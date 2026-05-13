@@ -208,7 +208,9 @@ contract ReasoningRegistryTest is Test {
         bytes32, string memory, ReasoningRegistry.Region,
         ReasoningRegistry.AssetClass, uint256, address
     ) {
-        ReasoningRegistry.TraceMetadata memory m = registry.traces(h);
-        return (m.traceHash, m.ipfsCid, m.region, m.assetClass, m.timestamp, m.submitter);
+        // Public mapping getter for structs returns a tuple, not the struct type.
+        (bytes32 traceHash, string memory ipfsCid, ReasoningRegistry.Region region,
+         ReasoningRegistry.AssetClass assetClass, uint256 ts, address submitter) = registry.traces(h);
+        return (traceHash, ipfsCid, region, assetClass, ts, submitter);
     }
 }
