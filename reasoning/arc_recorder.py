@@ -146,8 +146,16 @@ async def record_trace(metadata: TraceMetadata) -> str:
     asset_int   = _ASSET_CLASS_TO_UINT8[metadata.asset_class]
 
     try:
-        nonce     = await w3.eth.get_transaction_count(account.address)
-        gas_price = await w3.eth.gas_price
+        nonce = await w3.eth.get_transaction_count(account.address)
+
+        # Arc uses EIP-1559. Minimum maxFeePerGas is 20 Gwei (protocol floor).
+        # Using legacy gasPrice causes "transaction underpriced" — always use
+        # maxFeePerGas + maxPriorityFeePerGas on Arc.
+        _20_gwei = 20 * 10**9
+        fee_history = await w3.eth.fee_history(5, "latest", [50])
+        base_fee = fee_history["baseFeePerGas"][-1]
+        max_priority = max(_20_gwei // 20, 1 * 10**9)          # 1 Gwei tip
+        max_fee = max(base_fee * 2 + max_priority, _20_gwei)    # at least 20 Gwei floor
 
         txn = await registry.functions.record(
             trace_bytes,
@@ -155,16 +163,19 @@ async def record_trace(metadata: TraceMetadata) -> str:
             region_int,
             asset_int,
         ).build_transaction({
-            "from":     account.address,
-            "nonce":    nonce,
-            "gasPrice": gas_price,
+            "from":              account.address,
+            "nonce":             nonce,
+            "maxFeePerGas":      max_fee,
+            "maxPriorityFeePerGas": max_priority,
+            "type":              2,  # EIP-1559
         })
 
-        # Estimate gas (denominated in USDC microunits on Arc)
+        # Estimate gas (denominated in USDC — 18 decimals as native gas on Arc,
+        # NOT 6 decimals like ERC-20 USDC. Display in human USDC for observability.)
         gas_estimate = await w3.eth.estimate_gas(txn)
         txn["gas"] = int(gas_estimate * 1.2)  # 20% buffer
 
-        usdc_cost = (txn["gas"] * gas_price) / 1e18
+        usdc_cost = (txn["gas"] * max_fee) / 1e18
         logger.info(
             "Recording trace %s on Arc — estimated gas cost: %.8f USDC",
             metadata.trace_hash[:12],
