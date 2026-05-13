@@ -24,16 +24,13 @@ jobs:
 
       - name: Install dependencies
         run: uv sync --all-extras
-        working-directory: rosetta-alpha
 
       - name: Run tests
         env:
           # Smoke tests use mock keys — no real API calls needed in CI
           GROQ_API_KEY: gsk_ci_dummy_key_for_tests_only
         run: uv run pytest tests/ -v --tb=short
-        working-directory: rosetta-alpha
 
       - name: Lint (ruff)
         run: uv run ruff check .
-        working-directory: rosetta-alpha
         continue-on-error: true  # warn but don't block on style issues during hackathon
