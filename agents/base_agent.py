@@ -57,15 +57,40 @@ class PydanticJsonParser(adal.DataComponent):
         super().__init__()
         self.model_class = model_class
 
-    def call(self, input: adal.GeneratorOutput) -> T:  # noqa: A002
-        raw = input.raw_response if hasattr(input, "raw_response") else str(input)
-        # Strip markdown code fences if present
+    @staticmethod
+    def _extract_json(raw: str) -> str:
+        """Strip markdown code fences and return clean JSON string."""
         raw = raw.strip()
         if raw.startswith("```"):
-            raw = raw.split("```")[1]
-            if raw.startswith("json"):
+            # handles ```json, ```JSON, ``` (no lang tag)
+            raw = raw[3:]                      # strip opening ```
+            if raw.startswith("json") or raw.startswith("JSON"):
                 raw = raw[4:]
-        return self.model_class.model_validate(json.loads(raw.strip()))
+            # strip closing ```
+            if raw.rstrip().endswith("```"):
+                raw = raw.rstrip()[:-3]
+        return raw.strip()
+
+    def call(self, input: adal.GeneratorOutput, extra_fields: dict | None = None) -> T | None:  # noqa: A002
+        """Parse GeneratorOutput → Pydantic model.
+
+        Args:
+            input: AdalFlow GeneratorOutput from the Generator call.
+            extra_fields: fields to inject into the parsed dict before
+                validation. Use this for fields the LLM shouldn't echo
+                (e.g. agent_role, region).
+        """
+        raw = getattr(input, "raw_response", None) or str(input)
+        if not raw:
+            return None
+        try:
+            data = json.loads(self._extract_json(raw))
+            if extra_fields:
+                data.update(extra_fields)
+            return self.model_class.model_validate(data)
+        except Exception as exc:
+            logger.error("PydanticJsonParser failed: %s | raw: %.200s", exc, raw)
+            return None
 
 
 logger = logging.getLogger(__name__)
@@ -98,8 +123,8 @@ Produce a JSON object with these fields:
 
 SYNTHESIS_TEMPLATE = """\
 You are the portfolio manager for the {{ region }} desk.
-You receive analyst reports below. Synthesize them into a single
-InvestmentThesis. Be honest about disagreements — surface them in risk_factors.
+You receive analyst reports below. Synthesize them into a single InvestmentThesis JSON object.
+Be honest about disagreements — surface them in risk_factors.
 
 Subject: {{ ticker }} ({{ asset_class }})
 Working language: {{ language }}
@@ -107,7 +132,18 @@ Working language: {{ language }}
 Analyst reports:
 {{ analyst_reports }}
 
-{{ output_format_str }}
+Respond with ONLY a valid JSON object (no markdown, no prose) with these exact fields:
+- asset_class: string (e.g. "equity")
+- ticker_or_asset: string
+- thesis_summary_en: string (English summary)
+- thesis_summary_native: string or null
+- direction: "LONG" | "SHORT" | "NEUTRAL"
+- confidence_score: float 0.0-1.0
+- time_horizon_days: integer
+- reasoning_blocks: [] (leave empty — filled by pipeline)
+- data_sources_used: list of strings
+- risk_factors: list of strings
+- model_routing: {}
 """
 
 
@@ -143,12 +179,17 @@ class RegionalAgent(adal.Component):
         client = model_client or self.default_model_client()
         kwargs = model_kwargs or self.default_model_kwargs
 
+        # Parsers stored separately so we can call them with extra_fields.
+        self._block_parser = PydanticJsonParser(ReasoningBlock)
+        self._thesis_parser = PydanticJsonParser(InvestmentThesis)
+
         # Sub-agent generator — one Generator instance, called per role.
+        # No output_processors here — we parse manually via _block_parser /
+        # _thesis_parser so we can inject extra_fields (e.g. agent_role).
         self.sub_agent = adal.Generator(
             model_client=client,
             model_kwargs=kwargs,
             template=SUB_AGENT_TEMPLATE,
-            output_processors=PydanticJsonParser(ReasoningBlock),
         )
 
         # Synthesis generator — emits the full InvestmentThesis.
@@ -156,7 +197,6 @@ class RegionalAgent(adal.Component):
             model_client=client,
             model_kwargs=kwargs,
             template=SYNTHESIS_TEMPLATE,
-            output_processors=PydanticJsonParser(InvestmentThesis),
         )
 
     # -- subclass contract --------------------------------------------------
@@ -198,9 +238,11 @@ class RegionalAgent(adal.Component):
                     "data_summary": data_summary,
                 }
             )
-            block = block_output.data
+            # The LLM doesn't echo agent_role back — inject it post-parse.
+            # We re-parse raw_response with the role so the schema validates.
+            block = self._block_parser.call(block_output, extra_fields={"agent_role": role.value})
             if not isinstance(block, ReasoningBlock):
-                raise RuntimeError(f"{role} sub-agent returned non-ReasoningBlock: {block!r}")
+                raise RuntimeError(f"{role} sub-agent failed to produce a ReasoningBlock. raw: {getattr(block_output, 'raw_response', '')[:300]}")
             blocks.append(block)
 
         # 2. Portfolio-manager synthesis.
@@ -217,9 +259,12 @@ class RegionalAgent(adal.Component):
                 "analyst_reports": analyst_reports,
             }
         )
-        thesis = thesis_output.data
+        thesis = self._thesis_parser.call(
+            thesis_output,
+            extra_fields={"region": self.region.value, "ticker_or_asset": ticker},
+        )
         if not isinstance(thesis, InvestmentThesis):
-            raise RuntimeError(f"Synthesizer returned non-InvestmentThesis: {thesis!r}")
+            raise RuntimeError(f"Synthesizer failed. raw: {getattr(thesis_output, 'raw_response', '')[:300]}")
 
         # 3. Splice the sub-agent blocks back in (synthesizer may have summarized them).
         if not thesis.reasoning_blocks:

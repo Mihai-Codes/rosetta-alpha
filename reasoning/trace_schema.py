@@ -130,7 +130,7 @@ class InvestmentThesis(BaseModel):
     time_horizon_days: int = Field(gt=0, le=3650)
 
     # Reasoning chain
-    reasoning_blocks: list[ReasoningBlock] = Field(min_length=1)
+    reasoning_blocks: list[ReasoningBlock] = Field(default_factory=list)
 
     # Provenance
     data_sources_used: list[str] = Field(

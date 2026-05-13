@@ -18,6 +18,10 @@ import asyncio
 import json
 import logging
 
+from dotenv import load_dotenv
+
+load_dotenv()  # loads .env before any AdalFlow client init
+
 from agents.base_agent import RegionalAgent
 from data.mcp_client import FinancialDatasetsClient
 from reasoning.trace_schema import AgentRole, AssetClass, Region
