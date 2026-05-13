@@ -25,9 +25,12 @@ import logging
 from abc import abstractmethod
 from typing import Any
 
+import json
 import os
+from typing import TypeVar
 
 import adalflow as adal
+from pydantic import BaseModel
 
 from reasoning.trace_schema import (
     AgentRole,
@@ -38,6 +41,32 @@ from reasoning.trace_schema import (
     ReasoningBlock,
     Region,
 )
+
+T = TypeVar("T", bound=BaseModel)
+
+
+class PydanticJsonParser(adal.DataComponent):
+    """Bridge: parses LLM raw-string JSON output into a Pydantic model.
+
+    AdalFlow's JsonOutputParser requires adal.DataClass. Our domain models are
+    Pydantic BaseModel for FastAPI/web3 interop. This thin wrapper sits at the
+    Generator boundary and converts without touching the domain schemas.
+    """
+
+    def __init__(self, model_class: type[T]) -> None:
+        super().__init__()
+        self.model_class = model_class
+
+    def call(self, input: adal.GeneratorOutput) -> T:  # noqa: A002
+        raw = input.raw_response if hasattr(input, "raw_response") else str(input)
+        # Strip markdown code fences if present
+        raw = raw.strip()
+        if raw.startswith("```"):
+            raw = raw.split("```")[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+        return self.model_class.model_validate(json.loads(raw.strip()))
+
 
 logger = logging.getLogger(__name__)
 
@@ -119,7 +148,7 @@ class RegionalAgent(adal.Component):
             model_client=client,
             model_kwargs=kwargs,
             template=SUB_AGENT_TEMPLATE,
-            output_processors=adal.JsonOutputParser(data_class=ReasoningBlock),  # type: ignore[arg-type]
+            output_processors=PydanticJsonParser(ReasoningBlock),
         )
 
         # Synthesis generator — emits the full InvestmentThesis.
@@ -127,7 +156,7 @@ class RegionalAgent(adal.Component):
             model_client=client,
             model_kwargs=kwargs,
             template=SYNTHESIS_TEMPLATE,
-            output_processors=adal.JsonOutputParser(data_class=InvestmentThesis),  # type: ignore[arg-type]
+            output_processors=PydanticJsonParser(InvestmentThesis),
         )
 
     # -- subclass contract --------------------------------------------------

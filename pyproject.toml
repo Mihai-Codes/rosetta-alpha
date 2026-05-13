@@ -11,8 +11,10 @@ authors = [
 keywords = ["ai-agents", "trading-agents", "arc", "circle", "usdc", "prediction-markets", "risk-parity"]
 
 dependencies = [
-    # LLM orchestration
+    # LLM orchestration (openai is a required transitive dep of adalflow)
     "adalflow>=0.2.0",
+    "openai>=1.30",
+    "groq>=0.9",
     # Data validation (domain models)
     "pydantic>=2.6",
     "pydantic-settings>=2.2",
