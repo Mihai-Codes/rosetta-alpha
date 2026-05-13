@@ -12,6 +12,7 @@ import pytest
 
 from agents.us_agent import USAgent
 from agents.crypto_agent import CryptoAgent
+from agents.china_agent import ChinaAgent
 from agents.base_agent import PydanticJsonParser
 from reasoning.trace_schema import AgentRole, AssetClass, Region, ReasoningBlock, InvestmentThesis
 
@@ -34,6 +35,28 @@ def test_crypto_agent_region(monkeypatch: pytest.MonkeyPatch) -> None:
     assert agent.region == Region.CRYPTO
     assert agent.working_language == "en"
     assert agent.asset_class_for == AssetClass.CRYPTO
+
+
+def test_china_agent_region(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "sk_test_dummy")
+    agent = ChinaAgent()
+    assert agent.region == Region.CN
+    assert agent.working_language == "zh"
+    assert agent.asset_class_for == AssetClass.EQUITY
+
+
+def test_china_agent_sub_agent_roles(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "sk_test_dummy")
+    agent = ChinaAgent()
+    assert AgentRole.FUNDAMENTAL_ANALYST in agent.sub_agent_roles
+    assert AgentRole.SENTIMENT_ANALYST in agent.sub_agent_roles
+
+
+def test_china_agent_uses_deepseek_model(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "sk_test_dummy")
+    agent = ChinaAgent()
+    # Verify the synthesizer was built with DeepSeek model kwargs
+    assert agent.synthesizer.model_kwargs["model"] == "deepseek-chat"
 
 
 def test_crypto_agent_sub_agent_roles(monkeypatch: pytest.MonkeyPatch) -> None:
