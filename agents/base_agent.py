@@ -25,6 +25,8 @@ import logging
 from abc import abstractmethod
 from typing import Any
 
+import os
+
 import adalflow as adal
 
 from reasoning.trace_schema import (
@@ -91,8 +93,10 @@ class RegionalAgent(adal.Component):
     # Class-level attributes — subclass overrides
     region: Region
     working_language: LangCode = "en"
-    default_model_client: type[adal.ModelClient] = adal.AnthropicAPIClient  # type: ignore[attr-defined]
-    default_model_kwargs: dict[str, Any] = {"model": "claude-sonnet-4-6"}
+    # Default to Groq (free tier, zero local compute) when running outside AdaL CLI.
+    # Override in subclass for region-specific routing (e.g. DeepSeek for CN agent).
+    default_model_client: type[adal.ModelClient] = adal.GroqAPIClient  # type: ignore[attr-defined]
+    default_model_kwargs: dict[str, Any] = {"model": "llama-3.3-70b-versatile"}
     sub_agent_roles: tuple[AgentRole, ...] = (
         AgentRole.FUNDAMENTAL_ANALYST,
         AgentRole.TECHNICAL_ANALYST,

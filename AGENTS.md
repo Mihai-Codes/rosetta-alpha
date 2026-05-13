@@ -40,6 +40,7 @@ Five LLM agents (one per region, each thinking in its native language) produce s
 |------|-------|----------------|-----|
 | Architecture, scaffolding, cross-cutting refactors | **Claude Opus 4.7** | 1M | Reasoning depth + huge context |
 | Daily coding, tests, single-feature work | **Claude Sonnet 4.6** | 200K | Default. Cheap, fast, good. |
+| Python pipeline dev/test loop (outside AdaL) | **Groq + Llama 3.3-70B** | 32K | Free tier (30 RPM / 14.4K RPD), AdalFlow `GroqAPIClient` built-in, zero local compute |
 | Smart contracts, financial math, security-critical | **Claude Opus 4.6** | 200K | Production-grade precision |
 | `agents/china_agent.py` + Chinese prompts | **DeepSeek V4 Pro** | 936K | Native Chinese reasoning — prompt it *in Chinese* |
 | Bulk Chinese data parsing | DeepSeek V4 Flash | 984K | Cheaper than V4 Pro |
@@ -81,8 +82,8 @@ Whichever model writes Solidity:
 ## 7. GitHub remote
 
 Repo lives under the **`Mihai-Codes`** GitHub organization (NOT the personal
-`chindris-mihai-alexandru` account). Final URL will be
-`github.com/Mihai-Codes/rosetta-alpha`. Don't push to the personal account.
+`chindris-mihai-alexandru` account). URL: **https://github.com/Mihai-Codes/rosetta-alpha**
+Don't push to the personal account.
 
 ## 8. Sprint status
 
