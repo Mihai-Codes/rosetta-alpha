@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Tests (Python 3.12)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync --all-extras
+        working-directory: rosetta-alpha
+
+      - name: Run tests
+        env:
+          # Smoke tests use mock keys — no real API calls needed in CI
+          GROQ_API_KEY: gsk_ci_dummy_key_for_tests_only
+        run: uv run pytest tests/ -v --tb=short
+        working-directory: rosetta-alpha
+
+      - name: Lint (ruff)
+        run: uv run ruff check .
+        working-directory: rosetta-alpha
+        continue-on-error: true  # warn but don't block on style issues during hackathon

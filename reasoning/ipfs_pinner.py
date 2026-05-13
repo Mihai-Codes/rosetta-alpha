@@ -38,21 +38,31 @@ def _mock_cid(payload: dict[str, Any]) -> str:
 
 
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=1, max=8))
-async def _pin_real(payload: dict[str, Any], jwt: str) -> str:
+async def _pin_real(payload: dict[str, Any], jwt: str, *, name: str | None = None) -> str:
     headers = {"Authorization": f"Bearer {jwt}", "Content-Type": "application/json"}
-    body = {"pinataContent": payload, "pinataOptions": {"cidVersion": 1}}
+    body = {
+        "pinataContent": payload,
+        "pinataOptions": {"cidVersion": 1},
+        "pinataMetadata": {"name": name or "rosetta-alpha-trace"},
+    }
     async with httpx.AsyncClient(timeout=30.0) as client:
         resp = await client.post(PINATA_API_URL, headers=headers, json=body)
         resp.raise_for_status()
-        return resp.json()["IpfsHash"]
+        cid = resp.json()["IpfsHash"]
+        logger.info("Pinned to IPFS: %s (name=%s)", cid, name)
+        return cid
 
 
-async def pin_json(payload: dict[str, Any]) -> str:
-    """Pin a JSON-serializable payload. Returns the CID.
+async def pin_json(payload: dict[str, Any], *, name: str | None = None) -> str:
+    """Pin a JSON-serializable payload. Returns the IPFS CID.
 
     Falls back to a deterministic mock CID when ``PINATA_JWT`` is not set —
     intentional, so dev loops work offline. The mock prefix makes accidental
     mock-in-prod easy to spot.
+
+    Args:
+        payload: JSON-serializable dict to pin.
+        name: Optional human-readable label shown in the Pinata dashboard.
     """
     jwt = os.getenv("PINATA_JWT", "").strip()
     if not jwt:
@@ -61,6 +71,6 @@ async def pin_json(payload: dict[str, Any]) -> str:
         return cid
 
     try:
-        return await _pin_real(payload, jwt)
+        return await _pin_real(payload, jwt, name=name)
     except httpx.HTTPError as e:
         raise IPFSPinError(f"Pinata pin failed: {e}") from e
