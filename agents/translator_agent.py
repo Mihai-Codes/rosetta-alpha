@@ -110,7 +110,7 @@ class TranslatorAgent(adal.Component):
                 "summary_en": thesis.thesis_summary_en[:800],
                 "risks": risks[:400],
                 "thesis_id": thesis.thesis_id,
-                "lang": thesis.working_language,
+                "lang": thesis.working_language or "en",
                 "model_name": self._model_name,
             }
         )
@@ -119,7 +119,7 @@ class TranslatorAgent(adal.Component):
             output,
             extra_fields={
                 "source_thesis_id": thesis.thesis_id,
-                "source_language": thesis.lang,
+                "source_language": thesis.working_language or "en",
                 "translated_by_model": self._model_name,
             },
         )

@@ -62,7 +62,7 @@ async def generate(
     agent = _build_agent(region)
     logger.info("Running %s agent on %s…", region.upper(), ticker)
     thesis = await agent.analyze(ticker)
-    logger.info("Thesis: %s %s (conviction=%.2f)", ticker, thesis.direction.value, thesis.conviction)
+    logger.info("Thesis: %s %s (confidence=%.2f)", ticker, thesis.direction.value, thesis.confidence_score)
 
     # 2. Translate to prediction-market question
     translator = TranslatorAgent()
