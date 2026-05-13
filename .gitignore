@@ -1,0 +1,66 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual envs
+.venv/
+venv/
+env/
+
+# uv
+.uv/
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# IDE
+.vscode/
+.idea/
+.zed/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node / frontend
+node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Hardhat / Foundry
+contracts/cache/
+contracts/artifacts/
+contracts/typechain-types/
+contracts/out/
+contracts/broadcast/
+
+# Local data & logs
+data/cache/
+data/raw/
+*.log
+logs/
+
+# AdalFlow optimization artifacts
+adalflow_traces/
+*.adal_ckpt
+
+# AdaL CLI proprietary prompts (Warp playbook — closed intelligence layer)
+prompts/optimized/
+prompts/private/
