@@ -182,6 +182,70 @@ class PredictionMarketQuestion(BaseModel):
 
 
 # ---------------------------------------------------------------------------
+# Portfolio view — cross-region aggregated snapshot
+# ---------------------------------------------------------------------------
+
+
+class PortfolioPosition(BaseModel):
+    """One holding/signal derived from an InvestmentThesis."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    ticker_or_asset: str
+    region: Region
+    asset_class: AssetClass
+    direction: Direction
+    confidence_score: float = Field(ge=0.0, le=1.0)
+    thesis_id: str
+    thesis_summary_en: str
+    signal: float = Field(
+        ge=-1.0,
+        le=1.0,
+        description=(
+            "Signed conviction signal: direction_numeric × confidence_score. "
+            "LONG→+1, SHORT→-1, NEUTRAL→0, scaled by confidence."
+        ),
+    )
+
+
+class PortfolioView(BaseModel):
+    """Aggregated cross-region portfolio snapshot.
+
+    Produced by :class:`portfolio.engine.PortfolioEngine`. Designed to be
+    pinned to IPFS and eventually recorded in ``ReasoningRegistry.sol``.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    snapshot_id: str = Field(default_factory=lambda: str(uuid4()))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+    positions: list[PortfolioPosition]
+
+    # Aggregated signal
+    net_signal: float = Field(
+        ge=-1.0,
+        le=1.0,
+        description="Mean conviction-weighted signal across all positions.",
+    )
+    net_direction: Direction = Field(
+        description="Discretised direction: |net_signal| ≥ 0.10 → LONG/SHORT, else NEUTRAL."
+    )
+    aggregate_confidence: float = Field(
+        ge=0.0,
+        le=1.0,
+        description="Mean confidence_score across all positions.",
+    )
+
+    # Surfaced risk
+    top_risk_factors: list[str] = Field(
+        description="Deduplicated, frequency-ranked risk factors from all theses."
+    )
+
+    schema_version: str = Field(default="1.0.0")
+
+
+# ---------------------------------------------------------------------------
 # Trace metadata — what gets recorded on Arc
 # ---------------------------------------------------------------------------
 
