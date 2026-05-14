@@ -428,6 +428,19 @@ async def _try_settle(
             tx,
             " [DRY RUN]" if dry_run else "",
         )
+
+        # Auto-label the training dataset with the market outcome
+        try:
+            from training.adalflow_trace import update_outcome
+            exit_usd = snap.exit_usd if snap.exit_price > 0 else None
+            update_outcome(
+                trace_hash=snap.trace_hash.hex(),
+                was_correct=snap.was_correct,
+                exit_price_usd=exit_usd,
+            )
+        except Exception as _label_exc:
+            logger.debug("dataset label update failed (non-fatal): %s", _label_exc)
+
         return SettlementResult(
             trace_hash_hex=snap.trace_hash.hex(),
             action="settle",
