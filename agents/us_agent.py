@@ -20,7 +20,7 @@ import logging
 
 from dotenv import load_dotenv
 
-load_dotenv()  # loads .env before any AdalFlow client init
+load_dotenv(override=True)  # loads .env before any AdalFlow client init
 
 from agents.base_agent import RegionalAgent
 from data.mcp_client import FinancialDatasetsClient

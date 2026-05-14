@@ -1,0 +1,14 @@
+{
+  "name": "rosetta-alpha-scripts",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Circle Paymaster + on-chain utility scripts for Rosetta Alpha",
+  "scripts": {
+    "paymaster": "node scripts/circle_paymaster_demo.js"
+  },
+  "dependencies": {
+    "@circle-fin/modular-wallets-core": "^1.0.0",
+    "dotenv": "^16.0.0",
+    "viem": "^2.0.0"
+  }
+}

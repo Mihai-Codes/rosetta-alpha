@@ -22,7 +22,7 @@ import logging
 import os
 from typing import Any
 
-from reasoning.trace_schema import AssetClass, Region, TraceMetadata
+from reasoning.trace_schema import AssetClass, Direction, InvestmentThesis, Region, TraceMetadata
 
 logger = logging.getLogger(__name__)
 
@@ -48,6 +48,70 @@ _ASSET_CLASS_TO_UINT8: dict[AssetClass, int] = {
     AssetClass.FX:           4,
     AssetClass.REAL_ESTATE:  5,
 }
+
+# Minimal ABI for RosettaToken stake() + balanceOf() + stakedBalance()
+_TOKEN_ABI: list[dict[str, Any]] = [
+    {
+        "name": "stake",
+        "type": "function",
+        "stateMutability": "nonpayable",
+        "inputs": [{"name": "amount", "type": "uint256"}],
+        "outputs": [],
+    },
+    {
+        "name": "balanceOf",
+        "type": "function",
+        "stateMutability": "view",
+        "inputs": [{"name": "account", "type": "address"}],
+        "outputs": [{"name": "", "type": "uint256"}],
+    },
+    {
+        "name": "stakedBalance",
+        "type": "function",
+        "stateMutability": "view",
+        "inputs": [{"name": "", "type": "address"}],
+        "outputs": [{"name": "", "type": "uint256"}],
+    },
+]
+
+# Default stake per trace: 10 ROSETTA (18 decimals). Override with ROSETTA_STAKE_AMOUNT env var.
+_DEFAULT_STAKE = 10 * 10**18
+
+# ---------------------------------------------------------------------------
+# Direction → Solidity enum uint8 mapping
+# Mirrors Direction enum in contracts/src/PredictionMarket.sol exactly.
+# ---------------------------------------------------------------------------
+
+_DIRECTION_TO_UINT8: dict[Direction, int] = {
+    Direction.LONG:    0,
+    Direction.SHORT:   1,
+    Direction.NEUTRAL: 2,
+}
+
+# Minimal ABI for PredictionMarket createMarket()
+_MARKET_ABI: list[dict[str, Any]] = [
+    {
+        "name": "createMarket",
+        "type": "function",
+        "stateMutability": "nonpayable",
+        "inputs": [
+            {"name": "traceHash",    "type": "bytes32"},
+            {"name": "agent",        "type": "address"},
+            {"name": "stakeAmount",  "type": "uint256"},
+            {"name": "assetKey",     "type": "bytes32"},
+            {"name": "direction",    "type": "uint8"},
+            {"name": "confidenceBp", "type": "uint16"},
+            {"name": "entryPrice",   "type": "uint256"},
+            {"name": "horizonDays",  "type": "uint32"},
+        ],
+        "outputs": [],
+    },
+    {
+        "name": "MarketAlreadyExists",
+        "type": "error",
+        "inputs": [{"name": "traceHash", "type": "bytes32"}],
+    },
+]
 
 # Minimal ABI for the record() function — avoids bundling the full JSON.
 _RECORD_ABI: list[dict[str, Any]] = [
@@ -97,8 +161,163 @@ def _trace_hash_to_bytes32(hex_hash: str) -> bytes:
 # ---------------------------------------------------------------------------
 
 
-async def record_trace(metadata: TraceMetadata) -> str:
+async def create_market(
+    w3: Any,
+    account: Any,
+    trace_bytes: bytes,
+    thesis: "InvestmentThesis",
+    stake_amount: int,
+) -> str | None:
+    """Call PredictionMarket.createMarket() after a trace has been recorded.
+
+    Returns the tx hash, or None if PREDICTION_MARKET_ADDRESS is not configured.
+    Idempotent: MarketAlreadyExists is silently swallowed.
+    """
+    import hashlib as _hl
+
+    market_addr = os.getenv("PREDICTION_MARKET_ADDRESS", "").strip()
+    if not market_addr:
+        logger.debug("PREDICTION_MARKET_ADDRESS not set — skipping market creation.")
+        return None
+
+    from web3 import AsyncWeb3
+
+    market = w3.eth.contract(
+        address=AsyncWeb3.to_checksum_address(market_addr),
+        abi=_MARKET_ABI,
+    )
+
+    # assetKey = keccak256(ticker) — matches oracle convention
+    asset_key = w3.keccak(text=thesis.ticker_or_asset)
+
+    direction_int  = _DIRECTION_TO_UINT8[thesis.direction]
+    confidence_bp  = int(thesis.confidence_score * 10_000)  # 0-10000 basis points
+    # entryPrice: use live price from thesis if available, else 0 (oracle fills on resolve).
+    entry_price    = thesis.entry_price_1e8 if thesis.entry_price_1e8 is not None else 0
+    horizon_days   = int(thesis.time_horizon_days)
+
+    _20_gwei = 20 * 10**9
+    fee_history = await w3.eth.fee_history(5, "latest", [50])
+    base_fee = fee_history["baseFeePerGas"][-1]
+    max_priority = max(_20_gwei // 20, 1 * 10**9)
+    max_fee = max(base_fee * 2 + max_priority, _20_gwei)
+
+    nonce = await w3.eth.get_transaction_count(account.address)
+    txn = await market.functions.createMarket(
+        trace_bytes,
+        account.address,
+        stake_amount,
+        asset_key,
+        direction_int,
+        confidence_bp,
+        entry_price,
+        horizon_days,
+    ).build_transaction({
+        "from":                 account.address,
+        "nonce":                nonce,
+        "maxFeePerGas":         max_fee,
+        "maxPriorityFeePerGas": max_priority,
+        "type":                 2,
+    })
+    gas_estimate = await w3.eth.estimate_gas(txn)
+    txn["gas"] = int(gas_estimate * 1.2)
+
+    signed   = account.sign_transaction(txn)
+    tx_hash  = await w3.eth.send_raw_transaction(signed.raw_transaction)
+    receipt  = await w3.eth.wait_for_transaction_receipt(tx_hash, timeout=120)
+
+    if receipt["status"] == 0:
+        logger.error("createMarket reverted — tx=%s", tx_hash.hex())
+        return None
+
+    hex_tx = tx_hash.hex()
+    logger.info(
+        "PredictionMarket created for %s (%s, conf=%.0f%%) ✅  tx=%s",
+        thesis.ticker_or_asset,
+        thesis.direction.value,
+        thesis.confidence_score * 100,
+        hex_tx,
+    )
+    return hex_tx
+
+
+async def stake_for_trace(
+    w3: Any,
+    account: Any,
+    stake_amount: int | None = None,
+) -> str | None:
+    """Stake ROSETTA tokens before recording a trace.
+
+    Returns the tx hash of the stake transaction, or None if token address
+    is not configured (gracefully skipped — staking is optional for offline dev).
+    """
+    token_addr = os.getenv("ROSETTA_TOKEN_ADDRESS", "").strip()
+    if not token_addr:
+        logger.debug("ROSETTA_TOKEN_ADDRESS not set — skipping stake step.")
+        return None
+
+    amount = stake_amount or int(os.getenv("ROSETTA_STAKE_AMOUNT", str(_DEFAULT_STAKE)))
+
+    from web3 import AsyncWeb3
+
+    token = w3.eth.contract(
+        address=AsyncWeb3.to_checksum_address(token_addr),
+        abi=_TOKEN_ABI,
+    )
+
+    # Check liquid balance before staking
+    liquid = await token.functions.balanceOf(account.address).call()
+    if liquid < amount:
+        logger.warning(
+            "Insufficient ROSETTA balance to stake: have %.2f, need %.2f — skipping.",
+            liquid / 1e18,
+            amount / 1e18,
+        )
+        return None
+
+    _20_gwei = 20 * 10**9
+    fee_history = await w3.eth.fee_history(5, "latest", [50])
+    base_fee = fee_history["baseFeePerGas"][-1]
+    max_priority = max(_20_gwei // 20, 1 * 10**9)
+    max_fee = max(base_fee * 2 + max_priority, _20_gwei)
+
+    nonce = await w3.eth.get_transaction_count(account.address)
+    txn = await token.functions.stake(amount).build_transaction({
+        "from": account.address,
+        "nonce": nonce,
+        "maxFeePerGas": max_fee,
+        "maxPriorityFeePerGas": max_priority,
+        "type": 2,
+    })
+    gas_estimate = await w3.eth.estimate_gas(txn)
+    txn["gas"] = int(gas_estimate * 1.2)
+
+    signed = account.sign_transaction(txn)
+    tx_hash = await w3.eth.send_raw_transaction(signed.raw_transaction)
+    receipt = await w3.eth.wait_for_transaction_receipt(tx_hash, timeout=120)
+
+    if receipt["status"] == 0:
+        logger.error("Stake transaction reverted — tx=%s", tx_hash.hex())
+        return None
+
+    hex_tx = tx_hash.hex()
+    logger.info(
+        "Staked %.2f ROSETTA before trace recording ✅  tx=%s",
+        amount / 1e18,
+        hex_tx,
+    )
+    return hex_tx
+
+
+async def record_trace(
+    metadata: TraceMetadata,
+    thesis: "InvestmentThesis | None" = None,
+) -> str:
     """Submit *metadata* to the on-chain ReasoningRegistry. Returns tx hash.
+
+    If *thesis* is provided **and** PREDICTION_MARKET_ADDRESS is set, a
+    PredictionMarket is created for the trace immediately after recording —
+    closing the full Analyze → Pin → Stake → Record → Market loop.
 
     Idempotency: the contract reverts with TraceAlreadyExists if the hash was
     already recorded. We catch that specific error and treat it as success,
@@ -144,6 +363,12 @@ async def record_trace(metadata: TraceMetadata) -> str:
     trace_bytes = _trace_hash_to_bytes32(metadata.trace_hash)
     region_int  = _REGION_TO_UINT8[metadata.region]
     asset_int   = _ASSET_CLASS_TO_UINT8[metadata.asset_class]
+
+    # --- Optional: stake ROSETTA bond before recording ---
+    stake_amount = int(os.getenv("ROSETTA_STAKE_AMOUNT", str(_DEFAULT_STAKE)))
+    stake_tx = await stake_for_trace(w3, account, stake_amount)
+    if stake_tx:
+        logger.info("Bond staked → %s", stake_tx)
 
     try:
         nonce = await w3.eth.get_transaction_count(account.address)
@@ -193,6 +418,23 @@ async def record_trace(metadata: TraceMetadata) -> str:
 
         hex_tx = tx_hash.hex()
         logger.info("Trace recorded on Arc ✅  tx=%s", hex_tx)
+
+        # --- Optional: open a PredictionMarket for this trace ---
+        if thesis is not None:
+            try:
+                market_tx = await create_market(
+                    w3=w3,
+                    account=account,
+                    trace_bytes=trace_bytes,
+                    thesis=thesis,
+                    stake_amount=stake_amount,
+                )
+                if market_tx:
+                    logger.info("PredictionMarket opened ✅  tx=%s", market_tx)
+            except Exception as mkt_exc:
+                # Market creation is best-effort — never block the record path.
+                logger.warning("create_market failed (non-fatal): %s", mkt_exc)
+
         return hex_tx
 
     except ArcRecordError:

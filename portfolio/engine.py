@@ -24,7 +24,7 @@ from typing import Sequence
 
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 
 from reasoning import ipfs_pinner
 from reasoning.trace_schema import (
@@ -73,18 +73,56 @@ def _top_risks(theses: list[InvestmentThesis], top_n: int = 8) -> list[str]:
     return [risk for risk, _ in counter.most_common(top_n)]
 
 
-def _build_agent(region: str):
-    """Instantiate the correct regional agent. Mirrors question_generator."""
+def _build_agent(region: str, model_client=None, model_kwargs=None):
+    """Instantiate the correct regional agent.
+
+    Args:
+        region: Desk identifier — "us" | "cn" | "jp" | "eu" | "crypto".
+        model_client: Override the default model client. When None, each agent
+            uses its own routing logic (DeepSeek for CN, Gemini for JP/EU, etc.).
+            Set ROSETTA_TRAINING_MODEL=gemini to use Gemini Flash Lite for all
+            desks during training (avoids Groq TPD exhaustion).
+        model_kwargs: Override model kwargs (model name, temperature, etc.).
+    """
+    import os
+
+    # Training model override — swap non-CN agents to Gemini Flash Lite to avoid
+    # Groq 100K TPD exhaustion when running multi-round optimization sweeps.
+    # CN is excluded: Chinese synthesis prompts require DeepSeek/Groq for correct formatting.
+    training_model = os.environ.get("ROSETTA_TRAINING_MODEL", "")
+    if training_model == "gemini" and model_client is None and region != "cn":
+        gemini_key = os.environ.get("GEMINI_API_KEY", "")
+        if gemini_key:
+            from data.gemini_client import GeminiClient
+            model_client = GeminiClient(api_key=gemini_key)
+            model_kwargs = model_kwargs or {
+                "model": os.environ.get("GEMINI_MODEL", "gemini-3.1-flash-lite"),
+                "temperature": 0.2,
+                "max_tokens": 2048,
+            }
+
+    kwargs = {}
+    if model_client is not None:
+        kwargs["model_client"] = model_client
+    if model_kwargs is not None:
+        kwargs["model_kwargs"] = model_kwargs
+
     if region == "us":
         from agents.us_agent import USAgent
-        return USAgent()
+        return USAgent(**kwargs)
     if region == "cn":
         from agents.china_agent import ChinaAgent
-        return ChinaAgent()
+        return ChinaAgent(**kwargs)
+    if region == "jp":
+        from agents.japan_agent import JapanAgent
+        return JapanAgent(**kwargs)
+    if region == "eu":
+        from agents.eu_agent import EUAgent
+        return EUAgent(**kwargs)
     if region == "crypto":
         from agents.crypto_agent import CryptoAgent
-        return CryptoAgent()
-    raise ValueError(f"Unknown region: {region!r}. Choose from: us, cn, crypto")
+        return CryptoAgent(**kwargs)
+    raise ValueError(f"Unknown region: {region!r}. Choose from: us, cn, jp, eu, crypto")
 
 
 class PortfolioEngine:
@@ -177,7 +215,7 @@ async def _main() -> None:
         nargs="+",
         default=["AAPL:us", "ETH:crypto"],
         metavar="TICKER:REGION",
-        help="e.g. AAPL:us MSFT:us ETH:crypto 600519.SH:cn",
+        help="e.g. AAPL:us MSFT:us ETH:crypto 600519.SH:cn 7203.T:jp MC.PA:eu",
     )
     parser.add_argument("--pin", action="store_true", help="Pin snapshot to IPFS")
     parser.add_argument("--verbose", action="store_true")

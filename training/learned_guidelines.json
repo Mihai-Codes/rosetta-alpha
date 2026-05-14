@@ -1,0 +1,27 @@
+{
+  "cn": [
+    "Integrate a robust fallback mechanism to retrieve essential market data and historical price trends when primary sources are unavailable.",
+    "Ensure the analysis pipeline maintains active connectivity to reliable financial APIs for comprehensive fundamental and sentiment data on high-cap assets.",
+    "Prioritize the retrieval of real-time market data for major tickers to inform accurate investment direction and analysis."
+  ],
+  "crypto": [
+    "Identify specific macroeconomic indicators like CPI, Fed rate expectations, or M2 money supply and explicitly link them to Bitcoin's price action.",
+    "Incorporate granular on-chain metrics such as exchange net flows, HODL waves, or miner capitulation data to support fundamental analysis.",
+    "List three specific, non-macro risk factors such as regulatory shifts, exchange-specific liquidity shocks, or protocol-level vulnerabilities for every assessment."
+  ],
+  "jp": [
+    "Assign a neutral direction when technical analysis indicates a resistance-bound range regardless of valuation.",
+    "Lower the confidence score to 0.5\u20130.6 whenever the thesis identifies conflicting signals requiring a wait-and-see approach.",
+    "Quantify the impact of identified risks using sensitivity analysis instead of providing simple bulleted lists."
+  ],
+  "us": [
+    "Include at least two specific, non-boilerplate risk factors mapped to their potential impact on valuation multiples.",
+    "Quantify the percentage of revenue derived from top-tier hyperscalers and the impact of custom silicon competition on long-term margins.",
+    "Report specific quantitative metrics including P/E relative to historical averages, Services margin trends, and hardware unit volume growth rates."
+  ],
+  "eu": [
+    "Include specific quantitative evidence such as operating margin trends and P/E valuations relative to historical averages.",
+    "Provide detailed sensitivity analysis or quantitative impact estimates for all identified key risk factors.",
+    "Support every qualitative assertion with verifiable quantitative data to ensure analytical rigor."
+  ]
+}

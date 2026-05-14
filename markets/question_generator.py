@@ -30,7 +30,7 @@ from reasoning.trace_schema import InvestmentThesis, PredictionMarketQuestion
 
 logger = logging.getLogger(__name__)
 
-RegionKey = Literal["us", "cn", "crypto"]
+RegionKey = Literal["us", "cn", "crypto", "eu", "jp"]
 
 
 def _build_agent(region: RegionKey):  # type: ignore[return]
@@ -44,7 +44,13 @@ def _build_agent(region: RegionKey):  # type: ignore[return]
     if region == "crypto":
         from agents.crypto_agent import CryptoAgent
         return CryptoAgent()
-    raise ValueError(f"Unknown region: {region!r}. Choose from: us, cn, crypto")
+    if region == "eu":
+        from agents.eu_agent import EUAgent
+        return EUAgent()
+    if region == "jp":
+        from agents.japan_agent import JapanAgent
+        return JapanAgent()
+    raise ValueError(f"Unknown region: {region!r}. Choose from: us, cn, crypto, eu, jp")
 
 
 async def generate(
@@ -93,7 +99,7 @@ async def generate(
 async def _main() -> None:
     parser = argparse.ArgumentParser(description="Full thesis → prediction-market pipeline.")
     parser.add_argument("--ticker", default="AAPL")
-    parser.add_argument("--region", choices=["us", "cn", "crypto"], default="us")
+    parser.add_argument("--region", choices=["us", "cn", "crypto", "eu", "jp"], default="us")
     parser.add_argument("--no-pin", action="store_true", help="Skip IPFS pinning")
     parser.add_argument("--verbose", action="store_true")
     args = parser.parse_args()

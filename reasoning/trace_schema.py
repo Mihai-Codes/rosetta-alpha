@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Annotated
+from typing import Annotated, Any
 from uuid import uuid4
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
@@ -83,6 +83,10 @@ class ReasoningBlock(BaseModel):
     input_data_summary: str = Field(
         description="Short description of what this sub-agent consumed (e.g. '10-Q for AAPL Q1-2026')."
     )
+    thought_process: str | None = Field(
+        default=None,
+        description="Internal Chain-of-Thought / Thinking trace (R1-style)."
+    )
     analysis: str = Field(description="The reasoning/analysis in the agent's working language.")
     analysis_en: str | None = Field(
         default=None,
@@ -136,7 +140,7 @@ class InvestmentThesis(BaseModel):
     data_sources_used: list[str] = Field(
         description="e.g. ['mcp:financial-datasets/get_earnings', 'tushare:daily']."
     )
-    model_routing: dict[str, str] = Field(
+    model_routing: dict[str, Any] = Field(
         default_factory=dict,
         description="Map of agent_role → LLM model used. e.g. {'fundamental_analyst': 'claude-sonnet-4.6'}.",
     )
@@ -145,6 +149,14 @@ class InvestmentThesis(BaseModel):
     risk_factors: list[str] = Field(
         default_factory=list,
         description="Known unknowns. Data-source failures MUST be surfaced here, not hidden.",
+    )
+
+    # Live price at creation time (fixed-point: price × 1e8, e.g. $79357.00 → 7935700000000)
+    # Used by PredictionMarket.createMarket() as the entry price for resolution.
+    # None = price unavailable at thesis creation time (oracle fills on resolve).
+    entry_price_1e8: int | None = Field(
+        default=None,
+        description="Current asset price × 1e8 at thesis creation. Passed to on-chain market.",
     )
 
     # Versioning

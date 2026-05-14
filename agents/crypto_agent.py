@@ -17,10 +17,10 @@ import logging
 
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 
 from agents.base_agent import RegionalAgent
-from data.mcp_client import CoinGeckoClient, DefiLlamaClient
+from data.mcp_client import BinanceClient, CoinGeckoClient, DefiLlamaClient
 from reasoning.trace_schema import AgentRole, AssetClass, Region
 
 logger = logging.getLogger(__name__)
@@ -39,23 +39,81 @@ class CryptoAgent(RegionalAgent):
     def asset_class_for(self) -> AssetClass:
         return AssetClass.CRYPTO
 
+    # Map common ticker symbols → CoinGecko coin IDs
+    _TICKER_TO_COINGECKO: dict[str, str] = {
+        "BTC": "bitcoin",
+        "ETH": "ethereum",
+        "SOL": "solana",
+        "BNB": "binancecoin",
+        "XRP": "ripple",
+        "ADA": "cardano",
+        "AVAX": "avalanche-2",
+        "DOT": "polkadot",
+        "MATIC": "matic-network",
+        "LINK": "chainlink",
+        "UNI": "uniswap",
+        "DOGE": "dogecoin",
+        "LTC": "litecoin",
+        "ATOM": "cosmos",
+        "NEAR": "near",
+    }
+
+    # Map common tickers → DefiLlama protocol slugs
+    _TICKER_TO_DEFILLAMA: dict[str, str] = {
+        "ETH": "ethereum",
+        "BNB": "binance",
+        "AVAX": "avalanche",
+        "SOL": "solana",
+        "MATIC": "polygon",
+    }
+
     async def get_data_sources(self, ticker: str) -> dict[AgentRole, str]:
         """Pull CoinGecko + DefiLlama data concurrently.
 
-        `ticker` is a CoinGecko coin ID (e.g. 'bitcoin', 'ethereum', 'usd-coin').
-        For DeFi protocols, it's also the DefiLlama slug.
+        `ticker` can be a symbol (e.g. 'BTC', 'ETH') or a CoinGecko coin ID
+        (e.g. 'bitcoin', 'ethereum'). Symbol normalization is applied automatically.
         """
+        cg_id = self._TICKER_TO_COINGECKO.get(ticker.upper(), ticker.lower())
+        dl_slug = self._TICKER_TO_DEFILLAMA.get(ticker.upper(), cg_id)
+
         async with CoinGeckoClient() as cg, DefiLlamaClient() as dl:
-            coin_task = cg.get_coin(ticker)
+            coin_task = cg.get_coin(cg_id)
             # DefiLlama protocol slug often matches CoinGecko id — soft-fail if not
-            protocol_task = dl.get_protocol(ticker)
+            protocol_task = dl.get_protocol(dl_slug)
             coin, protocol = await asyncio.gather(
                 coin_task, protocol_task, return_exceptions=True
             )
 
-        # ---- fundamental: tokenomics + market data from CoinGecko ----
+        # ---- Binance fallback when CoinGecko is rate-limited or down ----
+        binance_ticker: dict | None = None
+        binance_klines: list | None = None
         if isinstance(coin, Exception):
-            fundamental_data = f"[CoinGecko ERROR: {coin}]"
+            logger.warning("CoinGecko failed (%s) — fetching Binance fallback data", coin)
+            try:
+                async with BinanceClient() as bn:
+                    binance_ticker, binance_klines = await asyncio.gather(
+                        bn.get_ticker_24h(cg_id),
+                        bn.get_klines(cg_id, interval="1d", limit=7),
+                        return_exceptions=False,
+                    )
+            except Exception as bn_exc:
+                logger.warning("Binance fallback also failed: %s", bn_exc)
+
+        # ---- fundamental: tokenomics + market data from CoinGecko (or Binance) ----
+        if isinstance(coin, Exception):
+            if binance_ticker:
+                fundamental_data = json.dumps({
+                    "source": "Binance (CoinGecko unavailable)",
+                    "symbol": binance_ticker.get("symbol"),
+                    "lastPrice": binance_ticker.get("lastPrice"),
+                    "priceChangePercent": binance_ticker.get("priceChangePercent"),
+                    "quoteVolume": binance_ticker.get("quoteVolume"),
+                    "highPrice": binance_ticker.get("highPrice"),
+                    "lowPrice": binance_ticker.get("lowPrice"),
+                    "recent_daily_ohlcv": binance_klines,
+                }, indent=2)[:4000]
+            else:
+                fundamental_data = f"[CoinGecko ERROR: {coin}] [Binance fallback unavailable]"
         else:
             # Trim to relevant fields — full response can be 50KB+
             trimmed = {
@@ -95,7 +153,15 @@ class CryptoAgent(RegionalAgent):
 
         # ---- sentiment: derive from CoinGecko community + market sentiment ----
         if isinstance(coin, Exception):
-            sentiment_data = "[No sentiment data — CoinGecko unavailable]"
+            if binance_ticker:
+                sentiment_data = json.dumps({
+                    "source": "Binance (CoinGecko unavailable)",
+                    "priceChangePercent_24h": binance_ticker.get("priceChangePercent"),
+                    "count": binance_ticker.get("count"),  # number of trades
+                    "weightedAvgPrice": binance_ticker.get("weightedAvgPrice"),
+                }, indent=2)
+            else:
+                sentiment_data = "[No sentiment data — CoinGecko and Binance both unavailable]"
         else:
             sentiment_data = json.dumps(
                 {

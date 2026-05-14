@@ -64,3 +64,6 @@ adalflow_traces/
 # AdaL CLI proprietary prompts (Warp playbook — closed intelligence layer)
 prompts/optimized/
 prompts/private/
+
+# Text-grad feedback accumulator (personal, not for commit)
+training/feedback_cache.json

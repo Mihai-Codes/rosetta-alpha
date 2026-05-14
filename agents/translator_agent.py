@@ -25,7 +25,7 @@ from typing import Any
 
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 
 import adalflow as adal
 
@@ -39,32 +39,30 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 _TRANSLATOR_TEMPLATE = """\
-<SYS>
-You are a prediction-market question designer. Your job is to convert an investment thesis
-into a single, binary, oracle-resolvable prediction-market question.
+You are a prediction-market question designer. Convert the investment thesis below into a single binary, oracle-resolvable prediction-market question.
 
 Rules:
 1. The question MUST be answerable YES or NO by a neutral third party using public data.
 2. The question MUST be time-bounded — expiry within 30–90 days from today ({{today}}).
-3. The resolution_criteria MUST cite a specific, publicly accessible data source
-   (e.g. "Bloomberg consensus EPS estimate", "CoinGecko daily close", "PBOC official announcement").
-4. category must be one of: macro | earnings | policy | crypto | geopolitics
-5. translation_confidence: how confident you are this question faithfully captures the thesis (0.0–1.0).
+3. resolution_criteria MUST cite a specific, publicly accessible data source (e.g. "CoinGecko daily close", "Bloomberg consensus EPS", "PBOC official announcement").
+4. category must be exactly one of: macro | earnings | policy | crypto | geopolitics
+5. translation_confidence: 0.0–1.0 — how faithfully this question captures the thesis.
 
-Output ONLY strict JSON matching this schema (no extra text):
-{{schema}}
-</SYS>
+Investment thesis:
+Ticker: {{ticker}} | Region: {{region}} | Direction: {{direction}} | Confidence: {{confidence_score}}
+Current price: {{current_price}}
+Summary: {{summary_en}}
+Risks: {{risks}}
 
-Investment thesis to translate:
-Ticker: {{ticker}}
-Region: {{region}}
-Direction: {{direction}}
-Confidence score: {{confidence_score}}
-Summary (EN): {{summary_en}}
-Risk factors: {{risks}}
-Source thesis ID: {{thesis_id}}
-Source language: {{lang}}
-Translated by model: {{model_name}}\
+Output ONLY a valid JSON object with exactly these fields (no markdown, no extra text):
+- question_text: string (the YES/NO question)
+- resolution_criteria: string (objective, machine-checkable rule + data source)
+- expiry: string (ISO datetime, e.g. "2026-08-01T00:00:00+00:00")
+- category: string (one of: macro | earnings | policy | crypto | geopolitics)
+- translation_confidence: float 0.0–1.0
+- source_thesis_id: "{{thesis_id}}"
+- source_language: "{{lang}}"
+- translated_by_model: "{{model_name}}"\
 """
 
 
@@ -100,6 +98,12 @@ class TranslatorAgent(adal.Component):
 
         risks = "; ".join(thesis.risk_factors) if thesis.risk_factors else "none provided"
 
+        # Inject live entry price so the LLM can form a specific, non-stale price target.
+        if thesis.entry_price_1e8 is not None:
+            current_price_str = f"{thesis.entry_price_1e8 / 1e8:,.2f} (at thesis creation)"
+        else:
+            current_price_str = "unknown (use directional question, not a price target)"
+
         output = self._generator(
             prompt_kwargs={
                 "today": today,
@@ -107,6 +111,7 @@ class TranslatorAgent(adal.Component):
                 "region": thesis.region.value,
                 "direction": thesis.direction.value,
                 "confidence_score": f"{thesis.confidence_score:.2f}",
+                "current_price": current_price_str,
                 "summary_en": thesis.thesis_summary_en[:800],
                 "risks": risks[:400],
                 "thesis_id": thesis.thesis_id,

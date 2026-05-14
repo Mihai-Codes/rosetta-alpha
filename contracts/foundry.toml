@@ -7,7 +7,7 @@ script = "script"
 solc_version = "0.8.24"
 optimizer = true
 optimizer_runs = 200
-via_ir = false
+via_ir = true
 
 [profile.default.fuzz]
 runs = 256
@@ -17,4 +17,4 @@ runs = 256
 arc_testnet = "${ARC_RPC_URL}"
 
 [etherscan]
-arc = { key = "${ETHERSCAN_API_KEY}", url = "${ARC_EXPLORER_URL}" }
+arc = { key = "placeholder", url = "https://testnet.arcscan.app/api" }
