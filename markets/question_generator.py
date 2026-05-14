@@ -79,7 +79,26 @@ async def generate(
     else:
         logger.warning("Translation produced no question.")
 
-    # 3. IPFS pinning (soft-fail)
+    # 3. Post Polymarket builder order (soft-fail — earns USDC fees on fills)
+    if question:
+        try:
+            from markets.polymarket_builder import post_builder_order
+            builder_result = post_builder_order(thesis, question)
+            if builder_result.error:
+                logger.debug("Polymarket builder order skipped: %s", builder_result.error)
+            else:
+                logger.info(
+                    "Polymarket builder order posted: %s %s @ %.2f (est. fee=$%.6f USDC) %s",
+                    builder_result.side,
+                    thesis.ticker_or_asset,
+                    builder_result.price,
+                    builder_result.estimated_fee_usdc,
+                    "[DRY RUN]" if builder_result.dry_run else "✅",
+                )
+        except Exception as _pm_exc:
+            logger.debug("Polymarket builder integration failed (non-fatal): %s", _pm_exc)
+
+    # 4. IPFS pinning (soft-fail)
     if pin:
         thesis_cid = await ipfs_pinner.pin_json(thesis.model_dump(mode="json"), name=f"thesis-{thesis.thesis_id[:8]}")
         logger.info("Thesis pinned → %s", thesis_cid)
