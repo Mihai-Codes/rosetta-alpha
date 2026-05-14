@@ -136,6 +136,7 @@ Post-hackathon, if you continue: add `CONTRIBUTING.md`, then say "PRs welcome." 
 | **May 15 (today)** | Drop link in `#agora-hackers` | Canteen Discord |
 | **May 18 (Monday)** | Launch thread | X / Twitter |
 | **May 18 (Monday)** | Launch post | LinkedIn |
+| **May 21 (Thursday)** | ⚠️ Set Polymarket **maker fee to 25 bps** (cooldown lifts 22:41 UTC) | polymarket.com/settings?tab=builder |
 | **May 19–22** | Reply to comments, share user feedback snippets | Both |
 | **May 22–24** | Final push: "3 days left — here's what users taught us" | X |
 | **May 25** | Submit | forms.gle/hFPM2t4Jt1zGfqzM7 |
