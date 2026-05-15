@@ -20,7 +20,6 @@ export function Layout({ children, activeTab, onTabChange, navVisible }: LayoutP
   return (
     <div className="min-h-screen flex flex-col bg-bg-primary relative selection:bg-gold/20">
       {/* 2026 Spatial Noise Texture */}
-      <div className="bg-noise" aria-hidden="true" />
       {/* Sticky nav — appears after hero scroll */}
       <header
         className={`

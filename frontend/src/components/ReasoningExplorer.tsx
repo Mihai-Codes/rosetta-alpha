@@ -11,7 +11,6 @@ interface ExplorerProps {
 export function ReasoningExplorer({ desk, onClose }: ExplorerProps) {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-bg-primary/90 backdrop-blur-xl">
-      <div className="bg-noise" aria-hidden />
       <div className="relative glass-panel border border-gold/30 w-full max-w-4xl max-h-[90vh] rounded-lg shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300">
         
         {/* Top edge light highlight */}
