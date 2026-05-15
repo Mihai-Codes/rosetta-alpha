@@ -28,6 +28,7 @@ load_dotenv(override=True)
 import adalflow as adal
 
 from agents.base_agent import PydanticJsonParser, RegionalAgent
+from data.stooq_client import StooqClient
 from data.yfinance_client import YFinanceClient
 from reasoning.trace_schema import (
     AgentRole,
@@ -156,14 +157,19 @@ class EUAgent(RegionalAgent):
     # ------------------------------------------------------------------
 
     async def get_data_sources(self, ticker: str) -> dict[AgentRole, str]:
-        """Pull daily bars + fundamentals + news from yfinance."""
-        client = YFinanceClient()
+        """Pull daily bars + fundamentals + news from yfinance (Stooq fallback for price data)."""
+        yf_client = YFinanceClient()
         daily, info, news = await asyncio.gather(
-            client.get_daily(ticker, period="10d"),
-            client.get_info(ticker),
-            client.get_news(ticker),
+            yf_client.get_daily(ticker, period="10d"),
+            yf_client.get_info(ticker),
+            yf_client.get_news(ticker),
             return_exceptions=True,
         )
+
+        # Price data: fall back to Stooq if yfinance fails or returns nothing
+        if isinstance(daily, Exception) or not daily:
+            logger.warning("yfinance get_daily failed for %s — trying Stooq fallback", ticker)
+            daily = await StooqClient().get_daily(ticker, period="10d")
 
         if isinstance(daily, Exception) or not daily:
             daily_summary = "[Price Data] Unavailable"
