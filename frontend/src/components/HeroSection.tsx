@@ -35,8 +35,6 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
       className="relative w-full overflow-hidden flex flex-col items-center justify-center pt-32 pb-16 border-b border-white/[0.05]"
       aria-label="Rosetta Alpha hero"
     >
-      {/* Subtle Apple-style background grid */}
-      
       <div className="absolute inset-0 hero-vignette" aria-hidden />
 
       <div className="relative z-10 w-full max-w-[1200px] mx-auto px-4 sm:px-8 lg:px-12 text-center">
@@ -60,10 +58,11 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
 
         <p
           data-reveal-id="subtitle"
-          className={`text-lg md:text-xl text-text-secondary font-light w-full max-w-full whitespace-nowrap overflow-hidden text-ellipsis mb-12 px-4 transition-all duration-1000 delay-150 ${visible.subtitle ? \'opacity-100 translate-y-0\' : \'opacity-0 translate-y-4\'}`}
+          className={`text-lg md:text-xl text-text-secondary font-light max-w-full w-full mx-auto px-4 whitespace-nowrap overflow-hidden text-ellipsis mb-12 transition-all duration-1000 delay-150 ${
+            visible.subtitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+          }`}
         >
-          Dalio's All Weather discipline, reimagined for every language.
-          Five regional AI analysts. One verifiable thesis.
+          Dalio's All Weather discipline, reimagined for every language. Five regional AI analysts. One verifiable thesis.
         </p>
 
         <div
@@ -77,11 +76,11 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
             return (
               <div
                 key={r}
-                className="group flex items-center gap-2 px-5 py-2.5 glass-panel rounded-full border border-white/[0.05] hover:border-white/[0.15] transition-colors duration-300 cursor-default"
+                className="group flex items-center gap-2 px-5 py-2.5 glass-panel rounded-full border border-white/[0.05] hover:border-brand-red hover:shadow-[0_0_20px_rgba(216,43,43,0.6)] transition-all duration-300 cursor-default"
               >
-                <div className="relative flex h-1.5 w-1.5 shrink-0">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60" style={{ backgroundColor: meta.color }} />
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5" style={{ backgroundColor: meta.color }} />
+                <div className="relative flex h-2 w-2 shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-80" style={{ backgroundColor: meta.color, boxShadow: `0 0 12px ${meta.color}` }} />
+                  <span className="relative inline-flex rounded-full h-2 w-2" style={{ backgroundColor: meta.color }} />
                 </div>
                 <span className="text-sm leading-none text-text-primary group-hover:scale-110 transition-transform">{meta.flag}</span>
                 <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-text-secondary group-hover:text-text-primary transition-colors">
@@ -100,15 +99,15 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
         >
           <button
             onClick={onScrollDown}
-            className="group relative overflow-hidden inline-flex items-center gap-3 px-10 py-4 glass-panel rounded-full border border-brand-red/40 text-brand-red text-[12px] font-medium uppercase tracking-[0.25em] transition-all duration-500 hover:border-brand-red hover:shadow-glow-red cursor-pointer"
+            className="group relative overflow-hidden inline-flex items-center gap-3 px-10 py-4 glass-panel rounded-full border border-brand-red/60 text-brand-red text-[12px] font-medium uppercase tracking-[0.25em] transition-all duration-500 hover:border-brand-red hover:shadow-[0_0_24px_rgba(216,43,43,0.8)] cursor-pointer"
           >
             <div className="absolute inset-0 bg-brand-red translate-y-[100%] group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" />
-            <span className="relative z-10 transition-colors duration-500 group-hover:text-black">Enter Terminal</span>
-            <span className="relative z-10 transition-all duration-500 group-hover:translate-x-1 group-hover:text-black">→</span>
+            <span className="relative z-10 transition-colors duration-500 group-hover:text-[#000000]">Enter Terminal</span>
+            <span className="relative z-10 transition-all duration-500 group-hover:translate-x-1 group-hover:text-[#000000]">→</span>
           </button>
 
           {latestHash && (
-            <div className="flex items-center gap-3 px-4 sm:px-6 py-3 sm:py-4 glass-panel rounded-full border border-white/[0.05]">
+            <div className="flex items-center gap-3 px-4 sm:px-6 py-3 sm:py-4 glass-panel rounded-full border border-brand-red/60 shadow-[0_0_15px_rgba(216,43,43,0.3)]">
               <span className="w-1.5 h-1.5 rounded-full bg-brand-red red-pulse" />
               <span className="text-[9px] uppercase tracking-[0.25em] text-text-tertiary">
                 Latest Trace
@@ -123,7 +122,7 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
         <div className="mt-12 flex justify-center">
           <button 
             onClick={onScrollDown} 
-            className="animate-bounce p-3 rounded-full border border-white/[0.05] text-text-tertiary bg-white/[0.02] hover:text-white transition-colors cursor-pointer"
+            className="animate-bounce p-3 rounded-full border border-white/[0.05] text-text-tertiary bg-white/[0.02] hover:text-white hover:border-white/[0.2] transition-colors cursor-pointer"
             aria-label="Scroll down to content"
           >
             <ArrowDown className="w-4 h-4" />

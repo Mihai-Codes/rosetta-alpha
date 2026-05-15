@@ -16,7 +16,6 @@ const ROLE_LABEL: Record<string, string> = {
   Portfolio_Manager: 'Portfolio Manager',
 }
 
-
 function TypewriterText({ text }: { text: string }) {
   const [displayed, setDisplayed] = React.useState('')
   
@@ -25,16 +24,16 @@ function TypewriterText({ text }: { text: string }) {
     let i = 0
     const interval = setInterval(() => {
       setDisplayed(text.slice(0, i))
-      i += 3
+      i += 3 // Spits out 3 chars at a time for fast Claude-like feel
       if (i > text.length) {
         setDisplayed(text)
         clearInterval(interval)
       }
-    }, 15)
+    }, 10)
     return () => clearInterval(interval)
   }, [text])
 
-  return <span>{displayed}<span className="inline-block w-1.5 h-3.5 ml-0.5 bg-brand-red animate-pulse align-middle" /></span>
+  return <span>{displayed}<span className="inline-block w-1.5 h-3 ml-0.5 bg-brand-red animate-pulse align-middle" /></span>
 }
 
 export function ThesisCard({ desk }: ThesisCardProps) {
@@ -62,10 +61,10 @@ export function ThesisCard({ desk }: ThesisCardProps) {
     <article className="glass-panel border border-border/20 rounded-2xl overflow-hidden shadow-none">
       {/* Header */}
       <header
-        className="px-5 sm:px-8 py-6 sm:py-7 border-b border-border"
+        className="px-8 py-7 border-b border-border"
         style={{ borderLeft: `3px solid ${meta.color}` }}
       >
-        <div className="flex items-start justify-between gap-4 sm:gap-6 flex-wrap">
+        <div className="flex items-start justify-between gap-6 flex-wrap">
           <div>
             <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary mb-2">
               {meta.name} · {desk.desk.toUpperCase()} Desk
@@ -109,7 +108,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
       </header>
 
       {/* Reasoning chain */}
-      <section className="px-5 sm:px-8 py-6 sm:py-7">
+      <section className="px-8 py-7">
         <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary mb-6">
           Reasoning Chain
         </p>
@@ -162,12 +161,16 @@ export function ThesisCard({ desk }: ThesisCardProps) {
 
                   {/* Native-language analysis */}
                   {block.analysis && (
-                    <p className="text-sm text-text-primary font-light leading-relaxed mb-2 text-left pr-4"><TypewriterText text={block.analysis} /></p>
+                    <p className="text-sm text-text-primary font-light leading-relaxed mb-2 text-justify">
+                      <TypewriterText text={block.analysis} />
+                    </p>
                   )}
 
                   {/* English translation if non-English */}
                   {block.analysis_en && block.analysis_en !== block.analysis && (
-                    <p className="text-sm text-text-secondary font-light leading-relaxed mb-2 pl-4 border-l-2 border-border/50 text-left pr-4"><TypewriterText text={block.analysis_en} /></p>
+                    <p className="text-sm text-text-secondary font-light leading-relaxed mb-2 pl-4 border-l-2 border-border/50 text-justify">
+                      <TypewriterText text={block.analysis_en} />
+                    </p>
                   )}
 
                   {block.thought_process && (
@@ -206,7 +209,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
 
       {/* Footer: provenance */}
       <footer className="px-8 py-5 border-t border-border flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
+        <div className="flex items-center gap-6 flex-wrap">
           {desk.ipfs_thesis_cid && desk.ipfs_thesis_cid !== 'bafkrei...' && (
             <a
               href={`https://gateway.pinata.cloud/ipfs/${desk.ipfs_thesis_cid}`}

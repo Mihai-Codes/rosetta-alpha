@@ -16,7 +16,6 @@ const TABS: { id: Tab; label: string }[] = [
   { id: 'about', label: 'About' },
 ]
 
-
 function QuoteMatrix() {
   const [isGreek, setIsGreek] = React.useState(true)
   React.useEffect(() => {
@@ -38,12 +37,11 @@ function QuoteMatrix() {
 export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
   return (
     <div className="min-h-screen flex flex-col bg-bg-primary relative selection:bg-brand-red/20">
-      {/* Anthropic-style subtle grain */}
       <div className="bg-grain" aria-hidden="true" />
       <div className="global-grid-bg" aria-hidden="true" />
-      {/* Always-visible sticky nav */}
+      
       <header
-        className="fixed top-0 left-0 right-0 z-50"
+        className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
         style={{
           background: 'rgba(10, 10, 15, 0.4)',
           backdropFilter: 'saturate(180%) blur(48px)',
@@ -52,7 +50,6 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
         }}
       >
         <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 h-16 flex items-center justify-between">
-          {/* Logo: R△ */}
           <button
             onClick={() => onTabChange('home')}
             className="flex items-baseline gap-1 group"
@@ -69,7 +66,6 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
             </span>
           </button>
 
-          {/* Nav tabs */}
           <nav className="hidden md:flex items-center" role="navigation">
             {TABS.map((tab, i) => {
               const isActive = activeTab === tab.id
@@ -78,16 +74,16 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
                   {i > 0 && <span aria-hidden className="w-px h-3.5 bg-border mx-1" />}
                   <button
                     onClick={() => onTabChange(tab.id)}
-                    className={`nav-link px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] transition-colors duration-200 ${isActive ? \'text-brand-red\' : \'text-text-secondary hover:text-brand-red hover:drop-shadow-[0_0_8px_rgba(216,43,43,0.8)]\'}`} data-active={isActive}
+                    className={`nav-link px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] transition-colors duration-200 ${isActive ? 'text-brand-red' : 'text-text-secondary hover:text-text-primary'}`} 
+                    data-active={isActive}
                   >
                     {tab.label}
-                    </button>
+                  </button>
                 </React.Fragment>
               )
             })}
           </nav>
 
-          {/* Wallet connect (ghost, mock) */}
           <button
             className="
               flex items-center gap-2 px-5 py-2
@@ -98,7 +94,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
             "
             onClick={() => alert('Wallet connection — coming soon')}
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-positive animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-positive red-pulse" />
             <span className="hidden sm:inline">Connect Wallet</span>
             <span className="sm:hidden">Wallet</span>
           </button>
@@ -113,9 +109,9 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
             <p className="font-display text-text-primary text-base mb-2">
               Rosetta <span className="text-brand-red">Alpha</span>
             </p>
-            <div className="flex flex-col gap-1.5 font-light whitespace-nowrap">
-              <span>Multi-language reasoning traces secured on Arc L1.</span>
-              <span>An institutional-grade intelligence layer for global macro.</span>
+            <div className="flex flex-col gap-1.5 font-light whitespace-nowrap overflow-hidden">
+              <span className="truncate">Multi-language reasoning traces secured on Arc L1.</span>
+              <span className="truncate">An institutional-grade intelligence layer for global macro.</span>
             </div>
           </div>
           <div>

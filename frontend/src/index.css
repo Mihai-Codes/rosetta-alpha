@@ -26,12 +26,10 @@
   --color-negative: #9F4A4A;
   --color-neutral: #7B8FA6;
 
-  /* Native Apple Typography */
   --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
-  /* Compatibility tokens for Tailwind utilities */
   --color-background: var(--color-bg-primary);
   --color-foreground: var(--color-text-primary);
   --color-card: var(--color-bg-secondary);
@@ -62,56 +60,24 @@
     --border: var(--color-border);
     --primary: var(--color-brand-red);
   }
-
   * { border-color: var(--color-border); }
-
-  *:focus-visible {
-    outline: 2px solid var(--color-brand-red);
-    outline-offset: 2px;
-    border-radius: 2px;
-  }
-
-  html {
-    scroll-behavior: smooth;
-    background: var(--color-bg-primary);
-  }
-
+  *:focus-visible { outline: 2px solid var(--color-brand-red); outline-offset: 2px; border-radius: 2px; }
+  html { scroll-behavior: smooth; background: var(--color-bg-primary); }
   body {
-    background: var(--color-bg-primary);
-    color: var(--color-text-primary);
-    font-family: var(--font-body);
-    font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
-    line-height: 1.6;
-    letter-spacing: 0.01em;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    background: var(--color-bg-primary); color: var(--color-text-primary);
+    font-family: var(--font-body); font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
+    line-height: 1.6; letter-spacing: 0.01em; -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
-
-  ::selection {
-    background: rgba(216, 43, 43, 0.25);
-    color: var(--color-text-primary);
-  }
-
-  h1, h2, h3, h4, .font-display {
-    font-family: var(--font-display);
-    line-height: 1.2;
-    letter-spacing: -0.01em;
-  }
-
-  code, pre, .font-mono {
-    font-family: var(--font-mono);
-    font-variant-numeric: tabular-nums;
-  }
-
+  ::selection { background: rgba(216, 43, 43, 0.25); color: var(--color-text-primary); }
+  h1, h2, h3, h4, .font-display { font-family: var(--font-display); line-height: 1.2; letter-spacing: -0.01em; }
+  code, pre, .font-mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
   button { cursor: pointer; }
 }
 
 @keyframes red-pulse {
-  0%, 100% { opacity: 0.8; filter: drop-shadow(0 0 8px rgba(216,43,43,0.8)); }
-  50% { opacity: 1; filter: drop-shadow(0 0 24px rgba(216,43,43,1)) drop-shadow(0 0 12px rgba(216,43,43,1)); }
-}
-  50% { opacity: 1; filter: drop-shadow(0 0 16px rgba(216,43,43,1)) drop-shadow(0 0 6px rgba(216,43,43,0.8)); }
+  0%, 100% { opacity: 0.6; filter: drop-shadow(0 0 8px rgba(216,43,43,0.8)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 24px rgba(216,43,43,1)) drop-shadow(0 0 12px rgba(216,43,43,0.9)); }
 }
 .red-pulse { animation: red-pulse 2.5s ease-in-out infinite; }
 
@@ -121,8 +87,7 @@
 }
 .skeleton {
   background: linear-gradient(90deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 50%, var(--color-bg-secondary) 100%);
-  background-size: 1000px 100%;
-  animation: shimmer 2s infinite linear;
+  background-size: 1000px 100%; animation: shimmer 2s infinite linear;
 }
 
 @keyframes hero-grid-drift {
@@ -137,50 +102,26 @@
 .fade-up { animation: fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
 
 .global-grid-bg {
-  position: fixed;
-  top: -100px; left: -100px; right: -100px; bottom: -100px;
-  background-image:
-    linear-gradient(rgba(216, 43, 43, 0.25) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(216, 43, 43, 0.25) 1px, transparent 1px);
+  position: fixed; top: -100px; left: -100px; right: -100px; bottom: -100px;
+  background-image: linear-gradient(rgba(216, 43, 43, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(216, 43, 43, 0.2) 1px, transparent 1px);
   background-size: 100px 100px;
   animation: hero-grid-drift 20s linear infinite, red-pulse 4s ease-in-out infinite;
   pointer-events: none;
-  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.05) 70%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.05) 70%, transparent 100%);
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 40%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 40%, transparent 100%);
   z-index: 0;
 }
 
-.hero-vignette {
-  background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.6) 50%, var(--color-bg-primary) 100%);
-}
+.hero-vignette { background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.6) 50%, var(--color-bg-primary) 100%); }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(216, 43, 43, 0.4); }
 
-.copy-toast {
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%) translateY(-4px);
-  background: var(--color-bg-tertiary);
-  border: 1px solid var(--color-brand-red);
-  color: var(--color-brand-red);
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 4px 8px;
-  border-radius: 2px;
-  white-space: nowrap;
-  pointer-events: none;
-  animation: fade-up 0.2s ease-out;
-}
-
 .glass-panel {
   background: linear-gradient(135deg, rgba(20, 20, 20, 0.4) 0%, rgba(0, 0, 0, 0.1) 100%);
-  backdrop-filter: saturate(200%) blur(64px);
-  -webkit-backdrop-filter: saturate(200%) blur(64px);
+  backdrop-filter: saturate(200%) blur(64px); -webkit-backdrop-filter: saturate(200%) blur(64px);
   box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05), inset 0 0 0 1px rgba(255, 255, 255, 0.02);
 }
 
@@ -196,7 +137,4 @@
   0% { opacity: 0; transform: translateY(-40px); filter: blur(4px); }
   100% { opacity: 1; transform: translateY(0); filter: blur(0px); }
 }
-.animate-rain {
-  animation: rain-drop 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  opacity: 0;
-}
+.animate-rain { animation: rain-drop 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
