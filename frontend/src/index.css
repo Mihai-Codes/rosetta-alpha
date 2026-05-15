@@ -104,8 +104,7 @@
     linear-gradient(90deg, rgba(216, 43, 43, 0.12) 1px, transparent 1px);
   background-size: 100px 100px, 100px 100px, 100px 100px;
   background-position: 50px 50px, 0 0, 0 0;
-  /* The grid inside the wrapper falls dynamically, creating an unbroken cinematic effect */
-  animation: grid-rain 10s linear infinite;
+  animation: grid-rain 8s linear infinite;
 }
 
 .bg-grain {
