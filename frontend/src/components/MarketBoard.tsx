@@ -27,11 +27,11 @@ export function MarketBoard({ desks }: { desks: DeskProps[] }) {
       </div>
 
       {/* Table */}
-      <div className="bg-card border border-border overflow-hidden">
+      <div className="glass-panel border border-border/20 rounded-2xl overflow-hidden shadow-none">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="border-b border-border bg-card/80">
+              <tr className="border-b border-white/[0.05] bg-transparent">
                 {['Question', 'Region', 'Arc Transaction', 'Expiry', 'Status'].map(h => (
                   <th key={h} className="px-6 py-4 text-[9px] font-medium uppercase tracking-[0.2em] text-muted-foreground/40">
                     {h}
@@ -39,7 +39,7 @@ export function MarketBoard({ desks }: { desks: DeskProps[] }) {
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-border/40">
+            <tbody className="divide-y divide-white/[0.02]">
               {markets.map((m, i) => (
                 <tr key={i} className="hover:bg-accent/10 transition-colors group">
                   <td className="px-6 py-5 max-w-xs">

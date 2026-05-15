@@ -81,9 +81,9 @@ export function HeroSection({ latestHash, onEnter }: HeroSectionProps) {
             return (
               <div
                 key={r}
-                className="flex items-center gap-2 px-4 py-2 border border-border/60 hover:border-gold/40 transition-colors duration-200"
-                style={{ borderLeftColor: meta.color, borderLeftWidth: 2 }}
+                className="flex items-center gap-2 px-5 py-2.5 glass-panel rounded-full border border-white/[0.05] hover:border-gold/30 transition-colors duration-300"
               >
+                <div className="w-1.5 h-1.5 rounded-full" style={{ background: meta.color }} />
                 <span className="text-base leading-none">{meta.flag}</span>
                 <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-text-secondary">
                   {meta.name}
@@ -97,7 +97,7 @@ export function HeroSection({ latestHash, onEnter }: HeroSectionProps) {
         {latestHash && (
           <div
             data-reveal-id="ticker"
-            className={`flex items-center justify-center gap-3 w-fit mx-auto px-5 py-2.5 border border-border/40 mb-10 transition-all duration-1000 delay-500 ${
+            className={`flex items-center justify-center gap-3 w-fit mx-auto px-6 py-3 glass-panel rounded-full border border-white/[0.05] mb-10 transition-all duration-1000 delay-500 ${
               visible.ticker ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             }`}
           >
@@ -115,11 +115,11 @@ export function HeroSection({ latestHash, onEnter }: HeroSectionProps) {
             data-reveal-id="cta"
             onClick={onEnter}
             className={`
-              group inline-flex items-center gap-3 px-8 py-3
-            border border-gold text-gold
+              group inline-flex items-center gap-3 px-10 py-4
+            glass-panel rounded-full border border-gold/40 text-gold
             text-[12px] font-medium uppercase tracking-[0.25em]
-            transition-all duration-300
-            hover:bg-gold hover:text-bg-primary hover:shadow-glow-gold hover:-translate-y-0.5
+            transition-all duration-500
+            hover:bg-gold hover:text-bg-primary hover:shadow-glow-gold hover:-translate-y-1
             ${visible.cta ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
             transition-opacity delay-700
           `}

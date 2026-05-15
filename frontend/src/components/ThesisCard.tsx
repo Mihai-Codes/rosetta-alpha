@@ -38,7 +38,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
   }
 
   return (
-    <article className="bg-bg-secondary border border-border">
+    <article className="glass-panel border border-border/20 rounded-2xl overflow-hidden shadow-none">
       {/* Header */}
       <header
         className="px-8 py-7 border-b border-border"

@@ -39,7 +39,7 @@ export function RegionSidebar({ desks, activeDesk, onSelect }: RegionSidebarProp
         Regional Desks
       </p>
 
-      <div className="border border-border bg-bg-secondary divide-y divide-border">
+      <div className="glass-panel border border-border/20 rounded-xl overflow-hidden shadow-none divide-y divide-white/[0.02]">
         {desks.map(d => {
           const meta = regionMeta(d.desk)
           const isActive = activeDesk === d.desk
@@ -48,11 +48,11 @@ export function RegionSidebar({ desks, activeDesk, onSelect }: RegionSidebarProp
               key={d.desk}
               onClick={() => onSelect(d.desk)}
               className={`
-                w-full flex items-center gap-3 px-4 py-4 text-left
-                transition-all duration-200
+                w-full flex items-center gap-3 px-5 py-4 text-left
+                transition-all duration-300
                 ${isActive
-                  ? 'bg-bg-tertiary'
-                  : 'hover:bg-bg-tertiary/50'
+                  ? 'bg-white/[0.04]'
+                  : 'hover:bg-white/[0.02]'
                 }
               `}
               style={{

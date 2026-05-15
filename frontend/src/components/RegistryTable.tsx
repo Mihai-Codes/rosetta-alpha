@@ -107,10 +107,10 @@ export function RegistryTable({ desks }: RegistryTableProps) {
       </div>
 
       {/* Table */}
-      <div className="bg-bg-secondary border border-border overflow-x-auto">
+      <div className="glass-panel border border-border/20 rounded-2xl overflow-x-auto shadow-none">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-border bg-bg-tertiary/40">
+            <tr className="border-b border-white/[0.05] bg-transparent">
               <th className="px-6 py-4 text-left"><SortHeader label="Desk" k="desk" /></th>
               <th className="px-6 py-4 text-left"><SortHeader label="Asset" k="ticker" /></th>
               <th className="px-6 py-4 text-left"><SortHeader label="Direction" k="direction" /></th>
@@ -128,7 +128,7 @@ export function RegistryTable({ desks }: RegistryTableProps) {
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border/50">
+          <tbody className="divide-y divide-white/[0.02]">
             {entries.length === 0 ? (
               <tr>
                 <td colSpan={7} className="px-6 py-16 text-center">
@@ -143,7 +143,7 @@ export function RegistryTable({ desks }: RegistryTableProps) {
                 const meta = regionMeta(e.desk)
                 const dirColor = e.direction === 'LONG' ? '#4A9F6F' : e.direction === 'SHORT' ? '#9F4A4A' : '#7B8FA6'
                 return (
-                  <tr key={i} className="hover:bg-bg-tertiary/30 transition-colors group">
+                  <tr key={i} className="hover:bg-white/[0.03] transition-all duration-300 group cursor-default">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <span

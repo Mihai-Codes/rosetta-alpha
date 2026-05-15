@@ -31,7 +31,7 @@ export function DesksView({ desks, loading }: DesksViewProps) {
 
       <div className="flex-1 min-w-0">
         {loading ? (
-          <div className="bg-bg-secondary border border-border p-8">
+          <div className="glass-panel border border-border/20 rounded-2xl p-10 shadow-none">
             <ThesisSkeleton />
           </div>
         ) : active ? (

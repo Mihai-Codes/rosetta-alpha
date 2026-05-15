@@ -89,7 +89,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
       </div>
 
       {/* Feed */}
-      <div className="bg-bg-secondary border border-border">
+      <div className="glass-panel border border-border/20 rounded-2xl overflow-hidden shadow-none">
         {loading ? (
           <>
             <FeedItemSkeleton />
@@ -115,7 +115,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
             return (
               <div
                 key={key}
-                className="border-b border-border/40 last:border-b-0 hover:bg-bg-tertiary/30 transition-colors"
+                className="border-b border-white/[0.02] last:border-b-0 hover:bg-white/[0.03] transition-all duration-300"
               >
                 <button
                   onClick={() => toggleExpand(key)}

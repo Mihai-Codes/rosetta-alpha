@@ -10,23 +10,28 @@ interface ExplorerProps {
 
 export function ReasoningExplorer({ desk, onClose }: ExplorerProps) {
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-md">
-      <div className="bg-card border w-full max-w-4xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
-        <div className="p-6 border-b flex items-center justify-between bg-muted/20">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary/10 rounded-lg">
-              <Brain className="w-6 h-6 text-primary" />
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-bg-primary/90 backdrop-blur-xl">
+      <div className="bg-noise" aria-hidden />
+      <div className="relative glass-panel border border-gold/30 w-full max-w-4xl max-h-[90vh] rounded-lg shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300">
+        
+        {/* Top edge light highlight */}
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
+
+        <div className="p-6 border-b border-border/60 flex items-center justify-between bg-bg-secondary/40">
+          <div className="flex items-center gap-4">
+            <div className="p-2 border border-gold/20 bg-gold/5 rounded flex items-center justify-center shadow-glow-gold">
+              <span className="font-display text-gold leading-none px-1 text-lg">R∆</span>
             </div>
             <div>
-              <h2 className="text-xl font-bold leading-none">Reasoning Trace: {desk.ticker}</h2>
-              <p className="text-[10px] font-black text-muted-foreground mt-1 uppercase tracking-[0.2em]">
+              <h2 className="text-xl font-display text-text-primary tracking-tight">Reasoning Trace: {desk.ticker}</h2>
+              <p className="text-[10px] font-medium text-gold mt-1 uppercase tracking-[0.25em]">
                 {desk.desk} Desk • {desk.direction} ({(desk.confidence * 100).toFixed(0)}%)
               </p>
             </div>
           </div>
           <button 
             onClick={onClose}
-            className="p-2 hover:bg-muted rounded-full transition-colors"
+            className="p-2 text-text-tertiary hover:text-gold transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -56,12 +61,12 @@ export function ReasoningExplorer({ desk, onClose }: ExplorerProps) {
           </div>
         </div>
         
-        <div className="p-4 bg-muted/10 border-t flex justify-end gap-3">
+        <div className="p-4 bg-bg-secondary/60 border-t border-border/60 flex justify-end gap-3">
           <button 
             onClick={onClose}
-            className="px-6 py-2 bg-primary text-primary-foreground rounded-lg font-bold hover:opacity-90 transition-opacity"
+            className="px-6 py-2 border border-gold/50 text-gold text-[10px] font-medium uppercase tracking-[0.2em] rounded-sm hover:bg-gold hover:text-bg-primary hover:shadow-glow-gold transition-all duration-200"
           >
-            Done
+            Acknowledge
           </button>
         </div>
       </div>
@@ -71,12 +76,12 @@ export function ReasoningExplorer({ desk, onClose }: ExplorerProps) {
 
 function AnalystSummary({ block }: { block: ReasoningBlock }) {
   return (
-    <div className="bg-muted/30 border rounded-xl p-4 space-y-2">
+    <div className="bg-bg-tertiary/20 border border-border/50 rounded-md p-4 space-y-2 hover:border-gold/30 transition-colors">
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-black uppercase text-muted-foreground">{block.agent_role.replace('_', ' ')}</span>
-        <span className="text-xs font-bold text-primary">{(block.confidence * 100).toFixed(0)}%</span>
+        <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-text-tertiary">{block.agent_role.replace('_', ' ')}</span>
+        <span className="text-xs font-mono text-gold">{(block.confidence * 100).toFixed(0)}%</span>
       </div>
-      <p className="text-xs font-medium leading-relaxed italic line-clamp-2">"{block.conclusion}"</p>
+      <p className="text-xs font-light text-text-secondary leading-relaxed italic line-clamp-2 pl-2 border-l border-gold/30">"{block.conclusion}"</p>
     </div>
   )
 }
@@ -86,47 +91,46 @@ function ReasoningStep({ block }: { block: ReasoningBlock }) {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <CheckCircle2 className="w-4 h-4 text-green-500" />
-        <span className="text-xs font-black uppercase tracking-widest text-primary">
+        <span className="w-1.5 h-1.5 rounded-full bg-gold gold-pulse" />
+        <span className="text-[10px] font-medium uppercase tracking-[0.25em] text-gold">
           Step: {block.agent_role.replace('_', ' ')}
         </span>
       </div>
-      <div className="bg-muted/10 border rounded-xl p-5 space-y-4">
-        <div className="space-y-1">
-          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Data Input</p>
-          <p className="text-sm font-medium">{block.input_data_summary}</p>
+      <div className="glass-panel border border-border/40 rounded-md p-6 space-y-5">
+        <div className="space-y-1.5">
+          <p className="text-[9px] font-medium text-text-tertiary uppercase tracking-[0.25em]">Data Input</p>
+          <p className="text-sm font-light text-text-primary leading-relaxed">{block.input_data_summary}</p>
         </div>
 
         {block.thought_process && (
           <div className="space-y-2">
-            <p className="text-[10px] font-bold text-amber-500/80 uppercase tracking-widest flex items-center gap-1.5">
-              <Brain className="w-3 h-3" />
+            <p className="text-[9px] font-medium text-amber uppercase tracking-[0.25em] flex items-center gap-1.5">
               Thinking Trace (R1)
             </p>
-            <div className="bg-amber-500/5 border border-amber-500/10 rounded-lg p-4 text-xs text-muted-foreground leading-relaxed font-mono">
+            <div className="bg-bg-primary/50 border border-amber/20 rounded p-4 text-[11px] text-text-secondary leading-relaxed font-mono italic shadow-inner">
               {block.thought_process}
             </div>
           </div>
         )}
 
         <div className="space-y-2">
-          <p className="text-[10px] font-bold text-primary uppercase tracking-widest">Analysis</p>
+          <p className="text-[9px] font-medium text-text-tertiary uppercase tracking-[0.25em]">Analysis</p>
           <div className="space-y-3">
-             <p className={clsx("text-sm leading-relaxed font-medium", isZh && "font-serif text-base")}>
+             <p className={clsx("text-sm font-light text-text-primary leading-relaxed", isZh && "font-display text-base")}>
                {block.analysis}
              </p>
              {block.analysis_en && (
-               <div className="pl-4 border-l-2 border-primary/20">
-                 <p className="text-[10px] font-bold text-primary/40 uppercase mb-1">English Translation</p>
-                 <p className="text-sm text-muted-foreground italic">{block.analysis_en}</p>
+               <div className="pl-4 border-l border-border">
+                 <p className="text-[9px] font-medium text-text-tertiary uppercase tracking-[0.2em] mb-1">English Translation</p>
+                 <p className="text-sm font-light text-text-secondary">{block.analysis_en}</p>
                </div>
              )}
           </div>
         </div>
-        <div className="pt-3 border-t border-border/50">
-           <p className="text-xs font-bold flex gap-2">
-             <span className="text-muted-foreground">CONCLUSION:</span>
-             <span>{block.conclusion}</span>
+        <div className="pt-4 border-t border-border/40">
+           <p className="text-sm font-medium text-gold flex items-baseline gap-2">
+             <span className="text-[9px] uppercase tracking-[0.2em] text-text-tertiary font-medium">Conclusion</span>
+             {block.conclusion}
            </p>
         </div>
       </div>

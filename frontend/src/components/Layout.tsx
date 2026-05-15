@@ -18,7 +18,9 @@ const TABS: { id: Tab; label: string }[] = [
 
 export function Layout({ children, activeTab, onTabChange, navVisible }: LayoutProps) {
   return (
-    <div className="min-h-screen flex flex-col bg-bg-primary">
+    <div className="min-h-screen flex flex-col bg-bg-primary relative selection:bg-gold/20">
+      {/* 2026 Spatial Noise Texture */}
+      <div className="bg-noise" aria-hidden="true" />
       {/* Sticky nav — appears after hero scroll */}
       <header
         className={`
@@ -29,24 +31,24 @@ export function Layout({ children, activeTab, onTabChange, navVisible }: LayoutP
           }
         `}
         style={{
-          background: 'rgba(10, 10, 15, 0.92)',
-          backdropFilter: 'blur(14px)',
-          WebkitBackdropFilter: 'blur(14px)',
-          borderBottom: '1px solid #2A2A38',
+          background: 'rgba(10, 10, 15, 0.4)',
+          backdropFilter: 'saturate(180%) blur(48px)',
+          WebkitBackdropFilter: 'saturate(180%) blur(48px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
         }}
       >
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          {/* Logo: R∆ */}
+          {/* Logo: R△ */}
           <button
             onClick={() => onTabChange('desks')}
             className="flex items-baseline gap-1 group"
             aria-label="Rosetta Alpha home"
           >
-            <span className="font-display text-2xl text-text-primary leading-none group-hover:text-gold transition-colors">
+            <span className="font-display text-2xl text-text-primary leading-none transition-colors">
               R
             </span>
-            <span className="font-display text-2xl text-gold leading-none transition-transform group-hover:translate-y-[-1px]">
-              ∆
+            <span className="font-display text-2xl text-[#E63946] leading-none transition-transform group-hover:scale-110 origin-bottom">
+              △
             </span>
             <span className="ml-2 text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary">
               Rosetta Alpha
@@ -82,15 +84,15 @@ export function Layout({ children, activeTab, onTabChange, navVisible }: LayoutP
           {/* Wallet connect (ghost, mock) */}
           <button
             className="
-              flex items-center gap-2 px-4 py-1.5
-              border border-gold/40 hover:border-gold
-              text-gold text-[11px] font-medium uppercase tracking-[0.15em]
-              transition-all duration-200
-              hover:shadow-glow-gold hover:-translate-y-px
+              flex items-center gap-2 px-5 py-2
+              glass-panel border border-white/[0.05] rounded-full
+              text-text-primary text-[10px] font-medium uppercase tracking-[0.2em]
+              transition-all duration-300
+              hover:border-gold/30 hover:shadow-glow-gold
             "
             onClick={() => alert('Wallet connection — coming soon')}
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-gold gold-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-positive animate-pulse" />
             <span className="hidden sm:inline">Connect Wallet</span>
             <span className="sm:hidden">Wallet</span>
           </button>
@@ -99,7 +101,7 @@ export function Layout({ children, activeTab, onTabChange, navVisible }: LayoutP
 
       <main className="flex-1 w-full">{children}</main>
 
-      <footer className="border-t border-border/60 py-10 mt-20">
+      <footer className="border-t border-white/[0.05] py-16 mt-24">
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8 text-[11px] text-text-tertiary">
           <div>
             <p className="font-display text-text-primary text-base mb-2">
@@ -127,7 +129,7 @@ export function Layout({ children, activeTab, onTabChange, navVisible }: LayoutP
             </p>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto px-6 mt-8 pt-6 border-t border-border/40 flex items-center justify-between text-[10px] text-text-tertiary uppercase tracking-[0.25em]">
+        <div className="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-white/[0.02] flex items-center justify-between text-[10px] text-text-tertiary uppercase tracking-[0.25em]">
           <span>© 2026 Rosetta Alpha</span>
           <span>Made with discipline · Not noise</span>
         </div>

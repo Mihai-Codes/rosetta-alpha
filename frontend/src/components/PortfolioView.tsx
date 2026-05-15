@@ -27,15 +27,15 @@ export function PortfolioView({ desks }: { desks: DeskProps[] }) {
   return (
     <div className="space-y-10">
       {/* Summary row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
           { label: 'Active Desks', value: String(desks.length) },
           { label: 'Avg Conviction', value: `${(avgConfidence * 100).toFixed(0)}%` },
           { label: 'Rebalance Cycle', value: 'Daily · UTC 00:00' },
         ].map(item => (
-          <div key={item.label} className="bg-card px-8 py-6">
-            <p className="text-[9px] font-medium uppercase tracking-[0.25em] text-muted-foreground/50 mb-1">{item.label}</p>
-            <p className="font-display text-2xl font-light text-foreground">{item.value}</p>
+          <div key={item.label} className="glass-panel border border-border/20 rounded-2xl shadow-none px-8 py-8">
+            <p className="text-[9px] font-medium uppercase tracking-[0.25em] text-text-tertiary mb-1">{item.label}</p>
+            <p className="font-display text-3xl font-light text-text-primary tracking-tight">{item.value}</p>
           </div>
         ))}
       </div>
@@ -43,8 +43,8 @@ export function PortfolioView({ desks }: { desks: DeskProps[] }) {
       {/* Chart + signal */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Allocation donut */}
-        <div className="lg:col-span-2 bg-card border border-border p-8">
-          <p className="text-[9px] font-medium uppercase tracking-[0.25em] text-muted-foreground/50 mb-6">Portfolio Allocation</p>
+        <div className="lg:col-span-2 glass-panel border border-border/20 rounded-2xl p-10 shadow-none">
+          <p className="text-[9px] font-medium uppercase tracking-[0.25em] text-text-tertiary mb-6">Portfolio Allocation</p>
           <div className="flex flex-col sm:flex-row items-center gap-8">
             <div className="w-[200px] h-[200px] shrink-0">
               <ResponsiveContainer width="100%" height="100%">
@@ -80,7 +80,7 @@ export function PortfolioView({ desks }: { desks: DeskProps[] }) {
         </div>
 
         {/* Aggregated signal */}
-        <div className="bg-card border border-border p-8 flex flex-col justify-between">
+        <div className="glass-panel border border-border/20 rounded-2xl p-10 shadow-none flex flex-col justify-between">
           <p className="text-[9px] font-medium uppercase tracking-[0.25em] text-muted-foreground/50">Aggregated Signal</p>
           <div className="text-center py-6">
             <div className={`flex items-center justify-center gap-3 mb-2 ${signalColor}`}>

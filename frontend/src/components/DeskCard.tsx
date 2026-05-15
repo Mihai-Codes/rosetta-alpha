@@ -65,7 +65,7 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
       <motion.article
         whileHover={{ y: -3, transition: { duration: 0.18 } }}
         onClick={() => setShowExplorer(true)}
-        className="group relative bg-card border border-border hover:border-primary/30 shadow-card hover:shadow-card-hover transition-all duration-250 cursor-pointer flex flex-col overflow-hidden"
+        className="group relative glass-panel border border-border/20 hover:border-primary/30 shadow-none hover:shadow-glow-gold transition-all duration-500 cursor-pointer flex flex-col overflow-hidden rounded-xl"
       >
         {/* Gold left accent on hover */}
         <div className="absolute left-0 top-0 w-px h-full bg-primary/0 group-hover:bg-primary/50 transition-colors duration-300" />
