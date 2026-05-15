@@ -43,17 +43,23 @@ export function AboutView() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-5xl mx-auto">
+        <div className="flex flex-col gap-6 max-w-7xl mx-auto">
           {[
             { label: 'Rising Growth', assets: 'Equities & Commodities', desc: 'Positive growth surprises favor ownership of the productive economy.' },
             { label: 'Falling Growth', assets: 'Nominal Bonds & Cash', desc: 'Economic contraction increases the value of safe, fixed-return assets.' },
             { label: 'Rising Inflation', assets: 'ILBs & Commodities', desc: 'Currency devaluation favors inflation-linked bonds and tangible assets.' },
             { label: 'Falling Inflation', assets: 'Equities & Nominal Bonds', desc: 'Deflationary environments increase real returns on financial capital.' }
           ].map((item, i) => (
-            <div key={i} className="group p-14 bg-white/[0.01] border border-white/[0.03] rounded-[2rem] flex flex-col items-center text-center transition-all duration-700 hover:bg-brand-red/[0.02] hover:border-brand-red/30 hover:-translate-y-2">
-              <p className="text-[10px] uppercase tracking-[0.6em] text-brand-red/30 mb-8 group-hover:text-brand-red transition-all duration-500 font-bold">{item.label}</p>
-              <p className="text-3xl font-display text-text-primary mb-6 tracking-tight leading-none">{item.assets}</p>
-              <p className="text-[15px] text-text-tertiary leading-relaxed font-light max-w-[320px]">{item.desc}</p>
+            <div key={i} className="group flex items-center justify-between p-8 bg-white/[0.01] border border-white/[0.03] rounded-2xl transition-all duration-700 hover:bg-brand-red/[0.01] hover:border-brand-red/20">
+              <div className="w-1/4">
+                <p className="text-[10px] uppercase tracking-[0.6em] text-brand-red/40 group-hover:text-brand-red transition-all duration-500 font-bold">{item.label}</p>
+              </div>
+              <div className="w-1/3">
+                <p className="text-xl font-display text-text-primary tracking-tight">{item.assets}</p>
+              </div>
+              <div className="flex-1 text-right">
+                <p className="text-[14px] text-text-tertiary font-light">{item.desc}</p>
+              </div>
             </div>
           ))}
         </div>
