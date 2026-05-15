@@ -28,7 +28,7 @@ export function AboutView() {
         </div>
       </header>
 
-      <div className="solid-panel rounded-3xl p-12 mb-16 border-white/[0.03] shadow-[0_30px_60px_-12px_rgba(0,0,0,0.5)]">
+      <div className="solid-panel rounded-3xl p-16 mb-20 border-white/[0.03] shadow-[0_30px_60px_-12px_rgba(0,0,0,0.5)]">
         <h3 className="font-display text-3xl text-text-primary mb-10 flex items-center justify-center gap-4">
           <Layers className="text-brand-red w-8 h-8" />
           Balanced Economic Exposure
@@ -38,16 +38,17 @@ export function AboutView() {
             Rosetta Alpha implements the All Weather discipline by maintaining structural equilibrium across the four distinct economic environments that drive asset returns.
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {[
-            { label: 'Rising Growth', assets: 'Equities &\nCommodities' },
-            { label: 'Falling Growth', assets: 'Nominal Bonds\n& Cash' },
-            { label: 'Rising Inflation', assets: 'ILBs &\nCommodities' },
-            { label: 'Falling Inflation', assets: 'Equities &\nNominal Bonds' }
+            { label: 'Rising Growth', assets: 'Equities & Commodities', desc: 'Positive growth surprises favor ownership of the productive economy.' },
+            { label: 'Falling Growth', assets: 'Nominal Bonds & Cash', desc: 'Economic contraction increases the value of safe, fixed-return assets.' },
+            { label: 'Rising Inflation', assets: 'ILBs & Commodities', desc: 'Currency devaluation favors inflation-linked bonds and tangible assets.' },
+            { label: 'Falling Inflation', assets: 'Equities & Nominal Bonds', desc: 'Deflationary environments increase real returns on financial capital.' }
           ].map((item, i) => (
-            <div key={i} className="group p-8 bg-white/[0.01] border border-white/[0.03] rounded-xl flex flex-col items-center text-center transition-all duration-500 hover:bg-brand-red/[0.03] hover:border-brand-red/20">
-              <p className="text-[10px] uppercase tracking-[0.4em] text-brand-red/60 mb-4 group-hover:text-brand-red transition-colors">{item.label}</p>
-              <p className="text-[15px] font-medium text-text-primary leading-tight whitespace-pre-line">{item.assets}</p>
+            <div key={i} className="group p-10 bg-white/[0.01] border border-white/[0.03] rounded-2xl flex flex-col items-center text-center transition-all duration-500 hover:bg-brand-red/[0.03] hover:border-brand-red/20">
+              <p className="text-[11px] uppercase tracking-[0.4em] text-brand-red/60 mb-4 group-hover:text-brand-red transition-colors font-bold">{item.label}</p>
+              <p className="text-xl font-medium text-text-primary mb-3">{item.assets}</p>
+              <p className="text-[13px] text-text-tertiary leading-relaxed font-light">{item.desc}</p>
             </div>
           ))}
         </div>
