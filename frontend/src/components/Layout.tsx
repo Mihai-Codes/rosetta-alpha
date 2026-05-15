@@ -41,11 +41,9 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
       <div className="global-grid-bg" aria-hidden="true" />
       
       <header
-        className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.05]"
+        className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.03]"
         style={{
-          background: 'rgba(0, 0, 0, 0.65)',
-          backdropFilter: 'saturate(180%) blur(12px)',
-          WebkitBackdropFilter: 'saturate(180%) blur(12px)',
+          background: 'transparent',
         }}
       >
         <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 h-16 flex items-center justify-between">
@@ -96,7 +94,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
 
       <main className="flex-1 w-full z-10">{children}</main>
 
-      <footer className="border-t border-white/[0.05] py-16 mt-24 bg-black/90 backdrop-blur-md z-10">
+      <footer className="border-t border-white/[0.05] py-16 mt-24 bg-transparent z-10">
         <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 grid md:grid-cols-3 gap-10 text-[11px] text-text-tertiary">
           <div>
             <p className="font-display text-text-primary text-base mb-2">

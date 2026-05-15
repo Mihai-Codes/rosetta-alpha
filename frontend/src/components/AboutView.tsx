@@ -15,13 +15,13 @@ export function AboutView() {
           <div className="space-y-4">
             <h4 className="text-brand-red uppercase tracking-[0.3em] text-[11px] font-bold border-b border-brand-red/20 pb-2">Native Intelligence</h4>
             <p className="text-text-secondary leading-relaxed font-light text-[15px]">
-              Most AI investment platforms speak one language and see one market. Rosetta Alpha runs five regional analysts — each native to their market's culture, language, and data sources — then settles their conviction on-chain as verifiable prediction markets. This ensures the "local" context remains the primary driver of the agent's thesis.
+              Most AI investment platforms speak one language and see one market. Rosetta Alpha runs five regional analysts, each native to their market's culture, language, and data sources, then settles their conviction on-chain as verifiable prediction markets. This ensures the local context remains the primary driver of the agent's thesis.
             </p>
           </div>
           <div className="space-y-4">
             <h4 className="text-brand-red uppercase tracking-[0.3em] text-[11px] font-bold border-b border-brand-red/20 pb-2">Cognitive Risk Parity</h4>
             <p className="text-text-secondary leading-relaxed font-light text-[15px]">
-              Ray Dalio's All Weather strategy succeeds because it acknowledges that no single asset class — and no single perspective — captures every economic regime. Rosetta Alpha extends that discipline to the AI layer: a Chinese analyst reads the <span className="font-medium text-text-primary">财报</span> in Mandarin; a Japanese analyst interprets BoJ policy; a US analyst processes 10-Qs.
+              Ray Dalio's All Weather strategy succeeds because it acknowledges that no single asset class and no single perspective captures every economic regime. Rosetta Alpha extends that discipline to the AI layer: a Chinese analyst reads the <span className="font-medium text-text-primary">财报</span> in Mandarin; a Japanese analyst interprets BoJ policy; a US analyst processes 10-Qs.
             </p>
           </div>
         </div>
