@@ -132,7 +132,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
               <span className="text-text-secondary tracking-[0.4em]">{activeTab === 'about' ? 'ARISTOTLE' : 'STRATEGY'}</span>
             </div>
           </div>
-          <span className="absolute right-4 sm:right-8 lg:right-12 xl:block hidden">Hackathon 2026</span>
+          <span className="absolute right-4 sm:right-8 lg:right-12 xl:block hidden">Verifiable Conviction</span>
         </div>
       </footer>
     </div>

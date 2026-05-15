@@ -102,11 +102,6 @@ export function AboutView() {
         </div>
       </section>
 
-      <hr className="hr-gold" />
-
-      <p className="text-center text-[10px] uppercase tracking-[0.3em] text-text-tertiary">
-        Built for the Agora Agents Hackathon · 2026
-      </p>
     </div>
   )
 }
