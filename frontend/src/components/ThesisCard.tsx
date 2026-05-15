@@ -24,7 +24,7 @@ function TypewriterText({ text }: { text: string }) {
     let i = 0
     const interval = setInterval(() => {
       setDisplayed(text.slice(0, i))
-      i += 3 // Spits out 3 chars at a time for fast Claude-like feel
+      i += 3 
       if (i > text.length) {
         setDisplayed(text)
         clearInterval(interval)
@@ -58,7 +58,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
   }
 
   return (
-    <article className="glass-panel border border-border/20 rounded-2xl overflow-hidden shadow-none h-full flex flex-col">
+    <article className="solid-panel rounded-2xl overflow-hidden h-full flex flex-col">
       {/* Header */}
       <header
         className="px-8 py-7 border-b border-border"
@@ -108,7 +108,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
       </header>
 
       {/* Reasoning chain */}
-      <section className="px-8 py-7">
+      <section className="px-8 py-7 bg-[#0A0A0A]">
         <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary mb-6">
           Reasoning Chain
         </p>
@@ -198,7 +198,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
       </section>
 
       {/* Market question */}
-      <section className="px-8 py-6 border-t border-border bg-bg-tertiary/30">
+      <section className="px-8 py-6 border-t border-border bg-[#141414]">
         <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary mb-3">
           Prediction Market Question
         </p>
@@ -208,11 +208,11 @@ export function ThesisCard({ desk }: ThesisCardProps) {
       </section>
 
       {/* Footer: provenance */}
-      <footer className="px-8 py-5 border-t border-border flex items-center justify-between gap-4 flex-wrap mt-auto">
+      <footer className="px-8 py-5 border-t border-border flex items-center justify-between gap-4 flex-wrap mt-auto bg-[#0A0A0A]">
         <div className="flex items-center gap-6 flex-wrap">
           {desk.ipfs_thesis_cid && desk.ipfs_thesis_cid !== 'bafkrei...' && (
             <a
-              href={`https://gateway.pinata.cloud/ipfs/${desk.ipfs_thesis_cid}`}
+              href={`https://dweb.link/ipfs/${desk.ipfs_thesis_cid}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-[11px] text-text-secondary hover:text-brand-red transition-colors"

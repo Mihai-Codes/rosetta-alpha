@@ -32,7 +32,7 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
   return (
     <section
       ref={heroRef}
-      className="relative w-full overflow-hidden flex flex-col items-center justify-center pt-32 pb-16 border-b border-white/[0.05]"
+      className="relative w-full overflow-hidden flex flex-col items-center justify-center pt-40 pb-20"
       aria-label="Rosetta Alpha hero"
     >
       <div className="absolute inset-0 hero-vignette" aria-hidden />
@@ -40,7 +40,7 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
       <div className="relative z-10 w-full max-w-[1200px] mx-auto px-4 sm:px-8 lg:px-12 text-center">
         <p
           data-reveal-id="eyebrow"
-          className={`text-[11px] font-medium uppercase tracking-[0.4em] text-brand-red/80 mb-6 transition-all duration-700 ${
+          className={`text-[11px] font-medium uppercase tracking-[0.4em] text-brand-red mb-8 transition-all duration-700 ${
             visible.eyebrow ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
           }`}
         >
@@ -49,25 +49,27 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
 
         <h1
           data-reveal-id="headline"
-          className={`font-display text-[clamp(2.75rem,8vw,8rem)] font-normal text-text-primary leading-[0.95] mb-6 transition-all duration-1000 delay-100 ${
+          className={`font-display text-[clamp(3rem,9vw,7.5rem)] font-normal text-text-primary leading-[0.95] mb-8 transition-all duration-1000 delay-100 ${
             visible.headline ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
           Rosetta <em className="text-brand-red not-italic">Alpha</em>
         </h1>
 
-        <p
-          data-reveal-id="subtitle"
-          className={`text-[clamp(11px,1.3vw,1.125rem)] text-text-secondary font-light w-full max-w-none flex justify-center whitespace-nowrap overflow-hidden text-ellipsis mb-12 transition-all duration-1000 delay-150 ${
-            visible.subtitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-          }`}
-        >
-          Dalio's All Weather discipline, reimagined for every language. Five regional AI analysts. One verifiable thesis.
-        </p>
+        <div className="overflow-hidden mb-12">
+          <p
+            data-reveal-id="subtitle"
+            className={`text-[clamp(11px,1.4vw,1.125rem)] text-text-secondary font-light whitespace-nowrap transition-all duration-1000 delay-200 ${
+              visible.subtitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+            }`}
+          >
+            Dalio's All Weather discipline, reimagined for every language. Five regional AI analysts. One verifiable thesis.
+          </p>
+        </div>
 
         <div
           data-reveal-id="regions"
-          className={`flex flex-wrap items-center justify-center gap-3 mb-12 transition-all duration-1000 delay-300 ${
+          className={`flex flex-wrap items-center justify-center gap-3 mb-16 transition-all duration-1000 delay-300 ${
             visible.regions ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
@@ -76,14 +78,14 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
             return (
               <div
                 key={r}
-                className="group flex items-center gap-2 px-5 py-2.5 glass-panel rounded-full border border-white/[0.05] hover:border-brand-red hover:shadow-[0_0_48px_rgba(216,43,43,1)] transition-all duration-300 cursor-pointer"
+                className="group flex items-center gap-3 px-6 py-3 solid-panel rounded-full hover:border-brand-red transition-all duration-300 cursor-default hover:shadow-[0_0_20px_rgba(216,43,43,0.4)]"
               >
                 <div className="relative flex h-2 w-2 shrink-0">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-80 shadow-[0_0_12px_rgba(216,43,43,1)]" style={{ backgroundColor: meta.color }} />
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: meta.color }} />
                   <span className="relative inline-flex rounded-full h-2 w-2" style={{ backgroundColor: meta.color }} />
                 </div>
                 <span className="text-sm leading-none text-text-primary group-hover:scale-110 transition-transform">{meta.flag}</span>
-                <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-text-secondary group-hover:text-text-primary transition-colors">
+                <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-text-secondary group-hover:text-text-primary transition-colors">
                   {meta.name}
                 </span>
               </div>
@@ -93,39 +95,39 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
 
         <div 
           data-reveal-id="actions"
-          className={`flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 transition-all duration-1000 delay-500 ${
+          className={`flex flex-col sm:flex-row items-center justify-center gap-6 transition-all duration-1000 delay-500 ${
             visible.actions ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
           <button
             onClick={onScrollDown}
-            className="group relative overflow-hidden inline-flex items-center gap-3 px-10 py-4 glass-panel rounded-full border border-brand-red/60 text-brand-red text-[12px] font-medium uppercase tracking-[0.25em] transition-all duration-500 hover:border-brand-red hover:shadow-[0_0_48px_rgba(216,43,43,1)] cursor-pointer"
+            className="group relative overflow-hidden inline-flex items-center gap-3 px-10 py-4 solid-panel rounded-full border-brand-red/30 text-brand-red text-[12px] font-medium uppercase tracking-[0.25em] transition-all duration-500 hover:border-brand-red hover:shadow-[0_0_30px_rgba(216,43,43,0.5)] cursor-pointer"
           >
-            <div className="absolute inset-0 bg-brand-red translate-y-[100%] group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" />
-            <span className="relative z-10 transition-colors duration-500 group-hover:text-[#000000]">Enter Terminal</span>
-            <span className="relative z-10 transition-all duration-500 group-hover:translate-x-1 group-hover:text-[#000000]">→</span>
+            <div className="absolute inset-0 bg-brand-red translate-y-[101%] group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" />
+            <span className="relative z-10 transition-colors duration-500 group-hover:text-black">Enter Terminal</span>
+            <span className="relative z-10 transition-transform duration-500 group-hover:translate-x-1 group-hover:text-black">→</span>
           </button>
 
           {latestHash && (
-            <div className="flex items-center gap-3 px-4 sm:px-6 py-3 sm:py-4 glass-panel rounded-full border border-brand-red shadow-[0_0_24px_rgba(216,43,43,0.6)]">
+            <div className="flex items-center gap-3 px-6 py-4 solid-panel rounded-full border-brand-red/50 shadow-[0_0_20px_rgba(216,43,43,0.2)]">
               <span className="w-1.5 h-1.5 rounded-full bg-brand-red red-pulse" />
               <span className="text-[9px] uppercase tracking-[0.25em] text-text-tertiary">
                 Latest Trace
               </span>
-              <span key={latestHash} className="font-mono text-[11px] text-brand-red animate-in fade-in zoom-in-95 duration-1000">
+              <span key={latestHash} className="font-mono text-[11px] text-brand-red animate-in fade-in duration-1000">
                 {truncateHash(latestHash, 10, 6)}
               </span>
             </div>
           )}
         </div>
 
-        <div className="mt-12 flex justify-center">
+        <div className="mt-20 flex justify-center">
           <button 
             onClick={onScrollDown} 
             className="animate-bounce p-3 rounded-full border border-white/[0.05] text-text-tertiary bg-white/[0.02] hover:text-white hover:border-white/[0.2] transition-colors cursor-pointer"
             aria-label="Scroll down to content"
           >
-            <ArrowDown className="w-4 h-4" />
+            <ArrowDown className="w-5 h-5" />
           </button>
         </div>
       </div>

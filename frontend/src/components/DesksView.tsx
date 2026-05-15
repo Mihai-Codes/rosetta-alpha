@@ -22,7 +22,7 @@ export function DesksView({ desks, loading }: DesksViewProps) {
   const active = desks.find(d => d.desk === activeDesk) ?? desks[0]
 
   return (
-    <div className="flex flex-col lg:flex-row items-start gap-5 sm:p-8">
+    <div className="flex flex-col lg:flex-row items-start gap-8">
       <div className="animate-rain" style={{ animationDelay: '0ms' }}>
         <RegionSidebar
           desks={desks}
@@ -33,7 +33,7 @@ export function DesksView({ desks, loading }: DesksViewProps) {
 
       <div className="flex-1 min-w-0 animate-rain" style={{ animationDelay: '150ms' }}>
         {loading ? (
-          <div className="glass-panel border border-border/20 rounded-2xl p-6 sm:p-10 shadow-none">
+          <div className="solid-panel rounded-2xl p-10 shadow-none">
             <ThesisSkeleton />
           </div>
         ) : active ? (
@@ -41,7 +41,7 @@ export function DesksView({ desks, loading }: DesksViewProps) {
             <ThesisCard desk={active} />
           </div>
         ) : (
-          <div className="border border-border bg-bg-secondary p-16 text-center">
+          <div className="solid-panel p-16 text-center rounded-2xl">
             <p className="font-display text-xl text-text-tertiary">No desks available</p>
           </div>
         )}
