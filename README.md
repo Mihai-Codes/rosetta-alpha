@@ -1,219 +1,230 @@
-# 🌐 Rosetta Alpha
+# Rosetta Alpha
 
 [![CI](https://github.com/Mihai-Codes/rosetta-alpha/actions/workflows/ci.yml/badge.svg)](https://github.com/Mihai-Codes/rosetta-alpha/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/Mihai-Codes/rosetta-alpha/branch/main/graph/badge.svg)](https://codecov.io/gh/Mihai-Codes/rosetta-alpha)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue?logo=python&logoColor=white)](https://www.python.org/)
-[![AdalFlow](https://img.shields.io/badge/AdalFlow-SylphAI-purple?logo=pytorch&logoColor=white)](https://github.com/SylphAI-Inc/AdalFlow)
-[![DeepSeek R1](https://img.shields.io/badge/DeepSeek-R1%20reasoning-0066cc?logo=deepseek&logoColor=white)](https://platform.deepseek.com)
-[![Arc Testnet](https://img.shields.io/badge/Arc-Testnet%20%7C%20chain%205042002-00c2ff?logo=ethereum&logoColor=white)](https://testnet.arcscan.app)
-[![Circle Paymaster](https://img.shields.io/badge/Circle-Paymaster%20ERC--4337-00d395?logo=circle&logoColor=white)](https://developers.circle.com/paymaster)
-[![IPFS](https://img.shields.io/badge/IPFS-Pinata-65c2cb?logo=ipfs&logoColor=white)](https://app.pinata.cloud)
+[![AdalFlow](https://img.shields.io/badge/AdalFlow-SylphAI-purple)](https://github.com/SylphAI-Inc/AdalFlow)
+[![Arc Testnet](https://img.shields.io/badge/Arc-Testnet%20chain%205042002-00c2ff)](https://testnet.arcscan.app)
+[![IPFS](https://img.shields.io/badge/IPFS-Pinata-65c2cb)](https://app.pinata.cloud)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![Hackathon](https://img.shields.io/badge/Agora%20Hackathon-Canteen%20%C3%97%20Circle-ff6b35)](https://agora.thecanteenapp.com/)
+[![Hackathon](https://img.shields.io/badge/Agora%20Hackathon-Canteen%20%C3%97%20Arc-ff6b35)](https://agora.thecanteenapp.com/)
 
-> *"Dalio's All Weather — diversified across **languages and regions**, not just asset classes."*
+> *"Dalio's All Weather — diversified across languages and regions, not just asset classes."*
 
-Multi-language AI financial research platform that hashes every reasoning trace onto **Arc** (Circle's stablecoin-native L1), pins it to IPFS, stakes a **ROSETTA performance bond**, and opens an on-chain **prediction market** — closing the full accountability loop automatically.
+Multi-language AI financial research platform. Five regional agents each reason in their native language, then every thesis is hashed, pinned to IPFS, staked with a ROSETTA performance bond, and recorded immutably on **Arc L1** — closing the full accountability loop automatically.
 
-**Hackathon:** [Canteen × Arc — Agora Agents](https://agora.thecanteenapp.com/) · May 11–25, 2026  
-**Builder:** Mihai Chindris (`mihai_chindris` on Arc Discord)  
-**Status:** ✅ 5/5 desks live · 4/4 contracts verified · Full E2E pipeline operational
-
----
-
-## 🌐 Live Dashboard
-
-**[rosetta-alpha.vercel.app](https://rosetta-alpha.vercel.app)** — public, no login required.
-
-## 🎬 Demo — Full E2E Run (May 15, 2026)
-
-```
-✅ US     AAPL       LONG     75% | analyze → pin → stake → record → market
-✅ CRYPTO BTC        LONG     70% | analyze → pin → stake → record → market
-✅ CN     600519.SH  LONG     55% | analyze → pin → stake → record → market (DeepSeek V4 Pro, ZH)
-✅ EU     MC.PA      LONG     85% | analyze → pin → stake → record → market
-✅ JP     7203.T     LONG     85% | analyze → pin → stake → record → market (Gemini 3.1, JA)
-
-📊 Portfolio: Net LONG · signal=+0.63 · avg confidence=79.0% · 5/5 desks OK
-```
-
-Every run produces **live on-chain proof** — no mocked data, no hardcoded results.
-
-### Live TX Evidence (May 15, 2026 E2E run)
-
-| Desk | Arc Registry TX | IPFS Thesis CID |
-|------|----------------|-----------------|
-| 🇺🇸 AAPL | [`6141a016...`](https://testnet.arcscan.app/tx/6141a0161a64b84093c2655774cb73842a593bdbd5b8fe2e8272ae091052bab4) | `bafkreiaei...` |
-| ₿ BTC | [`37dd5f73...`](https://testnet.arcscan.app/tx/37dd5f73e82f7855addc9a5cd74d7a2e3aa190d6407fb8e23788ed1c81ab470e) | `bafkreieng...` |
-| 🇨🇳 Moutai | [`9e706957...`](https://testnet.arcscan.app/tx/9e70695759ca4293c2602c9680d4b9135c3f587a09ba82b59aefd6d3bbd96f32) | `bafkreifdai...` |
-| 🇪🇺 LVMH | [`2e27a822...`](https://testnet.arcscan.app/tx/2e27a822c1e67c9bb48def0805e0586ca113e7dd2907b02a0441dd2f91995d4f) | `bafkreidio...` |
-| 🇯🇵 Toyota | [`3919bedc...`](https://testnet.arcscan.app/tx/3919bedc121c39542bdaa9b2196e0152cc9771c6ddd0a5f4be70f9d5d083ed7d) | `bafkreihxx...` |
+**Live dashboard:** [rosetta-alpha.vercel.app](https://rosetta-alpha.vercel.app)  
+**Hackathon:** Canteen × Arc — Agora Agents · May 11–25, 2026  
+**Builder:** Mihai Chindris
 
 ---
 
-## 🏗️ Architecture
+## What's Built
 
-```
-                 ┌─────────────────────────────────────────────────────────────┐
-  data feeds ──▶ │  Regional Agents  (TradingAgents-style, 5 desks)           │
-  (MCP, APIs,    │  🇺🇸 US · 🇨🇳 CN · 🇪🇺 EU · 🇯🇵 JP · ₿ CRYPTO              │
-  AKShare,       │  Each reasons in its native language (EN/ZH/DE/JA)         │
-  yfinance)      └────────────────────────┬────────────────────────────────────┘
-                                          │  structured InvestmentThesis (Pydantic)
-                                          ▼
-                          ┌───────────────────────────────┐
-                          │  Translator Agent             │──▶ PredictionMarketQuestion
-                          │  (DeepSeek / Gemini)          │    (Polymarket-shaped)
-                          └───────────────┬───────────────┘
-                                          ▼
-              ┌──────────────────────────────────────────────────────────┐
-              │  Reasoning Trace Pipeline                                │
-              │  SHA-256 hash ──▶ Pinata IPFS pin ──▶ Arc registry      │
-              │                    (bafkrei...)        (ReasoningRegistry.sol) │
-              └────────────────────────────┬─────────────────────────────┘
-                                           │
-                    ┌──────────────────────┼─────────────────────┐
-                    ▼                      ▼                      ▼
-          ROSETTA bond stake      On-chain record          PredictionMarket
-          (RosettaToken.sol)    (ReasoningRegistry.sol)   (PredictionMarket.sol)
-          10 tokens / trace      trace_hash + CID         YES/NO binary question
-                                                          OwnerPriceOracle resolves
-                                          │
-                                          ▼
-                    ┌──────────────────────────────────────────────┐
-                    │  Portfolio Engine  (All Weather risk parity) │
-                    │  Cross-desk signal aggregation               │──▶ rebalance signals
-                    │  Net direction · confidence · risk surfacing │
-                    └──────────────────────────────────────────────┘
-```
-
-### Why Arc?
-Arc settles in **USDC** with EVM compatibility and sub-cent gas fees — ideal for micro-transactions like per-trace staking and prediction market creation that would be economically unviable on mainnet. The `ReasoningRegistry` contract provides **immutable, verifiable provenance** for every AI decision: if an agent's thesis proves wrong, the bond is slashable and the prediction market resolves against it.
-
-> **Circle Paymaster note:** On Arc, USDC is the native gas token — agents pay gas in USDC natively with no extra plumbing. For multi-chain deployment on Arbitrum/Base, we've wired [Circle Paymaster (ERC-4337 v0.7)](https://developers.circle.com/paymaster) for fully gasless agent UX — see [`scripts/circle_paymaster_demo.js`](./scripts/circle_paymaster_demo.js).
+| Component | Status |
+|-----------|--------|
+| US desk — AAPL via Financial Datasets MCP | done |
+| Crypto desk — BTC via CoinGecko + DeFiLlama | done |
+| China desk — Moutai via AKShare + DeepSeek V4 Pro (ZH) | done |
+| EU desk — LVMH via yfinance + Gemini 3.1 Flash | done |
+| Japan desk — Toyota via yfinance + Gemini 3.1 Flash (JA) | done |
+| Arc smart contracts — 4/4 verified on testnet | done |
+| IPFS pinning via Pinata | done |
+| ROSETTA performance bond staking (10 tokens/trace) | done |
+| PredictionMarket creation per thesis | done |
+| Translator agent — thesis → binary PredictionMarketQuestion | done |
+| Autonomous settler — permissionless resolve + settle loop | done |
+| Text-grad prompt optimization — AdalFlow Textual Gradient Descent | done |
+| AdalFlow Trace integration — auto training dataset generation | done |
+| React dashboard — Vercel serverless, live Arc data | done |
+| Circle Paymaster demo — gasless USDC on Arbitrum (ERC-4337 v0.7) | done |
 
 ---
 
-## ⛓️ Smart Contracts (Arc Testnet — Chain ID 5042002)
+## Architecture
 
-All 4 contracts **verified** on [arcscan.app](https://testnet.arcscan.app):
+```mermaid
+flowchart TD
+    subgraph Agents["Regional Agents (5 desks)"]
+        US["US · AAPL\nGroq Llama-3.3 · EN\nFallback: Gemini"]
+        CN["China · 600519.SH\nDeepSeek V4 Pro · ZH\nFallback: Groq"]
+        EU["EU · MC.PA\nGemini 3.1 Flash · FR/DE\nFallback: Groq"]
+        JP["Japan · 7203.T\nGemini 3.1 Flash · JA\nFallback: Groq"]
+        CR["Crypto · BTC\nGroq Llama-3.3 · EN\nFallback: Gemini"]
+    end
+
+    subgraph Data["Data Feeds"]
+        D1["Financial Datasets MCP"]
+        D2["AKShare · yfinance"]
+        D3["CoinGecko · DeFiLlama"]
+    end
+
+    D1 --> US
+    D2 --> CN
+    D2 --> EU
+    D2 --> JP
+    D3 --> CR
+
+    Agents --> Thesis["InvestmentThesis\nPydantic schema"]
+    Thesis --> Trans["Translator Agent\nDeepSeek / Gemini"]
+    Trans --> PMQ["PredictionMarketQuestion"]
+
+    Thesis --> Hash["SHA-256 canonical hash"]
+    Hash --> IPFS["Pinata IPFS pin\nbafkrei..."]
+    Hash --> Stake["Stake 10 ROSETTA\nRosettaToken.sol"]
+    IPFS --> Registry["ReasoningRegistry.sol\nArc L1 · chain 5042002"]
+    Stake --> Registry
+    PMQ --> Market["PredictionMarket.sol\nbinary YES/NO"]
+    Registry --> Market
+
+    Market --> Settler["Autonomous Settler\nreasoning/settler.py"]
+    Settler --> Oracle["OwnerPriceOracle.sol\nresolves at expiry"]
+
+    Registry --> Training["AdalFlow Trace Dataset\ntraining/adalflow_trace.py"]
+    Training --> Optimizer["Text-grad Optimizer\ntraining/prompt_optimizer.py"]
+    Optimizer --> Agents
+```
+
+---
+
+## Agent Design
+
+### Multi-Language, Multi-Model Routing
+
+| Desk | Ticker | Language | Primary | Fallback |
+|------|--------|----------|---------|---------|
+| US | AAPL | English | Groq Llama-3.3-70B | Gemini 3.1 Flash |
+| China | 600519.SH | Simplified Chinese | DeepSeek V4 Pro | Groq Llama-3.3 |
+| EU | MC.PA | English/French | Gemini 3.1 Flash | Groq |
+| Japan | 7203.T | Japanese | Gemini 3.1 Flash | Groq |
+| Crypto | BTC | English | Groq Llama-3.3-70B | Gemini 3.1 Flash |
+
+**Why native languages?** DeepSeek V4 Pro reasons about Kweichow Moutai in Mandarin with context that English models lack — PBOC policy nuance, Moutai's cultural premium, A-share retail dynamics. `thesis_summary_en` is always English for cross-desk aggregation.
+
+### Sub-Agent Chain (TradingAgents pattern)
+
+```mermaid
+flowchart LR
+    FA["Fundamental\nAnalyst"] --> PM
+    SA["Sentiment\nAnalyst"] --> PM
+    TA["Technical\nAnalyst"] --> PM
+    PM["Portfolio Manager\nsynthesis"] --> IT["InvestmentThesis"]
+```
+
+All prompts are AdalFlow `Parameter` objects — optimizable via Textual Gradient Descent. Baked improvements are stored in `training/learned_guidelines.json` and injected into every future synthesis prompt.
+
+### Data Sources
+
+| Desk | Primary | Fallback |
+|------|---------|---------|
+| US | Financial Datasets API (SEC filings, fundamentals, news) | yfinance |
+| China | AKShare (Eastmoney, free) | yfinance `600519.SS` |
+| EU | yfinance | — |
+| Japan | yfinance | — |
+| Crypto | CoinGecko + DeFiLlama | Binance public API |
+
+---
+
+## Smart Contracts (Arc Testnet — Chain ID 5042002)
+
+All 4 contracts verified on [arcscan.app](https://testnet.arcscan.app):
 
 | Contract | Address | Purpose |
 |----------|---------|---------|
 | `ReasoningRegistry` | [`0x0677...`](https://testnet.arcscan.app/address/0x06775Be99CfBC9A6D0819ff87A67954a2E976A16) | Immutable log of trace hashes + IPFS CIDs |
-| `RosettaToken` | [`0x8ec6...`](https://testnet.arcscan.app/address/0x8ec6...) | ERC-20 performance bond (10 ROSETTA / trace) |
+| `RosettaToken` | [`0x8ec6...`](https://testnet.arcscan.app/address/0x8ec6FDd0fc9ca15eFEE86E31eC50B65F80f1f14d) | ERC-20 performance bond (10 ROSETTA/trace) |
 | `PredictionMarket` | [`0x5700...`](https://testnet.arcscan.app/address/0x570034f17e8aFc22aF885607fF26Fe90Beb97596) | Binary YES/NO markets per thesis |
 | `OwnerPriceOracle` | [`0x387C...`](https://testnet.arcscan.app/address/0x387C8cbCC2711A5d2388000D1DAE728542284824) | Price feed for market resolution |
 
-### Live TX Evidence (May 14, 2026 E2E run)
+### Live TX Evidence (May 15, 2026)
 
-| Desk | Stake TX | Registry TX | Market TX |
-|------|----------|-------------|-----------|
-| 🇺🇸 AAPL | `e48f02c2...` | `293d33c4...` | `3b39ce22...` |
-| ₿ BTC | `33cd57ea...` | `50fd3228...` | `69ada0ea...` |
-| 🇨🇳 Moutai | `f9b2e58a...` | `51fed396...` | `53ba03df...` |
-
----
-
-## 🤖 Agent Design
-
-### Multi-Language, Multi-Model Routing
-
-| Desk | Ticker | Language | Primary Model | Fallback |
-|------|--------|----------|---------------|---------|
-| 🇺🇸 US | AAPL | English | Groq Llama-3.3-70B | — |
-| 🇨🇳 China | 600519.SH | **Simplified Chinese** | DeepSeek V4 Pro | Groq (on 402) |
-| 🇪🇺 EU | LVMH, SAP | German/French | Gemini 3.1 Flash | Groq |
-| 🇯🇵 Japan | 7203.T | **Japanese** | Gemini 3.1 Flash | Groq |
-| ₿ Crypto | BTC/ETH | English | Groq Llama-3.3-70B | — |
-
-**Why native languages?** DeepSeek V4 Pro reasons about Kweichow Moutai in Mandarin with context that English models lack (PBOC policy nuance, Moutai's cultural premium, A-share retail dynamics). The `thesis_summary_en` field is always English for cross-desk aggregation.
-
-### TradingAgents-style Sub-Agent Chain
-
-Each regional agent runs a chain of specialist sub-agents before synthesis:
-
-```
-FundamentalAnalyst ──┐
-SentimentAnalyst   ──┼──▶ PortfolioManager (synthesis) ──▶ InvestmentThesis
-TechnicalAnalyst   ──┘         (with learned guidelines injected)
-```
-
-All prompts are **AdalFlow `Parameter` objects** — automatically optimizable via Textual Gradient Descent. The `training/bake_feedback.py` module distills ephemeral judge feedback into permanent `learned_guidelines.json` that get injected into every future synthesis prompt.
-
-### Data Sources
-
-| Desk | Primary | Secondary |
-|------|---------|-----------|
-| US | Financial Datasets API (fundamentals, SEC filings, news) | yfinance (live price) |
-| CN | **AKShare** (Eastmoney backend, free, no token) | yfinance `600519.SS` |
-| EU | yfinance | ECB data (planned) |
-| JP | yfinance | BOJ data (planned) |
-| Crypto | CoinGecko + DeFiLlama | Binance public API (fallback) |
+| Desk | Arc Registry TX | IPFS Thesis CID |
+|------|----------------|-----------------|
+| US · AAPL | [`6141a016...`](https://testnet.arcscan.app/tx/6141a0161a64b84093c2655774cb73842a593bdbd5b8fe2e8272ae091052bab4) | `bafkreiaei...` |
+| Crypto · BTC | [`37dd5f73...`](https://testnet.arcscan.app/tx/37dd5f73e82f7855addc9a5cd74d7a2e3aa190d6407fb8e23788ed1c81ab470e) | `bafkreieng...` |
+| China · Moutai | [`9e706957...`](https://testnet.arcscan.app/tx/9e70695759ca4293c2602c9680d4b9135c3f587a09ba82b59aefd6d3bbd96f32) | `bafkreifdai...` |
+| EU · LVMH | [`2e27a822...`](https://testnet.arcscan.app/tx/2e27a822c1e67c9bb48def0805e0586ca113e7dd2907b02a0441dd2f91995d4f) | `bafkreidio...` |
+| Japan · Toyota | [`3919bedc...`](https://testnet.arcscan.app/tx/3919bedc121c39542bdaa9b2196e0152cc9771c6ddd0a5f4be70f9d5d083ed7d) | `bafkreihxx...` |
 
 ---
 
-## 🧠 AdalFlow Integration
+## AdalFlow Integration
 
 Built on [SylphAI's AdalFlow](https://github.com/SylphAI-Inc/AdalFlow):
 
-- **`adal.Generator`** — all LLM calls go through AdalFlow's generator for provider-agnostic routing
-- **`adal.Parameter`** — every prompt is a trainable parameter
-- **`PydanticJsonParser`** — bridges AdalFlow's string output to Pydantic domain models
-- **Text-grad optimization** — `training/prompt_optimizer.py` runs multi-round sweeps; `bake_feedback.py` makes improvements permanent
-- **Learned guidelines** — baked from text-grad feedback, injected into every synthesis prompt
-- Average composite score after optimization: **~9.0/10**
+- `adal.Generator` — all LLM calls go through AdalFlow for provider-agnostic routing
+- `adal.Parameter` — every prompt is a trainable parameter
+- `PydanticJsonParser` — bridges AdalFlow string output to Pydantic domain models
+- Text-grad optimization — `training/prompt_optimizer.py` runs multi-round sweeps
+- Learned guidelines — baked from text-grad feedback, injected into every synthesis prompt
+- AdalFlow Trace dataset — every pipeline run logs to `training/rosetta_dataset.jsonl` for future fine-tuning
+- Average composite judge score after optimization: ~9.0/10
+
+```bash
+# Run a single optimization sweep
+uv run python -m training.prompt_optimizer
+
+# Bake ephemeral feedback into permanent guidelines
+uv run python -m training.bake_feedback
+```
 
 ---
 
-## 📦 Repo Layout
+## The Accountability Loop
+
+```mermaid
+flowchart LR
+    A["Agent analyzes ticker"] --> B["InvestmentThesis\nPydantic"]
+    B --> C["SHA-256 hash"]
+    C --> D["IPFS pin\nbafkrei..."]
+    C --> E["Stake 10 ROSETTA"]
+    D --> F["Arc L1 record\nReasoningRegistry.sol"]
+    E --> F
+    F --> G["PredictionMarket\nbinary question"]
+    G --> H{"Market expires"}
+    H -->|correct| I["Bond returned\n+ reputation"]
+    H -->|wrong| J["Bond slashed\n→ correct predictor"]
+```
+
+Every AI claim is financially accountable. Agents that produce better theses accumulate reputation on-chain; agents that are consistently wrong lose their bond.
+
+---
+
+## Repo Layout
 
 ```
 rosetta-alpha/
 ├── agents/          # Regional + translator LLM agents
 │   ├── base_agent.py        # Abstract base (TradingAgents pattern)
-│   ├── us_agent.py          # 🇺🇸 US equities (Financial Datasets MCP)
-│   ├── china_agent.py       # 🇨🇳 A-shares (AKShare + DeepSeek)
-│   ├── crypto_agent.py      # ₿ Crypto (CoinGecko + DeFiLlama)
-│   ├── eu_agent.py          # 🇪🇺 EU equities (yfinance + Gemini)
-│   ├── japan_agent.py       # 🇯🇵 JP equities (yfinance + Gemini)
+│   ├── us_agent.py          # US equities (Financial Datasets MCP)
+│   ├── china_agent.py       # A-shares (AKShare + DeepSeek)
+│   ├── crypto_agent.py      # Crypto (CoinGecko + DeFiLlama)
+│   ├── eu_agent.py          # EU equities (yfinance + Gemini)
+│   ├── japan_agent.py       # JP equities (yfinance + Gemini)
 │   └── translator_agent.py  # Thesis → PredictionMarketQuestion
 ├── reasoning/
-│   ├── trace_schema.py      # Pydantic domain models (InvestmentThesis etc.)
+│   ├── trace_schema.py      # Pydantic domain models
 │   ├── hasher.py            # SHA-256 canonical hash
 │   ├── ipfs_pinner.py       # Pinata IPFS pinning
 │   ├── arc_recorder.py      # Arc on-chain recording + market creation
-│   └── settler.py           # Autonomous settler: poll → resolve → settle markets
-├── scripts/
-│   ├── circle_paymaster_demo.js  # Circle Paymaster (ERC-4337 v0.7) gasless USDC demo
-│   └── .env.example         # Environment template for scripts
-├── docs/
-│   └── outreach/
-│       └── LAUNCH_PLAN.md   # Social launch plan (X/LinkedIn, May 18)
-├── portfolio/
-│   └── engine.py            # All Weather risk-parity aggregation
-├── markets/
-│   └── question_generator.py # Translator → binary prediction questions
-├── contracts/
-│   └── src/
-│       ├── ReasoningRegistry.sol  # Immutable trace log
-│       ├── RosettaToken.sol       # ERC-20 performance bond
-│       ├── PredictionMarket.sol   # Binary YES/NO markets
-│       └── OwnerPriceOracle.sol   # Price feed for resolution
-├── data/
-│   ├── mcp_client.py        # Financial Datasets MCP
-│   ├── akshare_client.py    # Free A-share data (Eastmoney)
-│   ├── yfinance_client.py   # Global price feeds
-│   ├── tushare_client.py    # Tushare Pro (optional)
-│   └── deepseek_client.py   # DeepSeek API client
+│   └── settler.py           # Autonomous settler: poll → resolve → settle
 ├── training/
+│   ├── adalflow_trace.py    # Training dataset generator (JSONL)
 │   ├── prompt_optimizer.py  # Text-grad sweep runner
 │   └── bake_feedback.py     # Distill feedback → permanent guidelines
+├── contracts/src/           # Solidity contracts (verified on Arc testnet)
+├── frontend/                # React + Tailwind dashboard (Vercel)
+│   └── api/results.js       # Serverless function — live Arc data
+├── demo/
+│   └── e2e_run.py           # Full pipeline orchestrator
+├── scripts/
+│   └── circle_paymaster_demo.js  # Circle Paymaster (ERC-4337 v0.7) gasless USDC
 └── tests/                   # pytest suite
 ```
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 # 1. Install uv: https://docs.astral.sh/uv/
@@ -221,132 +232,38 @@ uv sync --all-extras
 
 # 2. Configure environment
 cp .env.example .env
-# Fill in: GROQ_API_KEY (free), PINATA_JWT, ARC_RPC_URL, ARC_DEPLOYER_PRIVATE_KEY
+# Required: GROQ_API_KEY (free at console.groq.com)
+# For full pipeline: PINATA_JWT, ARC_RPC_URL, ARC_DEPLOYER_PRIVATE_KEY
 
 # 3. Run a single desk
 uv run python -m agents.us_agent --ticker AAPL
 uv run python -m agents.china_agent --ticker 600519.SH
-uv run python -m agents.crypto_agent --ticker BTC
 
-# 4. Run full 3-desk pipeline (analyze → pin → stake → record → market)
-uv run python -c "
-import asyncio
-from agents.us_agent import USAgent
-from agents.crypto_agent import CryptoAgent
-from agents.china_agent import ChinaAgent
-
-async def main():
-    for agent, ticker in [(USAgent(),'AAPL'),(CryptoAgent(),'BTC'),(ChinaAgent(),'600519.SH')]:
-        thesis = await agent.analyze(ticker)
-        print(f'{ticker}: {thesis.direction.value} conf={thesis.confidence_score:.2f}')
-        print(f'  {thesis.thesis_summary_en[:100]}')
-
-asyncio.run(main())
-"
+# 4. Run full E2E pipeline (all 5 desks — analyze → pin → stake → record → market)
+uv run python -m demo.e2e_run
 
 # 5. Run tests
 uv run pytest tests/ -q
 ```
 
-### Required Environment Variables
+### Environment Variables
 
-| Variable | Where to get | Required for |
-|----------|-------------|--------------|
-| `GROQ_API_KEY` | [console.groq.com](https://console.groq.com) (free) | All desks (default LLM) |
+| Variable | Source | Required for |
+|----------|--------|-------------|
+| `GROQ_API_KEY` | [console.groq.com](https://console.groq.com) (free) | US + Crypto desks (primary) |
+| `GEMINI_API_KEY` | [aistudio.google.com](https://aistudio.google.com) | EU, JP desks; US/Crypto fallback |
 | `FINANCIAL_DATASETS_API_KEY` | [financialdatasets.ai](https://financialdatasets.ai) | US desk fundamentals |
 | `PINATA_JWT` | [app.pinata.cloud](https://app.pinata.cloud) | IPFS pinning |
-| `ARC_RPC_URL` | [Arc Discord](https://discord.gg/arc) | On-chain recording |
+| `ARC_RPC_URL` | Arc Discord | On-chain recording |
 | `ARC_DEPLOYER_PRIVATE_KEY` | Your Arc wallet | On-chain recording |
-| `DEEPSEEK_API_KEY` | [platform.deepseek.com](https://platform.deepseek.com) | CN desk (optional, Groq fallback) |
-| `GEMINI_API_KEY` | [aistudio.google.com](https://aistudio.google.com) | EU/JP desks, judge |
-| `TUSHARE_TOKEN` | [tushare.pro](https://tushare.pro) | CN desk (optional, AKShare fallback) |
+| `DEEPSEEK_API_KEY` | [platform.deepseek.com](https://platform.deepseek.com) | China desk (optional, Groq fallback) |
+| `TUSHARE_TOKEN` | [tushare.pro](https://tushare.pro) | China desk (optional, AKShare fallback) |
 
 ---
 
-## 🔁 The Accountability Loop
-
-```
-Agent analyzes ticker
-        │
-        ▼
-InvestmentThesis (Pydantic)
-        │
-        ├──▶ SHA-256 hash (deterministic, sorted-key JSON)
-        │
-        ├──▶ IPFS pin (Pinata) ──▶ CID: bafkrei...
-        │
-        ├──▶ Stake 10 ROSETTA tokens (performance bond)
-        │
-        ├──▶ Record on Arc: record_trace(hash, CID, region, asset_class)
-        │         └── ReasoningRegistry.sol: immutable, auditable
-        │
-        └──▶ Open PredictionMarket: "Will AAPL be LONG in 30 days?"
-                  └── Entry price from yfinance at thesis creation time
-                  └── Resolved by OwnerPriceOracle at expiry
-                  └── Wrong thesis → bond slashed → correct predictor rewarded
-```
-
-This loop means **every AI claim is financially accountable**. Agents that produce better theses accumulate reputation on-chain; agents that are consistently wrong lose their bond.
-
----
-
-## 📊 Text-Grad Optimization
-
-Rosetta Alpha uses AdalFlow's **Textual Gradient Descent** to automatically improve agent prompts:
-
-```bash
-# Run a single optimization sweep (3 desks, 2 rounds)
-uv run python -m training.prompt_optimizer
-
-# Bake ephemeral feedback into permanent guidelines
-uv run python -m training.bake_feedback
-```
-
-The optimizer:
-1. Runs each agent on its benchmark ticker
-2. Sends the thesis to a judge LLM (Gemini 3.1 Flash) for scoring
-3. Generates textual gradient feedback on prompt weaknesses
-4. Propagates improvements back to the synthesis prompt
-5. Bakes durable improvements into `training/learned_guidelines.json`
-
-**Result:** Average composite judge score improved from ~7.2 → ~9.0/10 after 3 optimization rounds.
-
----
-
-## 🗺️ Roadmap
-
-- [x] US desk (AAPL) — Financial Datasets MCP
-- [x] Crypto desk (BTC) — CoinGecko + DeFiLlama
-- [x] China desk (Moutai) — AKShare + DeepSeek
-- [x] Arc smart contracts (4/4 verified)
-- [x] IPFS pinning via Pinata
-- [x] ROSETTA performance bond staking
-- [x] PredictionMarket creation per thesis
-- [x] Text-grad prompt optimization
-- [x] EU desk (LVMH MC.PA) — yfinance + Gemini 3.1 Flash · LONG 85%
-- [x] Japan desk (Toyota 7203.T) — yfinance + Gemini 3.1 Flash · LONG 75%
-- [x] Autonomous settler (`reasoning/settler.py`) — permissionless resolve + settle loop
-- [x] React dashboard + FastAPI backend (`frontend/` + `api/main.py`)
-- [x] Translator agent → binary PredictionMarketQuestion (Polymarket-shaped)
-- [x] Circle Paymaster demo (`scripts/circle_paymaster_demo.js`) — gasless USDC on Arbitrum
-- [ ] AdalFlow Trace integration (auto training dataset generation)
-- [ ] Submission doc + demo video (due May 25)
----
-
-## 🙏 Acknowledgements
+## Acknowledgements
 
 - **Ray Dalio / Bridgewater** — All Weather risk-parity framework (publicly documented; not affiliated)
-- **Tauric Research** — [TradingAgents paper](https://arxiv.org/abs/2504.21028) + Trading-R1 architecture
-- **SylphAI** — [AdalFlow](https://github.com/SylphAI-Inc/AdalFlow) framework + AdaL CLI
-- **Circle** — Arc L1, USDC, StableFX infrastructure
-- **AKShare** — Free A-share market data ([akshare.akfamily.xyz](https://akshare.akfamily.xyz))
-
----
-
-## 📄 License
-
-MIT — open infrastructure. Optimized prompts (the "intelligence layer") are gitignored per the Warp playbook in [`AGENTS.md`](./AGENTS.md).
-
----
-
-*🌸 Built with [AdaL](https://github.com/adal-cli/adal) — SylphAI's AI R&D agent*
+- **SylphAI** — AdalFlow multi-agent framework
+- **Arc / Circle** — L1 blockchain and stablecoin infrastructure
+- **TradingAgents** (arXiv 2504.13077) — multi-analyst sub-agent architecture pattern

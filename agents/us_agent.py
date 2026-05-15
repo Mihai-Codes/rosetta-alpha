@@ -17,10 +17,14 @@ import argparse
 import asyncio
 import json
 import logging
+import os
+from typing import Any
 
 from dotenv import load_dotenv
 
 load_dotenv(override=True)  # loads .env before any AdalFlow client init
+
+import adalflow as adal
 
 from agents.base_agent import RegionalAgent
 from data.mcp_client import FinancialDatasetsClient
@@ -41,6 +45,30 @@ class USAgent(RegionalAgent):
     @property
     def asset_class_for(self) -> AssetClass:
         return AssetClass.EQUITY
+
+    def __init__(
+        self,
+        *,
+        model_client: adal.ModelClient | None = None,
+        model_kwargs: dict[str, Any] | None = None,
+    ) -> None:
+        if model_client is None:
+            groq_key = os.environ.get("GROQ_API_KEY", "").strip()
+            gemini_key = os.environ.get("GEMINI_API_KEY", "").strip()
+            if groq_key:
+                model_client = adal.GroqAPIClient()  # type: ignore[attr-defined]
+                if model_kwargs is None:
+                    model_kwargs = {"model": "llama-3.3-70b-versatile", "temperature": 0.2, "max_tokens": 2048}
+            elif gemini_key:
+                logger.warning("GROQ_API_KEY not set — falling back to Gemini for US desk")
+                from data.gemini_client import GeminiClient
+                _gemini_model = os.environ.get("GEMINI_MODEL", "gemini-3.1-flash-lite")
+                model_client = GeminiClient(api_key=gemini_key)
+                if model_kwargs is None:
+                    model_kwargs = {"model": _gemini_model, "temperature": 0.2, "max_tokens": 2048}
+            else:
+                raise RuntimeError("US desk requires GROQ_API_KEY or GEMINI_API_KEY.")
+        super().__init__(model_client=model_client, model_kwargs=model_kwargs)
 
     async def get_data_sources(self, ticker: str) -> dict[AgentRole, str]:
         async with FinancialDatasetsClient() as fd:

@@ -25,12 +25,45 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras
 
-      - name: Run tests
+      - name: Run tests with coverage
         env:
-          # Smoke tests use mock keys — no real API calls needed in CI
           GROQ_API_KEY: gsk_ci_dummy_key_for_tests_only
-        run: uv run pytest tests/ -v --tb=short
+        run: uv run pytest tests/ -v --tb=short --cov --cov-report=xml --junitxml=junit.xml -o junit_family=legacy
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: coverage.xml
+          fail_ci_if_error: false
+
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
 
       - name: Lint (ruff)
         run: uv run ruff check .
-        continue-on-error: true  # warn but don't block on style issues during hackathon
+        continue-on-error: true
+
+  build:
+    name: Frontend build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --silent
+
+      - name: Build
+        run: npm run build
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

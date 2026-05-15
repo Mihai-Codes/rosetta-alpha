@@ -57,6 +57,10 @@ data/raw/
 *.log
 logs/
 
+# Generated artifacts — not for commit
+dashboard_screenshot.png
+results.json
+
 # AdalFlow optimization artifacts
 adalflow_traces/
 *.adal_ckpt

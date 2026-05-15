@@ -39,6 +39,34 @@ class CryptoAgent(RegionalAgent):
     def asset_class_for(self) -> AssetClass:
         return AssetClass.CRYPTO
 
+    def __init__(
+        self,
+        *,
+        model_client: "adal.ModelClient | None" = None,
+        model_kwargs: "dict | None" = None,
+    ) -> None:
+        import os
+        from typing import Any
+        import adalflow as adal  # noqa: F811
+
+        if model_client is None:
+            groq_key = os.environ.get("GROQ_API_KEY", "").strip()
+            gemini_key = os.environ.get("GEMINI_API_KEY", "").strip()
+            if groq_key:
+                model_client = adal.GroqAPIClient()  # type: ignore[attr-defined]
+                if model_kwargs is None:
+                    model_kwargs = {"model": "llama-3.3-70b-versatile", "temperature": 0.2, "max_tokens": 2048}
+            elif gemini_key:
+                logger.warning("GROQ_API_KEY not set — falling back to Gemini for Crypto desk")
+                from data.gemini_client import GeminiClient
+                _gemini_model = os.environ.get("GEMINI_MODEL", "gemini-3.1-flash-lite")
+                model_client = GeminiClient(api_key=gemini_key)
+                if model_kwargs is None:
+                    model_kwargs = {"model": _gemini_model, "temperature": 0.2, "max_tokens": 2048}
+            else:
+                raise RuntimeError("Crypto desk requires GROQ_API_KEY or GEMINI_API_KEY.")
+        super().__init__(model_client=model_client, model_kwargs=model_kwargs)
+
     # Map common ticker symbols → CoinGecko coin IDs
     _TICKER_TO_COINGECKO: dict[str, str] = {
         "BTC": "bitcoin",

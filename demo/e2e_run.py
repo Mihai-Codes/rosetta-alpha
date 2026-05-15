@@ -29,6 +29,7 @@ from reasoning.arc_recorder import record_trace
 from reasoning.hasher import canonical_hash
 from reasoning.ipfs_pinner import pin_json
 from reasoning.trace_schema import InvestmentThesis, PredictionMarketQuestion, TraceMetadata
+from training.adalflow_trace import log_thesis_run
 
 logger = logging.getLogger(__name__)
 
@@ -145,6 +146,22 @@ async def run_desk(
             print("  ⛓️  Arc TX:     [skipped — --no-chain]")
 
         result["status"] = "ok"
+
+        # Wire AdalFlow training dataset — logs every successful run for future optimization
+        try:
+            _th_hash = canonical_hash(thesis)
+            _meta = TraceMetadata(
+                trace_hash=_th_hash,
+                ipfs_cid=result.get("ipfs_thesis_cid", ""),
+                region=thesis.region,
+                asset_class=thesis.asset_class,
+                timestamp=thesis.timestamp,
+                submitter=deployer,
+            )
+            await log_thesis_run(thesis, _meta, "")
+            logger.debug("AdalFlow trace logged for %s", ticker)
+        except Exception as _trace_exc:
+            logger.debug("AdalFlow trace logging skipped: %s", _trace_exc)
 
     except Exception as exc:
         result["error"] = str(exc)
