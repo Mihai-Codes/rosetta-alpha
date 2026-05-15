@@ -15,6 +15,18 @@
 
 > *"Dalio's All Weather — diversified across languages and regions, not just asset classes."*
 
+## Contents
+
+- [What's Built](#whats-built)
+- [Architecture](#architecture)
+- [Agent Design](#agent-design)
+- [Smart Contracts](#smart-contracts-arc-testnet--chain-id-5042002)
+- [AdalFlow Integration](#adalflow-integration)
+- [The Accountability Loop](#the-accountability-loop)
+- [Quick Start](#quick-start)
+- [Repo Layout](#repo-layout)
+- [Acknowledgements](#acknowledgements)
+
 Multi-language AI financial research platform. Five regional agents each reason in their native language, then every thesis is hashed, pinned to IPFS, staked with a ROSETTA performance bond, and recorded immutably on **Arc L1** — closing the full accountability loop automatically.
 
 **Live dashboard:** [rosetta-alpha.vercel.app](https://rosetta-alpha.vercel.app)  
