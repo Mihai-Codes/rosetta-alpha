@@ -128,18 +128,12 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
             <QuoteMatrix />
             <div className="flex items-center gap-3">
               <span className="w-px h-4 bg-white/10" />
-              <span className="text-text-secondary tracking-[0.4em]">
-                {activeTab === 'about' ? (
-                  <>
-                    <span className="text-brand-red font-bold">α</span>RISTOTLE
-                  </>
-                ) : (
-                  'STRATEGY'
-                )}
+              <span className="text-text-secondary tracking-[0.4em] font-medium">
+                <span className="text-brand-red font-bold">α</span>RISTOTLE
               </span>
             </div>
           </div>
-          <span className="absolute right-4 sm:right-8 lg:right-12 xl:block hidden text-text-tertiary">MULTI-POLAR CONSENSUS</span>
+          <span className="absolute right-4 sm:right-8 lg:right-12 xl:block hidden text-text-tertiary">SYSTEMIC ACCOUNTABILITY</span>
         </div>
       </footer>
     </div>

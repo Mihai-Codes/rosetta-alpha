@@ -1,9 +1,9 @@
 import React from 'react'
-import { Layers } from 'lucide-react'
+import { Layers, Scale } from 'lucide-react'
 
 export function AboutView() {
   return (
-    <div className="max-w-5xl space-y-20 mx-auto px-4">
+    <div className="max-w-6xl space-y-24 mx-auto px-4 py-20 animate-rain">
       <header className="text-center">
         <p className="text-[11px] font-medium uppercase tracking-[0.4em] text-brand-red mb-6">
           Institutional reasoning layer
@@ -28,27 +28,32 @@ export function AboutView() {
         </div>
       </header>
 
-      <div className="solid-panel rounded-3xl p-16 mb-20 border-white/[0.03] shadow-[0_30px_60px_-12px_rgba(0,0,0,0.5)]">
-        <h3 className="font-display text-3xl text-text-primary mb-10 flex items-center justify-center gap-4">
-          <Layers className="text-brand-red w-8 h-8" />
-          Balanced Economic Exposure
-        </h3>
-        <div className="max-w-3xl mx-auto text-center mb-12">
-          <p className="text-text-secondary leading-relaxed text-lg font-light italic">
+      <div className="solid-panel rounded-[2.5rem] p-20 border-white/[0.03] shadow-[0_40px_80px_-15px_rgba(0,0,0,0.6)]">
+        <div className="flex flex-col items-center text-center mb-16">
+          <Scale className="text-brand-red w-10 h-10 mb-6" />
+          <h3 className="font-display text-4xl text-text-primary tracking-tight">
+            Balanced Economic Exposure
+          </h3>
+          <div className="h-1 w-12 bg-brand-red/30 mt-6 rounded-full" />
+        </div>
+        
+        <div className="max-w-3xl mx-auto text-center mb-16">
+          <p className="text-text-secondary leading-relaxed text-xl font-light italic">
             Rosetta Alpha implements the All Weather discipline by maintaining structural equilibrium across the four distinct economic environments that drive asset returns.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {[
             { label: 'Rising Growth', assets: 'Equities & Commodities', desc: 'Positive growth surprises favor ownership of the productive economy.' },
             { label: 'Falling Growth', assets: 'Nominal Bonds & Cash', desc: 'Economic contraction increases the value of safe, fixed-return assets.' },
             { label: 'Rising Inflation', assets: 'ILBs & Commodities', desc: 'Currency devaluation favors inflation-linked bonds and tangible assets.' },
             { label: 'Falling Inflation', assets: 'Equities & Nominal Bonds', desc: 'Deflationary environments increase real returns on financial capital.' }
           ].map((item, i) => (
-            <div key={i} className="group p-10 bg-white/[0.01] border border-white/[0.03] rounded-2xl flex flex-col items-center text-center transition-all duration-500 hover:bg-brand-red/[0.03] hover:border-brand-red/20">
-              <p className="text-[11px] uppercase tracking-[0.4em] text-brand-red/60 mb-4 group-hover:text-brand-red transition-colors font-bold">{item.label}</p>
-              <p className="text-xl font-medium text-text-primary mb-3">{item.assets}</p>
-              <p className="text-[13px] text-text-tertiary leading-relaxed font-light">{item.desc}</p>
+            <div key={i} className="group p-12 bg-white/[0.01] border border-white/[0.03] rounded-3xl flex flex-col items-center text-center transition-all duration-700 hover:bg-brand-red/[0.02] hover:border-brand-red/30 hover:-translate-y-1">
+              <p className="text-[11px] uppercase tracking-[0.5em] text-brand-red/40 mb-6 group-hover:text-brand-red transition-all duration-500 font-bold">{item.label}</p>
+              <p className="text-2xl font-display text-text-primary mb-4">{item.assets}</p>
+              <p className="text-[14px] text-text-tertiary leading-relaxed font-light max-w-[280px]">{item.desc}</p>
             </div>
           ))}
         </div>
