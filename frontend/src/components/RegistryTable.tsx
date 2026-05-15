@@ -174,7 +174,7 @@ export function RegistryTable({ desks }: RegistryTableProps) {
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-1">
                         <a
-                          href={`https://gateway.pinata.cloud/ipfs/${e.ipfs_thesis_cid}`}
+                          href={`https://dweb.link/ipfs/${e.ipfs_thesis_cid}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-1 font-mono text-[10px] text-text-secondary hover:text-gold transition-colors"
