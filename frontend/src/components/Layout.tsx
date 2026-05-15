@@ -123,18 +123,18 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
           </div>
         </div>
         <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 mt-12 pt-8 border-t border-white/[0.02] flex items-center justify-center relative flex-wrap gap-4 text-[10px] text-text-tertiary uppercase tracking-[0.25em]">
-          <span className="absolute left-4 sm:left-8 lg:left-12 font-medium text-brand-red hidden xl:block italic tracking-[0.3em]">Cognitive Parity</span>
+          <span className="absolute left-4 sm:left-8 lg:left-12 font-medium text-brand-red hidden xl:block italic tracking-[0.4em]">Decentralized Reason</span>
           <div className="flex items-center gap-6">
             <QuoteMatrix />
             <div className="flex items-center gap-3">
               <span className="w-px h-4 bg-white/10" />
               <div className="flex items-center gap-2 group">
-                <span className="text-[14px] leading-none grayscale group-hover:grayscale-0 transition-all duration-500" title="Aristotle">🏛️</span>
+                <span className="text-[16px] leading-none opacity-60 group-hover:opacity-100 transition-all duration-500" title="Aristotle">🗿</span>
                 <span className="text-text-secondary tracking-[0.4em] font-medium">Aristotle</span>
               </div>
             </div>
           </div>
-          <span className="absolute right-4 sm:right-8 lg:right-12 xl:block hidden text-text-tertiary tracking-[0.3em]">Institutional Grade</span>
+          <span className="absolute right-4 sm:right-8 lg:right-12 xl:block hidden text-text-tertiary tracking-[0.4em]">PROVENANCE LAYER</span>
         </div>
       </footer>
     </div>

@@ -89,16 +89,16 @@
 }
 
 .global-grid-bg {
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  position: fixed; top: -50px; left: 0; right: 0; bottom: 0;
   background-image: 
     linear-gradient(rgba(216, 43, 43, 0.04) 1px, transparent 1px),
     linear-gradient(90deg, rgba(216, 43, 43, 0.04) 1px, transparent 1px);
   background-size: 100px 100px;
-  animation: grid-rain 40s linear infinite;
+  animation: grid-rain 45s linear infinite;
   pointer-events: none;
-  /* Removal of top/radial mask to ensure absolute vertical unity from top pixel */
-  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 80%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 80%, transparent 100%);
+  /* Seamless Unity: No top mask, starts above viewport to hide edges */
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 85%, transparent 100%);
   z-index: 0;
 }
 
