@@ -99,7 +99,7 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
         >
           <button
             onClick={onScrollDown}
-            className="group relative overflow-hidden inline-flex items-center gap-3 px-10 py-4 glass-panel rounded-full border border-brand-red/60 text-brand-red text-[12px] font-medium uppercase tracking-[0.25em] transition-all duration-500 hover:border-brand-red hover:shadow-[0_0_24px_rgba(216,43,43,0.8)] cursor-pointer"
+            className="group relative overflow-hidden inline-flex items-center gap-3 px-10 py-4 glass-panel rounded-full border border-brand-red/60 text-brand-red text-[12px] font-medium uppercase tracking-[0.25em] transition-all duration-500 hover:border-brand-red hover:shadow-[0_0_32px_rgba(216,43,43,1)] cursor-pointer"
           >
             <div className="absolute inset-0 bg-brand-red translate-y-[100%] group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" />
             <span className="relative z-10 transition-colors duration-500 group-hover:text-[#000000]">Enter Terminal</span>
@@ -107,7 +107,7 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
           </button>
 
           {latestHash && (
-            <div className="flex items-center gap-3 px-4 sm:px-6 py-3 sm:py-4 glass-panel rounded-full border border-brand-red/60 shadow-[0_0_15px_rgba(216,43,43,0.3)]">
+            <div className="flex items-center gap-3 px-4 sm:px-6 py-3 sm:py-4 glass-panel rounded-full border border-brand-red shadow-[0_0_24px_rgba(216,43,43,0.6)]">
               <span className="w-1.5 h-1.5 rounded-full bg-brand-red red-pulse" />
               <span className="text-[9px] uppercase tracking-[0.25em] text-text-tertiary">
                 Latest Trace

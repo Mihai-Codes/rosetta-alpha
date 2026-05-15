@@ -22,7 +22,7 @@ export function DesksView({ desks, loading }: DesksViewProps) {
   const active = desks.find(d => d.desk === activeDesk) ?? desks[0]
 
   return (
-    <div className="flex flex-col lg:flex-row gap-5 sm:p-8">
+    <div className="flex flex-col lg:flex-row items-start gap-5 sm:p-8">
       <div className="animate-rain" style={{ animationDelay: '0ms' }}>
         <RegionSidebar
           desks={desks}
