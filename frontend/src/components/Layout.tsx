@@ -136,7 +136,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
               </div>
             </div>
           </div>
-          <span className="absolute right-4 sm:right-8 lg:right-12 xl:block hidden text-white tracking-[0.4em] font-medium">PROVENANCE LAYER</span>
+          <span className="absolute right-4 sm:right-8 lg:right-12 xl:block hidden text-white tracking-[0.4em]">PROVENANCE LAYER</span>
         </div>
       </footer>
     </div>
