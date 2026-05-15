@@ -91,17 +91,7 @@ flowchart TD
 
 **Why native languages?** DeepSeek V4 Pro reasons about Kweichow Moutai in Mandarin with context that English models lack — PBOC policy nuance, Moutai's cultural premium, A-share retail dynamics. `thesis_summary_en` is always English for cross-desk aggregation.
 
-### Sub-Agent Chain (TradingAgents pattern)
-
-```mermaid
-flowchart LR
-    FA["Fundamental\nAnalyst"] --> PM
-    SA["Sentiment\nAnalyst"] --> PM
-    TA["Technical\nAnalyst"] --> PM
-    PM["Portfolio Manager\nsynthesis"] --> IT["InvestmentThesis"]
-```
-
-All prompts are AdalFlow `Parameter` objects — optimizable via Textual Gradient Descent. Baked improvements are stored in `training/learned_guidelines.json` and injected into every future synthesis prompt.
+Each desk runs 2–3 specialist sub-agents (Fundamental, Technical, Sentiment, Macro) whose outputs are reconciled by a Portfolio Manager into a single `InvestmentThesis`. All prompts are AdalFlow `Parameter` objects — optimizable via Textual Gradient Descent; baked improvements are stored in `training/learned_guidelines.json` and injected into every future synthesis prompt.
 
 ### Data Sources
 
@@ -140,15 +130,16 @@ All 4 contracts verified on [arcscan.app](https://testnet.arcscan.app):
 
 ## AdalFlow Integration
 
-Built on [SylphAI's AdalFlow](https://github.com/SylphAI-Inc/AdalFlow):
+Built on [SylphAI's AdalFlow](https://github.com/SylphAI-Inc/AdalFlow). After text-grad optimization, composite judge score improved to **~9.0 / 10**.
 
-- `adal.Generator` — all LLM calls go through AdalFlow for provider-agnostic routing
-- `adal.Parameter` — every prompt is a trainable parameter
-- `PydanticJsonParser` — bridges AdalFlow string output to Pydantic domain models
-- Text-grad optimization — `training/prompt_optimizer.py` runs multi-round sweeps
-- Learned guidelines — baked from text-grad feedback, injected into every synthesis prompt
-- AdalFlow Trace dataset — every pipeline run logs to `training/rosetta_dataset.jsonl` for future fine-tuning
-- Average composite judge score after optimization: ~9.0/10
+| Component | Role |
+|-----------|------|
+| `adal.Generator` | Provider-agnostic LLM calls (Groq / Gemini / DeepSeek) |
+| `adal.Parameter` | Every prompt is a trainable parameter |
+| `PydanticJsonParser` | Bridges AdalFlow string output → Pydantic domain models |
+| `prompt_optimizer.py` | Text-grad sweep — multi-round judge/critique loop |
+| `bake_feedback.py` | Distils ephemeral feedback → permanent `learned_guidelines.json` |
+| `adalflow_trace.py` | Every run logged to `rosetta_dataset.jsonl` for future fine-tuning |
 
 ```bash
 # Run a single optimization sweep
@@ -177,6 +168,46 @@ flowchart LR
 ```
 
 Every AI claim is financially accountable. Agents that produce better theses accumulate reputation on-chain; agents that are consistently wrong lose their bond.
+
+---
+
+## Quick Start
+
+```bash
+# 1. Install uv (https://docs.astral.sh/uv/) then:
+uv sync --all-extras
+
+# 2. Add your free Groq key — that's all you need to run a desk
+echo "GROQ_API_KEY=your_key_here" > .env
+
+# 3. Run a single desk
+uv run python -m agents.us_agent --ticker AAPL
+uv run python -m agents.china_agent --ticker 600519.SH
+
+# 4. Run full E2E pipeline (all 5 desks — analyze → pin → stake → record → market)
+uv run python -m demo.e2e_run
+
+# 5. Run tests
+uv run pytest tests/ -q
+```
+
+### Minimum Viable Setup (one free key)
+
+| Variable | Source | Gets you |
+|----------|--------|----------|
+| `GROQ_API_KEY` | [console.groq.com](https://console.groq.com) (free) | US + Crypto desks |
+| `GEMINI_API_KEY` | [aistudio.google.com](https://aistudio.google.com) (free) | EU + Japan desks + fallbacks |
+
+### Full Pipeline (all 5 desks + on-chain)
+
+| Variable | Source | Required for |
+|----------|--------|-------------|
+| `FINANCIAL_DATASETS_API_KEY` | [financialdatasets.ai](https://financialdatasets.ai) | US desk high-fidelity SEC data |
+| `DEEPSEEK_API_KEY` | [platform.deepseek.com](https://platform.deepseek.com) | China desk native ZH reasoning |
+| `PINATA_JWT` | [app.pinata.cloud](https://app.pinata.cloud) | IPFS pinning |
+| `ARC_RPC_URL` | [arc.network](https://www.arc.network) → Community → Discord | On-chain recording |
+| `ARC_DEPLOYER_PRIVATE_KEY` | Your Arc wallet (`Settings → Export Key`) | On-chain recording |
+| `TUSHARE_TOKEN` | [tushare.pro](https://tushare.pro) | China desk alt data (optional) |
 
 ---
 
@@ -211,43 +242,6 @@ rosetta-alpha/
 │   └── circle_paymaster_demo.js  # Circle Paymaster (ERC-4337 v0.7) gasless USDC
 └── tests/                   # pytest suite
 ```
-
----
-
-## Quick Start
-
-```bash
-# 1. Install uv: https://docs.astral.sh/uv/
-uv sync --all-extras
-
-# 2. Configure environment
-cp .env.example .env
-# Required: GROQ_API_KEY (free at console.groq.com)
-# For full pipeline: PINATA_JWT, ARC_RPC_URL, ARC_DEPLOYER_PRIVATE_KEY
-
-# 3. Run a single desk
-uv run python -m agents.us_agent --ticker AAPL
-uv run python -m agents.china_agent --ticker 600519.SH
-
-# 4. Run full E2E pipeline (all 5 desks — analyze → pin → stake → record → market)
-uv run python -m demo.e2e_run
-
-# 5. Run tests
-uv run pytest tests/ -q
-```
-
-### Environment Variables
-
-| Variable | Source | Required for |
-|----------|--------|-------------|
-| `GROQ_API_KEY` | [console.groq.com](https://console.groq.com) (free) | US + Crypto desks (primary) |
-| `GEMINI_API_KEY` | [aistudio.google.com](https://aistudio.google.com) | EU, JP desks; US/Crypto fallback |
-| `FINANCIAL_DATASETS_API_KEY` | [financialdatasets.ai](https://financialdatasets.ai) | US desk fundamentals |
-| `PINATA_JWT` | [app.pinata.cloud](https://app.pinata.cloud) | IPFS pinning |
-| `ARC_RPC_URL` | [arc.network](https://www.arc.network) → Community → Discord | On-chain recording |
-| `ARC_DEPLOYER_PRIVATE_KEY` | Your Arc wallet (`Settings → Export Key`) | On-chain recording |
-| `DEEPSEEK_API_KEY` | [platform.deepseek.com](https://platform.deepseek.com) | China desk (optional, Groq fallback) |
-| `TUSHARE_TOKEN` | [tushare.pro](https://tushare.pro) | China desk (optional, AKShare fallback) |
 
 ---
 
