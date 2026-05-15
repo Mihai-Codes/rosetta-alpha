@@ -1,7 +1,7 @@
 import React from 'react'
-import { TrendingUp, TrendingDown, Minus, ExternalLink, HelpCircle, ShieldCheck, ChevronRight } from 'lucide-react'
-import { clsx } from 'clsx'
+import { TrendingUp, TrendingDown, Minus, ExternalLink, ChevronRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { ReasoningExplorer } from './ReasoningExplorer'
 
 export interface ReasoningBlock {
   agent_role: string
@@ -27,147 +27,139 @@ export interface DeskProps {
   reasoning_blocks: ReasoningBlock[]
 }
 
-import { ReasoningExplorer } from './ReasoningExplorer'
+const REGION_LABEL: Record<string, string> = {
+  us: 'United States',
+  cn: 'China',
+  eu: 'Europe',
+  jp: 'Japan',
+  crypto: 'Digital Assets',
+}
 
 export function DeskCard({ desk }: { desk: DeskProps }) {
   const [showExplorer, setShowExplorer] = React.useState(false)
   const isLong = desk.direction === 'LONG'
   const isShort = desk.direction === 'SHORT'
-  
+
+  const directionColor = isLong
+    ? 'text-[#52B788]'
+    : isShort
+    ? 'text-[#C0392B]'
+    : 'text-[#7B8FA6]'
+
+  const directionBg = isLong
+    ? 'bg-[rgba(82,183,136,0.06)] border-[rgba(82,183,136,0.18)]'
+    : isShort
+    ? 'bg-[rgba(192,57,43,0.06)] border-[rgba(192,57,43,0.18)]'
+    : 'bg-[rgba(123,143,166,0.06)] border-[rgba(123,143,166,0.18)]'
+
+  const barColor = isLong ? 'bg-[#52B788]' : isShort ? 'bg-[#C0392B]' : 'bg-muted-foreground/40'
+
   return (
     <>
-    <AnimatePresence>
-      {showExplorer && (
-        <ReasoningExplorer 
-          desk={desk} 
-          onClose={() => setShowExplorer(false)} 
-        />
-      )}
-    </AnimatePresence>
+      <AnimatePresence>
+        {showExplorer && (
+          <ReasoningExplorer desk={desk} onClose={() => setShowExplorer(false)} />
+        )}
+      </AnimatePresence>
 
-    <motion.div 
-      whileHover={{ y: -5, transition: { duration: 0.2 } }}
-      whileTap={{ scale: 0.98 }}
-      onClick={() => setShowExplorer(true)}
-      className="bg-card border border-primary/10 rounded-2xl overflow-hidden flex flex-col shadow-[0_4px_20px_-10px_rgba(0,0,0,0.5)] hover:shadow-[0_8px_30px_-10px_rgba(59,130,246,0.2)] transition-all duration-300 cursor-pointer group relative"
-    >
-      <div className="absolute top-0 left-0 w-1 h-full transition-colors duration-300 group-hover:bg-primary/40 bg-transparent" />
-      
-      <div className="p-6 border-b border-primary/5 bg-muted/5 group-hover:bg-muted/20 transition-colors flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="text-3xl filter saturate-[0.8] group-hover:saturate-100 transition-all">
-            {getRegionEmoji(desk.desk)}
-          </div>
+      <motion.article
+        whileHover={{ y: -3, transition: { duration: 0.18 } }}
+        onClick={() => setShowExplorer(true)}
+        className="group relative bg-card border border-border hover:border-primary/30 shadow-card hover:shadow-card-hover transition-all duration-250 cursor-pointer flex flex-col overflow-hidden"
+      >
+        {/* Gold left accent on hover */}
+        <div className="absolute left-0 top-0 w-px h-full bg-primary/0 group-hover:bg-primary/50 transition-colors duration-300" />
+
+        {/* Header */}
+        <div className="px-6 pt-6 pb-4 border-b border-border/50 flex items-start justify-between gap-4">
           <div>
-            <h3 className="text-xl font-black tracking-tight group-hover:text-primary transition-colors leading-none">
+            <p className="text-[9px] font-medium uppercase tracking-[0.25em] text-muted-foreground/60 mb-1">
+              {REGION_LABEL[desk.desk.toLowerCase()] ?? desk.desk} Desk
+            </p>
+            <h3 className="font-display text-3xl font-light tracking-tight text-foreground group-hover:text-primary transition-colors duration-200">
               {desk.ticker}
             </h3>
-            <p className="text-[9px] font-black text-muted-foreground/60 uppercase mt-1.5 tracking-[0.2em]">
-              {desk.desk} Terminal
+          </div>
+
+          <div className={`flex items-center gap-1.5 px-3 py-1.5 border text-[10px] font-medium uppercase tracking-widest shrink-0 mt-1 ${directionColor} ${directionBg}`}>
+            {isLong && <TrendingUp className="w-3 h-3" />}
+            {isShort && <TrendingDown className="w-3 h-3" />}
+            {!isLong && !isShort && <Minus className="w-3 h-3" />}
+            {desk.direction}
+          </div>
+        </div>
+
+        {/* Body */}
+        <div className="px-6 py-5 flex-1 space-y-5">
+          {/* Confidence bar */}
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-[9px] font-medium uppercase tracking-[0.2em] text-muted-foreground/60">
+                Conviction
+              </span>
+              <span className={`text-xs font-mono font-medium ${directionColor}`}>
+                {(desk.confidence * 100).toFixed(0)}%
+              </span>
+            </div>
+            <div className="h-px bg-border overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${desk.confidence * 100}%` }}
+                transition={{ duration: 1.2, ease: 'easeOut' }}
+                className={`h-full ${barColor}`}
+              />
+            </div>
+          </div>
+
+          {/* Thesis */}
+          {desk.summary && (
+            <p className="text-sm text-muted-foreground font-light leading-relaxed border-l border-primary/20 pl-4">
+              {desk.summary}
             </p>
-          </div>
-        </div>
-        <div className={clsx(
-          "px-3 py-1.5 rounded-lg text-[10px] font-black tracking-widest flex items-center gap-2 border transition-all duration-300",
-          isLong && "bg-green-500/5 text-green-500 border-green-500/20 shadow-[0_0_10px_rgba(34,197,94,0.1)]",
-          isShort && "bg-red-500/5 text-red-500 border-red-500/20 shadow-[0_0_10px_rgba(239,68,68,0.1)]",
-          !isLong && !isShort && "bg-slate-500/5 text-slate-500 border-slate-500/20"
-        )}>
-          {isLong && <TrendingUp className="w-3.5 h-3.5" />}
-          {isShort && <TrendingDown className="w-3.5 h-3.5" />}
-          {!isLong && !isShort && <Minus className="w-3.5 h-3.5" />}
-          {desk.direction}
-        </div>
-      </div>
-      
-      <div className="p-6 flex-1 space-y-6 text-left">
-        <div className="space-y-2">
-          <div className="flex justify-between items-end mb-1">
-            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Confidence Index</span>
-            <span className="text-sm font-black text-primary font-mono tracking-tighter">
-              {(desk.confidence * 100).toFixed(0)}%
-            </span>
-          </div>
-          <div className="w-full bg-primary/5 h-1.5 rounded-full overflow-hidden p-[1px] border border-primary/10">
-            <motion.div 
-              initial={{ width: 0 }}
-              animate={{ width: `${desk.confidence * 100}%` }}
-              transition={{ duration: 1, ease: "easeOut" }}
-              className={clsx(
-                "h-full rounded-full transition-all duration-500 shadow-[0_0_8px_rgba(0,0,0,0.2)]",
-                isLong ? "bg-green-500" : isShort ? "bg-red-500" : "bg-primary"
-              )}
-            />
-          </div>
-        </div>
+          )}
 
-        <div className="relative">
-          <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3 font-medium italic pl-4 border-l-2 border-primary/10">
-            "{desk.summary}"
-          </p>
-        </div>
-
-        {desk.price && (
-          <div className="flex items-center justify-between p-3 bg-primary/5 rounded-xl border border-primary/10 group/price transition-colors hover:bg-primary/10">
-            <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Oracle Price</span>
-            <span className="text-xs font-mono font-black text-primary tracking-tighter group-hover/price:scale-105 transition-transform origin-right">
-              {desk.price}
-            </span>
-          </div>
-        )}
-
-        <div className="space-y-3 pt-2">
-          <div className="flex items-center gap-2 text-[9px] font-black text-primary/60 uppercase tracking-[0.3em]">
-            <HelpCircle className="w-3 h-3" />
-            Market Incentive question
-          </div>
-          <div className="bg-muted/20 p-4 rounded-xl border border-border/50 group-hover:border-primary/20 transition-colors">
-            <p className="text-sm font-bold leading-snug group-hover:text-foreground transition-colors">
+          {/* Market question */}
+          <div>
+            <p className="text-[9px] font-medium uppercase tracking-[0.2em] text-muted-foreground/50 mb-2">
+              Prediction Market
+            </p>
+            <p className="text-sm font-light text-foreground/80 leading-snug">
               {desk.question}
             </p>
           </div>
         </div>
-      </div>
 
-      <div className="px-6 py-4 bg-muted/5 border-t border-primary/5 flex items-center justify-between">
-         <div className="flex gap-4">
-            <a 
-              href={`https://gateway.pinata.cloud/ipfs/${desk.ipfs_thesis_cid}`} 
-              target="_blank" 
-              rel="noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/50 hover:text-primary transition-colors flex items-center gap-1.5"
-            >
-              <ExternalLink className="w-3 h-3" />
-              Trace
-            </a>
-            <a 
-              href={`https://testnet.arcscan.app/tx/${desk.arc_tx}`} 
-              target="_blank" 
-              rel="noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/50 hover:text-primary transition-colors flex items-center gap-1.5"
-            >
-              <ShieldCheck className="w-3 h-3" />
-              Arc
-            </a>
-         </div>
-         <div className="text-primary/0 group-hover:text-primary/60 transition-all translate-x-2 group-hover:translate-x-0">
-            <ChevronRight className="w-4 h-4" />
-         </div>
-      </div>
-    </motion.div>
+        {/* Footer */}
+        <div className="px-6 py-3 border-t border-border/50 bg-card/50 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            {desk.ipfs_thesis_cid && desk.ipfs_thesis_cid !== 'bafkrei...' && (
+              <a
+                href={`https://gateway.pinata.cloud/ipfs/${desk.ipfs_thesis_cid}`}
+                target="_blank"
+                rel="noreferrer"
+                onClick={e => e.stopPropagation()}
+                className="flex items-center gap-1 text-[9px] font-medium uppercase tracking-widest text-muted-foreground/40 hover:text-primary transition-colors"
+              >
+                <ExternalLink className="w-2.5 h-2.5" />
+                IPFS
+              </a>
+            )}
+            {desk.arc_tx && desk.arc_tx !== '0x293d33c4...' && desk.arc_tx !== '0x50fd3228...' && (
+              <a
+                href={`https://testnet.arcscan.app/tx/${desk.arc_tx}`}
+                target="_blank"
+                rel="noreferrer"
+                onClick={e => e.stopPropagation()}
+                className="flex items-center gap-1 text-[9px] font-medium uppercase tracking-widest text-muted-foreground/40 hover:text-primary transition-colors"
+              >
+                <ExternalLink className="w-2.5 h-2.5" />
+                Arc
+              </a>
+            )}
+          </div>
+          <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/20 group-hover:text-primary/50 transition-colors translate-x-1 group-hover:translate-x-0 duration-200" />
+        </div>
+      </motion.article>
     </>
   )
-}
-
-function getRegionEmoji(region: string) {
-  switch (region.toLowerCase()) {
-    case 'us': return '🇺🇸'
-    case 'cn': return '🇨🇳'
-    case 'crypto': return '₿'
-    case 'eu': return '🇪🇺'
-    case 'jp': return '🇯🇵'
-    default: return '🌐'
-  }
 }

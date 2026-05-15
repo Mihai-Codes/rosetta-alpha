@@ -1,0 +1,54 @@
+[
+  {
+    "desk": "us",
+    "ticker": "AAPL",
+    "status": "ok",
+    "direction": "NEUTRAL",
+    "confidence": 0.7,
+    "question": "Will AAPL stock price remain within a 1% band over the next 30 days?",
+    "thesis": {
+      "ticker_or_asset": "AAPL",
+      "direction": "NEUTRAL",
+      "confidence_score": 0.7,
+      "thesis_summary_en": "Apple shows strong fundamentals but technical indicators suggest consolidation after recent earnings. Macro environment remains stable with no major catalysts in the immediate horizon.",
+      "reasoning": [
+        {
+          "role": "PortfolioManager",
+          "thought_process": "Analysis of current RSI and MACD shows neutral momentum. Institutional ownership is high and stable. I expect limited volatility in the near term.",
+          "content": "Consolidation phase expected."
+        }
+      ]
+    },
+    "metadata": {
+      "trace_hash": "0x56a2...8b1e",
+      "ipfs_cid": "bafkrei...",
+      "arc_tx": "0x293d33c4..."
+    }
+  },
+  {
+    "desk": "crypto",
+    "ticker": "BTC",
+    "status": "ok",
+    "direction": "LONG",
+    "confidence": 0.73,
+    "question": "Will BTC-USD close higher than $65,000 on June 15, 2026?",
+    "thesis": {
+      "ticker_or_asset": "BTC",
+      "direction": "LONG",
+      "confidence_score": 0.73,
+      "thesis_summary_en": "Bitcoin exhibits bullish divergence on the daily chart. ETF inflows remain positive and on-chain metrics show decreased exchange reserves, signaling supply tightening.",
+      "reasoning": [
+        {
+          "role": "TechnicalAnalyst",
+          "thought_process": "Breaking through the $64k resistance level with volume. R1 reasoning suggests high probability of continued upward momentum.",
+          "content": "Bullish breakout confirmed."
+        }
+      ]
+    },
+    "metadata": {
+      "trace_hash": "0x7c2d...4f9a",
+      "ipfs_cid": "bafkrei...",
+      "arc_tx": "0x50fd3228..."
+    }
+  }
+]

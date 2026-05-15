@@ -42,6 +42,7 @@ dependencies = [
     "google-genai>=2.2.0",
     "google-generativeai>=0.8.6",
     "akshare>=1.18.60",
+    "playwright>=1.59.0",
 ]
 
 [project.optional-dependencies]

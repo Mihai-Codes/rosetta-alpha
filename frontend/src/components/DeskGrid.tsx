@@ -1,7 +1,7 @@
 import React from 'react'
 import { DeskCard, DeskProps } from './DeskCard'
 
-export const MOCK_DATA: DeskProps[] = [
+const MOCK_DATA: DeskProps[] = [
   {
     desk: 'US',
     ticker: 'AAPL',

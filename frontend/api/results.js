@@ -1,0 +1,215 @@
+// Vercel serverless function — serves live agent results (generated 2026-05-15)
+// All traces recorded on Arc L1 Testnet | IPFS-pinned via Pinata
+
+const LIVE_DATA = [
+  {
+    desk: "us",
+    ticker: "AAPL",
+    status: "ok",
+    direction: "LONG",
+    confidence: 0.75,
+    question: "Will Apple Inc.'s stock price (AAPL) be above $296.99 at the close of trading on 2026-08-14?",
+    summary: "Apple Inc. is a well-established technology company with a strong market presence, neutral overall sentiment, and potential for growth.",
+    price: "296.99",
+    ipfs_thesis_cid: "bafkreiaeiduymgnqadldwpysnxrukvn6rlzkybvlxylvdblsxy4u2tbw6q",
+    ipfs_question_cid: "bafkreicsspvcmjwm5kel26d6eyi4wn2llt4pooq57a2qwfybdoh6e2q6qe",
+    arc_tx: "6141a0161a64b84093c2655774cb73842a593bdbd5b8fe2e8272ae091052bab4",
+    reasoning_blocks: [
+      {
+        agent_role: "fundamental_analyst",
+        input_data_summary: "Company facts for AAPL, including ticker, name, sector, industry, and location",
+        analysis: "Based on the provided company facts, Apple Inc (AAPL) operates in the Information Technology sector, specifically in the Technology Hardware, Storage & Peripherals industry. The company is listed on the NASDAQ exchange and is actively filing with the SEC. This information suggests that AAPL is a well-established technology company with a significant presence in the market.",
+        conclusion: "Apple Inc (AAPL) is a prominent player in the technology sector with a strong market presence.",
+        confidence: 0.8,
+        language: "en",
+      },
+      {
+        agent_role: "sentiment_analyst",
+        input_data_summary: "A collection of 8 news articles about Apple Inc. (AAPL) from various sources, including MarketBeat, Longbridge, AASTOCKS.com, Seeking Alpha, and GuruFocus, published on May 14-15, 2026.",
+        analysis: "The news articles cover various topics, including investments in Apple by Sterling Investment Counsel LLC and Belpointe Asset Management LLC, potential legal action by OpenAI against Apple, and a new security challenge faced by Apple. Overall sentiment is neutral with some positive news about institutional investments and some negative news about potential legal issues. Renaissance Technologies' $770M position in Q1 2026 is a notable positive development.",
+        conclusion: "The overall sentiment of the news articles about Apple Inc. is neutral, with a balance of positive and negative developments.",
+        confidence: 0.7,
+        language: "en",
+      },
+    ],
+    metadata: {
+      trace_hash: "0x6141a016...",
+      ipfs_cid: "bafkreiaeiduymgnqadldwpysnxrukvn6rlzkybvlxylvdblsxy4u2tbw6q",
+      arc_tx: "6141a0161a64b84093c2655774cb73842a593bdbd5b8fe2e8272ae091052bab4",
+      arc_explorer: "https://testnet.arcscan.app/tx/6141a0161a64b84093c2655774cb73842a593bdbd5b8fe2e8272ae091052bab4",
+    },
+  },
+  {
+    desk: "crypto",
+    ticker: "BTC",
+    status: "ok",
+    direction: "LONG",
+    confidence: 0.7,
+    question: "Will the price of Bitcoin be above $79,064.00 on 2026-08-01?",
+    summary: "Bitcoin has a significant market capitalization and trading volume, with a strong positive sentiment (84.9% bullish votes) and active development community.",
+    price: "79,064.00",
+    ipfs_thesis_cid: "bafkreiengcwkadazdtp5i6iwfhwdlmburcxif5srfpsnqpbelfqmtyqege",
+    ipfs_question_cid: "bafkreiaecsxensijco3ywrg4yuasxmghl3gwsjcl2cctinuk7z6xqunxxq",
+    arc_tx: "37dd5f73e82f7855addc9a5cd74d7a2e3aa190d6407fb8e23788ed1c81ab470e",
+    reasoning_blocks: [
+      {
+        agent_role: "fundamental_analyst",
+        input_data_summary: "Market data for Bitcoin, including current price and market capitalization in various currencies",
+        analysis: "Based on the provided market data, the current price of Bitcoin is approximately $79,137 USD, with a market capitalization of around $1.586T USD. Total volume traded is around $46.9B USD. This data provides a comprehensive overview of the current state of the Bitcoin market.",
+        conclusion: "Bitcoin has a significant market capitalization and trading volume, indicating a high level of interest and investment.",
+        confidence: 0.8,
+        language: "en",
+      },
+      {
+        agent_role: "sentiment_analyst",
+        input_data_summary: "BTC sentiment and community data",
+        analysis: "The sentiment votes up percentage is 84.9%, indicating a strong positive sentiment towards BTC. Developer data shows a significant number of stars, forks, and pull request contributors, indicating a healthy and active development community. The commit count over the past 4 weeks is also relatively high, suggesting ongoing development and maintenance.",
+        conclusion: "The overall sentiment and development activity indicate a positive outlook for BTC.",
+        confidence: 0.8,
+        language: "en",
+      },
+      {
+        agent_role: "macro_analyst",
+        input_data_summary: "Bitcoin macroeconomic positioning and DeFi ecosystem overview.",
+        analysis: "Bitcoin operates as a foundational element in the cryptocurrency space, described as an innovative payment network and a new kind of money. Without specific TVL or ecosystem token data, full DeFi positioning assessment is limited, but its role as 'Canonical Bridge' asset reinforces long-term store-of-value thesis.",
+        conclusion: "Bitcoin's macro positioning as reserve asset remains intact; near-term price action skewed bullish above $79K support.",
+        confidence: 0.3,
+        language: "en",
+      },
+    ],
+    metadata: {
+      trace_hash: "0x37dd5f73...",
+      ipfs_cid: "bafkreiengcwkadazdtp5i6iwfhwdlmburcxif5srfpsnqpbelfqmtyqege",
+      arc_tx: "37dd5f73e82f7855addc9a5cd74d7a2e3aa190d6407fb8e23788ed1c81ab470e",
+      arc_explorer: "https://testnet.arcscan.app/tx/37dd5f73e82f7855addc9a5cd74d7a2e3aa190d6407fb8e23788ed1c81ab470e",
+    },
+  },
+  {
+    desk: "cn",
+    ticker: "600519.SH",
+    status: "ok",
+    direction: "NEUTRAL",
+    confidence: 0.8,
+    question: "Will the stock price of Guizhou Moutai (600519.SH) be above 1332.95 on 2026-08-14?",
+    summary: "Guizhou Moutai's stock price has fluctuated recently, with a 52-week high/low of ¥1636.99/¥1322.01. Net profit up 1.47% YoY; revenue up 6.34%. Cautious stance amid policy sensitivity.",
+    price: "1,332.95",
+    ipfs_thesis_cid: "bafkreihwqwmnco7mpq4jslpo5a44nvhgdfifharppf6crt7kz5dwihbat4",
+    ipfs_question_cid: "bafkreieaklevwnunet5zxnx2g4wwxphgewmd6hlzpk2lwmjxjsqf2g3wo4",
+    arc_tx: "17856bea617282b54bbe6411afed9b6c9b95a2cdb7a9a2881085528c2af8e8a1",
+    reasoning_blocks: [
+      {
+        agent_role: "fundamental_analyst",
+        input_data_summary: "600519.SH price history and company financials",
+        analysis: "贵州茅台近期股价波动，52周高低价分别为1636.99和1322.01，当前价格为1332.95，公司属于白酒行业",
+        analysis_en: "Moutai stock trades near 52-week lows at ¥1332.95 vs high of ¥1636.99. Baijiu sector leader with strong brand moat.",
+        conclusion: "贵州茅台的股价近期波动较大，投资者需要谨慎分析公司的财务状况和市场趋势",
+        confidence: 0.8,
+        language: "zh",
+      },
+      {
+        agent_role: "sentiment_analyst",
+        input_data_summary: "贵州茅台600519.SH近期新闻和实时价格",
+        analysis: "贵州茅台近期净利润同比较去年同期上涨1.47%，营业总收入增加6.34%。",
+        analysis_en: "Moutai net profit up 1.47% YoY; operating revenue up 6.34%. Fundamentals remain solid despite macro headwinds.",
+        conclusion: "贵州茅台的盈利能力和估值水平较高，市场情绪偏正面，但需要关注政策影响和行业竞争",
+        confidence: 0.8,
+        language: "zh",
+      },
+    ],
+    metadata: {
+      trace_hash: "0x17856bea...",
+      ipfs_cid: "bafkreihwqwmnco7mpq4jslpo5a44nvhgdfifharppf6crt7kz5dwihbat4",
+      arc_tx: "17856bea617282b54bbe6411afed9b6c9b95a2cdb7a9a2881085528c2af8e8a1",
+      arc_explorer: "https://testnet.arcscan.app/tx/17856bea617282b54bbe6411afed9b6c9b95a2cdb7a9a2881085528c2af8e8a1",
+    },
+  },
+  {
+    desk: "eu",
+    ticker: "MC.PA",
+    status: "ok",
+    direction: "LONG",
+    confidence: 0.85,
+    question: "Will the stock price of LVMH (MC.PA) be above 455.00 on 2026-08-14?",
+    summary: "LVMH maintains a strong defensive profile with resilient operating margins despite current revenue contraction. Strategic divestment of Marc Jacobs enhances capital allocation efficiency. The stock serves as a high-quality hedge against ECB policy volatility.",
+    price: "455.00",
+    ipfs_thesis_cid: "bafkreidioaehvkf37l7uizznouvylpoviow4hfa3agd3vo5pljj7eggisu",
+    ipfs_question_cid: "bafkreiejgrnn2ae534rxabtib5dceomdrwqzukyqpo6f5p64ealehup5um",
+    arc_tx: "2e27a822c1e67c9bb48def0805e0586ca113e7dd2907b02a0441dd2f91995d4f",
+    reasoning_blocks: [
+      {
+        agent_role: "fundamental_analyst",
+        input_data_summary: "LVMH 10-day price history and company fundamentals.",
+        analysis: "LVMH shows resilient margins despite revenue contraction. Divestment of Marc Jacobs improves focus. FX sensitive; low beta offers ECB policy hedge.",
+        analysis_en: "LVMH maintains strong margins despite revenue headwinds. The Marc Jacobs divestment streamlines the portfolio. High global FX exposure creates volatility, but a low beta of 0.835 provides a defensive buffer against ECB rate sensitivity. ESG remains a core focus for luxury brand equity.",
+        conclusion: "LVMH remains a high-quality luxury play with improved capital allocation following the Marc Jacobs divestment.",
+        confidence: 0.85,
+        language: "en",
+      },
+      {
+        agent_role: "macro_analyst",
+        input_data_summary: "LVMH 10-day price history and fundamentals.",
+        analysis: "High margins and ROE support quality, but revenue contraction and Marc Jacobs divestment signal portfolio pruning. FX/ECB sensitive; ESG risk remains.",
+        analysis_en: "LVMH maintains strong margins and ROE, though revenue contraction suggests cyclical headwinds. The Marc Jacobs divestment reflects strategic portfolio optimization. High sensitivity to EUR strength and ECB rate policy persists, with luxury sector ESG scrutiny remaining a key regulatory risk factor.",
+        conclusion: "LVMH remains a high-quality defensive play despite cyclical revenue pressure and strategic restructuring.",
+        confidence: 0.85,
+        language: "en",
+      },
+    ],
+    metadata: {
+      trace_hash: "0x2e27a822...",
+      ipfs_cid: "bafkreidioaehvkf37l7uizznouvylpoviow4hfa3agd3vo5pljj7eggisu",
+      arc_tx: "2e27a822c1e67c9bb48def0805e0586ca113e7dd2907b02a0441dd2f91995d4f",
+      arc_explorer: "https://testnet.arcscan.app/tx/2e27a822c1e67c9bb48def0805e0586ca113e7dd2907b02a0441dd2f91995d4f",
+    },
+  },
+  {
+    desk: "jp",
+    ticker: "7203.T",
+    status: "ok",
+    direction: "LONG",
+    confidence: 0.85,
+    question: "Will the closing price of Toyota Motor (7203.T) on the Tokyo Stock Exchange be above 3000 JPY on 2026-08-14?",
+    summary: "Toyota Motor shows strong fundamental value with a P/E ratio of 9.5x and strategic growth potential from North American investments. Technical indicators confirm a bottoming out at the 2800 JPY level, supporting a bullish outlook.",
+    price: "3,085.00",
+    ipfs_thesis_cid: "bafkreifoalmzqkd64zul2jrhniwjsl7vfzsgt3konnyf5jwb4cuj5463vq",
+    ipfs_question_cid: "bafkreibjf4moccu6hfiepk2ner7eyuvb5egiblq25rgmsjjxazjoedd2jq",
+    arc_tx: "7b677c2182053313c2a1f811dc3971ac346c4adf232b04485710cd888fc388d9",
+    reasoning_blocks: [
+      {
+        agent_role: "fundamental_analyst",
+        input_data_summary: "トヨタ自動車の直近株価推移と財務・ニュース分析",
+        analysis: "株価は一時2800円台まで調整したが、直近は反発基調。PER約9.5倍と割安感があり、テキサス工場投資など北米戦略が成長を支える。低ベータで安定性が高く、配当利回りも魅力。",
+        analysis_en: "Stock recovered from recent lows; attractive valuation at 9.5x forward PE. US expansion supports long-term growth.",
+        conclusion: "割安なバリュエーションと北米投資による成長期待から、押し目買いを推奨する。",
+        confidence: 0.85,
+        language: "ja",
+      },
+      {
+        agent_role: "technical_analyst",
+        input_data_summary: "トヨタ自動車(7203)の直近10日間の株価推移と財務・ニュース分析。",
+        analysis: "株価は2800円台の底打ちから反発し、直近は3000円台を回復。PER9倍台の割安感とテキサス工場投資による成長期待が下支え。テクニカルには短期的な底入れの形が見え、反転上昇トレンドへの移行が期待される。",
+        analysis_en: "Stock rebounded from 2800 JPY; valuation remains attractive at 9x forward PE. Technicals show a bullish reversal pattern.",
+        conclusion: "短期的な底打ちを確認し3000円台での安定推移から上値追いを試す展開を予想する。",
+        confidence: 0.85,
+        language: "ja",
+      },
+    ],
+    metadata: {
+      trace_hash: "0x7b677c21...",
+      ipfs_cid: "bafkreifoalmzqkd64zul2jrhniwjsl7vfzsgt3konnyf5jwb4cuj5463vq",
+      arc_tx: "7b677c2182053313c2a1f811dc3971ac346c4adf232b04485710cd888fc388d9",
+      arc_explorer: "https://testnet.arcscan.app/tx/7b677c2182053313c2a1f811dc3971ac346c4adf232b04485710cd888fc388d9",
+    },
+  },
+];
+
+export default function handler(req, res) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate=300");
+
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
+  return res.status(200).json(LIVE_DATA);
+}

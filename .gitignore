@@ -67,3 +67,4 @@ prompts/private/
 
 # Text-grad feedback accumulator (personal, not for commit)
 training/feedback_cache.json
+.vercel
