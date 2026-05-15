@@ -23,7 +23,7 @@ export function DesksView({ desks, loading }: DesksViewProps) {
 
   return (
     <div className="flex flex-col lg:flex-row items-start gap-8">
-      <div className="animate-rain" style={{ animationDelay: '0ms' }}>
+      <div className="animate-rain solid-panel rounded-2xl overflow-hidden" style={{ animationDelay: '0ms' }}>
         <RegionSidebar
           desks={desks}
           activeDesk={activeDesk}
@@ -33,11 +33,11 @@ export function DesksView({ desks, loading }: DesksViewProps) {
 
       <div className="flex-1 min-w-0 animate-rain" style={{ animationDelay: '150ms' }}>
         {loading ? (
-          <div className="solid-panel rounded-2xl p-10 shadow-none">
+          <div className="solid-panel rounded-2xl p-10">
             <ThesisSkeleton />
           </div>
         ) : active ? (
-          <div key={active.desk}>
+          <div key={active.desk} className="solid-panel rounded-2xl overflow-hidden">
             <ThesisCard desk={active} />
           </div>
         ) : (
@@ -47,7 +47,7 @@ export function DesksView({ desks, loading }: DesksViewProps) {
         )}
       </div>
 
-      <div className="w-full lg:w-[280px] shrink-0 animate-rain" style={{ animationDelay: '300ms' }}>
+      <div className="w-full lg:w-[280px] shrink-0 animate-rain solid-panel rounded-2xl overflow-hidden" style={{ animationDelay: '300ms' }}>
         <AllWeatherChart />
       </div>
     </div>

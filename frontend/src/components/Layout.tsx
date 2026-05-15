@@ -23,7 +23,7 @@ function QuoteMatrix() {
     return () => clearInterval(i)
   }, [])
   return (
-    <span className="italic text-text-secondary text-xs md:text-sm font-display tracking-wide relative inline-flex items-center justify-center min-w-[340px] h-[24px]">
+    <span className="italic text-text-secondary text-[11px] font-display tracking-wide relative inline-flex items-center justify-center min-w-[420px] h-[24px] whitespace-nowrap">
       <span className={`absolute transition-all duration-1000 ease-in-out ${isGreek ? 'opacity-100 blur-0 scale-100' : 'opacity-0 blur-md scale-95'}`}>
         "Τὸ γὰρ ὅλον παρὰ τὰ μόρια"
       </span>
@@ -119,7 +119,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
           <div>
             <p className="uppercase tracking-[0.25em] text-text-secondary mb-3 text-[10px]">Reference</p>
             <p className="font-light leading-relaxed">
-              <a href="https://agora.thecanteenapp.com/" target="_blank" rel="noopener noreferrer" className="text-text-secondary hover:text-brand-red transition-colors font-medium underline underline-offset-4 decoration-white/10">Agora Agents Hackathon</a><br />
+              <a href="https://agora.thecanteenapp.com/" target="_blank" rel="noopener noreferrer" className="text-brand-red hover:text-text-primary transition-colors font-medium underline underline-offset-4 decoration-white/10">Agora Agents Hackathon</a><br />
               Built on the <a href="https://www.bridgewater.com/research-and-insights/the-all-weather-story" target="_blank" rel="noopener noreferrer" className="text-brand-red hover:text-text-primary transition-colors font-medium drop-shadow-[0_0_8px_rgba(216,43,43,0.4)]">All Weather discipline</a>.
             </p>
           </div>

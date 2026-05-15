@@ -107,7 +107,7 @@ export function RegistryTable({ desks }: RegistryTableProps) {
       </div>
 
       {/* Table */}
-      <div className="glass-panel border border-border/20 rounded-2xl overflow-x-auto shadow-none">
+      <div className="solid-panel rounded-2xl overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="border-b border-white/[0.05] bg-transparent">

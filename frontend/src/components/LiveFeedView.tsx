@@ -89,7 +89,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
       </div>
 
       {/* Feed */}
-      <div className="glass-panel border border-border/20 rounded-2xl overflow-hidden shadow-none">
+      <div className="solid-panel rounded-2xl overflow-hidden">
         {loading ? (
           <>
             <FeedItemSkeleton />
