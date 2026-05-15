@@ -38,7 +38,9 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
   return (
     <div className="min-h-screen flex flex-col bg-bg-primary relative selection:bg-brand-red/20">
       <div className="bg-grain" aria-hidden="true" />
-      <div className="global-grid-bg" aria-hidden="true" />
+      <div className="global-grid-wrapper" aria-hidden="true">
+        <div className="global-grid-bg" />
+      </div>
       
       <header
         className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.03]"
@@ -129,12 +131,12 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
             <div className="flex items-center gap-3">
               <span className="w-px h-4 bg-white/10" />
               <div className="flex items-center gap-2 group">
-                <span className="text-[16px] leading-none opacity-60 group-hover:opacity-100 transition-all duration-500" title="Aristotle">🗿</span>
+                <span className="text-[18px] leading-none grayscale group-hover:grayscale-0 transition-all duration-500" title="Aristotle">🏛️</span>
                 <span className="text-text-secondary tracking-[0.4em] font-medium">Aristotle</span>
               </div>
             </div>
           </div>
-          <span className="absolute right-4 sm:right-8 lg:right-12 xl:block hidden text-text-tertiary tracking-[0.4em]">PROVENANCE LAYER</span>
+          <span className="absolute right-4 sm:right-8 lg:right-12 xl:block hidden text-white tracking-[0.4em] font-medium">PROVENANCE LAYER</span>
         </div>
       </footer>
     </div>
