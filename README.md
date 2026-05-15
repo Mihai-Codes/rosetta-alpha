@@ -29,7 +29,7 @@
 
 Multi-language AI financial research platform. Five regional agents each reason in their native language, then every thesis is hashed, pinned to IPFS, staked with a ROSETTA performance bond, and recorded immutably on **Arc L1** — closing the full accountability loop automatically.
 
-**Live dashboard:** [rosetta-alpha.vercel.app](https://rosetta-alpha.vercel.app)  
+**Live dashboard:** [frontend-nu-three-93.vercel.app](https://frontend-nu-three-93.vercel.app)  
 **Hackathon:** Canteen × Arc — Agora Agents · May 11–25, 2026  
 **Builder:** Mihai Chindris
 
@@ -259,7 +259,7 @@ rosetta-alpha/
 
 ## Acknowledgements
 
-- **Ray Dalio / Bridgewater** — All Weather risk-parity framework (publicly documented; not affiliated)
-- **SylphAI** — AdalFlow multi-agent framework
-- **Arc / Circle** — L1 blockchain and stablecoin infrastructure
-- **TradingAgents** (arXiv 2504.13077) — multi-analyst sub-agent architecture pattern
+- **[Ray Dalio / Bridgewater](https://www.bridgewater.com/research-and-insights/the-all-weather-story)** — All Weather risk-parity framework (publicly documented; not affiliated)
+- **[SylphAI AdalFlow](https://github.com/SylphAI-Inc/AdalFlow)** — The multi-agent reasoning framework powering the back-end.
+- **[Arc L1 / Circle](https://testnet.arcscan.app)** — The blockchain infrastructure for verifiable accountability.
+- **[TradingAgents (arXiv 2412.20138)](https://arxiv.org/pdf/2412.20138)** — Multi-agent LLM financial trading framework pattern.

@@ -2,34 +2,60 @@ import React from 'react'
 
 export function AboutView() {
   return (
-    <div className="max-w-3xl space-y-12">
-      <header>
-        <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-brand-red mb-4">
-          About Rosetta Alpha
+    <div className="max-w-5xl space-y-20 mx-auto px-4">
+      <header className="text-center">
+        <p className="text-[11px] font-medium uppercase tracking-[0.4em] text-brand-red mb-6">
+          Institutional reasoning layer
         </p>
-        <h1 className="font-display text-5xl text-text-primary leading-tight mb-6">
-          A reasoning layer for global macro,<br />
-          <em className="text-brand-red">in every language.</em>
+        <h1 className="font-display text-[clamp(2.5rem,6vw,5rem)] text-text-primary leading-[0.95] mb-10">
+          A Global Macro perspective,<br />
+          <em className="text-brand-red not-italic">in every language.</em>
         </h1>
-        <p className="text-lg text-text-secondary font-light leading-relaxed">
-          Most AI investment platforms speak one language and see one market.
-          Rosetta Alpha runs five regional analysts — each native to their
-          market's culture, language, and data sources — then settles their
-          conviction on-chain as verifiable prediction markets.
-        </p>
+        <div className="grid md:grid-cols-2 gap-12 text-justify">
+          <div className="space-y-4">
+            <h4 className="text-brand-red uppercase tracking-[0.3em] text-[11px] font-bold border-b border-brand-red/20 pb-2">Native Intelligence</h4>
+            <p className="text-text-secondary leading-relaxed font-light text-[15px]">
+              Most AI investment platforms speak one language and see one market. Rosetta Alpha runs five regional analysts — each native to their market's culture, language, and data sources — then settles their conviction on-chain as verifiable prediction markets. This ensures the "local" context remains the primary driver of the agent's thesis.
+            </p>
+          </div>
+          <div className="space-y-4">
+            <h4 className="text-brand-red uppercase tracking-[0.3em] text-[11px] font-bold border-b border-brand-red/20 pb-2">Cognitive Risk Parity</h4>
+            <p className="text-text-secondary leading-relaxed font-light text-[15px]">
+              Ray Dalio's All Weather strategy succeeds because it acknowledges that no single asset class — and no single perspective — captures every economic regime. Rosetta Alpha extends that discipline to the AI layer: a Chinese analyst reads the <span className="font-medium text-text-primary">财报</span> in Mandarin; a Japanese analyst interprets BoJ policy; a US analyst processes 10-Qs.
+            </p>
+          </div>
+        </div>
       </header>
 
-      <section className="space-y-6">
-        <h2 className="font-display text-2xl text-text-primary">Why this exists</h2>
-        <p className="text-text-secondary font-light leading-relaxed">
-          Ray Dalio's All Weather strategy succeeds because it acknowledges that
-          no single asset class — and no single perspective — captures every
-          economic regime. Rosetta Alpha extends that discipline to the AI layer:
-          a Chinese analyst reads the 财报 in Mandarin; a Japanese analyst
-          interprets BoJ policy in Japanese; a US analyst processes 10-Qs.
-          Their conclusions are then merged, hashed, and recorded permanently.
-        </p>
-      </section>
+      <div className="solid-panel rounded-2xl p-10 border-brand-red/20 shadow-[0_0_40px_rgba(216,43,43,0.15)]">
+        <h3 className="font-display text-2xl text-text-primary mb-8 flex items-center justify-center gap-3">
+          <span className="text-brand-red text-3xl">α</span>
+          Balanced Economic Exposure
+        </h3>
+        <div className="max-w-2xl mx-auto text-center mb-10">
+          <p className="text-text-secondary leading-relaxed text-[15px] font-light italic">
+            "Rosetta Alpha implements the All Weather discipline by maintaining structural equilibrium across the four distinct economic environments that drive asset returns."
+          </p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-white/5 border border-white/5 overflow-hidden rounded-lg">
+          <div className="p-8 bg-bg-secondary flex flex-col items-center text-center">
+            <p className="text-[9px] uppercase tracking-[0.3em] text-brand-red mb-3">Rising Growth</p>
+            <p className="text-sm font-medium text-text-primary">Equities &<br/>Commodities</p>
+          </div>
+          <div className="p-8 bg-bg-secondary flex flex-col items-center text-center">
+            <p className="text-[9px] uppercase tracking-[0.3em] text-brand-red mb-3">Falling Growth</p>
+            <p className="text-sm font-medium text-text-primary">Nominal Bonds<br/>& Cash</p>
+          </div>
+          <div className="p-8 bg-bg-secondary flex flex-col items-center text-center">
+            <p className="text-[9px] uppercase tracking-[0.3em] text-brand-red mb-3">Rising Inflation</p>
+            <p className="text-sm font-medium text-text-primary">ILBs &<br/>Commodities</p>
+          </div>
+          <div className="p-8 bg-bg-secondary flex flex-col items-center text-center">
+            <p className="text-[9px] uppercase tracking-[0.3em] text-brand-red mb-3">Falling Inflation</p>
+            <p className="text-sm font-medium text-text-primary">Equities &<br/>Nominal Bonds</p>
+          </div>
+        </div>
+      </div>
 
       <section className="space-y-6">
         <h2 className="font-display text-2xl text-text-primary">The pipeline</h2>
