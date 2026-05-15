@@ -35,8 +35,8 @@ function ConfidenceArc({ value, color }: { value: number; color: string }) {
 export function RegionSidebar({ desks, activeDesk, onSelect }: RegionSidebarProps) {
   return (
     <aside className="w-full lg:w-[260px] shrink-0">
-      <div className="glass-panel border border-border/20 rounded-xl overflow-hidden shadow-none flex flex-col">
-        <div className="px-5 py-5 border-b border-white/[0.05]">
+      <div className="glass-panel border border-border/20 rounded-2xl overflow-hidden shadow-none flex flex-col h-full">
+        <div className="px-5 sm:px-8 py-6 sm:py-7 border-b border-white/[0.05]">
           <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary">
             Regional Desks
           </p>

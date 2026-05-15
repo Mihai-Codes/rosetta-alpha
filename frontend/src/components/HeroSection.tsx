@@ -76,7 +76,7 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
             return (
               <div
                 key={r}
-                className="group flex items-center gap-2 px-5 py-2.5 glass-panel rounded-full border border-white/[0.05] hover:border-brand-red hover:shadow-[0_0_32px_rgba(216,43,43,0.8)] transition-all duration-300 cursor-pointer"
+                className="group flex items-center gap-2 px-5 py-2.5 glass-panel rounded-full border border-white/[0.05] hover:border-brand-red hover:shadow-[0_0_48px_rgba(216,43,43,1)] transition-all duration-300 cursor-pointer"
               >
                 <div className="relative flex h-2 w-2 shrink-0">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-80 shadow-[0_0_12px_rgba(216,43,43,1)]" style={{ backgroundColor: meta.color }} />

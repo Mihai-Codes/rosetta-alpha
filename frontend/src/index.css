@@ -114,8 +114,8 @@
   background-size: 100px 100px;
   animation: hero-grid-drift 20s linear infinite, red-pulse 3.5s ease-in-out infinite;
   pointer-events: none;
-  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 40%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 40%, transparent 100%);
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, transparent 100%);
   z-index: 0;
 }
 
@@ -162,4 +162,18 @@
   white-space: nowrap;
   pointer-events: none;
   animation: fade-up 0.2s ease-out;
+}
+
+.logo-triangle {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: logo-idle-pulse 4s ease-in-out infinite;
+}
+.group:hover .logo-triangle {
+  transform: scale(1.3);
+  filter: drop-shadow(0 0 24px rgba(216,43,43,1)) drop-shadow(0 0 12px rgba(216,43,43,0.8));
+  animation: none;
+}
+@keyframes logo-idle-pulse {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(216,43,43,0.4)); }
+  50% { filter: drop-shadow(0 0 12px rgba(216,43,43,0.8)); }
 }

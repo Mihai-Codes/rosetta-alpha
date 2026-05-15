@@ -58,7 +58,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
   }
 
   return (
-    <article className="glass-panel border border-border/20 rounded-2xl overflow-hidden shadow-none">
+    <article className="glass-panel border border-border/20 rounded-2xl overflow-hidden shadow-none h-full flex flex-col">
       {/* Header */}
       <header
         className="px-8 py-7 border-b border-border"
@@ -208,7 +208,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
       </section>
 
       {/* Footer: provenance */}
-      <footer className="px-8 py-5 border-t border-border flex items-center justify-between gap-4 flex-wrap">
+      <footer className="px-8 py-5 border-t border-border flex items-center justify-between gap-4 flex-wrap mt-auto">
         <div className="flex items-center gap-6 flex-wrap">
           {desk.ipfs_thesis_cid && desk.ipfs_thesis_cid !== 'bafkrei...' && (
             <a

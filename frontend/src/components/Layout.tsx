@@ -23,7 +23,7 @@ function QuoteMatrix() {
     return () => clearInterval(i)
   }, [])
   return (
-    <span className="italic text-text-secondary text-lg md:text-2xl font-display tracking-wide relative inline-flex items-center justify-center min-w-[500px] h-[40px]">
+    <span className="italic text-text-secondary text-2xl md:text-3xl font-display tracking-wide relative inline-flex items-center justify-center min-w-[600px] h-[50px] drop-shadow-[0_0_16px_rgba(255,255,255,0.2)]">
       <span className={`absolute transition-all duration-1000 ease-in-out ${isGreek ? 'opacity-100 blur-0 scale-100 drop-shadow-[0_0_12px_rgba(255,255,255,0.2)]' : 'opacity-0 blur-md scale-95'}`}>
         "Τὸ γὰρ ὅλον παρὰ τὰ μόρια"
       </span>
@@ -90,7 +90,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
               glass-panel border border-white/[0.05] rounded-full
               text-text-primary text-[10px] font-medium uppercase tracking-[0.2em]
               transition-all duration-300
-              hover:border-brand-red/30 hover:shadow-[0_0_32px_rgba(216,43,43,1)]
+              hover:border-brand-red/30 hover:shadow-[0_0_48px_rgba(216,43,43,1)]
             "
             onClick={() => alert('Wallet connection — coming soon')}
           >
@@ -109,10 +109,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
             <p className="font-display text-text-primary text-base mb-2">
               Rosetta <span className="text-brand-red">Alpha</span>
             </p>
-            <div className="flex flex-col gap-1.5 font-light whitespace-nowrap overflow-hidden">
-              <span className="truncate">Multi-language reasoning traces secured on Arc L1.</span>
-              <span className="truncate">An institutional-grade intelligence layer for global macro.</span>
-            </div>
+            <div className="flex flex-col gap-2 font-light text-[12px]"><p className="whitespace-nowrap">Multi-language reasoning traces secured on Arc L1.</p><p className="whitespace-nowrap">An institutional-grade intelligence layer for global macro.</p></div>
           </div>
           <div>
             <p className="uppercase tracking-[0.25em] text-text-secondary mb-3">Stack</p>
