@@ -16,6 +16,27 @@ const ROLE_LABEL: Record<string, string> = {
   Portfolio_Manager: 'Portfolio Manager',
 }
 
+
+function TypewriterText({ text }: { text: string }) {
+  const [displayed, setDisplayed] = React.useState('')
+  
+  React.useEffect(() => {
+    setDisplayed('')
+    let i = 0
+    const interval = setInterval(() => {
+      setDisplayed(text.slice(0, i))
+      i += 3
+      if (i > text.length) {
+        setDisplayed(text)
+        clearInterval(interval)
+      }
+    }, 15)
+    return () => clearInterval(interval)
+  }, [text])
+
+  return <span>{displayed}<span className="inline-block w-1.5 h-3.5 ml-0.5 bg-brand-red animate-pulse align-middle" /></span>
+}
+
 export function ThesisCard({ desk }: ThesisCardProps) {
   const meta = regionMeta(desk.desk)
   const [copied, setCopied] = React.useState(false)
@@ -141,16 +162,12 @@ export function ThesisCard({ desk }: ThesisCardProps) {
 
                   {/* Native-language analysis */}
                   {block.analysis && (
-                    <p className="text-sm text-text-primary font-light leading-relaxed mb-2 text-justify hyphens-auto">
-                      {block.analysis}
-                    </p>
+                    <p className="text-sm text-text-primary font-light leading-relaxed mb-2 text-left pr-4"><TypewriterText text={block.analysis} /></p>
                   )}
 
                   {/* English translation if non-English */}
                   {block.analysis_en && block.analysis_en !== block.analysis && (
-                    <p className="text-sm text-text-secondary font-light leading-relaxed mb-2 pl-4 border-l border-border text-justify hyphens-auto">
-                      {block.analysis_en}
-                    </p>
+                    <p className="text-sm text-text-secondary font-light leading-relaxed mb-2 pl-4 border-l-2 border-border/50 text-left pr-4"><TypewriterText text={block.analysis_en} /></p>
                   )}
 
                   {block.thought_process && (

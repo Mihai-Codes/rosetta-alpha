@@ -79,10 +79,12 @@ export function AllWeatherChart() {
         ))}
       </div>
 
-      <p className="text-[10px] text-text-tertiary leading-relaxed mt-5 pt-5 border-t border-border">
-        Inspired by Bridgewater's All Weather strategy — balanced exposure
-        across four economic regimes: rising/falling growth and inflation.
-      </p>
+      <div className="text-center mt-6 pt-5 border-t border-border/50">
+        <p className="text-[10px] text-text-tertiary leading-relaxed max-w-[220px] mx-auto">
+          Inspired by Bridgewater's <a href="https://www.bridgewater.com/research-and-insights/the-all-weather-story" target="_blank" rel="noopener noreferrer" className="text-brand-red hover:text-text-primary transition-colors font-medium drop-shadow-[0_0_8px_rgba(216,43,43,0.5)]">All Weather strategy</a><br/>
+          balanced exposure across four economic regimes: rising/falling growth and inflation.
+        </p>
+      </div>
     </div>
   )
 }

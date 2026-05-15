@@ -36,7 +36,7 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
       aria-label="Rosetta Alpha hero"
     >
       {/* Subtle Apple-style background grid */}
-      <div className="absolute inset-0 hero-grid-bg" aria-hidden />
+      
       <div className="absolute inset-0 hero-vignette" aria-hidden />
 
       <div className="relative z-10 w-full max-w-[1200px] mx-auto px-4 sm:px-8 lg:px-12 text-center">
@@ -60,9 +60,7 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
 
         <p
           data-reveal-id="subtitle"
-          className={`text-lg md:text-xl text-text-secondary font-light max-w-max mx-auto px-4 whitespace-nowrap overflow-hidden text-ellipsis sm:whitespace-normal leading-relaxed mb-10 transition-all duration-1000 delay-200 ${
-            visible.subtitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-          }`}
+          className={`text-lg md:text-xl text-text-secondary font-light max-w-full mx-auto px-4 whitespace-nowrap overflow-hidden text-ellipsis leading-relaxed mb-10 transition-all duration-1000 delay-200 ${visible.subtitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
         >
           Dalio's All Weather discipline, reimagined for every language.
           Five regional AI analysts. One verifiable thesis.

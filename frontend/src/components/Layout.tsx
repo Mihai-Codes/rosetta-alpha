@@ -16,11 +16,31 @@ const TABS: { id: Tab; label: string }[] = [
   { id: 'about', label: 'About' },
 ]
 
+
+function QuoteMatrix() {
+  const [isGreek, setIsGreek] = React.useState(true)
+  React.useEffect(() => {
+    const i = setInterval(() => setIsGreek(g => !g), 4000)
+    return () => clearInterval(i)
+  }, [])
+  return (
+    <span className="italic text-text-secondary text-sm font-display tracking-wide relative inline-flex items-center justify-center min-w-[360px] h-[24px]">
+      <span className={`absolute transition-all duration-1000 ${isGreek ? 'opacity-100 blur-0 scale-100' : 'opacity-0 blur-md scale-95'}`}>
+        "Τὸ γὰρ ὅλον παρὰ τὰ μόρια"
+      </span>
+      <span className={`absolute transition-all duration-1000 ${!isGreek ? 'opacity-100 blur-0 scale-100 text-brand-red drop-shadow-[0_0_8px_rgba(216,43,43,0.8)]' : 'opacity-0 blur-md scale-105'}`}>
+        "The whole is something besides the parts"
+      </span>
+    </span>
+  )
+}
+
 export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
   return (
     <div className="min-h-screen flex flex-col bg-bg-primary relative selection:bg-brand-red/20">
       {/* Anthropic-style subtle grain */}
       <div className="bg-grain" aria-hidden="true" />
+      <div className="global-grid-bg" aria-hidden="true" />
       {/* Always-visible sticky nav */}
       <header
         className="fixed top-0 left-0 right-0 z-50"
@@ -41,7 +61,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
             <span className="font-display text-2xl text-text-primary leading-none transition-colors">
               R
             </span>
-            <span className="font-display text-2xl text-brand-red leading-none transition-all duration-500 group-hover:scale-110 group-hover:drop-shadow-[0_0_16px_rgba(216,43,43,1)] origin-bottom">
+            <span className="font-display text-2xl text-brand-red leading-none transition-all duration-300 group-hover:scale-125 group-hover:drop-shadow-[0_0_20px_rgba(216,43,43,1)] origin-bottom group-hover:animate-pulse">
               △
             </span>
             <span className="hidden sm:inline-block ml-2 text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary">
@@ -58,18 +78,10 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
                   {i > 0 && <span aria-hidden className="w-px h-3.5 bg-border mx-1" />}
                   <button
                     onClick={() => onTabChange(tab.id)}
-                    className={`
-                      relative px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] transition-colors duration-200
-                      ${isActive ? 'text-brand-red' : 'text-text-secondary hover:text-text-primary'}
-                    `}
+                    className={`nav-link px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] transition-colors duration-200 ${isActive ? \'text-brand-red\' : \'text-text-secondary hover:text-text-primary\'}`} data-active={isActive}
                   >
                     {tab.label}
-                    <span
-                      className={`absolute left-4 right-4 -bottom-px h-px transition-all duration-300 ${
-                        isActive ? 'bg-brand-red opacity-100' : 'bg-brand-red opacity-0'
-                      }`}
-                    />
-                  </button>
+                    </button>
                 </React.Fragment>
               )
             })}
@@ -101,10 +113,10 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
             <p className="font-display text-text-primary text-base mb-2">
               Rosetta <span className="text-brand-red">Alpha</span>
             </p>
-            <p className="font-light leading-relaxed max-w-[240px]">
-              Multi-language reasoning traces secured on Arc L1.<br className="hidden sm:block" />
-              An institutional-grade intelligence layer for global macro.
-            </p>
+            <div className="flex flex-col gap-1.5 font-light whitespace-nowrap overflow-hidden">
+              <span className="truncate">Multi-language reasoning traces secured on Arc L1.</span>
+              <span className="truncate">An institutional-grade intelligence layer for global macro.</span>
+            </div>
           </div>
           <div>
             <p className="uppercase tracking-[0.25em] text-text-secondary mb-3">Stack</p>
@@ -118,14 +130,15 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
           <div>
             <p className="uppercase tracking-[0.25em] text-text-secondary mb-3">Built For</p>
             <p className="font-light leading-relaxed">
-              <a href="https://agora.thecanteenapp.com/" target="_blank" rel="noopener noreferrer" className="text-text-secondary hover:text-brand-red transition-colors font-medium">Agora Agents Hackathon</a> · 2026<br />
-              Inspired by the <a href="https://www.bridgewater.com/research-and-insights/the-all-weather-story" target="_blank" rel="noopener noreferrer" className="text-text-secondary hover:text-brand-red transition-colors font-medium">All Weather discipline</a> of Bridgewater Associates.
+              <a href="https://agora.thecanteenapp.com/" target="_blank" rel="noopener noreferrer" className="text-brand-red hover:text-text-primary transition-colors font-medium drop-shadow-[0_0_8px_rgba(216,43,43,0.4)]">Agora Agents Hackathon</a><br />
+              Inspired by the <a href="https://www.bridgewater.com/research-and-insights/the-all-weather-story" target="_blank" rel="noopener noreferrer" className="text-brand-red hover:text-text-primary transition-colors font-medium drop-shadow-[0_0_8px_rgba(216,43,43,0.4)]">All Weather discipline</a> of Bridgewater Associates.
             </p>
           </div>
         </div>
         <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 mt-12 pt-8 border-t border-white/[0.02] flex items-center justify-between flex-wrap gap-4 text-[10px] text-text-tertiary uppercase tracking-[0.25em]">
           <span>© 2026 Rosetta Alpha</span>
-          <span className="italic text-text-secondary">"Τὸ γὰρ ὅλον παρὰ τὰ μόρια" <span className="text-text-tertiary normal-case tracking-normal ml-1">(The whole is something besides the parts)</span> — Aristotle</span>
+          <QuoteMatrix />
+          <span>Aristotle</span>
         </div>
       </footer>
     </div>
