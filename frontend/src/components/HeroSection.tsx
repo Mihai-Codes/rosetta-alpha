@@ -58,7 +58,7 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
 
         <p
           data-reveal-id="subtitle"
-          className={`text-lg md:text-xl text-text-secondary font-light max-w-full w-full mx-auto px-4 whitespace-nowrap overflow-hidden text-ellipsis mb-12 transition-all duration-1000 delay-150 ${
+          className={`text-[clamp(11px,1.5vw,1.125rem)] text-text-secondary font-light w-full max-w-none mx-auto px-4 whitespace-nowrap overflow-hidden text-ellipsis mb-12 transition-all duration-1000 delay-150 ${
             visible.subtitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
@@ -76,10 +76,10 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
             return (
               <div
                 key={r}
-                className="group flex items-center gap-2 px-5 py-2.5 glass-panel rounded-full border border-white/[0.05] hover:border-brand-red hover:shadow-[0_0_20px_rgba(216,43,43,0.6)] transition-all duration-300 cursor-default"
+                className="group flex items-center gap-2 px-5 py-2.5 glass-panel rounded-full border border-white/[0.05] hover:border-brand-red hover:shadow-[0_0_32px_rgba(216,43,43,0.8)] transition-all duration-300 cursor-pointer"
               >
                 <div className="relative flex h-2 w-2 shrink-0">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-80" style={{ backgroundColor: meta.color, boxShadow: `0 0 12px ${meta.color}` }} />
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-80 shadow-[0_0_12px_rgba(216,43,43,1)]" style={{ backgroundColor: meta.color }} />
                   <span className="relative inline-flex rounded-full h-2 w-2" style={{ backgroundColor: meta.color }} />
                 </div>
                 <span className="text-sm leading-none text-text-primary group-hover:scale-110 transition-transform">{meta.flag}</span>

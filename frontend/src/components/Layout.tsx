@@ -19,15 +19,15 @@ const TABS: { id: Tab; label: string }[] = [
 function QuoteMatrix() {
   const [isGreek, setIsGreek] = React.useState(true)
   React.useEffect(() => {
-    const i = setInterval(() => setIsGreek(g => !g), 4000)
+    const i = setInterval(() => setIsGreek(g => !g), 5000)
     return () => clearInterval(i)
   }, [])
   return (
     <span className="italic text-text-secondary text-lg md:text-2xl font-display tracking-wide relative inline-flex items-center justify-center min-w-[500px] h-[40px]">
-      <span className={`absolute transition-all duration-1000 ${isGreek ? 'opacity-100 blur-0 scale-100' : 'opacity-0 blur-md scale-95'}`}>
+      <span className={`absolute transition-all duration-1000 ease-in-out ${isGreek ? 'opacity-100 blur-0 scale-100 drop-shadow-[0_0_12px_rgba(255,255,255,0.2)]' : 'opacity-0 blur-md scale-95'}`}>
         "Τὸ γὰρ ὅλον παρὰ τὰ μόρια"
       </span>
-      <span className={`absolute transition-all duration-1000 ${!isGreek ? 'opacity-100 blur-0 scale-100 text-brand-red drop-shadow-[0_0_8px_rgba(216,43,43,0.8)]' : 'opacity-0 blur-md scale-105'}`}>
+      <span className={`absolute transition-all duration-1000 ease-in-out ${!isGreek ? 'opacity-100 blur-0 scale-100 text-brand-red drop-shadow-[0_0_16px_rgba(216,43,43,0.8)]' : 'opacity-0 blur-md scale-105'}`}>
         "The whole is something besides the parts"
       </span>
     </span>
@@ -55,10 +55,10 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
             className="flex items-baseline gap-1 group"
             aria-label="Rosetta Alpha home"
           >
-            <span className="font-display text-2xl text-text-primary leading-none transition-colors">
+            <span className="font-display text-2xl text-text-primary leading-none transition-colors group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]">
               R
             </span>
-            <span className="font-display text-2xl text-brand-red leading-none transition-all duration-300 group-hover:scale-125 group-hover:drop-shadow-[0_0_32px_rgba(216,43,43,1)] origin-bottom animate-pulse">
+            <span className="font-display text-2xl text-brand-red leading-none transition-all duration-500 group-hover:scale-125 group-hover:drop-shadow-[0_0_32px_rgba(216,43,43,1)] origin-bottom group-hover:animate-pulse">
               △
             </span>
             <span className="hidden sm:inline-block ml-2 text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary">
@@ -74,7 +74,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
                   {i > 0 && <span aria-hidden className="w-px h-3.5 bg-border mx-1" />}
                   <button
                     onClick={() => onTabChange(tab.id)}
-                    className={`nav-link px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] transition-colors duration-200 ${isActive ? 'text-brand-red' : 'text-text-secondary hover:text-text-primary'}`} 
+                    className={`nav-link px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] transition-all duration-300 ${isActive ? 'text-brand-red drop-shadow-[0_0_8px_rgba(216,43,43,0.8)]' : 'text-text-secondary hover:text-brand-red hover:drop-shadow-[0_0_12px_rgba(216,43,43,1)]'}`} 
                     data-active={isActive}
                   >
                     {tab.label}
@@ -94,7 +94,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
             "
             onClick={() => alert('Wallet connection — coming soon')}
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-positive red-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-brand-red red-pulse" />
             <span className="hidden sm:inline">Connect Wallet</span>
             <span className="sm:hidden">Wallet</span>
           </button>
@@ -109,9 +109,9 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
             <p className="font-display text-text-primary text-base mb-2">
               Rosetta <span className="text-brand-red">Alpha</span>
             </p>
-            <div className="flex flex-col gap-1.5 font-light whitespace-nowrap">
-              <span>Multi-language reasoning traces secured on Arc L1.</span>
-              <span>An institutional-grade intelligence layer for global macro.</span>
+            <div className="flex flex-col gap-1.5 font-light whitespace-nowrap overflow-hidden">
+              <span className="truncate">Multi-language reasoning traces secured on Arc L1.</span>
+              <span className="truncate">An institutional-grade intelligence layer for global macro.</span>
             </div>
           </div>
           <div>
