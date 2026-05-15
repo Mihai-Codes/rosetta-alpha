@@ -38,9 +38,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
   return (
     <div className="min-h-screen flex flex-col bg-bg-primary relative selection:bg-brand-red/20">
       <div className="bg-grain" aria-hidden="true" />
-      <div className="global-grid-wrapper" aria-hidden="true">
-        <div className="global-grid-bg" />
-      </div>
+      <div className="global-grid-bg" aria-hidden="true" />
       
       <header
         className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.03]"
@@ -131,7 +129,9 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
             <div className="flex items-center gap-3">
               <span className="w-px h-4 bg-white/10" />
               <div className="flex items-center gap-2 group">
-                <span className="text-[18px] leading-none grayscale group-hover:grayscale-0 transition-all duration-500" title="Aristotle">🏛️</span>
+                <svg viewBox="0 0 24 24" className="w-5 h-5 text-brand-red opacity-80 group-hover:opacity-100 transition-opacity" fill="currentColor" title="Aristotle">
+                  <path d="M12 2C9.24 2 7 4.24 7 7c0 1.95 1.12 3.63 2.76 4.47l-.14 3.19C8.36 15.19 7.41 16 6.3 16H6v4h12v-4h-.3c-1.11 0-2.06-.81-2.32-1.84l-.14-3.19C16.88 10.63 18 8.95 18 7c0-2.76-2.24-5-5-5z" />
+                </svg>
                 <span className="text-text-secondary tracking-[0.4em] font-medium">Aristotle</span>
               </div>
             </div>

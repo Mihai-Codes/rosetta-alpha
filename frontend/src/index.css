@@ -84,28 +84,22 @@
 
 /* Fixed Global Grid - Unified Top-to-Bottom Rain Effect */
 @keyframes grid-rain {
-  0% { transform: translateY(-100px); }
-  100% { transform: translateY(0); }
-}
-
-.global-grid-wrapper {
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  z-index: 0; pointer-events: none;
-  /* The wrapper is stationary and applies the mask over the entire page */
-  mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 15%, rgba(0,0,0,1) 85%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 15%, rgba(0,0,0,1) 85%, transparent 100%);
+  0% { background-position: 50px 50px, 0 0, 0 0; }
+  100% { background-position: 50px 150px, 0 100px, 0 100px; }
 }
 
 .global-grid-bg {
-  position: absolute; top: -100px; left: 0; right: 0; bottom: -100px;
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
   background-image: 
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 30 C 42 30 38 38 43 45 C 40 50 35 60 50 65 C 65 60 60 50 57 45 C 62 38 58 30 50 30 Z' fill='rgba(216,43,43,0.06)'/%3E%3C/svg%3E"),
-    linear-gradient(rgba(216, 43, 43, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(216, 43, 43, 0.1) 1px, transparent 1px);
-  background-size: 100px 100px;
-  background-position: center center;
-  /* The grid inside the wrapper falls, creating the perfect unbroken effect */
-  animation: grid-rain 15s linear infinite;
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M40 30 Q50 15 60 30 Q65 45 55 60 Q50 70 45 60 Q35 45 40 30' fill='none' stroke='rgba(216,43,43,0.1)' stroke-width='1.5'/%3E%3C/svg%3E"),
+    linear-gradient(rgba(216, 43, 43, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(216, 43, 43, 0.08) 1px, transparent 1px);
+  background-size: 100px 100px, 100px 100px, 100px 100px;
+  animation: grid-rain 12s linear infinite;
+  pointer-events: none;
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 85%, transparent 100%);
+  z-index: 0;
 }
 
 .bg-grain {
