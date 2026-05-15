@@ -52,7 +52,7 @@ export function HeroSection({ latestHash, onEnter }: HeroSectionProps) {
 
         <h1
           data-reveal-id="headline"
-          className={`font-display text-display font-normal text-text-primary leading-[0.95] mb-6 transition-all duration-1000 ${
+          className={`font-display text-[clamp(4rem,10vw,8rem)] font-normal text-text-primary leading-[0.95] mb-6 transition-all duration-1000 ${
             visible.headline ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
@@ -97,7 +97,7 @@ export function HeroSection({ latestHash, onEnter }: HeroSectionProps) {
         {latestHash && (
           <div
             data-reveal-id="ticker"
-            className={`inline-flex items-center gap-3 px-5 py-2.5 border border-border/40 mb-16 transition-all duration-1000 delay-500 ${
+            className={`flex items-center justify-center gap-3 w-fit mx-auto px-5 py-2.5 border border-border/40 mb-10 transition-all duration-1000 delay-500 ${
               visible.ticker ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             }`}
           >
@@ -110,11 +110,12 @@ export function HeroSection({ latestHash, onEnter }: HeroSectionProps) {
         )}
 
         {/* Enter CTA */}
-        <button
-          data-reveal-id="cta"
-          onClick={onEnter}
-          className={`
-            group inline-flex items-center gap-3 px-8 py-3
+        <div className="flex justify-center">
+          <button
+            data-reveal-id="cta"
+            onClick={onEnter}
+            className={`
+              group inline-flex items-center gap-3 px-8 py-3
             border border-gold text-gold
             text-[12px] font-medium uppercase tracking-[0.25em]
             transition-all duration-300
@@ -124,8 +125,9 @@ export function HeroSection({ latestHash, onEnter }: HeroSectionProps) {
           `}
         >
           Enter Terminal
-          <span className="transition-transform group-hover:translate-x-1">→</span>
-        </button>
+            <span className="transition-transform group-hover:translate-x-1">→</span>
+          </button>
+        </div>
 
         {/* Scroll hint */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50">
