@@ -27,33 +27,28 @@ export function AboutView() {
         </div>
       </header>
 
-      <div className="solid-panel rounded-2xl p-10 border-brand-red/20 shadow-[0_0_40px_rgba(216,43,43,0.15)]">
-        <h3 className="font-display text-2xl text-text-primary mb-8 flex items-center justify-center gap-3">
-          <span className="text-brand-red text-3xl">α</span>
+      <div className="solid-panel rounded-3xl p-12 mb-16 border-white/[0.03] shadow-[0_30px_60px_-12px_rgba(0,0,0,0.5)]">
+        <h3 className="font-display text-3xl text-text-primary mb-10 flex items-center justify-center gap-4">
+          <Layers className="text-brand-red w-8 h-8" />
           Balanced Economic Exposure
         </h3>
-        <div className="max-w-2xl mx-auto text-center mb-10">
-          <p className="text-text-secondary leading-relaxed text-[15px] font-light italic">
-            "Rosetta Alpha implements the All Weather discipline by maintaining structural equilibrium across the four distinct economic environments that drive asset returns."
+        <div className="max-w-3xl mx-auto text-center mb-12">
+          <p className="text-text-secondary leading-relaxed text-lg font-light italic">
+            Rosetta Alpha implements the All Weather discipline by maintaining structural equilibrium across the four distinct economic environments that drive asset returns.
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-white/5 border border-white/5 overflow-hidden rounded-lg">
-          <div className="p-8 bg-bg-secondary flex flex-col items-center text-center">
-            <p className="text-[9px] uppercase tracking-[0.3em] text-brand-red mb-3">Rising Growth</p>
-            <p className="text-sm font-medium text-text-primary">Equities &<br/>Commodities</p>
-          </div>
-          <div className="p-8 bg-bg-secondary flex flex-col items-center text-center">
-            <p className="text-[9px] uppercase tracking-[0.3em] text-brand-red mb-3">Falling Growth</p>
-            <p className="text-sm font-medium text-text-primary">Nominal Bonds<br/>& Cash</p>
-          </div>
-          <div className="p-8 bg-bg-secondary flex flex-col items-center text-center">
-            <p className="text-[9px] uppercase tracking-[0.3em] text-brand-red mb-3">Rising Inflation</p>
-            <p className="text-sm font-medium text-text-primary">ILBs &<br/>Commodities</p>
-          </div>
-          <div className="p-8 bg-bg-secondary flex flex-col items-center text-center">
-            <p className="text-[9px] uppercase tracking-[0.3em] text-brand-red mb-3">Falling Inflation</p>
-            <p className="text-sm font-medium text-text-primary">Equities &<br/>Nominal Bonds</p>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { label: 'Rising Growth', assets: 'Equities &\nCommodities' },
+            { label: 'Falling Growth', assets: 'Nominal Bonds\n& Cash' },
+            { label: 'Rising Inflation', assets: 'ILBs &\nCommodities' },
+            { label: 'Falling Inflation', assets: 'Equities &\nNominal Bonds' }
+          ].map((item, i) => (
+            <div key={i} className="group p-8 bg-white/[0.01] border border-white/[0.03] rounded-xl flex flex-col items-center text-center transition-all duration-500 hover:bg-brand-red/[0.03] hover:border-brand-red/20">
+              <p className="text-[10px] uppercase tracking-[0.4em] text-brand-red/60 mb-4 group-hover:text-brand-red transition-colors">{item.label}</p>
+              <p className="text-[15px] font-medium text-text-primary leading-tight whitespace-pre-line">{item.assets}</p>
+            </div>
+          ))}
         </div>
       </div>
 
