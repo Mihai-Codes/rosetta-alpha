@@ -6,7 +6,6 @@ interface LayoutProps {
   children: React.ReactNode
   activeTab: Tab
   onTabChange: (tab: Tab | 'home') => void
-  navVisible: boolean
 }
 
 const TABS: { id: Tab; label: string }[] = [
@@ -16,19 +15,13 @@ const TABS: { id: Tab; label: string }[] = [
   { id: 'about', label: 'About' },
 ]
 
-export function Layout({ children, activeTab, onTabChange, navVisible }: LayoutProps) {
+export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
   return (
-    <div className="min-h-screen flex flex-col bg-bg-primary relative selection:bg-gold/20">
+    <div className="min-h-screen flex flex-col bg-bg-primary relative selection:bg-brand-red/20">
       {/* 2026 Spatial Noise Texture */}
-      {/* Sticky nav — appears after hero scroll */}
+      {/* Always-visible sticky nav */}
       <header
-        className={`
-          fixed top-0 left-0 right-0 z-50 transition-all duration-500
-          ${navVisible
-            ? 'translate-y-0 opacity-100'
-            : '-translate-y-full opacity-0 pointer-events-none'
-          }
-        `}
+        className="fixed top-0 left-0 right-0 z-50"
         style={{
           background: 'rgba(10, 10, 15, 0.4)',
           backdropFilter: 'saturate(180%) blur(48px)',
@@ -65,13 +58,13 @@ export function Layout({ children, activeTab, onTabChange, navVisible }: LayoutP
                     onClick={() => onTabChange(tab.id)}
                     className={`
                       relative px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] transition-colors duration-200
-                      ${isActive ? 'text-gold' : 'text-text-secondary hover:text-text-primary'}
+                      ${isActive ? 'text-brand-red' : 'text-text-secondary hover:text-text-primary'}
                     `}
                   >
                     {tab.label}
                     <span
                       className={`absolute left-4 right-4 -bottom-px h-px transition-all duration-300 ${
-                        isActive ? 'bg-gold opacity-100' : 'bg-gold opacity-0'
+                        isActive ? 'bg-brand-red opacity-100' : 'bg-brand-red opacity-0'
                       }`}
                     />
                   </button>
@@ -87,7 +80,7 @@ export function Layout({ children, activeTab, onTabChange, navVisible }: LayoutP
               glass-panel border border-white/[0.05] rounded-full
               text-text-primary text-[10px] font-medium uppercase tracking-[0.2em]
               transition-all duration-300
-              hover:border-gold/30 hover:shadow-glow-gold
+              hover:border-brand-red/30 hover:shadow-glow-red
             "
             onClick={() => alert('Wallet connection — coming soon')}
           >
@@ -104,7 +97,7 @@ export function Layout({ children, activeTab, onTabChange, navVisible }: LayoutP
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8 text-[11px] text-text-tertiary">
           <div>
             <p className="font-display text-text-primary text-base mb-2">
-              Rosetta <span className="text-gold">Alpha</span>
+              Rosetta <span className="text-brand-red">Alpha</span>
             </p>
             <p className="font-light leading-relaxed">
               Multi-language reasoning traces secured on Arc L1.

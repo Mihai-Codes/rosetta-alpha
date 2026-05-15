@@ -57,7 +57,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                 onClick={() => setRegionFilter(r)}
                 className={`px-3 py-1 text-[10px] font-medium uppercase tracking-[0.18em] border transition-all ${
                   isActive
-                    ? 'border-gold text-gold'
+                    ? 'border-brand-red text-brand-red'
                     : 'border-border text-text-secondary hover:text-text-primary hover:border-border-strong'
                 }`}
                 style={isActive && meta ? { borderColor: meta.color, color: meta.color } : undefined}
@@ -78,7 +78,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
               onClick={() => setDirectionFilter(d)}
               className={`px-3 py-1 text-[10px] font-medium uppercase tracking-[0.18em] border transition-all ${
                 directionFilter === d
-                  ? 'border-gold text-gold'
+                  ? 'border-brand-red text-brand-red'
                   : 'border-border text-text-secondary hover:text-text-primary'
               }`}
             >
@@ -162,7 +162,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                     <p className="text-[9px] uppercase tracking-[0.25em] text-text-tertiary">
                       Arc Tx
                     </p>
-                    <p className="font-mono text-[10px] text-gold">
+                    <p className="font-mono text-[10px] text-brand-red">
                       {truncateHash(e.arc_tx, 6, 4)}
                     </p>
                   </div>

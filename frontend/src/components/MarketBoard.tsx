@@ -58,7 +58,7 @@ export function MarketBoard({ desks }: { desks: DeskProps[] }) {
                         href={`https://testnet.arcscan.app/tx/${m.arc_tx}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex items-center gap-1.5 font-mono text-[10px] text-primary/60 hover:text-primary transition-colors"
+                        className="flex items-center gap-1.5 font-mono text-[10px] text-brand-red/60 hover:text-brand-red transition-colors"
                       >
                         {m.arc_tx.slice(0, 10)}…{m.arc_tx.slice(-6)}
                         <ExternalLink className="w-3 h-3" />

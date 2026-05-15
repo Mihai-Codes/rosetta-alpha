@@ -71,7 +71,7 @@ export function RegistryTable({ desks }: RegistryTableProps) {
       className="flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-[0.2em] text-text-tertiary hover:text-text-primary transition-colors"
     >
       {label}
-      <ArrowUpDown className={`w-3 h-3 ${sortKey === k ? 'text-gold' : 'opacity-40'}`} />
+      <ArrowUpDown className={`w-3 h-3 ${sortKey === k ? 'text-brand-red' : 'opacity-40'}`} />
     </button>
   )
 
@@ -89,7 +89,7 @@ export function RegistryTable({ desks }: RegistryTableProps) {
             className="
               w-full pl-9 pr-3 py-2 bg-bg-secondary border border-border
               text-sm text-text-primary placeholder:text-text-tertiary
-              focus:border-gold focus:outline-none transition-colors
+              focus:border-brand-red focus:outline-none transition-colors
             "
           />
         </div>
@@ -98,7 +98,7 @@ export function RegistryTable({ desks }: RegistryTableProps) {
           className="
             flex items-center gap-2 px-4 py-2 border border-border
             text-[10px] font-medium uppercase tracking-[0.2em] text-text-secondary
-            hover:border-gold hover:text-gold transition-colors
+            hover:border-brand-red hover:text-brand-red transition-colors
           "
         >
           <Download className="w-3 h-3" />
@@ -177,7 +177,7 @@ export function RegistryTable({ desks }: RegistryTableProps) {
                           href={`https://dweb.link/ipfs/${e.ipfs_thesis_cid}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1 font-mono text-[10px] text-text-secondary hover:text-gold transition-colors"
+                          className="flex items-center gap-1 font-mono text-[10px] text-text-secondary hover:text-brand-red transition-colors"
                         >
                           <span className="text-text-tertiary uppercase tracking-wider">IPFS</span>
                           {truncateHash(e.ipfs_thesis_cid, 6, 4)}
@@ -187,7 +187,7 @@ export function RegistryTable({ desks }: RegistryTableProps) {
                           href={`https://testnet.arcscan.app/tx/${e.arc_tx}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1 font-mono text-[10px] text-text-secondary hover:text-gold transition-colors"
+                          className="flex items-center gap-1 font-mono text-[10px] text-text-secondary hover:text-brand-red transition-colors"
                         >
                           <span className="text-text-tertiary uppercase tracking-wider">Arc</span>
                           {truncateHash(e.arc_tx, 6, 4)}

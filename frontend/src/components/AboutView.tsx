@@ -4,12 +4,12 @@ export function AboutView() {
   return (
     <div className="max-w-3xl space-y-12">
       <header>
-        <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-gold mb-4">
+        <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-brand-red mb-4">
           About Rosetta Alpha
         </p>
         <h1 className="font-display text-5xl text-text-primary leading-tight mb-6">
           A reasoning layer for global macro,<br />
-          <em className="text-gold">in every language.</em>
+          <em className="text-brand-red">in every language.</em>
         </h1>
         <p className="text-lg text-text-secondary font-light leading-relaxed">
           Most AI investment platforms speak one language and see one market.
@@ -43,7 +43,7 @@ export function AboutView() {
           ].map(step => (
             <li key={step.n} className="relative">
               <span
-                className="absolute -left-[33px] top-0 w-6 h-6 flex items-center justify-center font-mono text-[10px] bg-bg-primary border border-gold/60 text-gold"
+                className="absolute -left-[33px] top-0 w-6 h-6 flex items-center justify-center font-mono text-[10px] bg-bg-primary border border-brand-red/60 text-brand-red"
               >
                 {step.n}
               </span>

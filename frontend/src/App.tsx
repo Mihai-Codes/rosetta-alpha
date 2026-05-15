@@ -148,7 +148,6 @@ function App() {
   const [activeTab, setActiveTab] = React.useState<Tab>('desks')
   const [data, setData] = React.useState<DeskProps[]>(SEED_DATA)
   const [loading, setLoading] = React.useState(true)
-  const [showHero, setShowHero] = React.useState(true)
   const mainRef = React.useRef<HTMLDivElement>(null)
 
   React.useEffect(() => {
@@ -177,45 +176,41 @@ function App() {
     return () => clearInterval(interval)
   }, [])
 
-  const handleEnter = () => {
-    setShowHero(false)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+  const handleScrollDown = () => {
+    if (mainRef.current) {
+      // Scroll to the content, offsetting for the fixed header
+      const y = mainRef.current.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
   }
 
   const handleTabChange = (tab: Tab | 'home') => {
-    if (tab === 'home') {
-      setShowHero(true)
-      setActiveTab('desks')
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    } else {
-      setActiveTab(tab)
-      if (showHero) setShowHero(false)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
+    setActiveTab(tab === 'home' ? 'desks' : tab)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const latestHash = data[0]?.arc_tx
 
   return (
-    <Layout activeTab={activeTab} onTabChange={handleTabChange} navVisible={!showHero}>
-      {showHero && <HeroSection latestHash={latestHash} onEnter={handleEnter} />}
+    <Layout activeTab={activeTab} onTabChange={handleTabChange}>
+      {activeTab === 'desks' && <HeroSection latestHash={latestHash} onScrollDown={handleScrollDown} />}
 
-      <div ref={mainRef} className="max-w-7xl mx-auto px-6 pt-24 pb-16">
+      <div ref={mainRef} className="max-w-7xl mx-auto px-6 pt-12 pb-16">
         {/* Section header */}
-        <div className="mb-10">
-          <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-gold mb-3">
-            {activeTab === 'desks' && 'Regional Intelligence'}
-            {activeTab === 'feed' && 'Real-Time Stream'}
-            {activeTab === 'registry' && 'On-Chain Provenance'}
-            {activeTab === 'about' && 'About'}
-          </p>
-          <h1 className="font-display text-4xl md:text-5xl text-text-primary leading-tight">
-            {activeTab === 'desks' && (<>Five desks. Five languages.<br /><em className="text-gold">One verifiable thesis.</em></>)}
-            {activeTab === 'feed' && (<>The reasoning, <em className="text-gold">as it happens.</em></>)}
-            {activeTab === 'registry' && (<>Every thesis, <em className="text-gold">permanently recorded.</em></>)}
-            {activeTab === 'about' && 'About Rosetta Alpha'}
-          </h1>
-        </div>
+        {activeTab !== 'desks' && (
+          <div className="mb-10">
+            <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-brand-red mb-3">
+              {activeTab === 'feed' && 'Real-Time Stream'}
+              {activeTab === 'registry' && 'On-Chain Provenance'}
+              {activeTab === 'about' && 'About'}
+            </p>
+            <h1 className="font-display text-4xl md:text-5xl text-text-primary leading-tight">
+              {activeTab === 'feed' && (<>The reasoning, <em className="text-brand-red">as it happens.</em></>)}
+              {activeTab === 'registry' && (<>Every thesis, <em className="text-brand-red">permanently recorded.</em></>)}
+              {activeTab === 'about' && 'About Rosetta Alpha'}
+            </h1>
+          </div>
+        )}
 
         <div key={activeTab} className="fade-up">
           {activeTab === 'desks' && <DesksView desks={data} loading={loading} />}

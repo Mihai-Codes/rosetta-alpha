@@ -97,11 +97,11 @@ export function PortfolioView({ desks }: { desks: DeskProps[] }) {
           <div>
             <div className="flex justify-between text-[9px] font-medium uppercase tracking-widest mb-2">
               <span className="text-muted-foreground/40">Avg Confidence</span>
-              <span className="text-primary/80">{(avgConfidence * 100).toFixed(0)}%</span>
+              <span className="text-brand-red/80">{(avgConfidence * 100).toFixed(0)}%</span>
             </div>
             <div className="h-px bg-border overflow-hidden">
               <div
-                className="h-full bg-primary/60 transition-all duration-1000"
+                className="h-full bg-brand-red/60 transition-all duration-1000"
                 style={{ width: `${avgConfidence * 100}%` }}
               />
             </div>

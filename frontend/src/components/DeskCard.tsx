@@ -65,10 +65,10 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
       <motion.article
         whileHover={{ y: -3, transition: { duration: 0.18 } }}
         onClick={() => setShowExplorer(true)}
-        className="group relative glass-panel border border-border/20 hover:border-primary/30 shadow-none hover:shadow-glow-gold transition-all duration-500 cursor-pointer flex flex-col overflow-hidden rounded-xl"
+        className="group relative glass-panel border border-border/20 hover:border-brand-red/30 shadow-none hover:shadow-glow-red transition-all duration-500 cursor-pointer flex flex-col overflow-hidden rounded-xl"
       >
         {/* Gold left accent on hover */}
-        <div className="absolute left-0 top-0 w-px h-full bg-primary/0 group-hover:bg-primary/50 transition-colors duration-300" />
+        <div className="absolute left-0 top-0 w-px h-full bg-brand-red/0 group-hover:bg-brand-red/50 transition-colors duration-300" />
 
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b border-border/50 flex items-start justify-between gap-4">
@@ -76,7 +76,7 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
             <p className="text-[9px] font-medium uppercase tracking-[0.25em] text-muted-foreground/60 mb-1">
               {REGION_LABEL[desk.desk.toLowerCase()] ?? desk.desk} Desk
             </p>
-            <h3 className="font-display text-3xl font-light tracking-tight text-foreground group-hover:text-primary transition-colors duration-200">
+            <h3 className="font-display text-3xl font-light tracking-tight text-foreground group-hover:text-brand-red transition-colors duration-200">
               {desk.ticker}
             </h3>
           </div>
@@ -113,7 +113,7 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
 
           {/* Thesis */}
           {desk.summary && (
-            <p className="text-sm text-muted-foreground font-light leading-relaxed border-l border-primary/20 pl-4">
+            <p className="text-sm text-muted-foreground font-light leading-relaxed border-l border-brand-red/20 pl-4">
               {desk.summary}
             </p>
           )}
@@ -138,7 +138,7 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
                 target="_blank"
                 rel="noreferrer"
                 onClick={e => e.stopPropagation()}
-                className="flex items-center gap-1 text-[9px] font-medium uppercase tracking-widest text-muted-foreground/40 hover:text-primary transition-colors"
+                className="flex items-center gap-1 text-[9px] font-medium uppercase tracking-widest text-muted-foreground/40 hover:text-brand-red transition-colors"
               >
                 <ExternalLink className="w-2.5 h-2.5" />
                 IPFS
@@ -150,14 +150,14 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
                 target="_blank"
                 rel="noreferrer"
                 onClick={e => e.stopPropagation()}
-                className="flex items-center gap-1 text-[9px] font-medium uppercase tracking-widest text-muted-foreground/40 hover:text-primary transition-colors"
+                className="flex items-center gap-1 text-[9px] font-medium uppercase tracking-widest text-muted-foreground/40 hover:text-brand-red transition-colors"
               >
                 <ExternalLink className="w-2.5 h-2.5" />
                 Arc
               </a>
             )}
           </div>
-          <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/20 group-hover:text-primary/50 transition-colors translate-x-1 group-hover:translate-x-0 duration-200" />
+          <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/20 group-hover:text-brand-red/50 transition-colors translate-x-1 group-hover:translate-x-0 duration-200" />
         </div>
       </motion.article>
     </>

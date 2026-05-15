@@ -155,7 +155,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
 
                   {block.thought_process && (
                     <details className="mt-3 group">
-                      <summary className="text-[10px] uppercase tracking-[0.25em] text-text-tertiary cursor-pointer hover:text-gold transition-colors list-none flex items-center gap-2">
+                      <summary className="text-[10px] uppercase tracking-[0.25em] text-text-tertiary cursor-pointer hover:text-brand-red transition-colors list-none flex items-center gap-2">
                         <span className="group-open:rotate-90 transition-transform">▸</span>
                         Thought Process
                       </summary>
@@ -195,7 +195,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
               href={`https://gateway.pinata.cloud/ipfs/${desk.ipfs_thesis_cid}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-[11px] text-text-secondary hover:text-gold transition-colors"
+              className="flex items-center gap-2 text-[11px] text-text-secondary hover:text-brand-red transition-colors"
             >
               <ExternalLink className="w-3 h-3" />
               <span className="uppercase tracking-[0.2em]">IPFS</span>
@@ -209,7 +209,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
                 href={`https://testnet.arcscan.app/tx/${desk.arc_tx}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-[11px] text-text-secondary hover:text-gold transition-colors"
+                className="flex items-center gap-2 text-[11px] text-text-secondary hover:text-brand-red transition-colors"
               >
                 <ExternalLink className="w-3 h-3" />
                 <span className="uppercase tracking-[0.2em]">Arc Tx</span>
@@ -218,7 +218,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
               <button
                 onClick={handleCopy}
                 aria-label="Copy Arc transaction hash"
-                className="text-text-tertiary hover:text-gold transition-colors p-1"
+                className="text-text-tertiary hover:text-brand-red transition-colors p-1"
               >
                 {copied ? <Check className="w-3 h-3 text-positive" /> : <Copy className="w-3 h-3" />}
                 {copied && <span className="copy-toast">Copied</span>}
@@ -232,7 +232,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
             href={`https://testnet.arcscan.app/tx/${desk.arc_tx}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.25em] text-text-tertiary hover:text-gold transition-colors"
+            className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.25em] text-text-tertiary hover:text-brand-red transition-colors"
           >
             <ExternalLink className="w-3 h-3" />
             Verified on Arc L1
