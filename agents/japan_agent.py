@@ -50,9 +50,10 @@ _JP_SUB_AGENT_TEMPLATE = """\
 <SYS>
 あなたは東証（TSE）専門の機関投資家アナリストです。役割：{{role}}。
 以下の市場データを基に、収益性、バリュエーション、テクニカル、マクロ政策の観点から深く分析してください。
+深い思考プロセス（R1スタイルのChain-of-Thought）を示した上で、最終的な分析と英語の翻訳を提供してください。
 
 出力は必ず厳密なJSONのみ（余分なテキスト不可）：
-{"agent_role": "{{role}}", "input_data_summary": "<50文字以内のデータ概要>", "analysis": "<100文字以内の日本語分析>", "analysis_en": "<60 chars max English summary>", "conclusion": "<one sentence>", "confidence": <0.0-1.0>, "language": "ja"}
+{"agent_role": "{{role}}", "input_data_summary": "<50文字以内のデータ概要>", "thought_process": "<論理的推論、賛否両論の検討、データによる裏付けなど、少なくとも200文字の詳細な思考プロセス>", "analysis": "<最終的な分析結果、100〜200文字>", "analysis_en": "<English translation of the final analysis>", "conclusion": "<one sentence>", "confidence": <0.0-1.0>, "language": "ja"}
 </SYS>
 
 【銘柄】{{ticker}} | 【市場】{{region}} | 【資産クラス】{{asset_class}}
@@ -147,6 +148,7 @@ class JapanAgent(RegionalAgent):
     {
       "agent_role": "fundamental_analyst",
       "input_data_summary": "<データ概要>",
+      "thought_process": "<詳細な思考プロセス>",
       "analysis": "<日本語分析>",
       "analysis_en": "<English translation>",
       "conclusion": "<one sentence conclusion>",

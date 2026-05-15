@@ -14,10 +14,10 @@ async def capture():
         )
         page = await context.new_page()
         
-        print("Connecting to http://localhost:5173...")
+        print("Connecting to https://rosetta-alpha.vercel.app...")
         try:
             # Wait for the frontend to be ready (up to 30s)
-            await page.goto("http://localhost:5173", wait_until="networkidle", timeout=30000)
+            await page.goto("https://rosetta-alpha.vercel.app", wait_until="networkidle", timeout=30000)
             
             # Additional wait to ensure Recharts and Framer Motion animations finish
             await asyncio.sleep(5)

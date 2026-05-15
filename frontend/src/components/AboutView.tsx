@@ -61,8 +61,8 @@ export function AboutView() {
             <li>· AdalFlow — multi-agent orchestration</li>
             <li>· Arc L1 — on-chain provenance</li>
             <li>· IPFS via Pinata — permanent storage</li>
-            <li>· Circle Paymaster — gasless USDC tx</li>
-            <li>· Polymarket V2 — market liquidity</li>
+            <li>· ROSETTA Token — performance bond staking</li>
+            <li>· PredictionMarket.sol — on-chain binary markets</li>
           </ul>
         </div>
         <div className="border border-border bg-bg-secondary p-6">

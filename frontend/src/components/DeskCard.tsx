@@ -132,7 +132,7 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
         {/* Footer */}
         <div className="px-6 py-3 border-t border-border/50 bg-card/50 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            {desk.ipfs_thesis_cid && desk.ipfs_thesis_cid !== 'bafkrei...' && (
+            {desk.ipfs_thesis_cid && desk.ipfs_thesis_cid.length > 20 && (
               <a
                 href={`https://gateway.pinata.cloud/ipfs/${desk.ipfs_thesis_cid}`}
                 target="_blank"
@@ -144,7 +144,7 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
                 IPFS
               </a>
             )}
-            {desk.arc_tx && desk.arc_tx !== '0x293d33c4...' && desk.arc_tx !== '0x50fd3228...' && (
+            {desk.arc_tx && desk.arc_tx.length > 20 && !desk.arc_tx.startsWith('0xmock') && (
               <a
                 href={`https://testnet.arcscan.app/tx/${desk.arc_tx}`}
                 target="_blank"

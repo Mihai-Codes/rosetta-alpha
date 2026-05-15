@@ -19,6 +19,7 @@ export function RegistryTable({ desks }: RegistryTableProps) {
   const [search, setSearch] = React.useState('')
 
   const entries: RegistryEntry[] = React.useMemo(() => {
+    // Timestamps are approximated from run order; real block time not yet surfaced by API
     const enriched = desks.map((d, i) => ({ ...d, timestamp: Date.now() - i * 90_000 }))
     const filtered = search
       ? enriched.filter(
@@ -119,7 +120,7 @@ export function RegistryTable({ desks }: RegistryTableProps) {
                   IPFS · Arc Tx
                 </span>
               </th>
-              <th className="px-6 py-4 text-left"><SortHeader label="Recorded" k="time" /></th>
+              <th className="px-6 py-4 text-left"><SortHeader label="Est. Recorded" k="time" /></th>
               <th className="px-6 py-4 text-center">
                 <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-text-tertiary">
                   Status

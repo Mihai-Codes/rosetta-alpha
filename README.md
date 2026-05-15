@@ -20,19 +20,33 @@ Multi-language AI financial research platform that hashes every reasoning trace 
 
 ---
 
-## 🎬 Demo — Full E2E Run (May 14, 2026)
+## 🌐 Live Dashboard
+
+**[rosetta-alpha.vercel.app](https://rosetta-alpha.vercel.app)** — public, no login required.
+
+## 🎬 Demo — Full E2E Run (May 15, 2026)
 
 ```
-✅ US     AAPL       NEUTRAL  70% | analyze → pin → stake → record → market
-✅ CRYPTO BTC        LONG     73% | analyze → pin → stake → record → market
-✅ CN     600519.SH  LONG     80% | analyze → pin → stake → record → market
+✅ US     AAPL       LONG     75% | analyze → pin → stake → record → market
+✅ CRYPTO BTC        LONG     70% | analyze → pin → stake → record → market
+✅ CN     600519.SH  LONG     55% | analyze → pin → stake → record → market (DeepSeek V4 Pro, ZH)
 ✅ EU     MC.PA      LONG     85% | analyze → pin → stake → record → market
-✅ JP     7203.T     LONG     75% | analyze → pin → stake → record → market
+✅ JP     7203.T     LONG     85% | analyze → pin → stake → record → market (Gemini 3.1, JA)
 
-📊 Portfolio View: Net LONG · signal=+0.66 · avg confidence=76.2%
+📊 Portfolio: Net LONG · signal=+0.63 · avg confidence=79.0% · 5/5 desks OK
 ```
 
 Every run produces **live on-chain proof** — no mocked data, no hardcoded results.
+
+### Live TX Evidence (May 15, 2026 E2E run)
+
+| Desk | Arc Registry TX | IPFS Thesis CID |
+|------|----------------|-----------------|
+| 🇺🇸 AAPL | [`6141a016...`](https://testnet.arcscan.app/tx/6141a0161a64b84093c2655774cb73842a593bdbd5b8fe2e8272ae091052bab4) | `bafkreiaei...` |
+| ₿ BTC | [`37dd5f73...`](https://testnet.arcscan.app/tx/37dd5f73e82f7855addc9a5cd74d7a2e3aa190d6407fb8e23788ed1c81ab470e) | `bafkreieng...` |
+| 🇨🇳 Moutai | [`9e706957...`](https://testnet.arcscan.app/tx/9e70695759ca4293c2602c9680d4b9135c3f587a09ba82b59aefd6d3bbd96f32) | `bafkreifdai...` |
+| 🇪🇺 LVMH | [`2e27a822...`](https://testnet.arcscan.app/tx/2e27a822c1e67c9bb48def0805e0586ca113e7dd2907b02a0441dd2f91995d4f) | `bafkreidio...` |
+| 🇯🇵 Toyota | [`3919bedc...`](https://testnet.arcscan.app/tx/3919bedc121c39542bdaa9b2196e0152cc9771c6ddd0a5f4be70f9d5d083ed7d) | `bafkreihxx...` |
 
 ---
 

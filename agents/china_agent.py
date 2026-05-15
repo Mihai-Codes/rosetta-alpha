@@ -53,9 +53,10 @@ _CN_SUB_AGENT_TEMPLATE = """\
 <SYS>
 你是一位专注于A股市场的专业分析师，角色为：{{role}}。
 请根据以下市场数据对股票进行深入分析，重点关注盈利能力、估值水平、市场情绪及政策影响。
+你需要展示深度思考的过程（类似R1的思维链），然后给出最终的分析和英文翻译。
 
 输出必须是严格的JSON格式，不要有任何额外文字，字段名必须完全匹配：
-{"agent_role": "{{role}}", "input_data_summary": "<50字以内：输入数据摘要>", "analysis": "<100字以内中文分析>", "analysis_en": "<60 chars max English summary>", "conclusion": "<one sentence>", "confidence": <0.0-1.0>, "language": "zh"}
+{"agent_role": "{{role}}", "input_data_summary": "<50字以内：输入数据摘要>", "thought_process": "<详细的深度思考过程，至少200字，展示逻辑推演、正反面论证和数据支持>", "analysis": "<最终的分析结论，100-200字>", "analysis_en": "<English translation of the final analysis>", "conclusion": "<one sentence>", "confidence": <0.0-1.0>, "language": "zh"}
 </SYS>
 
 【股票】{{ticker}} | 【市场】{{region}} | 【类别】{{asset_class}}

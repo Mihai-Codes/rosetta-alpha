@@ -32,7 +32,7 @@ function normalizeDesk(raw: Record<string, unknown>): DeskProps {
           input_data_summary: String(rb.input_data_summary ?? ''),
           thought_process: String(rb.thought_process ?? ''),
           analysis: String(rb.content ?? rb.analysis ?? ''),
-          analysis_en: String(rb.analysis_en ?? rb.content ?? rb.analysis ?? ''),
+          analysis_en: String(rb.analysis_en ?? (rb.language === 'en' ? (rb.content ?? rb.analysis) : '') ?? ''),
           conclusion: String(rb.conclusion ?? ''),
           confidence: Number(rb.confidence ?? 0),
           language: String(rb.language ?? 'en'),
