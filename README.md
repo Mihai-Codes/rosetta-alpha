@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/rosetta_logo.png" alt="Rosetta Alpha" width="120" />
+</p>
+
 # Rosetta Alpha
 
 [![CI](https://github.com/Mihai-Codes/rosetta-alpha/actions/workflows/ci.yml/badge.svg)](https://github.com/Mihai-Codes/rosetta-alpha/actions/workflows/ci.yml)
