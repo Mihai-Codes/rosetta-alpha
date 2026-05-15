@@ -1,4 +1,5 @@
 import React from 'react'
+import { Layers } from 'lucide-react'
 
 export function AboutView() {
   return (
