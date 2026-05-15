@@ -1,10 +1,5 @@
 @import "tailwindcss";
 
-/* =========================================================================
-   ROSETTA ALPHA — DESIGN SYSTEM
-   Apple Native Typography + Bridgewater Minimalist Palette (Black/White/Red)
-   ========================================================================= */
-
 @theme {
   --color-bg-primary: #000000;
   --color-bg-secondary: #0A0A0A;
@@ -43,7 +38,7 @@
   --color-card-foreground: var(--color-text-primary);
   --color-popover: var(--color-bg-secondary);
   --color-popover-foreground: var(--color-text-primary);
-  --color-primary: var(--color-accent-gold);
+  --color-primary: var(--color-brand-red);
   --color-primary-foreground: var(--color-bg-primary);
   --color-secondary: var(--color-bg-tertiary);
   --color-secondary-foreground: var(--color-text-secondary);
@@ -54,7 +49,7 @@
   --color-destructive: var(--color-negative);
   --color-destructive-foreground: var(--color-text-primary);
   --color-input: var(--color-border);
-  --color-ring: var(--color-accent-gold);
+  --color-ring: var(--color-brand-red);
   --radius-lg: 12px;
   --radius-md: 8px;
   --radius-sm: 4px;
@@ -65,15 +60,13 @@
     --background: var(--color-bg-primary);
     --foreground: var(--color-text-primary);
     --border: var(--color-border);
-    --primary: var(--color-accent-gold);
+    --primary: var(--color-brand-red);
   }
 
-  * {
-    border-color: var(--color-border);
-  }
+  * { border-color: var(--color-border); }
 
   *:focus-visible {
-    outline: 2px solid var(--color-accent-gold);
+    outline: 2px solid var(--color-brand-red);
     outline-offset: 2px;
     border-radius: 2px;
   }
@@ -114,27 +107,18 @@
   button { cursor: pointer; }
 }
 
-/* =========================================================================
-   ANIMATIONS
-   ========================================================================= */
-
 @keyframes red-pulse {
-  0%, 100% { opacity: 1; box-shadow: 0 0 6px rgba(216,43,43,0.5); }
-  50% { opacity: 0.6; box-shadow: 0 0 14px rgba(216,43,43,0.8); }
+  0%, 100% { opacity: 0.4; filter: drop-shadow(0 0 4px rgba(216,43,43,0.6)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 16px rgba(216,43,43,1)) drop-shadow(0 0 6px rgba(216,43,43,0.8)); }
 }
-.red-pulse { animation: red-pulse 2.4s ease-in-out infinite; }
+.red-pulse { animation: red-pulse 2.5s ease-in-out infinite; }
 
 @keyframes shimmer {
   0% { background-position: -1000px 0; }
   100% { background-position: 1000px 0; }
 }
 .skeleton {
-  background: linear-gradient(
-    90deg,
-    var(--color-bg-secondary) 0%,
-    var(--color-bg-tertiary) 50%,
-    var(--color-bg-secondary) 100%
-  );
+  background: linear-gradient(90deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 50%, var(--color-bg-secondary) 100%);
   background-size: 1000px 100%;
   animation: shimmer 2s infinite linear;
 }
@@ -150,96 +134,37 @@
 }
 .fade-up { animation: fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
 
-@keyframes count-up {
-  from { opacity: 0.4; transform: translateY(4px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.count-up { animation: count-up 0.45s ease-out; }
-
-
-@keyframes neon-grid-pulse {
-  0%, 100% { opacity: 0.3; filter: drop-shadow(0 0 2px rgba(216,43,43,0.8)); }
-  50% { opacity: 1; filter: drop-shadow(0 0 12px rgba(216,43,43,1)) drop-shadow(0 0 4px rgba(216,43,43,0.8)); }
-}
-
 .global-grid-bg {
   position: fixed;
   top: -100px; left: -100px; right: -100px; bottom: -100px;
   background-image:
-    linear-gradient(rgba(216, 43, 43, 0.3) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(216, 43, 43, 0.3) 1px, transparent 1px);
+    linear-gradient(rgba(216, 43, 43, 0.25) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(216, 43, 43, 0.25) 1px, transparent 1px);
   background-size: 100px 100px;
-  animation: hero-grid-drift 20s linear infinite, neon-grid-pulse 2.5s ease-in-out infinite;
+  animation: hero-grid-drift 20s linear infinite, red-pulse 4s ease-in-out infinite;
   pointer-events: none;
-  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.05) 80%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.05) 80%, transparent 100%);
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.05) 70%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.05) 70%, transparent 100%);
   z-index: 0;
 }
 
-.nav-link {
-  position: relative;
-}
-.nav-link::after {
-  content: '';
-  position: absolute;
-  width: 0;
-  height: 2px;
-  bottom: -4px;
-  left: 50%;
-  background-color: var(--color-brand-red);
-  transition: all 0.3s ease;
-  transform: translateX(-50%);
-  box-shadow: 0 0 8px rgba(216,43,43,0.8);
-}
-.nav-link:hover::after, .nav-link[data-active="true"]::after {
-  width: 100%;
-}
-
-
-/* Rain Cascade Effect */
-@keyframes rain-drop {
-  0% { opacity: 0; transform: translateY(-40px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-.animate-rain {
-  animation: rain-drop 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  opacity: 0;
-}
-
 .hero-vignette {
-  background: radial-gradient(
-    ellipse at center,
-    transparent 0%,
-    rgba(10, 10, 15, 0.4) 50%,
-    var(--color-bg-primary) 100%
-  );
+  background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.6) 50%, var(--color-bg-primary) 100%);
 }
 
-/* Cinematic scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 3px;
-}
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(216, 43, 43, 0.4); }
 
-/* Gold gradient HR */
-.hr-gold {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(216, 43, 43, 0.4), transparent);
-  border: none;
-}
-
-/* "Copied!" tooltip */
 .copy-toast {
   position: absolute;
   bottom: 100%;
   left: 50%;
   transform: translateX(-50%) translateY(-4px);
   background: var(--color-bg-tertiary);
-  border: 1px solid var(--color-accent-gold);
-  color: var(--color-accent-gold);
+  border: 1px solid var(--color-brand-red);
+  color: var(--color-brand-red);
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -250,17 +175,26 @@
   animation: fade-up 0.2s ease-out;
 }
 
-/* =========================================================================
-   2026 SPATIAL UI TRENDS
-   ========================================================================= */
-
 .glass-panel {
-  /* Ultra-clean liquid glass */
   background: linear-gradient(135deg, rgba(20, 20, 20, 0.4) 0%, rgba(0, 0, 0, 0.1) 100%);
   backdrop-filter: saturate(200%) blur(64px);
   -webkit-backdrop-filter: saturate(200%) blur(64px);
-  /* Ultra-subtle inner edge lighting */
-  box-shadow: 
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05), inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+.nav-link { position: relative; }
+.nav-link::after {
+  content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 50%;
+  background-color: var(--color-brand-red); transition: all 0.3s ease; transform: translateX(-50%);
+  box-shadow: 0 0 8px rgba(216,43,43,0.8);
+}
+.nav-link:hover::after, .nav-link[data-active="true"]::after { width: 100%; }
+
+@keyframes rain-drop {
+  0% { opacity: 0; transform: translateY(-40px); filter: blur(4px); }
+  100% { opacity: 1; transform: translateY(0); filter: blur(0px); }
+}
+.animate-rain {
+  animation: rain-drop 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
 }
