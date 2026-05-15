@@ -1,139 +1,284 @@
 const fs = require('fs');
 
-// 1. HeroSection.tsx
-let hero = fs.readFileSync('src/components/HeroSection.tsx', 'utf8');
+// --- 1. index.css ---
+const css = `@import "tailwindcss";
 
-// Subtitle ONE line
-hero = hero.replace(
-  /className=\{`text-lg md:text-xl text-text-secondary font-light max-w-full w-full mx-auto px-4 whitespace-nowrap overflow-hidden text-ellipsis mb-12 transition-all duration-1000 delay-150 \$\{.*?\}`\}/,
-  "className={`text-[clamp(12px,1.5vw,1.125rem)] text-text-secondary font-light w-full max-w-none mx-auto px-4 whitespace-nowrap overflow-hidden text-ellipsis mb-12 transition-all duration-1000 delay-150 ${visible.subtitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}"
-);
+@theme {
+  --color-bg-primary: #000000;
+  --color-bg-secondary: #0A0A0A;
+  --color-bg-tertiary: #141414;
+  --color-border: #1A1A1A;
+  --color-border-strong: #2A2A2A;
 
-// Regional dots intense glow & ping
-hero = hero.replace(
-  /<div className="w-1\.5 h-1\.5 rounded-full" style=\{\{ background: meta\.color \}\} \/>/g,
-  `<div className="relative flex h-2 w-2 shrink-0"><span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-80" style={{ backgroundColor: meta.color, boxShadow: \`0 0 12px \${meta.color}\` }} /><span className="relative inline-flex rounded-full h-2 w-2" style={{ backgroundColor: meta.color }} /></div>`
-);
-hero = hero.replace(
-  /hover:border-white\/\[0\.05\]/g,
-  'hover:border-brand-red/80 hover:shadow-[0_0_32px_rgba(216,43,43,0.8)] cursor-pointer'
-);
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #A3A3A3;
+  --color-text-tertiary: #666666;
 
-// Enter Terminal liquid slide
-hero = hero.replace(
-  /<button\s+onClick=\{onScrollDown\}\s+className="group relative overflow-hidden inline-flex items-center gap-3 px-10 py-4 glass-panel rounded-full border border-brand-red\/60 text-brand-red text-\[12px\] font-medium uppercase tracking-\[0\.25em\] transition-all duration-500 hover:border-brand-red hover:shadow-\[0_0_24px_rgba\(216,43,43,0\.8\)\] cursor-pointer"[\s\S]*?<\/button>/,
-  `<button
-            onClick={onScrollDown}
-            className="group relative overflow-hidden inline-flex items-center gap-3 px-10 py-4 glass-panel rounded-full border border-brand-red/60 text-brand-red text-[12px] font-medium uppercase tracking-[0.25em] transition-all duration-500 hover:border-brand-red hover:shadow-[0_0_32px_rgba(216,43,43,1)] cursor-pointer"
-          >
-            <div className="absolute inset-0 bg-brand-red translate-y-[100%] group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" />
-            <span className="relative z-10 transition-colors duration-500 group-hover:text-[#000000]">Enter Terminal</span>
-            <span className="relative z-10 transition-all duration-500 group-hover:translate-x-1 group-hover:text-[#000000]">→</span>
-          </button>`
-);
+  --color-brand-red: #D82B2B;
+  --color-accent-gold: #D82B2B;
+  --color-accent-amber: #D82B2B;
+  --color-accent-blue: #4A7FBF;
 
-// Latest Trace highlight
-hero = hero.replace(
-  /border-brand-red\/60 shadow-\[0_0_15px_rgba\(216,43,43,0\.3\)\]/,
-  'border-brand-red shadow-[0_0_24px_rgba(216,43,43,0.6)]'
-);
+  --color-region-us: #4A7FBF;
+  --color-region-cn: #BF4A4A;
+  --color-region-eu: #4A8F6F;
+  --color-region-jp: #8F6F4A;
+  --color-region-crypto: #7A4ABF;
 
-fs.writeFileSync('src/components/HeroSection.tsx', hero);
+  --color-positive: #4A9F6F;
+  --color-negative: #9F4A4A;
+  --color-neutral: #7B8FA6;
 
+  /* Native Apple Typography */
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
-// 2. Layout.tsx
-let layout = fs.readFileSync('src/components/Layout.tsx', 'utf8');
-
-layout = layout.replace(
-  /className="font-display text-2xl text-brand-red leading-none transition-all duration-300 group-hover:scale-125 group-hover:drop-shadow-\[0_0_24px_rgba\(216,43,43,1\)\] origin-bottom group-hover:animate-pulse"/g,
-  'className="font-display text-2xl text-brand-red leading-none transition-all duration-300 group-hover:scale-125 group-hover:drop-shadow-[0_0_32px_rgba(216,43,43,1)] origin-bottom animate-pulse"'
-);
-
-// Fix Connect Wallet glow intensity
-layout = layout.replace(
-  /hover:shadow-\[0_0_24px_rgba\(216,43,43,0\.8\)\]/g,
-  'hover:shadow-[0_0_32px_rgba(216,43,43,1)]'
-);
-
-// Aristotle Quote Size
-layout = layout.replace(
-  /text-base md:text-lg font-display tracking-wide relative inline-flex items-center justify-center min-w-\[440px\] h-\[32px\]/g,
-  'text-lg md:text-2xl font-display tracking-wide relative inline-flex items-center justify-center min-w-[500px] h-[40px]'
-);
-
-// Footer wrapping sentences
-layout = layout.replace(
-  /<div className="flex flex-col gap-1\.5 font-light whitespace-nowrap overflow-hidden">[\s\S]*?<\/div>/,
-  `<div className="flex flex-col gap-1.5 font-light whitespace-nowrap">
-              <span>Multi-language reasoning traces secured on Arc L1.</span>
-              <span>An institutional-grade intelligence layer for global macro.</span>
-            </div>`
-);
-
-// Remove duplicate year
-layout = layout.replace(
-  /<span>© 2026 Rosetta Alpha<\/span>\s*<QuoteMatrix \/>\s*<span>Aristotle<\/span>/,
-  `<span>Rosetta Alpha</span>\n          <QuoteMatrix />\n          <span>Aristotle</span>`
-);
-
-fs.writeFileSync('src/components/Layout.tsx', layout);
-
-
-// 3. DesksView.tsx
-let desks = fs.readFileSync('src/components/DesksView.tsx', 'utf8');
-desks = desks.replace(
-  /<div className="flex flex-col lg:flex-row gap-5 sm:p-8">/,
-  `<div className="flex flex-col lg:flex-row items-start gap-5 sm:p-8">`
-);
-fs.writeFileSync('src/components/DesksView.tsx', desks);
-
-
-// 4. RegionSidebar.tsx
-let sidebar = fs.readFileSync('src/components/RegionSidebar.tsx', 'utf8');
-sidebar = sidebar.replace(
-  /hover:bg-white\/\[0\.08\]/g,
-  `hover:bg-brand-red/20 hover:border-brand-red/50 hover:shadow-[inset_4px_0_0_0_rgba(216,43,43,1)]`
-);
-fs.writeFileSync('src/components/RegionSidebar.tsx', sidebar);
-
-
-// 5. ThesisCard.tsx
-let thesis = fs.readFileSync('src/components/ThesisCard.tsx', 'utf8');
-thesis = thesis.replace(
-  /className="text-sm text-text-primary font-light leading-relaxed mb-2 text-left pr-4"/g,
-  `className="text-sm text-text-primary font-light leading-relaxed mb-2 text-justify pr-4"`
-);
-thesis = thesis.replace(
-  /className="text-sm text-text-secondary font-light leading-relaxed mb-2 pl-4 border-l-2 border-border\/50 text-left pr-4"/g,
-  `className="text-sm text-text-secondary font-light leading-relaxed mb-2 pl-4 border-l-2 border-border/50 text-justify pr-4"`
-);
-fs.writeFileSync('src/components/ThesisCard.tsx', thesis);
-
-
-// 6. AllWeatherChart.tsx
-let awc = fs.readFileSync('src/components/AllWeatherChart.tsx', 'utf8');
-awc = awc.replace(
-  /<p className="text-\[10px\] text-text-tertiary leading-relaxed max-w-\[220px\] mx-auto">/,
-  `<p className="text-[10px] text-text-tertiary leading-relaxed max-w-[220px] mx-auto text-center">`
-);
-fs.writeFileSync('src/components/AllWeatherChart.tsx', awc);
-
-
-// 7. index.css
-let css = fs.readFileSync('src/index.css', 'utf8');
-css = css.replace(
-  /@keyframes red-pulse \{\s*0%, 100% \{ opacity: 0\.6; filter: drop-shadow\(0 0 8px rgba\(216,43,43,0\.8\)\); \}\s*50% \{ opacity: 1; filter: drop-shadow\(0 0 24px rgba\(216,43,43,1\)\) drop-shadow\(0 0 12px rgba\(216,43,43,0\.9\)\); \}\s*\}/,
-  `@keyframes red-pulse {\n  0%, 100% { opacity: 0.8; filter: drop-shadow(0 0 12px rgba(216,43,43,0.8)); }\n  50% { opacity: 1; filter: drop-shadow(0 0 32px rgba(216,43,43,1)) drop-shadow(0 0 16px rgba(216,43,43,1)); }\n}`
-);
-
-if (!css.includes('mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 40%, transparent 100%);')) {
-    css = css.replace(
-        /mask-image: linear-gradient\(to bottom, rgba\(0,0,0,1\) 0%, rgba\(0,0,0,0\.8\) 40%, transparent 100%\);/g,
-        'mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 40%, transparent 100%);'
-    );
-    css = css.replace(
-        /-webkit-mask-image: linear-gradient\(to bottom, rgba\(0,0,0,1\) 0%, rgba\(0,0,0,0\.8\) 40%, transparent 100%\);/g,
-        '-webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 40%, transparent 100%);'
-    );
+  /* Compatibility tokens for Tailwind utilities */
+  --color-background: var(--color-bg-primary);
+  --color-foreground: var(--color-text-primary);
+  --color-card: var(--color-bg-secondary);
+  --color-card-foreground: var(--color-text-primary);
+  --color-popover: var(--color-bg-secondary);
+  --color-popover-foreground: var(--color-text-primary);
+  --color-primary: var(--color-brand-red);
+  --color-primary-foreground: var(--color-bg-primary);
+  --color-secondary: var(--color-bg-tertiary);
+  --color-secondary-foreground: var(--color-text-secondary);
+  --color-muted: var(--color-bg-tertiary);
+  --color-muted-foreground: var(--color-text-secondary);
+  --color-accent: var(--color-bg-tertiary);
+  --color-accent-foreground: var(--color-text-primary);
+  --color-destructive: var(--color-negative);
+  --color-destructive-foreground: var(--color-text-primary);
+  --color-input: var(--color-border);
+  --color-ring: var(--color-brand-red);
+  --radius-lg: 12px;
+  --radius-md: 8px;
+  --radius-sm: 4px;
 }
+
+@layer base {
+  :root {
+    --background: var(--color-bg-primary);
+    --foreground: var(--color-text-primary);
+    --border: var(--color-border);
+    --primary: var(--color-brand-red);
+  }
+  * { border-color: var(--color-border); }
+  *:focus-visible { outline: 2px solid var(--color-brand-red); outline-offset: 2px; border-radius: 2px; }
+  html { scroll-behavior: smooth; background: var(--color-bg-primary); }
+  body {
+    background: var(--color-bg-primary); color: var(--color-text-primary);
+    font-family: var(--font-body); font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
+    line-height: 1.6; letter-spacing: 0.01em; -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection { background: rgba(216, 43, 43, 0.25); color: var(--color-text-primary); }
+  h1, h2, h3, h4, .font-display { font-family: var(--font-display); line-height: 1.2; letter-spacing: -0.01em; }
+  code, pre, .font-mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  button { cursor: pointer; }
+}
+
+@keyframes red-pulse {
+  0%, 100% { opacity: 0.8; filter: drop-shadow(0 0 12px rgba(216,43,43,0.8)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 32px rgba(216,43,43,1)) drop-shadow(0 0 16px rgba(216,43,43,0.9)); }
+}
+.red-pulse { animation: red-pulse 2.5s ease-in-out infinite; }
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 50%, var(--color-bg-secondary) 100%);
+  background-size: 1000px 100%; animation: shimmer 2s infinite linear;
+}
+
+@keyframes hero-grid-drift {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(-40px, -40px); }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+.bg-grain {
+  position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: 0.025; mix-blend-mode: screen;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.global-grid-bg {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background-image: linear-gradient(rgba(216, 43, 43, 0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(216, 43, 43, 0.25) 1px, transparent 1px);
+  background-size: 100px 100px;
+  animation: hero-grid-drift 20s linear infinite, red-pulse 3.5s ease-in-out infinite;
+  pointer-events: none;
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 40%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 40%, transparent 100%);
+  z-index: 0;
+}
+
+.hero-vignette { background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.6) 50%, var(--color-bg-primary) 100%); }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(216, 43, 43, 0.4); }
+
+.glass-panel {
+  background: linear-gradient(135deg, rgba(20, 20, 20, 0.4) 0%, rgba(0, 0, 0, 0.1) 100%);
+  backdrop-filter: saturate(200%) blur(64px); -webkit-backdrop-filter: saturate(200%) blur(64px);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05), inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+.nav-link { position: relative; }
+.nav-link::after {
+  content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 50%;
+  background-color: var(--color-brand-red); transition: all 0.3s ease; transform: translateX(-50%);
+  box-shadow: 0 0 8px rgba(216,43,43,0.8);
+}
+.nav-link:hover::after, .nav-link[data-active="true"]::after { width: 100%; }
+
+@keyframes rain-drop {
+  0% { opacity: 0; transform: translateY(-40px); filter: blur(4px); }
+  100% { opacity: 1; transform: translateY(0); filter: blur(0px); }
+}
+.animate-rain { animation: rain-drop 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+
+.logo-triangle {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-block;
+}
+.group:hover .logo-triangle {
+  transform: scale(1.25);
+  filter: drop-shadow(0 0 16px rgba(216,43,43,1));
+}
+`;
 fs.writeFileSync('src/index.css', css);
+
+// --- 2. Layout.tsx ---
+const layout = `import React from 'react'
+import { Brain, Layers, HardDrive, CircleDollarSign } from 'lucide-react'
+
+export type Tab = 'desks' | 'feed' | 'registry' | 'about'
+
+interface LayoutProps {
+  children: React.ReactNode
+  activeTab: Tab
+  onTabChange: (tab: Tab | 'home') => void
+}
+
+const TABS: { id: Tab; label: string }[] = [
+  { id: 'desks', label: 'Desks' },
+  { id: 'feed', label: 'Live Feed' },
+  { id: 'registry', label: 'Registry' },
+  { id: 'about', label: 'About' },
+]
+
+function QuoteMatrix() {
+  const [isGreek, setIsGreek] = React.useState(true)
+  React.useEffect(() => {
+    const i = setInterval(() => setIsGreek(g => !g), 4000)
+    return () => clearInterval(i)
+  }, [])
+  return (
+    <span className="italic text-text-secondary text-lg md:text-xl font-display tracking-wide relative inline-flex items-center justify-center min-w-[500px] h-[32px]">
+      <span className={\`absolute transition-all duration-1000 \${isGreek ? 'opacity-100 blur-0 scale-100' : 'opacity-0 blur-md scale-95'}\`}>
+        "Τὸ γὰρ ὅλον παρὰ τὰ μόρια"
+      </span>
+      <span className={\`absolute transition-all duration-1000 \${!isGreek ? 'opacity-100 blur-0 scale-100 text-brand-red drop-shadow-[0_0_8px_rgba(216,43,43,0.8)]' : 'opacity-0 blur-md scale-105'}\`}>
+        "The whole is something besides the parts"
+      </span>
+    </span>
+  )
+}
+
+export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
+  return (
+    <div className="min-h-screen flex flex-col bg-bg-primary relative selection:bg-brand-red/20">
+      <div className="bg-grain" aria-hidden="true" />
+      <div className="global-grid-bg" aria-hidden="true" />
+      
+      <header
+        className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
+        style={{
+          background: 'rgba(10, 10, 15, 0.4)',
+          backdropFilter: 'saturate(180%) blur(48px)',
+          WebkitBackdropFilter: 'saturate(180%) blur(48px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+        }}
+      >
+        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 h-16 flex items-center justify-between">
+          <button
+            onClick={() => onTabChange('home')}
+            className="flex items-baseline gap-1 group"
+            aria-label="Rosetta Alpha home"
+          >
+            <span className="font-display text-2xl text-text-primary leading-none transition-colors group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]">
+              R
+            </span>
+            <span className="logo-triangle font-display text-2xl text-brand-red leading-none origin-bottom">
+              △
+            </span>
+            <span className="hidden sm:inline-block ml-2 text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary">
+              Rosetta Alpha
+            </span>
+          </button>
+
+          <nav className="hidden md:flex items-center" role="navigation">
+            {TABS.map((tab, i) => {
+              const isActive = activeTab === tab.id
+              return (
+                <React.Fragment key={tab.id}>
+                  {i > 0 && <span aria-hidden className="w-px h-3.5 bg-border mx-1" />}
+                  <button
+                    onClick={() => onTabChange(tab.id)}
+                    className={\`nav-link px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] transition-all duration-300 \${isActive ? 'text-brand-red drop-shadow-[0_0_8px_rgba(216,43,43,0.8)]' : 'text-text-secondary hover:text-brand-red hover:drop-shadow-[0_0_12px_rgba(216,43,43,1)]'}\`} 
+                    data-active={isActive}
+                  >
+                    {tab.label}
+                  </button>
+                </React.Fragment>
+              )
+            })}
+          </nav>
+
+          <button
+            className="
+              flex items-center gap-2 px-5 py-2
+              glass-panel border border-white/[0.05] rounded-full
+              text-text-primary text-[10px] font-medium uppercase tracking-[0.2em]
+              transition-all duration-300
+              hover:border-brand-red/30 hover:shadow-[0_0_32px_rgba(216,43,43,1)]
+            "
+            onClick={() => alert('Wallet connection — coming soon')}
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-brand-red red-pulse" />
+            <span className="hidden sm:inline">Connect Wallet</span>
+            <span className="sm:hidden">Wallet</span>
+          </button>
+        </div>
+      </header>
+
+      <main className="flex-1 w-full">{children}</main>
+
+      <footer className="border-t border-white/[0.05] py-16 mt-24">
+        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 grid md:grid-cols-3 gap-5 sm:p-8 text-[11px] text-text-tertiary">
+          <div>
+            <p className="font-display text-text-primary text-base mb-2">
+              Rosetta <span className="text-brand-red">Alpha</span>
+            </p>
+            <div className="flex flex-col gap-1.5 font-light whitespace-nowrap overflow-hidden">
+              <span className="block truncate">Multi-language reasoning traces secured on Arc L1.</span>
+              <span className="block truncate">An institutional-grade intelligence layer for global macro.</span>
+            </div>
+          </div>
+          <div>
+            <p className="uppercase tracking-[0.25em] text-text-secondary mb-3">Stack</p>
+            <ul className="space-y-2 font-light">
+              <li className="flex items-center gap-2"><Brain className="w-3.5 h-3.5 text-brand-red"/> AdalFlow · Multi-agent reasoning</li>
+              <li className="flex items-center gap-2"><Layers className="w-3.5 h-3.5 text-brand-red"/>

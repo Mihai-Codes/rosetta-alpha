@@ -58,9 +58,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
             <span className="font-display text-2xl text-text-primary leading-none transition-colors group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]">
               R
             </span>
-            <span className="font-display text-2xl text-brand-red leading-none transition-all duration-500 group-hover:scale-125 group-hover:drop-shadow-[0_0_32px_rgba(216,43,43,1)] origin-bottom group-hover:animate-pulse">
-              △
-            </span>
+            <span className="logo-triangle font-display text-2xl text-brand-red leading-none animate-pulse">△</span>
             <span className="hidden sm:inline-block ml-2 text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary">
               Rosetta Alpha
             </span>
@@ -74,7 +72,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
                   {i > 0 && <span aria-hidden className="w-px h-3.5 bg-border mx-1" />}
                   <button
                     onClick={() => onTabChange(tab.id)}
-                    className={`nav-link px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] transition-all duration-300 ${isActive ? 'text-brand-red drop-shadow-[0_0_8px_rgba(216,43,43,0.8)]' : 'text-text-secondary hover:text-brand-red hover:drop-shadow-[0_0_12px_rgba(216,43,43,1)]'}`} 
+                    className={`nav-link px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] transition-all duration-300 ${isActive ? 'text-brand-red drop-shadow-[0_0_8px_rgba(216,43,43,0.8)]' : 'text-text-secondary hover:text-brand-red hover:drop-shadow-[0_0_24px_rgba(216,43,43,1)]'}`} 
                     data-active={isActive}
                   >
                     {tab.label}
@@ -123,7 +121,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
           <div>
             <p className="uppercase tracking-[0.25em] text-text-secondary mb-3">Built For</p>
             <p className="font-light leading-relaxed">
-              <a href="https://agora.thecanteenapp.com/" target="_blank" rel="noopener noreferrer" className="text-brand-red hover:text-text-primary transition-colors font-medium drop-shadow-[0_0_8px_rgba(216,43,43,0.4)]">Agora Agents Hackathon</a><br />
+              <a href="https://agora.thecanteenapp.com/" target="_blank" rel="noopener noreferrer" className="text-brand-red hover:text-text-primary transition-colors font-medium drop-shadow-[0_0_16px_rgba(216,43,43,0.8)]">Agora Agents Hackathon</a><br />
               Inspired by the <a href="https://www.bridgewater.com/research-and-insights/the-all-weather-story" target="_blank" rel="noopener noreferrer" className="text-brand-red hover:text-text-primary transition-colors font-medium drop-shadow-[0_0_8px_rgba(216,43,43,0.4)]">All Weather discipline</a> of Bridgewater Associates.
             </p>
           </div>

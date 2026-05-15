@@ -58,7 +58,7 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
 
         <p
           data-reveal-id="subtitle"
-          className={`text-[clamp(11px,1.5vw,1.125rem)] text-text-secondary font-light w-full max-w-none mx-auto px-4 whitespace-nowrap overflow-hidden text-ellipsis mb-12 transition-all duration-1000 delay-150 ${
+          className={`text-[clamp(11px,1.3vw,1.125rem)] text-text-secondary font-light w-full max-w-none flex justify-center whitespace-nowrap overflow-hidden text-ellipsis mb-12 transition-all duration-1000 delay-150 ${
             visible.subtitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
@@ -99,7 +99,7 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
         >
           <button
             onClick={onScrollDown}
-            className="group relative overflow-hidden inline-flex items-center gap-3 px-10 py-4 glass-panel rounded-full border border-brand-red/60 text-brand-red text-[12px] font-medium uppercase tracking-[0.25em] transition-all duration-500 hover:border-brand-red hover:shadow-[0_0_32px_rgba(216,43,43,1)] cursor-pointer"
+            className="group relative overflow-hidden inline-flex items-center gap-3 px-10 py-4 glass-panel rounded-full border border-brand-red/60 text-brand-red text-[12px] font-medium uppercase tracking-[0.25em] transition-all duration-500 hover:border-brand-red hover:shadow-[0_0_48px_rgba(216,43,43,1)] cursor-pointer"
           >
             <div className="absolute inset-0 bg-brand-red translate-y-[100%] group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" />
             <span className="relative z-10 transition-colors duration-500 group-hover:text-[#000000]">Enter Terminal</span>
