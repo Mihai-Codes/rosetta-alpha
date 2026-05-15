@@ -41,7 +41,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-rain">
       {/* Filters */}
       <div className="flex items-center justify-between gap-4 flex-wrap pb-4 border-b border-border">
         <div className="flex items-center gap-2 flex-wrap">

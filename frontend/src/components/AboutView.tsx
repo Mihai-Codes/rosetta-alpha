@@ -54,7 +54,7 @@ export function AboutView() {
         </ol>
       </section>
 
-      <section className="grid md:grid-cols-2 gap-6">
+      <section className="grid md:grid-cols-2 gap-4 sm:gap-6">
         <div className="border border-border bg-bg-secondary p-6">
           <p className="text-[10px] uppercase tracking-[0.25em] text-text-tertiary mb-3">Built On</p>
           <ul className="space-y-2 text-sm text-text-secondary font-light">

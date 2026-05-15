@@ -41,10 +41,10 @@ export function ThesisCard({ desk }: ThesisCardProps) {
     <article className="glass-panel border border-border/20 rounded-2xl overflow-hidden shadow-none">
       {/* Header */}
       <header
-        className="px-8 py-7 border-b border-border"
+        className="px-5 sm:px-8 py-6 sm:py-7 border-b border-border"
         style={{ borderLeft: `3px solid ${meta.color}` }}
       >
-        <div className="flex items-start justify-between gap-6 flex-wrap">
+        <div className="flex items-start justify-between gap-4 sm:gap-6 flex-wrap">
           <div>
             <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary mb-2">
               {meta.name} · {desk.desk.toUpperCase()} Desk
@@ -88,7 +88,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
       </header>
 
       {/* Reasoning chain */}
-      <section className="px-8 py-7">
+      <section className="px-5 sm:px-8 py-6 sm:py-7">
         <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary mb-6">
           Reasoning Chain
         </p>
@@ -105,8 +105,8 @@ export function ThesisCard({ desk }: ThesisCardProps) {
               return (
                 <li
                   key={i}
-                  className="relative pl-8"
-                  style={{ borderLeft: `1px solid ${meta.color}30` }}
+                  className="relative pl-8 pr-4 animate-in slide-in-from-left-4 fade-in duration-700 fill-mode-both"
+                  style={{ borderLeft: `1px solid ${meta.color}30`, animationDelay: `${i * 300}ms` }}
                 >
                   {/* Step number */}
                   <span
@@ -141,14 +141,14 @@ export function ThesisCard({ desk }: ThesisCardProps) {
 
                   {/* Native-language analysis */}
                   {block.analysis && (
-                    <p className="text-sm text-text-primary font-light leading-relaxed mb-2">
+                    <p className="text-sm text-text-primary font-light leading-relaxed mb-2 text-justify hyphens-auto">
                       {block.analysis}
                     </p>
                   )}
 
                   {/* English translation if non-English */}
                   {block.analysis_en && block.analysis_en !== block.analysis && (
-                    <p className="text-sm text-text-secondary font-light leading-relaxed mb-2 pl-3 border-l border-border">
+                    <p className="text-sm text-text-secondary font-light leading-relaxed mb-2 pl-4 border-l border-border text-justify hyphens-auto">
                       {block.analysis_en}
                     </p>
                   )}
@@ -189,7 +189,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
 
       {/* Footer: provenance */}
       <footer className="px-8 py-5 border-t border-border flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex items-center gap-6 flex-wrap">
+        <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
           {desk.ipfs_thesis_cid && desk.ipfs_thesis_cid !== 'bafkrei...' && (
             <a
               href={`https://gateway.pinata.cloud/ipfs/${desk.ipfs_thesis_cid}`}

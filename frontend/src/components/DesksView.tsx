@@ -22,20 +22,22 @@ export function DesksView({ desks, loading }: DesksViewProps) {
   const active = desks.find(d => d.desk === activeDesk) ?? desks[0]
 
   return (
-    <div className="flex flex-col lg:flex-row gap-8">
-      <RegionSidebar
-        desks={desks}
-        activeDesk={activeDesk}
-        onSelect={setActiveDesk}
-      />
+    <div className="flex flex-col lg:flex-row gap-5 sm:p-8">
+      <div className="animate-rain" style={{ animationDelay: '0ms' }}>
+        <RegionSidebar
+          desks={desks}
+          activeDesk={activeDesk}
+          onSelect={setActiveDesk}
+        />
+      </div>
 
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 animate-rain" style={{ animationDelay: '150ms' }}>
         {loading ? (
-          <div className="glass-panel border border-border/20 rounded-2xl p-10 shadow-none">
+          <div className="glass-panel border border-border/20 rounded-2xl p-6 sm:p-10 shadow-none">
             <ThesisSkeleton />
           </div>
         ) : active ? (
-          <div key={active.desk} className="fade-up">
+          <div key={active.desk}>
             <ThesisCard desk={active} />
           </div>
         ) : (
@@ -45,7 +47,7 @@ export function DesksView({ desks, loading }: DesksViewProps) {
         )}
       </div>
 
-      <div className="w-full lg:w-[280px] shrink-0">
+      <div className="w-full lg:w-[280px] shrink-0 animate-rain" style={{ animationDelay: '300ms' }}>
         <AllWeatherChart />
       </div>
     </div>

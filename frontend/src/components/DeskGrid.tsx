@@ -122,7 +122,7 @@ const MOCK_DATA: DeskProps[] = [
 
 export function DeskGrid({ data }: { data: DeskProps[] }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 text-left">
       {data.map((desk) => (
         <DeskCard key={desk.ticker} desk={desk} />
       ))}

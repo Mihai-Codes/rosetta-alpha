@@ -76,7 +76,7 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
             <p className="text-[9px] font-medium uppercase tracking-[0.25em] text-muted-foreground/60 mb-1">
               {REGION_LABEL[desk.desk.toLowerCase()] ?? desk.desk} Desk
             </p>
-            <h3 className="font-display text-3xl font-light tracking-tight text-foreground group-hover:text-brand-red transition-colors duration-200">
+            <h3 className="font-display text-2xl sm:text-3xl font-light tracking-tight text-foreground group-hover:text-brand-red transition-colors duration-200">
               {desk.ticker}
             </h3>
           </div>
@@ -90,7 +90,7 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
         </div>
 
         {/* Body */}
-        <div className="px-6 py-5 flex-1 space-y-5">
+        <div className="px-4 sm:px-6 py-4 sm:py-5 flex-1 space-y-5">
           {/* Confidence bar */}
           <div>
             <div className="flex justify-between items-center mb-2">

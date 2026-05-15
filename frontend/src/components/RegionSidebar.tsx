@@ -49,14 +49,14 @@ export function RegionSidebar({ desks, activeDesk, onSelect }: RegionSidebarProp
               onClick={() => onSelect(d.desk)}
               className={`
                 w-full flex items-center gap-3 px-5 py-4 text-left
-                transition-all duration-300
+                transition-all duration-300 border-l-2
                 ${isActive
-                  ? 'bg-white/[0.04]'
-                  : 'hover:bg-white/[0.02]'
+                  ? 'bg-white/[0.06] border-transparent'
+                  : 'border-transparent hover:bg-white/[0.12] hover:border-white/[0.2]'
                 }
               `}
               style={{
-                borderLeft: `2px solid ${isActive ? meta.color : 'transparent'}`,
+                borderLeftColor: isActive ? meta.color : undefined,
               }}
             >
               <ConfidenceArc value={d.confidence} color={meta.color} />

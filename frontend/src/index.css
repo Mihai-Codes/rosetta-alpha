@@ -96,7 +96,7 @@
   }
 
   ::selection {
-    background: rgba(201, 168, 76, 0.25);
+    background: rgba(216, 43, 43, 0.25);
     color: var(--color-text-primary);
   }
 
@@ -119,8 +119,8 @@
    ========================================================================= */
 
 @keyframes red-pulse {
-  0%, 100% { opacity: 1; box-shadow: 0 0 6px rgba(201,168,76,0.5); }
-  50% { opacity: 0.6; box-shadow: 0 0 14px rgba(201,168,76,0.8); }
+  0%, 100% { opacity: 1; box-shadow: 0 0 6px rgba(216,43,43,0.5); }
+  50% { opacity: 0.6; box-shadow: 0 0 14px rgba(216,43,43,0.8); }
 }
 .red-pulse { animation: red-pulse 2.4s ease-in-out infinite; }
 
@@ -156,13 +156,31 @@
 }
 .count-up { animation: count-up 0.45s ease-out; }
 
-/* Hero ambient grid background — pure CSS, no library */
+@keyframes neon-grid-pulse {
+  0%, 100% { opacity: 0.3; filter: drop-shadow(0 0 2px rgba(216,43,43,0.8)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 12px rgba(216,43,43,1)) drop-shadow(0 0 4px rgba(216,43,43,0.8)); }
+}
+
+/* Hero ambient grid background — Prominent Neon Red Pulse */
 .hero-grid-bg {
+  position: absolute;
+  top: -100px; left: -100px; right: -100px; bottom: -100px; /* Oversized to prevent edges showing during drift */
   background-image:
-    linear-gradient(rgba(201, 168, 76, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(201, 168, 76, 0.04) 1px, transparent 1px);
-  background-size: 80px 80px;
-  animation: hero-grid-drift 30s linear infinite;
+    linear-gradient(rgba(216, 43, 43, 0.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(216, 43, 43, 0.5) 1px, transparent 1px);
+  background-size: 100px 100px;
+  animation: hero-grid-drift 20s linear infinite, neon-grid-pulse 2.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Rain Cascade Effect */
+@keyframes rain-drop {
+  0% { opacity: 0; transform: translateY(-40px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.animate-rain {
+  animation: rain-drop 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
 }
 
 .hero-vignette {
@@ -181,12 +199,12 @@
   background: var(--color-border);
   border-radius: 3px;
 }
-::-webkit-scrollbar-thumb:hover { background: rgba(201, 168, 76, 0.4); }
+::-webkit-scrollbar-thumb:hover { background: rgba(216, 43, 43, 0.4); }
 
 /* Gold gradient HR */
 .hr-gold {
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(201, 168, 76, 0.4), transparent);
+  background: linear-gradient(90deg, transparent, rgba(216, 43, 43, 0.4), transparent);
   border: none;
 }
 

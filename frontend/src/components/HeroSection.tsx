@@ -32,14 +32,14 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
   return (
     <section
       ref={heroRef}
-      className="relative w-full flex flex-col items-center justify-center pt-32 pb-16 border-b border-white/[0.05]"
+      className="relative w-full overflow-hidden flex flex-col items-center justify-center pt-32 pb-16 border-b border-white/[0.05]"
       aria-label="Rosetta Alpha hero"
     >
       {/* Subtle Apple-style background grid */}
       <div className="absolute inset-0 hero-grid-bg" aria-hidden />
       <div className="absolute inset-0 hero-vignette" aria-hidden />
 
-      <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
+      <div className="relative z-10 w-full max-w-[1200px] mx-auto px-4 sm:px-8 lg:px-12 text-center">
         <p
           data-reveal-id="eyebrow"
           className={`text-[11px] font-medium uppercase tracking-[0.4em] text-brand-red/80 mb-6 transition-all duration-700 ${
@@ -51,7 +51,7 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
 
         <h1
           data-reveal-id="headline"
-          className={`font-display text-[clamp(4rem,10vw,8rem)] font-normal text-text-primary leading-[0.95] mb-6 transition-all duration-1000 delay-100 ${
+          className={`font-display text-[clamp(2.75rem,8vw,8rem)] font-normal text-text-primary leading-[0.95] mb-6 transition-all duration-1000 delay-100 ${
             visible.headline ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
@@ -60,7 +60,7 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
 
         <p
           data-reveal-id="subtitle"
-          className={`text-lg md:text-xl text-text-secondary font-light max-w-2xl mx-auto leading-relaxed mb-10 transition-all duration-1000 delay-200 ${
+          className={`text-lg md:text-xl text-text-secondary font-light max-w-max mx-auto px-4 whitespace-nowrap overflow-hidden text-ellipsis sm:whitespace-normal leading-relaxed mb-10 transition-all duration-1000 delay-200 ${
             visible.subtitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
@@ -79,11 +79,14 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
             return (
               <div
                 key={r}
-                className="flex items-center gap-2 px-5 py-2.5 glass-panel rounded-full border border-white/[0.05]"
+                className="group flex items-center gap-2 px-5 py-2.5 glass-panel rounded-full border border-white/[0.05] hover:border-white/[0.15] transition-colors duration-300 cursor-default"
               >
-                <div className="w-1.5 h-1.5 rounded-full" style={{ background: meta.color }} />
-                <span className="text-sm leading-none text-text-primary">{meta.flag}</span>
-                <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-text-secondary">
+                <div className="relative flex h-1.5 w-1.5 shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60" style={{ backgroundColor: meta.color }} />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5" style={{ backgroundColor: meta.color }} />
+                </div>
+                <span className="text-sm leading-none text-text-primary group-hover:scale-110 transition-transform">{meta.flag}</span>
+                <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-text-secondary group-hover:text-text-primary transition-colors">
                   {meta.name}
                 </span>
               </div>
@@ -93,25 +96,28 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
 
         <div 
           data-reveal-id="actions"
-          className={`flex flex-col sm:flex-row items-center justify-center gap-6 transition-all duration-1000 delay-500 ${
+          className={`flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 transition-all duration-1000 delay-500 ${
             visible.actions ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
           <button
             onClick={onScrollDown}
-            className="group inline-flex items-center gap-3 px-8 py-3.5 glass-panel rounded-full border border-brand-red/40 text-brand-red text-[11px] font-medium uppercase tracking-[0.2em] transition-all hover:bg-brand-red hover:text-black hover:shadow-glow-red cursor-pointer"
+            className="group relative overflow-hidden inline-flex items-center gap-3 px-10 py-4 glass-panel rounded-full border border-brand-red/40 text-brand-red text-[12px] font-medium uppercase tracking-[0.25em] transition-all duration-500 hover:border-brand-red hover:shadow-glow-red cursor-pointer"
           >
-            Enter Terminal
-            <span className="transition-transform group-hover:translate-x-1">→</span>
+            <div className="absolute inset-0 bg-brand-red translate-y-[100%] group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" />
+            <span className="relative z-10 transition-colors duration-500 group-hover:text-black">Enter Terminal</span>
+            <span className="relative z-10 transition-all duration-500 group-hover:translate-x-1 group-hover:text-black">→</span>
           </button>
 
           {latestHash && (
-            <div className="flex items-center gap-3 px-5 py-3 glass-panel rounded-full border border-white/[0.05]">
+            <div className="flex items-center gap-3 px-4 sm:px-6 py-3 sm:py-4 glass-panel rounded-full border border-white/[0.05]">
               <span className="w-1.5 h-1.5 rounded-full bg-brand-red red-pulse" />
               <span className="text-[9px] uppercase tracking-[0.25em] text-text-tertiary">
                 Latest Trace
               </span>
-              <span className="font-mono text-[10px] text-brand-red">{truncateHash(latestHash, 10, 6)}</span>
+              <span key={latestHash} className="font-mono text-[11px] text-brand-red animate-in fade-in zoom-in-95 duration-1000">
+                {truncateHash(latestHash, 10, 6)}
+              </span>
             </div>
           )}
         </div>

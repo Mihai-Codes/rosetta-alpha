@@ -76,7 +76,7 @@ export function RegistryTable({ desks }: RegistryTableProps) {
   )
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-rain">
       {/* Toolbar */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div className="relative flex-1 max-w-md">
@@ -111,17 +111,17 @@ export function RegistryTable({ desks }: RegistryTableProps) {
         <table className="w-full">
           <thead>
             <tr className="border-b border-white/[0.05] bg-transparent">
-              <th className="px-6 py-4 text-left"><SortHeader label="Desk" k="desk" /></th>
-              <th className="px-6 py-4 text-left"><SortHeader label="Asset" k="ticker" /></th>
-              <th className="px-6 py-4 text-left"><SortHeader label="Direction" k="direction" /></th>
-              <th className="px-6 py-4 text-right"><SortHeader label="Conviction" k="confidence" /></th>
-              <th className="px-6 py-4 text-left">
+              <th className="px-4 sm:px-6 py-3 sm:py-4 text-left"><SortHeader label="Desk" k="desk" /></th>
+              <th className="px-4 sm:px-6 py-3 sm:py-4 text-left"><SortHeader label="Asset" k="ticker" /></th>
+              <th className="px-4 sm:px-6 py-3 sm:py-4 text-left"><SortHeader label="Direction" k="direction" /></th>
+              <th className="px-4 sm:px-6 py-3 sm:py-4 text-right"><SortHeader label="Conviction" k="confidence" /></th>
+              <th className="px-4 sm:px-6 py-3 sm:py-4 text-left">
                 <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-text-tertiary">
                   IPFS · Arc Tx
                 </span>
               </th>
-              <th className="px-6 py-4 text-left"><SortHeader label="Est. Recorded" k="time" /></th>
-              <th className="px-6 py-4 text-center">
+              <th className="px-4 sm:px-6 py-3 sm:py-4 text-left"><SortHeader label="Est. Recorded" k="time" /></th>
+              <th className="px-4 sm:px-6 py-3 sm:py-4 text-center">
                 <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-text-tertiary">
                   Status
                 </span>
@@ -144,7 +144,7 @@ export function RegistryTable({ desks }: RegistryTableProps) {
                 const dirColor = e.direction === 'LONG' ? '#4A9F6F' : e.direction === 'SHORT' ? '#9F4A4A' : '#7B8FA6'
                 return (
                   <tr key={i} className="hover:bg-white/[0.03] transition-all duration-300 group cursor-default">
-                    <td className="px-6 py-4">
+                    <td className="px-4 sm:px-6 py-3 sm:py-4">
                       <div className="flex items-center gap-2">
                         <span
                           className="w-1 h-6 shrink-0"
@@ -155,10 +155,10 @@ export function RegistryTable({ desks }: RegistryTableProps) {
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 sm:px-6 py-3 sm:py-4">
                       <span className="font-mono text-sm text-text-primary">{e.ticker}</span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 sm:px-6 py-3 sm:py-4">
                       <span
                         className="text-[10px] font-medium uppercase tracking-[0.2em]"
                         style={{ color: dirColor }}
@@ -166,12 +166,12 @@ export function RegistryTable({ desks }: RegistryTableProps) {
                         {e.direction}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 text-right">
                       <span className="font-mono text-sm text-text-primary">
                         {(e.confidence * 100).toFixed(0)}%
                       </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 sm:px-6 py-3 sm:py-4">
                       <div className="flex flex-col gap-1">
                         <a
                           href={`https://dweb.link/ipfs/${e.ipfs_thesis_cid}`}
@@ -195,12 +195,12 @@ export function RegistryTable({ desks }: RegistryTableProps) {
                         </a>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 sm:px-6 py-3 sm:py-4">
                       <span className="font-mono text-[11px] text-text-tertiary">
                         {formatRelative(e.timestamp)}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-center">
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 text-center">
                       <span className="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-[0.2em] text-positive">
                         <CheckCircle2 className="w-3 h-3" />
                         Verified

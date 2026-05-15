@@ -1,4 +1,5 @@
 import React from 'react'
+import { Brain, Layers, HardDrive, CircleDollarSign } from 'lucide-react'
 
 export type Tab = 'desks' | 'feed' | 'registry' | 'about'
 
@@ -18,7 +19,8 @@ const TABS: { id: Tab; label: string }[] = [
 export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
   return (
     <div className="min-h-screen flex flex-col bg-bg-primary relative selection:bg-brand-red/20">
-      {/* 2026 Spatial Noise Texture */}
+      {/* Anthropic-style subtle grain */}
+      <div className="bg-grain" aria-hidden="true" />
       {/* Always-visible sticky nav */}
       <header
         className="fixed top-0 left-0 right-0 z-50"
@@ -29,7 +31,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
           borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
         }}
       >
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 h-16 flex items-center justify-between">
           {/* Logo: R△ */}
           <button
             onClick={() => onTabChange('home')}
@@ -39,10 +41,10 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
             <span className="font-display text-2xl text-text-primary leading-none transition-colors">
               R
             </span>
-            <span className="font-display text-2xl text-[#E63946] leading-none transition-transform group-hover:scale-110 origin-bottom">
+            <span className="font-display text-2xl text-brand-red leading-none transition-all duration-500 group-hover:scale-110 group-hover:drop-shadow-[0_0_16px_rgba(216,43,43,1)] origin-bottom">
               △
             </span>
-            <span className="ml-2 text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary">
+            <span className="hidden sm:inline-block ml-2 text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary">
               Rosetta Alpha
             </span>
           </button>
@@ -94,36 +96,36 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
       <main className="flex-1 w-full">{children}</main>
 
       <footer className="border-t border-white/[0.05] py-16 mt-24">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8 text-[11px] text-text-tertiary">
+        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 grid md:grid-cols-3 gap-5 sm:p-8 text-[11px] text-text-tertiary">
           <div>
             <p className="font-display text-text-primary text-base mb-2">
               Rosetta <span className="text-brand-red">Alpha</span>
             </p>
-            <p className="font-light leading-relaxed">
-              Multi-language reasoning traces secured on Arc L1.
+            <p className="font-light leading-relaxed max-w-[240px]">
+              Multi-language reasoning traces secured on Arc L1.<br className="hidden sm:block" />
               An institutional-grade intelligence layer for global macro.
             </p>
           </div>
           <div>
             <p className="uppercase tracking-[0.25em] text-text-secondary mb-3">Stack</p>
-            <ul className="space-y-1.5 font-light">
-              <li>AdalFlow · Multi-agent reasoning</li>
-              <li>Arc L1 · On-chain provenance</li>
-              <li>IPFS · Permanent thesis storage</li>
-              <li>Circle Paymaster · Gasless USDC</li>
+            <ul className="space-y-2 font-light">
+              <li className="flex items-center gap-2"><Brain className="w-3.5 h-3.5 text-brand-red"/> AdalFlow · Multi-agent reasoning</li>
+              <li className="flex items-center gap-2"><Layers className="w-3.5 h-3.5 text-brand-red"/> Arc L1 · On-chain provenance</li>
+              <li className="flex items-center gap-2"><HardDrive className="w-3.5 h-3.5 text-brand-red"/> IPFS · Permanent thesis storage</li>
+              <li className="flex items-center gap-2"><CircleDollarSign className="w-3.5 h-3.5 text-brand-red"/> Circle Paymaster · Gasless USDC</li>
             </ul>
           </div>
           <div>
             <p className="uppercase tracking-[0.25em] text-text-secondary mb-3">Built For</p>
             <p className="font-light leading-relaxed">
-              Agora Agents Hackathon · 2026<br />
-              Inspired by the All Weather discipline of Bridgewater Associates.
+              <a href="https://agora.thecanteenapp.com/" target="_blank" rel="noopener noreferrer" className="text-text-secondary hover:text-brand-red transition-colors font-medium">Agora Agents Hackathon</a> · 2026<br />
+              Inspired by the <a href="https://www.bridgewater.com/research-and-insights/the-all-weather-story" target="_blank" rel="noopener noreferrer" className="text-text-secondary hover:text-brand-red transition-colors font-medium">All Weather discipline</a> of Bridgewater Associates.
             </p>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-white/[0.02] flex items-center justify-between text-[10px] text-text-tertiary uppercase tracking-[0.25em]">
+        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 mt-12 pt-8 border-t border-white/[0.02] flex items-center justify-between flex-wrap gap-4 text-[10px] text-text-tertiary uppercase tracking-[0.25em]">
           <span>© 2026 Rosetta Alpha</span>
-          <span>Made with discipline · Not noise</span>
+          <span className="italic text-text-secondary">"Τὸ γὰρ ὅλον παρὰ τὰ μόρια" <span className="text-text-tertiary normal-case tracking-normal ml-1">(The whole is something besides the parts)</span> — Aristotle</span>
         </div>
       </footer>
     </div>

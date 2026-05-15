@@ -13,7 +13,7 @@ export function MarketBoard({ desks }: { desks: DeskProps[] }) {
           <p className="text-[9px] font-medium uppercase tracking-[0.25em] text-muted-foreground/50 mb-2">
             On-Chain Prediction Markets
           </p>
-          <h2 className="font-display text-3xl font-light text-foreground">
+          <h2 className="font-display text-2xl sm:text-3xl font-light text-foreground">
             Settlement Registry
           </h2>
           <p className="text-sm text-muted-foreground/60 font-light mt-1">
@@ -33,7 +33,7 @@ export function MarketBoard({ desks }: { desks: DeskProps[] }) {
             <thead>
               <tr className="border-b border-white/[0.05] bg-transparent">
                 {['Question', 'Region', 'Arc Transaction', 'Expiry', 'Status'].map(h => (
-                  <th key={h} className="px-6 py-4 text-[9px] font-medium uppercase tracking-[0.2em] text-muted-foreground/40">
+                  <th key={h} className="px-4 sm:px-6 py-3 sm:py-4 text-[9px] font-medium uppercase tracking-[0.2em] text-muted-foreground/40">
                     {h}
                   </th>
                 ))}
@@ -42,17 +42,17 @@ export function MarketBoard({ desks }: { desks: DeskProps[] }) {
             <tbody className="divide-y divide-white/[0.02]">
               {markets.map((m, i) => (
                 <tr key={i} className="hover:bg-accent/10 transition-colors group">
-                  <td className="px-6 py-5 max-w-xs">
+                  <td className="px-4 sm:px-6 py-4 sm:py-5 max-w-xs">
                     <p className="text-sm font-light text-foreground/80 leading-snug group-hover:text-foreground transition-colors">
                       {m.question}
                     </p>
                   </td>
-                  <td className="px-6 py-5">
+                  <td className="px-4 sm:px-6 py-4 sm:py-5">
                     <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground/60 border border-border px-2 py-1">
                       {m.desk.toUpperCase()}
                     </span>
                   </td>
-                  <td className="px-6 py-5">
+                  <td className="px-4 sm:px-6 py-4 sm:py-5">
                     {m.arc_tx && !m.arc_tx.endsWith('...') ? (
                       <a
                         href={`https://testnet.arcscan.app/tx/${m.arc_tx}`}
@@ -67,13 +67,13 @@ export function MarketBoard({ desks }: { desks: DeskProps[] }) {
                       <span className="font-mono text-[10px] text-muted-foreground/30">{m.arc_tx}</span>
                     )}
                   </td>
-                  <td className="px-6 py-5">
+                  <td className="px-4 sm:px-6 py-4 sm:py-5">
                     <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground/50">
                       <Clock className="w-3 h-3" />
                       Aug 12, 2026
                     </div>
                   </td>
-                  <td className="px-6 py-5">
+                  <td className="px-4 sm:px-6 py-4 sm:py-5">
                     <span className="text-[9px] font-medium uppercase tracking-widest text-[#C9A84C] border border-[rgba(201,168,76,0.25)] bg-[rgba(201,168,76,0.05)] px-3 py-1">
                       Pending
                     </span>

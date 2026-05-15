@@ -195,7 +195,7 @@ function App() {
     <Layout activeTab={activeTab} onTabChange={handleTabChange}>
       {activeTab === 'desks' && <HeroSection latestHash={latestHash} onScrollDown={handleScrollDown} />}
 
-      <div ref={mainRef} className="max-w-7xl mx-auto px-6 pt-12 pb-16">
+      <div ref={mainRef} className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pt-12 pb-16">
         {/* Section header */}
         {activeTab !== 'desks' && (
           <div className="mb-10">

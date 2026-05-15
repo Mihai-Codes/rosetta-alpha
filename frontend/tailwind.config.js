@@ -9,6 +9,7 @@ module.exports = {
         mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', '"Liberation Mono"', '"Courier New"', 'monospace'],
       },
       colors: {
+        'brand-red': '#D82B2B',
         // Surfaces
         'bg-primary': '#000000',
         'bg-secondary': '#0A0A0A',
