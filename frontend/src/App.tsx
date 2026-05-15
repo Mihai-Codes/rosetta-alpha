@@ -179,14 +179,19 @@ function App() {
 
   const handleEnter = () => {
     setShowHero(false)
-    requestAnimationFrame(() => {
-      mainRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    })
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  const handleTabChange = (tab: Tab) => {
-    setActiveTab(tab)
-    if (showHero) setShowHero(false)
+  const handleTabChange = (tab: Tab | 'home') => {
+    if (tab === 'home') {
+      setShowHero(true)
+      setActiveTab('desks')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    } else {
+      setActiveTab(tab)
+      if (showHero) setShowHero(false)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
   }
 
   const latestHash = data[0]?.arc_tx

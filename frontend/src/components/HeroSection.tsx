@@ -1,4 +1,5 @@
 import React from 'react'
+import { ArrowDown } from 'lucide-react'
 import { REGION_META, truncateHash } from '../lib/format'
 
 interface HeroSectionProps {
@@ -109,31 +110,16 @@ export function HeroSection({ latestHash, onEnter }: HeroSectionProps) {
           </div>
         )}
 
-        {/* Enter CTA */}
-        <div className="flex justify-center">
-          <button
-            data-reveal-id="cta"
-            onClick={onEnter}
-            className={`
-              group inline-flex items-center gap-3 px-10 py-4
-            glass-panel rounded-full border border-gold/40 text-gold
-            text-[12px] font-medium uppercase tracking-[0.25em]
-            transition-all duration-500
-            hover:bg-gold hover:text-bg-primary hover:shadow-glow-gold hover:-translate-y-1
-            ${visible.cta ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
-            transition-opacity delay-700
-          `}
+        {/* Scroll down arrow */}
+        <div 
+          data-reveal-id="cta"
+          className={`flex justify-center mt-6 transition-all duration-1000 delay-700 ${visible.cta ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
         >
-          Enter Terminal
-            <span className="transition-transform group-hover:translate-x-1">→</span>
-          </button>
+          <div className="animate-bounce p-3 rounded-full border border-white/[0.05] text-text-tertiary bg-white/[0.02]">
+            <ArrowDown className="w-4 h-4" />
+          </div>
         </div>
 
-        {/* Scroll hint */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50">
-          <span className="text-[9px] uppercase tracking-[0.3em] text-text-tertiary">Scroll</span>
-          <div className="w-px h-8 bg-gradient-to-b from-text-tertiary to-transparent" />
-        </div>
       </div>
     </section>
   )

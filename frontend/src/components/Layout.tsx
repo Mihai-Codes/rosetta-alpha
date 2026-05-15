@@ -5,7 +5,7 @@ export type Tab = 'desks' | 'feed' | 'registry' | 'about'
 interface LayoutProps {
   children: React.ReactNode
   activeTab: Tab
-  onTabChange: (tab: Tab) => void
+  onTabChange: (tab: Tab | 'home') => void
   navVisible: boolean
 }
 
@@ -40,7 +40,7 @@ export function Layout({ children, activeTab, onTabChange, navVisible }: LayoutP
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           {/* Logo: R△ */}
           <button
-            onClick={() => onTabChange('desks')}
+            onClick={() => onTabChange('home')}
             className="flex items-baseline gap-1 group"
             aria-label="Rosetta Alpha home"
           >
