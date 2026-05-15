@@ -108,7 +108,9 @@
 }
 
 @keyframes red-pulse {
-  0%, 100% { opacity: 0.4; filter: drop-shadow(0 0 4px rgba(216,43,43,0.6)); }
+  0%, 100% { opacity: 0.8; filter: drop-shadow(0 0 8px rgba(216,43,43,0.8)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 24px rgba(216,43,43,1)) drop-shadow(0 0 12px rgba(216,43,43,1)); }
+}
   50% { opacity: 1; filter: drop-shadow(0 0 16px rgba(216,43,43,1)) drop-shadow(0 0 6px rgba(216,43,43,0.8)); }
 }
 .red-pulse { animation: red-pulse 2.5s ease-in-out infinite; }

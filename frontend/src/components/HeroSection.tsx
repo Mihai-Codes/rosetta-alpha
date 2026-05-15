@@ -60,7 +60,7 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
 
         <p
           data-reveal-id="subtitle"
-          className={`text-lg md:text-xl text-text-secondary font-light max-w-full mx-auto px-4 whitespace-nowrap overflow-hidden text-ellipsis leading-relaxed mb-10 transition-all duration-1000 delay-200 ${visible.subtitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+          className={`text-lg md:text-xl text-text-secondary font-light w-full max-w-full whitespace-nowrap overflow-hidden text-ellipsis mb-12 px-4 transition-all duration-1000 delay-150 ${visible.subtitle ? \'opacity-100 translate-y-0\' : \'opacity-0 translate-y-4\'}`}
         >
           Dalio's All Weather discipline, reimagined for every language.
           Five regional AI analysts. One verifiable thesis.
