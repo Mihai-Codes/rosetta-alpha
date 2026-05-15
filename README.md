@@ -25,23 +25,9 @@ Multi-language AI financial research platform. Five regional agents each reason 
 
 ## What's Built
 
-| Component | Status |
-|-----------|--------|
-| US desk — AAPL via Financial Datasets MCP | done |
-| Crypto desk — BTC via CoinGecko + DeFiLlama | done |
-| China desk — Moutai via AKShare + DeepSeek V4 Pro (ZH) | done |
-| EU desk — LVMH via yfinance + Gemini 3.1 Flash | done |
-| Japan desk — Toyota via yfinance + Gemini 3.1 Flash (JA) | done |
-| Arc smart contracts — 4/4 verified on testnet | done |
-| IPFS pinning via Pinata | done |
-| ROSETTA performance bond staking (10 tokens/trace) | done |
-| PredictionMarket creation per thesis | done |
-| Translator agent — thesis → binary PredictionMarketQuestion | done |
-| Autonomous settler — permissionless resolve + settle loop | done |
-| Text-grad prompt optimization — AdalFlow Textual Gradient Descent | done |
-| AdalFlow Trace integration — auto training dataset generation | done |
-| React dashboard — Vercel serverless, live Arc data | done |
-| Circle Paymaster demo — gasless USDC on Arbitrum (ERC-4337 v0.7) | done |
+<p align="center">
+  <img src="docs/whats_built.svg" alt="What's Built — Rosetta Alpha" width="800" />
+</p>
 
 ---
 

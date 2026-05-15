@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="480" viewBox="0 0 800 480">
+  <rect width="800" height="480" fill="#0a0a0a"/>
+  <text x="400" y="28" font-family="Georgia,serif" font-size="9" fill="#555" text-anchor="middle" letter-spacing="5">WHAT'S BUILT — ROSETTA ALPHA</text>
+  <line x1="20" y1="38" x2="780" y2="38" stroke="#1e1e1e" stroke-width="1"/>
+
+  <!-- REGIONAL DESKS -->
+  <text x="30" y="58" font-family="monospace" font-size="8" fill="#666" letter-spacing="3">REGIONAL DESKS</text>
+  <rect x="20" y="64" width="228" height="32" fill="#0f0f0f" rx="1"/>
+  <rect x="20" y="64" width="3" height="32" fill="#22c55e" rx="1"/>
+  <text x="32" y="76" font-family="monospace" font-size="9" fill="#e0e0e0">US · AAPL</text>
+  <text x="32" y="88" font-family="monospace" font-size="8" fill="#555">Financial Datasets MCP · Groq Llama-3.3</text>
+
+  <rect x="256" y="64" width="228" height="32" fill="#0f0f0f" rx="1"/>
+  <rect x="256" y="64" width="3" height="32" fill="#22c55e" rx="1"/>
+  <text x="268" y="76" font-family="monospace" font-size="9" fill="#e0e0e0">CN · Moutai 600519</text>
+  <text x="268" y="88" font-family="monospace" font-size="8" fill="#555">AKShare · DeepSeek V4 Pro · ZH</text>
+
+  <rect x="492" y="64" width="288" height="32" fill="#0f0f0f" rx="1"/>
+  <rect x="492" y="64" width="3" height="32" fill="#22c55e" rx="1"/>
+  <text x="504" y="76" font-family="monospace" font-size="9" fill="#e0e0e0">EU · LVMH MC.PA</text>
+  <text x="504" y="88" font-family="monospace" font-size="8" fill="#555">yfinance + Stooq · Gemini 2.5 Pro · EN/FR</text>
+
+  <rect x="20" y="102" width="228" height="32" fill="#0f0f0f" rx="1"/>
+  <rect x="20" y="102" width="3" height="32" fill="#22c55e" rx="1"/>
+  <text x="32" y="114" font-family="monospace" font-size="9" fill="#e0e0e0">JP · Toyota 7203.T</text>
+  <text x="32" y="126" font-family="monospace" font-size="8" fill="#555">yfinance + Stooq · Gemini 2.5 Pro · JA</text>
+
+  <rect x="256" y="102" width="228" height="32" fill="#0f0f0f" rx="1"/>
+  <rect x="256" y="102" width="3" height="32" fill="#22c55e" rx="1"/>
+  <text x="268" y="114" font-family="monospace" font-size="9" fill="#e0e0e0">CRYPTO · BTC</text>
+  <text x="268" y="126" font-family="monospace" font-size="8" fill="#555">CoinGecko + DeFiLlama · Groq Llama-3.3</text>
+
+  <line x1="20" y1="148" x2="780" y2="148" stroke="#1e1e1e" stroke-width="1"/>
+
+  <!-- ON-CHAIN -->
+  <text x="30" y="166" font-family="monospace" font-size="8" fill="#666" letter-spacing="3">ON-CHAIN · ARC L1 TESTNET 5042002</text>
+  <rect x="20" y="172" width="168" height="32" fill="#0f0f0f" rx="1"/>
+  <rect x="20" y="172" width="3" height="32" fill="#00c2ff" rx="1"/>
+  <text x="32" y="184" font-family="monospace" font-size="9" fill="#e0e0e0">ReasoningRegistry</text>
+  <text x="32" y="196" font-family="monospace" font-size="8" fill="#555">4 contracts · verified</text>
+
+  <rect x="196" y="172" width="168" height="32" fill="#0f0f0f" rx="1"/>
+  <rect x="196" y="172" width="3" height="32" fill="#00c2ff" rx="1"/>
+  <text x="208" y="184" font-family="monospace" font-size="9" fill="#e0e0e0">ROSETTA Token</text>
+  <text x="208" y="196" font-family="monospace" font-size="8" fill="#555">10 tokens · performance bond</text>
+
+  <rect x="372" y="172" width="168" height="32" fill="#0f0f0f" rx="1"/>
+  <rect x="372" y="172" width="3" height="32" fill="#00c2ff" rx="1"/>
+  <text x="384" y="184" font-family="monospace" font-size="9" fill="#e0e0e0">PredictionMarket.sol</text>
+  <text x="384" y="196" font-family="monospace" font-size="8" fill="#555">binary YES/NO per thesis</text>
+
+  <rect x="548" y="172" width="232" height="32" fill="#0f0f0f" rx="1"/>
+  <rect x="548" y="172" width="3" height="32" fill="#00c2ff" rx="1"/>
+  <text x="560" y="184" font-family="monospace" font-size="9" fill="#e0e0e0">IPFS via Pinata</text>
+  <text x="560" y="196" font-family="monospace" font-size="8" fill="#555">permanent thesis storage · dweb.link</text>
+
+  <line x1="20" y1="218" x2="780" y2="218" stroke="#1e1e1e" stroke-width="1"/>
+
+  <!-- AI PIPELINE -->
+  <text x="30" y="236" font-family="monospace" font-size="8" fill="#666" letter-spacing="3">AI PIPELINE · ADALFLOW</text>
+  <rect x="20" y="242" width="178" height="32" fill="#0f0f0f" rx="1"/>
+  <rect x="20" y="242" width="3" height="32" fill="#a855f7" rx="1"/>
+  <text x="32" y="254" font-family="monospace" font-size="9" fill="#e0e0e0">Translator Agent</text>
+  <text x="32" y="266" font-family="monospace" font-size="8" fill="#555">thesis → PredictionMarketQuestion</text>
+
+  <rect x="206" y="242" width="178" height="32" fill="#0f0f0f" rx="1"/>
+  <rect x="206" y="242" width="3" height="32" fill="#a855f7" rx="1"/>
+  <text x="218" y="254" font-family="monospace" font-size="9" fill="#e0e0e0">Autonomous Settler</text>
+  <text x="218" y="266" font-family="monospace" font-size="8" fill="#555">permissionless resolve + settle</text>
+
+  <rect x="392" y="242" width="178" height="32" fill="#0f0f0f" rx="1"/>
+  <rect x="392" y="242" width="3" height="32" fill="#a855f7" rx="1"/>
+  <text x="404" y="254" font-family="monospace" font-size="9" fill="#e0e0e0">TextGrad Optimizer</text>
+  <text x="404" y="266" font-family="monospace" font-size="8" fill="#555">AdalFlow Textual Gradient Descent</text>
+
+  <rect x="578" y="242" width="202" height="32" fill="#0f0f0f" rx="1"/>
+  <rect x="578" y="242" width="3" height="32" fill="#a855f7" rx="1"/>
+  <text x="590" y="254" font-family="monospace" font-size="9" fill="#e0e0e0">Trace Integration</text>
+  <text x="590" y="266" font-family="monospace" font-size="8" fill="#555">auto training dataset · JSONL</text>
+
+  <line x1="20" y1="288" x2="780" y2="288" stroke="#1e1e1e" stroke-width="1"/>
+
+  <!-- PLATFORM -->
+  <text x="30" y="306" font-family="monospace" font-size="8" fill="#666" letter-spacing="3">PLATFORM</text>
+  <rect x="20" y="312" width="238" height="32" fill="#0f0f0f" rx="1"/>
+  <rect x="20" y="312" width="3" height="32" fill="#f59e0b" rx="1"/>
+  <text x="32" y="324" font-family="monospace" font-size="9" fill="#e0e0e0">React Dashboard · Vercel</text>
+  <text x="32" y="336" font-family="monospace" font-size="8" fill="#555">serverless · live Arc data</text>
+
+  <rect x="266" y="312" width="238" height="32" fill="#0f0f0f" rx="1"/>
+  <rect x="266" y="312" width="3" height="32" fill="#f59e0b" rx="1"/>
+  <text x="278" y="324" font-family="monospace" font-size="9" fill="#e0e0e0">Circle Paymaster</text>
+  <text x="278" y="336" font-family="monospace" font-size="8" fill="#555">gasless USDC · Arbitrum ERC-4337 v0.7</text>
+
+  <rect x="512" y="312" width="268" height="32" fill="#0f0f0f" rx="1"/>
+  <rect x="512" y="312" width="3" height="32" fill="#f59e0b" rx="1"/>
+  <text x="524" y="324" font-family="monospace" font-size="9" fill="#e0e0e0">CI/CD · GitHub Actions</text>
+  <text x="524" y="336" font-family="monospace" font-size="8" fill="#555">93 tests · Codecov · Ruff · Vite bundle</text>
+
+  <!-- Footer -->
+  <line x1="20" y1="368" x2="780" y2="368" stroke="#1e1e1e" stroke-width="1"/>
+  <text x="30" y="388" font-family="monospace" font-size="8" fill="#333">■ DONE</text>
+  <rect x="65" y="380" width="8" height="8" fill="#22c55e" rx="1"/>
+  <text x="78" y="388" font-family="monospace" font-size="8" fill="#555">Regional Desks (5)</text>
+  <rect x="185" y="380" width="8" height="8" fill="#00c2ff" rx="1"/>
+  <text x="198" y="388" font-family="monospace" font-size="8" fill="#555">On-Chain (4 contracts)</text>
+  <rect x="320" y="380" width="8" height="8" fill="#a855f7" rx="1"/>
+  <text x="333" y="388" font-family="monospace" font-size="8" fill="#555">AI Pipeline (4 modules)</text>
+  <rect x="455" y="380" width="8" height="8" fill="#f59e0b" rx="1"/>
+  <text x="468" y="388" font-family="monospace" font-size="8" fill="#555">Platform (3 components)</text>
+
+  <text x="400" y="470" font-family="Georgia,serif" font-size="8" fill="#333" text-anchor="middle" letter-spacing="3">AGORA AGENTS HACKATHON · MAY 2026</text>
+</svg>

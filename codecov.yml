@@ -1,0 +1,17 @@
+codecov:
+  token: 80a2c800-ff16-40ab-b9c0-6356a23aeb33
+
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 2%
+    patch:
+      default:
+        target: auto
+
+comment:
+  layout: "reach,diff,flags,files"
+  behavior: default
+  require_changes: false
