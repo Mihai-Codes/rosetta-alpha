@@ -43,22 +43,22 @@ export function AboutView() {
           </p>
         </div>
 
-        <div className="flex flex-col gap-2 w-full max-w-[1600px] mx-auto">
+        <div className="flex flex-col gap-4 w-full max-w-7xl mx-auto">
           {[
             { label: 'Rising Growth', assets: 'Equities & Commodities', desc: 'Positive growth surprises favor ownership of the productive economy.' },
             { label: 'Falling Growth', assets: 'Nominal Bonds & Cash', desc: 'Economic contraction increases the value of safe, fixed-return assets.' },
             { label: 'Rising Inflation', assets: 'ILBs & Commodities', desc: 'Currency devaluation favors inflation-linked bonds and tangible assets.' },
             { label: 'Falling Inflation', assets: 'Equities & Nominal Bonds', desc: 'Deflationary environments increase real returns on financial capital.' }
           ].map((item, i) => (
-            <div key={i} className="group flex items-center justify-between gap-12 p-5 bg-white/[0.01] border border-white/[0.03] rounded-lg transition-all duration-700 hover:bg-brand-red/[0.01] hover:border-brand-red/10">
-              <div className="w-[180px] shrink-0">
-                <p className="text-[10px] uppercase tracking-[0.7em] text-brand-red/40 group-hover:text-brand-red transition-all duration-500 font-bold whitespace-nowrap">{item.label}</p>
+            <div key={i} className="group flex flex-col lg:flex-row lg:items-center justify-between gap-6 lg:gap-12 p-8 bg-white/[0.01] border border-white/[0.03] rounded-xl transition-all duration-700 hover:bg-brand-red/[0.01] hover:border-brand-red/20">
+              <div className="w-full lg:w-[220px] shrink-0">
+                <p className="text-[11px] uppercase tracking-[0.6em] text-brand-red/50 group-hover:text-brand-red transition-all duration-500 font-bold">{item.label}</p>
               </div>
-              <div className="w-[300px] shrink-0 border-l border-white/5 pl-10">
-                <p className="text-lg font-display text-text-primary tracking-tight whitespace-nowrap">{item.assets}</p>
+              <div className="w-full lg:w-[340px] shrink-0 lg:border-l border-white/10 lg:pl-10">
+                <p className="text-xl font-display text-text-primary tracking-tight leading-snug">{item.assets}</p>
               </div>
-              <div className="flex-1 min-w-0 border-l border-white/5 pl-10">
-                <p className="text-[14px] text-text-tertiary font-light whitespace-nowrap">{item.desc}</p>
+              <div className="flex-1 lg:border-l border-white/10 lg:pl-10">
+                <p className="text-[15px] text-text-tertiary font-light leading-relaxed">{item.desc}</p>
               </div>
             </div>
           ))}
