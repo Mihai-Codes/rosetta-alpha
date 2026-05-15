@@ -128,8 +128,8 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
             <QuoteMatrix />
             <div className="flex items-center gap-3">
               <span className="w-px h-4 bg-white/10" />
-              <div className="flex items-center gap-2">
-                <Library className="w-3.5 h-3.5 text-brand-red opacity-80" />
+              <div className="flex items-center gap-2 group">
+                <span className="text-lg grayscale group-hover:grayscale-0 transition-all duration-500" title="Aristotle">🏛️</span>
                 <span className="text-text-secondary tracking-[0.4em] font-medium">Aristotle</span>
               </div>
             </div>

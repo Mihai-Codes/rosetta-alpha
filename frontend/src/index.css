@@ -89,15 +89,15 @@
 }
 
 .global-grid-bg {
-  position: fixed; top: -50px; left: 0; right: 0; bottom: 0;
+  position: fixed; top: -100px; left: -100px; right: -100px; bottom: -100px;
   background-image: 
-    linear-gradient(rgba(216, 43, 43, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(216, 43, 43, 0.06) 1px, transparent 1px);
+    linear-gradient(rgba(216, 43, 43, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(216, 43, 43, 0.04) 1px, transparent 1px);
   background-size: 100px 100px;
-  animation: grid-rain 30s linear infinite;
+  animation: grid-rain 40s linear infinite;
   pointer-events: none;
-  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 90%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 90%, transparent 100%);
+  mask-image: radial-gradient(circle at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 70%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 70%, transparent 100%);
   z-index: 0;
 }
 

@@ -43,22 +43,22 @@ export function AboutView() {
           </p>
         </div>
 
-        <div className="flex flex-col gap-6 max-w-7xl mx-auto">
+        <div className="flex flex-col gap-4 max-w-[1200px] mx-auto">
           {[
             { label: 'Rising Growth', assets: 'Equities & Commodities', desc: 'Positive growth surprises favor ownership of the productive economy.' },
             { label: 'Falling Growth', assets: 'Nominal Bonds & Cash', desc: 'Economic contraction increases the value of safe, fixed-return assets.' },
             { label: 'Rising Inflation', assets: 'ILBs & Commodities', desc: 'Currency devaluation favors inflation-linked bonds and tangible assets.' },
             { label: 'Falling Inflation', assets: 'Equities & Nominal Bonds', desc: 'Deflationary environments increase real returns on financial capital.' }
           ].map((item, i) => (
-            <div key={i} className="group flex items-center justify-between p-8 bg-white/[0.01] border border-white/[0.03] rounded-2xl transition-all duration-700 hover:bg-brand-red/[0.01] hover:border-brand-red/20">
-              <div className="w-1/4">
-                <p className="text-[10px] uppercase tracking-[0.6em] text-brand-red/40 group-hover:text-brand-red transition-all duration-500 font-bold">{item.label}</p>
+            <div key={i} className="group flex items-center gap-12 p-6 bg-white/[0.01] border border-white/[0.03] rounded-xl transition-all duration-700 hover:bg-brand-red/[0.02] hover:border-brand-red/20">
+              <div className="w-48 shrink-0">
+                <p className="text-[9px] uppercase tracking-[0.5em] text-brand-red/40 group-hover:text-brand-red transition-all duration-500 font-bold">{item.label}</p>
               </div>
-              <div className="w-1/3">
-                <p className="text-xl font-display text-text-primary tracking-tight">{item.assets}</p>
+              <div className="w-72 shrink-0">
+                <p className="text-lg font-display text-text-primary tracking-tight whitespace-nowrap">{item.assets}</p>
               </div>
-              <div className="flex-1 text-right">
-                <p className="text-[14px] text-text-tertiary font-light">{item.desc}</p>
+              <div className="flex-1">
+                <p className="text-[13px] text-text-tertiary font-light whitespace-nowrap">{item.desc}</p>
               </div>
             </div>
           ))}
