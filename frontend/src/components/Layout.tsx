@@ -38,7 +38,9 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
   return (
     <div className="min-h-screen flex flex-col bg-bg-primary relative selection:bg-brand-red/20">
       <div className="bg-grain" aria-hidden="true" />
-      <div className="global-grid-bg" aria-hidden="true" />
+      <div className="global-grid-wrapper" aria-hidden="true">
+        <div className="global-grid-bg" />
+      </div>
       
       <header
         className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.03]"
