@@ -119,8 +119,8 @@ All prompts are AdalFlow `Parameter` objects — optimizable via Textual Gradien
 |------|---------|---------|
 | US | Financial Datasets API (SEC filings, fundamentals, news) | yfinance |
 | China | AKShare (Eastmoney, free) | yfinance `600519.SS` |
-| EU | yfinance | — |
-| Japan | yfinance | — |
+| EU | yfinance | Stooq (pandas-datareader) |
+| Japan | yfinance | Stooq (pandas-datareader) |
 | Crypto | CoinGecko + DeFiLlama | Binance public API |
 
 ---
@@ -254,8 +254,8 @@ uv run pytest tests/ -q
 | `GEMINI_API_KEY` | [aistudio.google.com](https://aistudio.google.com) | EU, JP desks; US/Crypto fallback |
 | `FINANCIAL_DATASETS_API_KEY` | [financialdatasets.ai](https://financialdatasets.ai) | US desk fundamentals |
 | `PINATA_JWT` | [app.pinata.cloud](https://app.pinata.cloud) | IPFS pinning |
-| `ARC_RPC_URL` | Arc Discord | On-chain recording |
-| `ARC_DEPLOYER_PRIVATE_KEY` | Your Arc wallet | On-chain recording |
+| `ARC_RPC_URL` | [arc.network](https://www.arc.network) → Community → Discord | On-chain recording |
+| `ARC_DEPLOYER_PRIVATE_KEY` | Your Arc wallet (`Settings → Export Key`) | On-chain recording |
 | `DEEPSEEK_API_KEY` | [platform.deepseek.com](https://platform.deepseek.com) | China desk (optional, Groq fallback) |
 | `TUSHARE_TOKEN` | [tushare.pro](https://tushare.pro) | China desk (optional, AKShare fallback) |
 
