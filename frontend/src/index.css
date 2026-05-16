@@ -84,24 +84,25 @@
 
 /* Fixed Global Grid - Unified Top-to-Bottom Rain Effect */
 @keyframes grid-rain {
-  0% { background-position: 0 0, 0 0; }
-  100% { background-position: 0 100px, 0 100px; }
+  0% { transform: translateY(-100px); }
+  100% { transform: translateY(0); }
 }
 
 .global-grid-wrapper {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
   z-index: 0; pointer-events: none;
-  /* Stationary mask that ensures the grid fades out cleanly before hitting the header/footer */
+  /* The stationary mask ensures the falling grid does not clip or bleed into the header */
   mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 15%, rgba(0,0,0,1) 85%, transparent 100%);
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 15%, rgba(0,0,0,1) 85%, transparent 100%);
 }
 
 .global-grid-bg {
-  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  position: absolute; top: -100px; left: 0; right: 0; bottom: -100px;
   background-image: 
     linear-gradient(rgba(216, 43, 43, 0.15) 1px, transparent 1px),
     linear-gradient(90deg, rgba(216, 43, 43, 0.15) 1px, transparent 1px);
   background-size: 100px 100px;
+  /* Translates endlessly without moving the mask */
   animation: grid-rain 15s linear infinite;
 }
 
