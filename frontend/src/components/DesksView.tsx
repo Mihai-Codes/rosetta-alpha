@@ -47,7 +47,7 @@ export function DesksView({ desks, loading }: DesksViewProps) {
         )}
       </div>
 
-      <div className="w-full lg:w-[540px] shrink-0 animate-rain solid-panel rounded-2xl overflow-hidden" style={{ animationDelay: '300ms' }}>
+      <div className="w-full lg:w-[300px] shrink-0 animate-rain solid-panel rounded-2xl overflow-hidden" style={{ animationDelay: '300ms' }}>
         <AllWeatherChart />
       </div>
     </div>
