@@ -12,7 +12,7 @@
 [![IPFS](https://img.shields.io/badge/IPFS-Pinata-65c2cb)](https://app.pinata.cloud)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Hackathon](https://img.shields.io/badge/Agora%20Hackathon-Canteen%20%C3%97%20Arc-ff6b35)](https://agora.thecanteenapp.com/)
-[![App](https://img.shields.io/badge/App-Live-000000?logo=vercel&logoColor=white)](https://frontend-nu-three-93.vercel.app/)
+[![App](https://img.shields.io/badge/App-Live-000000?logo=vercel&logoColor=white)](https://rosetta-alpha.vercel.app)
 
 > *"Dalio's All Weather — diversified across languages and regions, not just asset classes."*
 
