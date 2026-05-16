@@ -50,14 +50,14 @@ export function AboutView() {
             { label: 'Rising Inflation', assets: 'ILBs & Commodities', desc: 'Currency devaluation favors inflation-linked bonds and tangible assets.' },
             { label: 'Falling Inflation', assets: 'Equities & Nominal Bonds', desc: 'Deflationary environments increase real returns on financial capital.' }
           ].map((item, i) => (
-            <div key={i} className="group grid grid-cols-1 md:grid-cols-[160px_220px_1fr] lg:grid-cols-[200px_280px_1fr] items-center gap-6 p-6 lg:p-8 bg-white/[0.01] border border-white/[0.03] rounded-xl transition-all duration-700 hover:bg-brand-red/[0.01] hover:border-brand-red/10">
-              <div>
+            <div key={i} className="group flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6 p-6 lg:p-8 bg-white/[0.01] border border-white/[0.03] rounded-xl transition-all duration-700 hover:bg-brand-red/[0.01] hover:border-brand-red/10">
+              <div className="md:w-[160px] shrink-0">
                 <p className="text-[11px] uppercase tracking-[0.4em] text-brand-red/50 group-hover:text-brand-red transition-all duration-500 font-bold">{item.label}</p>
               </div>
-              <div className="md:border-l border-white/5 md:pl-6">
+              <div className="md:w-[220px] shrink-0 md:border-l border-white/5 md:pl-6">
                 <p className="text-xl font-display text-text-primary tracking-tight leading-snug">{item.assets}</p>
               </div>
-              <div className="md:border-l border-white/5 md:pl-6">
+              <div className="flex-1 md:border-l border-white/5 md:pl-6">
                 <p className="text-[14px] text-text-tertiary font-light leading-relaxed">{item.desc}</p>
               </div>
             </div>

@@ -99,9 +99,10 @@
 .global-grid-bg {
   position: absolute; top: -100px; left: 0; right: 0; bottom: -100px;
   background-image: 
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M30 70 L70 70 L65 60 L35 60 Z M40 60 L40 30 L45 30 L45 60 Z M55 60 L55 30 L60 30 L60 60 Z M35 30 L65 30 L50 15 Z' fill='rgba(216,43,43,0.1)'/%3E%3C/svg%3E"),
     linear-gradient(rgba(216, 43, 43, 0.15) 1px, transparent 1px),
     linear-gradient(90deg, rgba(216, 43, 43, 0.15) 1px, transparent 1px);
-  background-size: 100px 100px;
+  background-size: 100px 100px, 100px 100px, 100px 100px;
   /* Translates endlessly without moving the mask */
   animation: grid-rain 15s linear infinite;
 }
