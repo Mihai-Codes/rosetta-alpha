@@ -38,7 +38,9 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
   return (
     <div className="min-h-screen flex flex-col bg-bg-primary relative selection:bg-brand-red/20">
       <div className="bg-grain" aria-hidden="true" />
-      <div className="global-grid-bg" aria-hidden="true" />
+      <div className="global-grid-wrapper" aria-hidden="true">
+        <div className="global-grid-bg" />
+      </div>
       
       <header
         className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.03]"
@@ -134,7 +136,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
               </div>
             </div>
           </div>
-          <span className="absolute right-4 sm:right-8 lg:right-12 xl:block hidden text-white tracking-[0.4em]">PROVENANCE LAYER</span>
+          <span className="absolute right-4 sm:right-8 lg:right-12 xl:block hidden text-white tracking-[0.4em] italic font-medium">PROVENANCE LAYER</span>
         </div>
       </footer>
     </div>
