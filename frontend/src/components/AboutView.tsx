@@ -88,28 +88,6 @@ export function AboutView() {
         </ol>
       </section>
 
-      <section className="grid md:grid-cols-2 gap-4 sm:gap-6">
-        <div className="border border-border bg-bg-secondary p-6">
-          <p className="text-[10px] uppercase tracking-[0.25em] text-text-tertiary mb-3">Built On</p>
-          <ul className="space-y-2 text-sm text-text-secondary font-light">
-            <li>· AdalFlow — multi-agent orchestration</li>
-            <li>· Arc L1 — on-chain provenance</li>
-            <li>· IPFS via Pinata — permanent storage</li>
-            <li>· ROSETTA Token — performance bond staking</li>
-            <li>· PredictionMarket.sol — on-chain binary markets</li>
-          </ul>
-        </div>
-        <div className="border border-border bg-bg-secondary p-6">
-          <p className="text-[10px] uppercase tracking-[0.25em] text-text-tertiary mb-3">Inspired By</p>
-          <ul className="space-y-2 text-sm text-text-secondary font-light">
-            <li>· Bridgewater Associates — All Weather</li>
-            <li>· Ray Dalio — <em>Principles</em></li>
-            <li>· Bloomberg Terminal — institutional UX</li>
-            <li>· The Economist — editorial restraint</li>
-          </ul>
-        </div>
-      </section>
-
     </div>
   )
 }
