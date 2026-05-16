@@ -43,21 +43,21 @@ export function AboutView() {
           </p>
         </div>
 
-        <div className="flex flex-col gap-3 w-full max-w-[1200px] mx-auto">
+        <div className="flex flex-col gap-4 w-full max-w-[1200px] mx-auto">
           {[
             { label: 'Rising Growth', assets: 'Equities & Commodities', desc: 'Positive growth surprises favor ownership of the productive economy.' },
             { label: 'Falling Growth', assets: 'Nominal Bonds & Cash', desc: 'Economic contraction increases the value of safe, fixed-return assets.' },
             { label: 'Rising Inflation', assets: 'ILBs & Commodities', desc: 'Currency devaluation favors inflation-linked bonds and tangible assets.' },
             { label: 'Falling Inflation', assets: 'Equities & Nominal Bonds', desc: 'Deflationary environments increase real returns on financial capital.' }
           ].map((item, i) => (
-            <div key={i} className="group flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-8 p-6 lg:p-8 bg-white/[0.01] border border-white/[0.03] rounded-xl transition-all duration-700 hover:bg-brand-red/[0.01] hover:border-brand-red/10">
-              <div className="lg:w-1/4 shrink-0">
+            <div key={i} className="group grid grid-cols-1 md:grid-cols-[160px_220px_1fr] lg:grid-cols-[200px_280px_1fr] items-center gap-6 p-6 lg:p-8 bg-white/[0.01] border border-white/[0.03] rounded-xl transition-all duration-700 hover:bg-brand-red/[0.01] hover:border-brand-red/10">
+              <div>
                 <p className="text-[11px] uppercase tracking-[0.4em] text-brand-red/50 group-hover:text-brand-red transition-all duration-500 font-bold">{item.label}</p>
               </div>
-              <div className="lg:w-1/3 shrink-0 lg:border-l border-white/5 lg:pl-6">
-                <p className="text-xl font-display text-text-primary tracking-tight">{item.assets}</p>
+              <div className="md:border-l border-white/5 md:pl-6">
+                <p className="text-xl font-display text-text-primary tracking-tight leading-snug">{item.assets}</p>
               </div>
-              <div className="flex-1 lg:border-l border-white/5 lg:pl-6">
+              <div className="md:border-l border-white/5 md:pl-6">
                 <p className="text-[14px] text-text-tertiary font-light leading-relaxed">{item.desc}</p>
               </div>
             </div>
