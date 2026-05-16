@@ -84,27 +84,25 @@
 
 /* Fixed Global Grid - Unified Top-to-Bottom Rain Effect */
 @keyframes grid-rain {
-  0% { transform: translateY(-100px); }
-  100% { transform: translateY(0); }
+  0% { background-position: 0 0, 0 0; }
+  100% { background-position: 0 100px, 0 100px; }
 }
 
 .global-grid-wrapper {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
   z-index: 0; pointer-events: none;
-  /* The wrapper applies the stationary mask over the entire page so the falling grid vanishes seamlessly at the top and bottom */
+  /* Stationary mask that ensures the grid fades out cleanly before hitting the header/footer */
   mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 15%, rgba(0,0,0,1) 85%, transparent 100%);
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 15%, rgba(0,0,0,1) 85%, transparent 100%);
 }
 
 .global-grid-bg {
-  position: absolute; top: -100px; left: 0; right: 0; bottom: -100px;
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
   background-image: 
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M35,65 Q35,50 50,45 Q40,40 45,25 Q50,20 55,25 Q60,40 50,45 Q65,50 65,65 Z' fill='rgba(216,43,43,0.08)'/%3E%3C/svg%3E"),
-    linear-gradient(rgba(216, 43, 43, 0.12) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(216, 43, 43, 0.12) 1px, transparent 1px);
-  background-size: 100px 100px, 100px 100px, 100px 100px;
-  background-position: 50px 50px, 0 0, 0 0;
-  animation: grid-rain 8s linear infinite;
+    linear-gradient(rgba(216, 43, 43, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(216, 43, 43, 0.15) 1px, transparent 1px);
+  background-size: 100px 100px;
+  animation: grid-rain 15s linear infinite;
 }
 
 .bg-grain {
