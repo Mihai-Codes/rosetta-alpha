@@ -28,37 +28,37 @@ export function AboutView() {
         </div>
       </header>
 
-      <div className="solid-panel rounded-[2.5rem] p-20 border-white/[0.03] shadow-[0_40px_80px_-15px_rgba(0,0,0,0.6)]">
-        <div className="flex flex-col items-center text-center mb-16">
-          <Scale className="text-brand-red w-10 h-10 mb-6" />
-          <h3 className="font-display text-4xl text-text-primary tracking-tight">
+      <div className="solid-panel rounded-[2rem] p-8 md:p-12 border-white/[0.03] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.6)]">
+        <div className="flex flex-col items-center text-center mb-10">
+          <Scale className="text-brand-red w-8 h-8 mb-4" />
+          <h3 className="font-display text-2xl text-text-primary tracking-tight">
             Balanced Economic Exposure
           </h3>
-          <div className="h-1 w-12 bg-brand-red/30 mt-6 rounded-full" />
+          <div className="h-0.5 w-8 bg-brand-red/30 mt-4 rounded-full" />
         </div>
         
-        <div className="max-w-3xl mx-auto text-center mb-16">
-          <p className="text-text-secondary leading-relaxed text-xl font-light italic">
+        <div className="max-w-2xl mx-auto text-center mb-10">
+          <p className="text-text-secondary leading-relaxed text-sm font-light italic">
             Rosetta Alpha implements the All Weather discipline by maintaining structural equilibrium across the four distinct economic environments that drive asset returns.
           </p>
         </div>
 
-        <div className="flex flex-col gap-4 w-full max-w-[1200px] mx-auto">
+        <div className="flex flex-col gap-3 w-full max-w-[900px] mx-auto">
           {[
             { label: 'Rising Growth', assets: 'Equities & Commodities', desc: 'Positive growth surprises favor ownership of the productive economy.' },
             { label: 'Falling Growth', assets: 'Nominal Bonds & Cash', desc: 'Economic contraction increases the value of safe, fixed-return assets.' },
             { label: 'Rising Inflation', assets: 'ILBs & Commodities', desc: 'Currency devaluation favors inflation-linked bonds and tangible assets.' },
             { label: 'Falling Inflation', assets: 'Equities & Nominal Bonds', desc: 'Deflationary environments increase real returns on financial capital.' }
           ].map((item, i) => (
-            <div key={i} className="group flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6 p-6 lg:p-8 bg-white/[0.01] border border-white/[0.03] rounded-xl transition-all duration-700 hover:bg-brand-red/[0.01] hover:border-brand-red/10">
-              <div className="md:w-[160px] shrink-0">
-                <p className="text-[11px] uppercase tracking-[0.4em] text-brand-red/50 group-hover:text-brand-red transition-all duration-500 font-bold">{item.label}</p>
+            <div key={i} className="group flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-5 p-4 lg:p-5 bg-white/[0.01] border border-white/[0.03] rounded-xl transition-all duration-700 hover:bg-brand-red/[0.01] hover:border-brand-red/10">
+              <div className="md:w-[140px] shrink-0">
+                <p className="text-[10px] uppercase tracking-[0.3em] text-brand-red/50 group-hover:text-brand-red transition-all duration-500 font-bold">{item.label}</p>
               </div>
-              <div className="md:w-[220px] shrink-0 md:border-l border-white/5 md:pl-6">
-                <p className="text-xl font-display text-text-primary tracking-tight leading-snug">{item.assets}</p>
+              <div className="md:w-[180px] shrink-0 md:border-l border-white/5 md:pl-5">
+                <p className="text-base font-display text-text-primary tracking-tight leading-snug">{item.assets}</p>
               </div>
-              <div className="flex-1 md:border-l border-white/5 md:pl-6">
-                <p className="text-[14px] text-text-tertiary font-light leading-relaxed">{item.desc}</p>
+              <div className="flex-1 md:border-l border-white/5 md:pl-5">
+                <p className="text-[13px] text-text-tertiary font-light leading-relaxed">{item.desc}</p>
               </div>
             </div>
           ))}
