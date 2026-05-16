@@ -195,10 +195,10 @@ function App() {
     <Layout activeTab={activeTab} onTabChange={handleTabChange}>
       {activeTab === 'desks' && <HeroSection latestHash={latestHash} onScrollDown={handleScrollDown} />}
 
-      <div ref={mainRef} className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pt-12 pb-16">
+      <div ref={mainRef} className={`w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-16 ${activeTab !== 'desks' ? 'pt-32' : 'pt-12'}`}>
         {/* Section header */}
         {activeTab !== 'desks' && (
-          <div className="mb-10">
+          <div className="mb-12">
             <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-brand-red mb-3">
               {activeTab === 'feed' && 'Real-Time Stream'}
               {activeTab === 'registry' && 'On-Chain Provenance'}
