@@ -25,7 +25,7 @@ export default function DesksPage() {
 
   return (
     <Layout activeTab="desks" onTabChange={(tab) => router.push(`/${tab === 'home' ? '' : tab}`)}>
-      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-16 pt-12">
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-16 pt-36">
         <DesksView desks={data} loading={loading} isAuthenticated={!!session?.user} />
       </div>
     </Layout>

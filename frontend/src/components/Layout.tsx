@@ -3,8 +3,8 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useSession, signOut } from 'next-auth/react'
-import { Brain, Layers, HardDrive, CircleDollarSign } from 'lucide-react'
+import { useSession } from 'next-auth/react'
+import { Brain, Layers, HardDrive, CircleDollarSign, Menu, X } from 'lucide-react'
 import { WalletButton } from './WalletButton'
 import { OnboardingModal } from './OnboardingModal'
 
@@ -16,7 +16,6 @@ interface LayoutProps {
   onTabChange: (tab: Tab | 'home') => void
 }
 
-/** Navigation items — different for signed-in vs signed-out */
 const PUBLIC_TABS: { id: Tab; label: string; href: string }[] = [
   { id: 'desks', label: 'Desks', href: '/desks' },
   { id: 'leaderboard', label: 'Leaderboard', href: '/leaderboard' },
@@ -37,7 +36,7 @@ function QuoteMatrix() {
     return () => clearInterval(i)
   }, [])
   return (
-    <span className="italic text-text-secondary text-[11px] font-display tracking-wide relative inline-flex items-center justify-center min-w-[420px] h-[24px] whitespace-nowrap">
+    <span className="italic text-text-secondary text-[11px] font-display tracking-wide relative inline-flex items-center justify-center min-w-[280px] sm:min-w-[420px] h-[24px] whitespace-nowrap">
       <span className={`absolute transition-all duration-1000 ease-in-out ${isGreek ? 'opacity-100 blur-0 scale-100' : 'opacity-0 blur-md scale-95'}`}>
         "Τὸ γὰρ ὅλον παρὰ τὰ μόρια"
       </span>
@@ -49,9 +48,13 @@ function QuoteMatrix() {
 }
 
 export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
-  const { data: session, status } = useSession()
+  const { data: session } = useSession()
   const pathname = usePathname()
   const isSignedIn = !!session?.user
+  const [mobileOpen, setMobileOpen] = React.useState(false)
+
+  // Close drawer on route change
+  React.useEffect(() => { setMobileOpen(false) }, [pathname])
 
   const tabs = isSignedIn ? AUTH_TABS : PUBLIC_TABS
 
@@ -61,17 +64,13 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
       <div className="global-grid-wrapper" aria-hidden="true">
         <div className="global-grid-bg" />
       </div>
-      
-      <header
-        className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.03]"
-        style={{ background: 'transparent' }}
-      >
+
+      {/* ── Header ── */}
+      <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.03]" style={{ background: 'transparent' }}>
         <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 h-16 flex items-center justify-between">
-          <Link
-            href="/"
-            className="flex items-baseline gap-1 group logo-container"
-            aria-label="Rosetta Alpha home"
-          >
+
+          {/* Logo */}
+          <Link href="/" className="flex items-baseline gap-1 group logo-container" aria-label="Rosetta Alpha home">
             <span className="font-display text-2xl text-text-primary leading-none logo-r">R</span>
             <span className="font-display text-2xl text-brand-red leading-none logo-triangle">△</span>
             <span className="hidden sm:inline-block ml-2 text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary">
@@ -79,6 +78,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
             </span>
           </Link>
 
+          {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-1" role="navigation">
             {tabs.map((tab) => {
               const isActive = pathname === tab.href || activeTab === tab.id
@@ -98,51 +98,84 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
           <div className="flex items-center gap-3">
             {isSignedIn ? (
               <>
-                {/* User avatar */}
-                {session.user?.image && (
-                  <img
-                    src={session.user.image}
-                    alt={session.user.name ?? 'User'}
-                    className="w-7 h-7 rounded-full border border-border"
-                  />
+                {session?.user?.image && (
+                  <img src={session.user.image} alt={session.user.name ?? 'User'} className="hidden md:block w-7 h-7 rounded-full border border-border" />
                 )}
-                {/* RainbowKit wallet button */}
                 <WalletButton />
               </>
             ) : (
               <Link
                 href="/signin"
-                className="
-                  flex items-center gap-2 px-5 py-2
-                  solid-panel rounded-full
-                  text-text-primary text-[10px] font-medium uppercase tracking-[0.2em]
-                  transition-all duration-300
-                  hover:border-brand-red/50 hover:shadow-[0_0_30px_rgba(216,43,43,0.7)]
-                "
+                className="hidden md:flex items-center gap-2 px-5 py-2 solid-panel rounded-full text-text-primary text-[10px] font-medium uppercase tracking-[0.2em] transition-all duration-300 hover:border-brand-red/50 hover:shadow-[0_0_30px_rgba(216,43,43,0.7)]"
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-accent-gold" />
-                <span className="hidden sm:inline">Sign In</span>
-                <span className="sm:hidden">Sign In</span>
+                Sign In
+              </Link>
+            )}
+
+            {/* Hamburger — mobile only */}
+            <button
+              onClick={() => setMobileOpen(o => !o)}
+              className="md:hidden flex items-center justify-center w-11 h-11 text-text-secondary hover:text-text-primary transition-colors"
+              aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={mobileOpen}
+            >
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile drawer overlay */}
+        {mobileOpen && (
+          <div
+            className="md:hidden fixed inset-0 top-16 z-40 bg-bg-primary/95 backdrop-blur-md border-t border-white/[0.05] flex flex-col px-6 py-8 gap-2"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Navigation menu"
+          >
+            {tabs.map((tab) => {
+              const isActive = pathname === tab.href || activeTab === tab.id
+              return (
+                <Link
+                  key={tab.id}
+                  href={tab.href}
+                  className={`flex items-center px-4 py-4 min-h-[44px] rounded-lg text-sm font-medium uppercase tracking-[0.2em] transition-colors ${
+                    isActive
+                      ? 'text-brand-red bg-brand-red/10 border border-brand-red/20'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-white/[0.04]'
+                  }`}
+                >
+                  {tab.label}
+                </Link>
+              )
+            })}
+
+            {!isSignedIn && (
+              <Link
+                href="/signin"
+                className="mt-4 flex items-center justify-center gap-2 px-5 py-4 min-h-[44px] solid-panel rounded-full text-text-primary text-[10px] font-medium uppercase tracking-[0.2em] transition-all duration-300 hover:border-brand-red/50"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-accent-gold" />
+                Sign In
               </Link>
             )}
           </div>
-        </div>
+        )}
       </header>
 
-      {/* Onboarding modal — shows once for signed-in users without wallet */}
       <OnboardingModal isSignedIn={isSignedIn} />
 
       <main className="flex-1 w-full z-10">{children}</main>
 
-      <footer className="border-t border-white/[0.05] py-16 mt-24 bg-bg-primary z-10 relative">
-        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 grid md:grid-cols-3 gap-10 text-[11px] text-text-tertiary">
+      <footer className="border-t border-white/[0.05] py-12 sm:py-16 mt-16 sm:mt-24 bg-bg-primary z-10 relative">
+        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 text-[11px] text-text-tertiary">
           <div>
             <p className="font-display text-text-primary text-base mb-2">
               Rosetta <span className="text-brand-red">Alpha</span>
             </p>
             <div className="flex flex-col gap-0.5 font-light text-[12px] text-text-secondary">
-              <p className="whitespace-nowrap">Multi-language reasoning traces secured on Arc L1.</p>
-              <p className="whitespace-nowrap">An institutional-grade intelligence layer for global macro.</p>
+              <p>Multi-language reasoning traces secured on Arc L1.</p>
+              <p>An institutional-grade intelligence layer for global macro.</p>
             </div>
           </div>
           <div>
@@ -162,11 +195,11 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
             </p>
           </div>
         </div>
-        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 mt-12 pt-8 border-t border-white/[0.02] flex items-center justify-center relative flex-wrap gap-4 text-[10px] text-text-tertiary uppercase tracking-[0.25em]">
+        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 mt-10 sm:mt-12 pt-6 sm:pt-8 border-t border-white/[0.02] flex items-center justify-center relative flex-wrap gap-4 text-[10px] text-text-tertiary uppercase tracking-[0.25em]">
           <span className="absolute left-4 sm:left-8 lg:left-12 font-medium text-brand-red hidden xl:block italic tracking-[0.4em]">Decentralized Reason</span>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 sm:gap-6 overflow-hidden">
             <QuoteMatrix />
-            <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-3">
               <span className="w-px h-4 bg-white/10" />
               <div className="flex items-center gap-2 group">
                 <span className="text-[18px] leading-none grayscale group-hover:grayscale-0 transition-all duration-500" title="Aristotle">🏛️</span>

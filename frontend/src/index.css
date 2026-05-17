@@ -153,3 +153,16 @@
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(216, 43, 43, 0.4); }
+
+/* ── Scrollbar hide utility (for horizontal pill bars) ── */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
+/* ── TV / Large screen (1920px+) ── */
+@media (min-width: 1920px) {
+  body { font-size: 18px; }
+  .w-full.max-w-\[1440px\] { max-width: 1400px; }
+}
