@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 import { ExternalLink, Clock } from 'lucide-react'
 import { DeskProps } from './DeskCard'

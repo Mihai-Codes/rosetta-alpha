@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 
 // All Weather allocation — Bridgewater's classic 4-quadrant model

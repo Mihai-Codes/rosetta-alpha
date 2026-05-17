@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 import { X, Brain, CheckCircle2, MessageSquare, Shield } from 'lucide-react'
 import { DeskProps, ReasoningBlock } from './DeskCard'

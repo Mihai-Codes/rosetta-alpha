@@ -1,31 +1,12 @@
+'use client'
+
 import React from 'react'
 import { TrendingUp, TrendingDown, Minus, ExternalLink, ChevronRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ReasoningExplorer } from './ReasoningExplorer'
 
-export interface ReasoningBlock {
-  agent_role: string
-  input_data_summary: string
-  thought_process?: string
-  analysis: string
-  analysis_en?: string
-  conclusion: string
-  confidence: number
-  language: string
-}
-
-export interface DeskProps {
-  desk: string
-  ticker: string
-  direction: 'LONG' | 'SHORT' | 'NEUTRAL'
-  confidence: number
-  summary: string
-  question: string
-  price?: string
-  ipfs_thesis_cid: string
-  arc_tx: string
-  reasoning_blocks: ReasoningBlock[]
-}
+export type { ReasoningBlock, DeskProps } from '@/lib/types'
+import type { DeskProps, ReasoningBlock } from '@/lib/types'
 
 const REGION_LABEL: Record<string, string> = {
   us: 'United States',

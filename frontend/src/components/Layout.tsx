@@ -1,7 +1,12 @@
-import React from 'react'
-import { Brain, Layers, HardDrive, CircleDollarSign, Library } from 'lucide-react'
+'use client'
 
-export type Tab = 'desks' | 'feed' | 'registry' | 'about'
+import React from 'react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { useSession, signOut } from 'next-auth/react'
+import { Brain, Layers, HardDrive, CircleDollarSign } from 'lucide-react'
+
+export type Tab = 'desks' | 'feed' | 'registry' | 'about' | 'leaderboard' | 'dashboard' | 'quiz'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -9,11 +14,18 @@ interface LayoutProps {
   onTabChange: (tab: Tab | 'home') => void
 }
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'desks', label: 'Desks' },
-  { id: 'feed', label: 'Live Feed' },
-  { id: 'registry', label: 'Registry' },
-  { id: 'about', label: 'About' },
+/** Navigation items — different for signed-in vs signed-out */
+const PUBLIC_TABS: { id: Tab; label: string; href: string }[] = [
+  { id: 'desks', label: 'Desks', href: '/desks' },
+  { id: 'leaderboard', label: 'Leaderboard', href: '/leaderboard' },
+  { id: 'about', label: 'About', href: '/about' },
+]
+
+const AUTH_TABS: { id: Tab; label: string; href: string }[] = [
+  { id: 'desks', label: 'Desks', href: '/desks' },
+  { id: 'feed', label: 'Live Feed', href: '/feed' },
+  { id: 'registry', label: 'Registry', href: '/registry' },
+  { id: 'dashboard', label: 'Dashboard', href: '/dashboard' },
 ]
 
 function QuoteMatrix() {
@@ -35,6 +47,12 @@ function QuoteMatrix() {
 }
 
 export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
+  const { data: session, status } = useSession()
+  const pathname = usePathname()
+  const isSignedIn = !!session?.user
+
+  const tabs = isSignedIn ? AUTH_TABS : PUBLIC_TABS
+
   return (
     <div className="min-h-screen flex flex-col bg-bg-primary relative selection:bg-brand-red/20">
       <div className="bg-grain" aria-hidden="true" />
@@ -44,13 +62,11 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
       
       <header
         className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.03]"
-        style={{
-          background: 'transparent',
-        }}
+        style={{ background: 'transparent' }}
       >
         <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 h-16 flex items-center justify-between">
-          <button
-            onClick={() => onTabChange('home')}
+          <Link
+            href="/"
             className="flex items-baseline gap-1 group logo-container"
             aria-label="Rosetta Alpha home"
           >
@@ -59,38 +75,68 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
             <span className="hidden sm:inline-block ml-2 text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary">
               Rosetta Alpha
             </span>
-          </button>
+          </Link>
 
           <nav className="hidden md:flex items-center gap-1" role="navigation">
-            {TABS.map((tab) => {
-              const isActive = activeTab === tab.id
+            {tabs.map((tab) => {
+              const isActive = pathname === tab.href || activeTab === tab.id
               return (
-                <button
+                <Link
                   key={tab.id}
-                  onClick={() => onTabChange(tab.id)}
-                  className={`nav-link px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] ${isActive ? 'text-brand-red' : 'text-text-secondary hover:text-text-primary'}`} 
+                  href={tab.href}
+                  className={`nav-link px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] ${isActive ? 'text-brand-red' : 'text-text-secondary hover:text-text-primary'}`}
                   data-active={isActive}
                 >
                   {tab.label}
-                </button>
+                </Link>
               )
             })}
           </nav>
 
-          <button
-            className="
-              flex items-center gap-2 px-5 py-2
-              solid-panel rounded-full
-              text-text-primary text-[10px] font-medium uppercase tracking-[0.2em]
-              transition-all duration-300
-              hover:border-brand-red/50 hover:shadow-[0_0_30px_rgba(216,43,43,0.7)]
-            "
-            onClick={() => alert('Wallet connection — coming soon')}
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-brand-red red-pulse" />
-            <span className="hidden sm:inline">Connect Wallet</span>
-            <span className="sm:hidden">Wallet</span>
-          </button>
+          <div className="flex items-center gap-3">
+            {isSignedIn ? (
+              <>
+                {/* User avatar */}
+                {session.user?.image && (
+                  <img
+                    src={session.user.image}
+                    alt={session.user.name ?? 'User'}
+                    className="w-7 h-7 rounded-full border border-border"
+                  />
+                )}
+                {/* Connect Wallet button */}
+                <button
+                  className="
+                    flex items-center gap-2 px-5 py-2
+                    solid-panel rounded-full
+                    text-text-primary text-[10px] font-medium uppercase tracking-[0.2em]
+                    transition-all duration-300
+                    hover:border-brand-red/50 hover:shadow-[0_0_30px_rgba(216,43,43,0.7)]
+                  "
+                  onClick={() => alert('Wallet connection — coming in next sprint')}
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-brand-red red-pulse" />
+                  <span className="hidden sm:inline">Connect Wallet</span>
+                  <span className="sm:hidden">Wallet</span>
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/signin"
+                className="
+                  flex items-center gap-2 px-5 py-2
+                  solid-panel rounded-full
+                  text-text-primary text-[10px] font-medium uppercase tracking-[0.2em]
+                  transition-all duration-300
+                  hover:border-brand-red/50 hover:shadow-[0_0_30px_rgba(216,43,43,0.7)]
+                "
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-accent-gold" />
+                <span className="hidden sm:inline">Sign In</span>
+                <span className="sm:hidden">Sign In</span>
+              </Link>
+            )}
+          </div>
         </div>
       </header>
 

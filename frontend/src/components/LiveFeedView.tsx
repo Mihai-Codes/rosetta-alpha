@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 import { TrendingUp, TrendingDown, Minus, ChevronDown } from 'lucide-react'
 import { DeskProps } from './DeskCard'

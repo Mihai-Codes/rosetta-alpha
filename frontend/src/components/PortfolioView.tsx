@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
