@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
 import { Brain, Layers, HardDrive, CircleDollarSign } from 'lucide-react'
+import { WalletButton } from './WalletButton'
+import { OnboardingModal } from './OnboardingModal'
 
 export type Tab = 'desks' | 'feed' | 'registry' | 'about' | 'leaderboard' | 'dashboard' | 'quiz'
 
@@ -104,21 +106,8 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
                     className="w-7 h-7 rounded-full border border-border"
                   />
                 )}
-                {/* Connect Wallet button */}
-                <button
-                  className="
-                    flex items-center gap-2 px-5 py-2
-                    solid-panel rounded-full
-                    text-text-primary text-[10px] font-medium uppercase tracking-[0.2em]
-                    transition-all duration-300
-                    hover:border-brand-red/50 hover:shadow-[0_0_30px_rgba(216,43,43,0.7)]
-                  "
-                  onClick={() => alert('Wallet connection — coming in next sprint')}
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-brand-red red-pulse" />
-                  <span className="hidden sm:inline">Connect Wallet</span>
-                  <span className="sm:hidden">Wallet</span>
-                </button>
+                {/* RainbowKit wallet button */}
+                <WalletButton />
               </>
             ) : (
               <Link
@@ -139,6 +128,9 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
           </div>
         </div>
       </header>
+
+      {/* Onboarding modal — shows once for signed-in users without wallet */}
+      <OnboardingModal isSignedIn={isSignedIn} />
 
       <main className="flex-1 w-full z-10">{children}</main>
 

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { AuthProvider } from '@/lib/session-provider'
+import { Web3Provider } from '@/providers/Web3Provider'
 import '../index.css'
 
 export const metadata: Metadata = {
@@ -28,7 +29,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className="bg-bg-primary text-text-primary antialiased">
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <Web3Provider>{children}</Web3Provider>
+        </AuthProvider>
       </body>
     </html>
   )
