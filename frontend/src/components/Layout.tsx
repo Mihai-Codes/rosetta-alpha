@@ -13,7 +13,6 @@ export type Tab = 'desks' | 'feed' | 'registry' | 'about' | 'leaderboard' | 'das
 interface LayoutProps {
   children: React.ReactNode
   activeTab: Tab
-  onTabChange: (tab: Tab | 'home') => void
 }
 
 const PUBLIC_TABS: { id: Tab; label: string; href: string }[] = [
@@ -47,7 +46,7 @@ function QuoteMatrix() {
   )
 }
 
-export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
+export function Layout({ children, activeTab }: LayoutProps) {
   const { data: session } = useSession()
   const pathname = usePathname()
   const router = useRouter()
@@ -56,9 +55,9 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
 
   const handleSignOut = React.useCallback(async () => {
     await signOut({ redirect: false })
-    router.refresh()
-    router.push('/')
-  }, [router])
+    // Hard reload to completely bust the Next.js App Router client cache
+    window.location.href = '/'
+  }, [])
 
   // Close drawer on route change
   React.useEffect(() => { setMobileOpen(false) }, [pathname])

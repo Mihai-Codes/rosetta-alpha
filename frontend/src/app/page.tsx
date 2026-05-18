@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
 import { HeroSection } from '@/components/HeroSection'
 import { DesksView } from '@/components/DesksView'
 import { Layout } from '@/components/Layout'
@@ -11,7 +10,6 @@ import type { DeskProps } from '@/lib/types'
 
 export default function HomePage() {
   const { data: session } = useSession()
-  const router = useRouter()
   const [data, setData] = React.useState<DeskProps[]>(SEED_DATA)
   const [loading, setLoading] = React.useState(true)
 
@@ -25,7 +23,7 @@ export default function HomePage() {
   }, [])
 
   return (
-    <Layout activeTab="desks" onTabChange={(tab) => router.push(tab === 'home' ? '/' : `/${tab}`)}>
+    <Layout activeTab="desks">
       <HeroSection latestHash="0x46d3f229..." onScrollDown={() => {
         document.getElementById('desks-section')?.scrollIntoView({ behavior: 'smooth' })
       }} />

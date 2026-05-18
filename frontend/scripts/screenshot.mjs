@@ -30,7 +30,6 @@ const BREAKPOINTS = [
 
 const PAGES = [
   { name: 'home',      path: '/' },
-  { name: 'desks',     path: '/desks' },
   { name: 'feed',      path: '/feed' },
   { name: 'registry',  path: '/registry' },
   { name: 'quiz',      path: '/quiz' },
