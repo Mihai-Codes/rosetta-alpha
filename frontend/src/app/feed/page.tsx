@@ -26,7 +26,7 @@ export default function FeedPage() {
           <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-brand-red mb-3">
             Real-Time Stream
           </p>
-          <h1 className="font-display text-4xl md:text-5xl text-text-primary leading-tight">
+          <h1 className="font-display text-[clamp(1.75rem,5vw,3rem)] text-text-primary leading-tight">
             The reasoning, <em className="text-brand-red">as it happens.</em>
           </h1>
         </div>

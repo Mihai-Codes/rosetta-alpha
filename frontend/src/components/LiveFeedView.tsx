@@ -22,7 +22,6 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
   const [directionFilter, setDirectionFilter] = React.useState<Direction>('ALL')
   const [expanded, setExpanded] = React.useState<Set<string>>(new Set())
 
-  // Derive synthetic timestamps for the demo (newest first)
   const entries: FeedEntry[] = React.useMemo(
     () =>
       desks
@@ -43,55 +42,61 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
   }
 
   return (
-    <div className="space-y-6 animate-rain">
-      {/* Filters */}
-      <div className="flex items-center justify-between gap-4 flex-wrap pb-4 border-b border-border">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-[10px] uppercase tracking-[0.25em] text-text-tertiary mr-2">
+    <div className="space-y-4 sm:space-y-6 animate-rain">
+      {/* ── Filters ── */}
+      <div className="flex flex-col gap-3 pb-4 border-b border-border">
+        {/* Region — horizontal scroll pill bar on mobile */}
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] uppercase tracking-[0.25em] text-text-tertiary shrink-0">
             Region
           </span>
-          {regions.map(r => {
-            const isActive = regionFilter === r
-            const meta = r === 'ALL' ? null : regionMeta(r)
-            return (
-              <button
-                key={r}
-                onClick={() => setRegionFilter(r)}
-                className={`px-3 py-1 text-[10px] font-medium uppercase tracking-[0.18em] border transition-all ${
-                  isActive
-                    ? 'border-brand-red text-brand-red'
-                    : 'border-border text-text-secondary hover:text-text-primary hover:border-border-strong'
-                }`}
-                style={isActive && meta ? { borderColor: meta.color, color: meta.color } : undefined}
-              >
-                {r === 'ALL' ? 'All' : meta?.name ?? r}
-              </button>
-            )
-          })}
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide snap-x pb-1 flex-1">
+            {regions.map(r => {
+              const isActive = regionFilter === r
+              const meta = r === 'ALL' ? null : regionMeta(r)
+              return (
+                <button
+                  key={r}
+                  onClick={() => setRegionFilter(r)}
+                  className={`shrink-0 snap-start px-3 py-2 min-h-[44px] text-[10px] font-medium uppercase tracking-[0.18em] border transition-all ${
+                    isActive
+                      ? 'border-brand-red text-brand-red'
+                      : 'border-border text-text-secondary hover:text-text-primary hover:border-border-strong'
+                  }`}
+                  style={isActive && meta ? { borderColor: meta.color, color: meta.color } : undefined}
+                >
+                  {r === 'ALL' ? 'All' : (meta?.flag ? `${meta.flag} ` : '') + (meta?.name ?? r)}
+                </button>
+              )
+            })}
+          </div>
         </div>
 
+        {/* Direction — horizontal scroll pill bar on mobile */}
         <div className="flex items-center gap-2">
-          <span className="text-[10px] uppercase tracking-[0.25em] text-text-tertiary mr-2">
-            Direction
+          <span className="text-[10px] uppercase tracking-[0.25em] text-text-tertiary shrink-0">
+            Signal
           </span>
-          {(['ALL', 'LONG', 'SHORT', 'NEUTRAL'] as Direction[]).map(d => (
-            <button
-              key={d}
-              onClick={() => setDirectionFilter(d)}
-              className={`px-3 py-1 text-[10px] font-medium uppercase tracking-[0.18em] border transition-all ${
-                directionFilter === d
-                  ? 'border-brand-red text-brand-red'
-                  : 'border-border text-text-secondary hover:text-text-primary'
-              }`}
-            >
-              {d === 'ALL' ? 'All' : d}
-            </button>
-          ))}
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide snap-x pb-1 flex-1">
+            {(['ALL', 'LONG', 'SHORT', 'NEUTRAL'] as Direction[]).map(d => (
+              <button
+                key={d}
+                onClick={() => setDirectionFilter(d)}
+                className={`shrink-0 snap-start px-3 py-2 min-h-[44px] text-[10px] font-medium uppercase tracking-[0.18em] border transition-all ${
+                  directionFilter === d
+                    ? 'border-brand-red text-brand-red'
+                    : 'border-border text-text-secondary hover:text-text-primary'
+                }`}
+              >
+                {d === 'ALL' ? 'All' : d}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Feed */}
-      <div className="solid-panel rounded-2xl overflow-hidden">
+      {/* ── Feed ── */}
+      <div className="solid-panel overflow-hidden">
         {loading ? (
           <>
             <FeedItemSkeleton />
@@ -99,7 +104,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
             <FeedItemSkeleton />
           </>
         ) : entries.length === 0 ? (
-          <div className="p-16 text-center">
+          <div className="p-12 sm:p-16 text-center">
             <p className="font-display text-xl text-text-tertiary">No traces match filters</p>
             <p className="text-[11px] uppercase tracking-[0.25em] text-text-tertiary/60 mt-2">
               Try widening your selection
@@ -117,15 +122,15 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
             return (
               <div
                 key={key}
-                className="border-b border-white/[0.02] last:border-b-0 hover:bg-white/[0.03] transition-all duration-300"
+                className="border-b border-white/[0.02] last:border-b-0 transition-all duration-300"
               >
                 <button
                   onClick={() => toggleExpand(key)}
-                  className="w-full flex items-start gap-4 p-5 text-left"
+                  className="w-full flex items-start gap-3 sm:gap-4 p-4 sm:p-5 text-left min-h-[44px] hover:bg-white/[0.03] transition-colors"
                   style={{ borderLeft: `2px solid ${meta.color}` }}
                 >
-                  {/* Timestamp + region */}
-                  <div className="w-32 shrink-0 space-y-1">
+                  {/* Timestamp + region — hidden on mobile, shown as col on sm+ */}
+                  <div className="hidden sm:block w-28 lg:w-32 shrink-0 space-y-1">
                     <p className="font-mono text-[10px] text-text-tertiary">
                       {formatRelative(e.timestamp)}
                     </p>
@@ -138,9 +143,23 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                   </div>
 
                   {/* Asset + thesis */}
-                  <div className="flex-1 min-w-0 space-y-1">
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <span className="font-display text-lg text-text-primary">{e.ticker}</span>
+                  <div className="flex-1 min-w-0 space-y-1.5">
+                    {/* Mobile: region + time inline */}
+                    <div className="flex items-center gap-2 sm:hidden">
+                      <span
+                        className="text-[10px] font-medium uppercase tracking-[0.18em]"
+                        style={{ color: meta.color }}
+                      >
+                        {meta.flag} {meta.name}
+                      </span>
+                      <span className="text-text-tertiary">·</span>
+                      <span className="font-mono text-[10px] text-text-tertiary">
+                        {formatRelative(e.timestamp)}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+                      <span className="font-display text-base sm:text-lg text-text-primary">{e.ticker}</span>
                       <span
                         className="flex items-center gap-1 text-[10px] font-medium uppercase tracking-[0.2em]"
                         style={{ color: dirColor }}
@@ -159,29 +178,24 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                     </p>
                   </div>
 
-                  {/* Trace hash */}
+                  {/* Arc Tx — desktop only */}
                   <div className="hidden lg:flex flex-col items-end gap-1 shrink-0">
-                    <p className="text-[9px] uppercase tracking-[0.25em] text-text-tertiary">
-                      Arc Tx
-                    </p>
+                    <p className="text-[9px] uppercase tracking-[0.25em] text-text-tertiary">Arc Tx</p>
                     <p className="font-mono text-[10px] text-brand-red">
                       {truncateHash(e.arc_tx, 6, 4)}
                     </p>
                   </div>
 
                   <ChevronDown
-                    className={`w-4 h-4 text-text-tertiary shrink-0 mt-1 transition-transform ${
+                    className={`w-4 h-4 text-text-tertiary shrink-0 mt-0.5 transition-transform duration-300 ${
                       isOpen ? 'rotate-180' : ''
                     }`}
                   />
                 </button>
 
-                {/* Expanded reasoning */}
+                {/* Expanded reasoning — pl-4 on mobile, pl-[10rem] on sm+ */}
                 {isOpen && (
-                  <div
-                    className="px-5 pb-5 pl-[10rem] space-y-3 fade-up"
-                    style={{ animationDuration: '0.3s' }}
-                  >
+                  <div className="px-4 sm:px-5 pb-4 sm:pb-5 pl-4 sm:pl-[10rem] space-y-3">
                     {e.reasoning_blocks.map((b, j) => (
                       <div
                         key={j}

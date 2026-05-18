@@ -26,7 +26,7 @@ export default function RegistryPage() {
           <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-brand-red mb-3">
             On-Chain Provenance
           </p>
-          <h1 className="font-display text-4xl md:text-5xl text-text-primary leading-tight">
+          <h1 className="font-display text-[clamp(1.75rem,5vw,3rem)] text-text-primary leading-tight">
             Every thesis, <em className="text-brand-red">permanently recorded.</em>
           </h1>
         </div>
