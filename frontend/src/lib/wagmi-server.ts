@@ -5,7 +5,7 @@
  */
 import { createConfig, http, cookieStorage, createStorage } from 'wagmi'
 import { mainnet } from 'wagmi/chains'
-import { arcTestnet } from './wagmi'
+import { arcTestnet } from './chains'
 
 export const serverConfig = createConfig({
   chains: [arcTestnet, mainnet],
