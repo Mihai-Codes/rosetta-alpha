@@ -229,7 +229,7 @@ function ResultsScreen({
 // ─── Main EarnQuiz component ────────────────────────────────────────────────
 
 export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
-  const { isConnected } = useAccount()
+  const { isConnected, connector } = useAccount()
   const { openConnectModal } = useConnectModal()
   const currentChainId = useChainId()
 
@@ -313,9 +313,21 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
       return
     }
 
-    // Get the raw EIP-1193 provider — bypasses ALL wagmi connector machinery
-    // (fixes Coinbase Smart Wallet crashing on connector.getChainId())
-    const provider = (window as Window & { ethereum?: { request: (args: { method: string; params?: unknown[] }) => Promise<unknown> } }).ethereum
+    // Get the EIP-1193 provider from the wagmi connector — works for ALL wallet types
+    // including Coinbase Smart Wallet (passkey-based, no window.ethereum injection)
+    // Falls back to window.ethereum for MetaMask / injected wallets
+    type EIP1193Provider = { request: (args: { method: string; params?: unknown[] }) => Promise<unknown> }
+    let provider: EIP1193Provider | undefined
+    if (connector) {
+      try {
+        provider = await connector.getProvider() as EIP1193Provider
+      } catch {
+        // connector.getProvider() failed — fall back to window.ethereum
+      }
+    }
+    if (!provider) {
+      provider = (window as Window & { ethereum?: EIP1193Provider }).ethereum
+    }
     if (!provider) {
       setClaimError('No wallet detected — please install MetaMask or Coinbase Wallet.')
       return
