@@ -102,7 +102,18 @@ export function WalletButton() {
               View on Arc Explorer
             </button>
             <button
-              onClick={() => { disconnect(); setDropdownOpen(false) }}
+              onClick={() => {
+                disconnect()
+                setDropdownOpen(false)
+                // Clear wagmi cookieStorage so the wallet doesn't auto-reconnect on refresh
+                document.cookie.split(';').forEach(c => {
+                  if (c.trim().startsWith('wagmi')) {
+                    document.cookie = c.trim().split('=')[0] + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+                  }
+                })
+                // Hard reload to fully reset wagmi state
+                window.location.reload()
+              }}
               className="w-full px-4 py-3 text-left text-xs text-negative hover:bg-bg-tertiary transition-colors border-t border-border"
             >
               Disconnect
