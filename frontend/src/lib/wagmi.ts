@@ -1,9 +1,4 @@
 import { getDefaultConfig } from '@rainbow-me/rainbowkit'
-import {
-  metaMaskWallet,
-  coinbaseWallet,
-  walletConnectWallet,
-} from '@rainbow-me/rainbowkit/wallets'
 import { mainnet } from 'wagmi/chains'
 
 /** Arc Testnet — official config from docs.arc.network */
@@ -36,11 +31,5 @@ export const config = getDefaultConfig({
   appName: 'Rosetta Alpha',
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'bec422518cfa4cfbc6e83d3c1bd8d07b',
   chains: [arcTestnet, mainnet],
-  wallets: [
-    {
-      groupName: 'Recommended',
-      wallets: [metaMaskWallet, coinbaseWallet, walletConnectWallet],
-    },
-  ],
   ssr: true,
 })
