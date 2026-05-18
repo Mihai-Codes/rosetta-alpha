@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { Layout } from '@/components/Layout'
+import { DashboardView } from '@/components/DashboardView'
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -16,12 +17,11 @@ export default function DashboardPage() {
           <h1 className="font-display text-4xl md:text-5xl text-text-primary leading-tight">
             Dashboard
           </h1>
-        </div>
-        <div className="solid-panel rounded-2xl p-8">
-          <p className="text-text-secondary text-sm">
-            Portfolio dashboard coming soon — track your predictions, stakes, and PnL.
+          <p className="text-text-secondary text-sm mt-4 max-w-lg">
+            Track your prediction accuracy, USDC earnings, and Arc Testnet settlements in one place.
           </p>
         </div>
+        <DashboardView />
       </div>
     </Layout>
   )
