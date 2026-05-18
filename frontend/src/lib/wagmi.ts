@@ -3,6 +3,7 @@ import { mainnet } from 'wagmi/chains'
 import { type Chain } from 'viem'
 
 /** Arc Testnet — official config from docs.arc.network */
+// @ts-expect-error RainbowKit custom chain properties not in viem Chain type
 export const arcTestnet: Chain = {
   id: Number(process.env.NEXT_PUBLIC_ARC_CHAIN_ID) || 5042002,
   name: 'Arc Testnet',
