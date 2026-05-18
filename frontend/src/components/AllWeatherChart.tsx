@@ -78,10 +78,9 @@ export function AllWeatherChart() {
             className="text-brand-red hover:text-text-primary transition-colors font-medium drop-shadow-[0_0_8px_rgba(216,43,43,0.5)]"
           >
             All Weather strategy
-          </a>,
+          </a>, balancing exposure
           <br />
-          which balances exposure across four economic regimes:<br />
-          rising/falling growth and inflation.
+          across four economic regimes: rising/falling growth and inflation.
         </p>
       </div>
     </div>
