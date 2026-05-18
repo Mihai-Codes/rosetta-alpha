@@ -10,8 +10,7 @@ export default function SignInPage() {
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    // We will wire up Resend/Nodemailer next
-    await signIn('nodemailer', { email, callbackUrl: '/desks' })
+    await signIn('resend', { email, callbackUrl: '/desks' })
     setLoading(false)
   }
 
