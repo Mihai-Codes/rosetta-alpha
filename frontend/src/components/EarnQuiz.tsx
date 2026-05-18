@@ -28,8 +28,6 @@ const CLAIM_PROOF_VALUE = parseEther('0.001')
 const ARCSCAN_TX = (hash: string) => `https://testnet.arcscan.app/tx/${hash}`
 
 // Color tokens from design system
-const GREEN = '#4A9F6F'
-const RED = '#9F4A4A'
 const GOLD = '#C9A84C'
 
 // ─── Progress dots ──────────────────────────────────────────────────────────
@@ -336,10 +334,30 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
       setClaimStatus('confirming')
       // Step 3: useWaitForTransactionReceipt watches `hash` and sets txConfirmed
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Transaction failed'
+      const msg = (err instanceof Error ? err.message : String(err)).toLowerCase()
       setClaimStatus('idle')
-      if (!msg.toLowerCase().includes('rejected') && !msg.toLowerCase().includes('denied')) {
+      // Silently ignore user rejections and unsupported chain-switch errors
+      const isUserReject = msg.includes('rejected') || msg.includes('denied') || msg.includes('user refused')
+      const isUnsupportedSwitch = msg.includes('unsupported') || msg.includes('does not support') || msg.includes('chain') || msg.includes('switch')
+      if (!isUserReject && !isUnsupportedSwitch) {
         setClaimError('Transaction failed — check your Arc Testnet USDC balance.')
+      } else if (isUnsupportedSwitch && !isUserReject) {
+        // Wallet doesn't support chain switching (e.g. some smart wallets) — try sending anyway
+        try {
+          setClaimStatus('broadcasting')
+          const hash = await sendTransactionAsync({
+            to: REWARDS_POOL,
+            value: CLAIM_PROOF_VALUE,
+            chainId: ARC_CHAIN_ID,
+          })
+          setClaimTxHash(hash)
+          setClaimStatus('confirming')
+        } catch (innerErr: unknown) {
+          const innerMsg = (innerErr instanceof Error ? innerErr.message : String(innerErr)).toLowerCase()
+          if (!innerMsg.includes('rejected') && !innerMsg.includes('denied')) {
+            setClaimError('Transaction failed — check your Arc Testnet USDC balance.')
+          }
+        }
       }
     } finally {
       setClaiming(false)

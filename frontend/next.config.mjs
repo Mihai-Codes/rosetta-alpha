@@ -42,8 +42,15 @@ const securityHeaders = [
       `img-src * 'self' data: blob:`,
       `connect-src 'self' ${WC_CONNECT_SRC}`,
       `frame-src 'self' ${WC_FRAME_SRC}`,
-      `Cross-Origin-Opener-Policy: same-origin-allow-popups`,
     ].join('; '),
+  },
+  /**
+   * Required for Base Smart Wallet / Coinbase passkey popups.
+   * Must be a separate header — NOT a CSP directive.
+   */
+  {
+    key: 'Cross-Origin-Opener-Policy',
+    value: 'same-origin-allow-popups',
   },
 ]
 
