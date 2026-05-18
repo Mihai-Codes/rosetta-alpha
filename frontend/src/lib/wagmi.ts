@@ -2,8 +2,6 @@ import { connectorsForWallets } from '@rainbow-me/rainbowkit'
 import {
   metaMaskWallet,
   base,
-  rainbowWallet,
-  walletConnectWallet,
   injectedWallet,
   okxWallet,
 } from '@rainbow-me/rainbowkit/wallets'
@@ -62,15 +60,13 @@ const connectors = connectorsForWallets(
       wallets: [
         base,           // Coinbase / Base Smart Wallet (passkey, no extension needed)
         metaMaskWallet, // MetaMask browser extension
-        rainbowWallet,  // Rainbow mobile + desktop
+        okxWallet,      // OKX injected extension
       ],
     },
     {
       groupName: 'More',
       wallets: [
-        okxWallet,
-        injectedWallet,      // any other injected (Brave, frame, etc.)
-        walletConnectWallet, // QR-code fallback for any WC-compatible wallet
+        injectedWallet, // Brave, Frame, or any other EIP-6963 injected wallet
       ],
     },
   ],
