@@ -6,6 +6,8 @@ import { type Chain } from 'viem'
 export const arcTestnet: Chain = {
   id: Number(process.env.NEXT_PUBLIC_ARC_CHAIN_ID) || 5042002,
   name: 'Arc Testnet',
+  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI0Q4MkIyQiI+PHBhdGggZD0iTTEyIDJMMjIgMjBIMloiLz48L3N2Zz4=',
+  iconBackground: '#0A0A0F',
   nativeCurrency: {
     name: 'USDC',
     symbol: 'USDC',

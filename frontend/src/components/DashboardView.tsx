@@ -263,7 +263,7 @@ function ConnectPrompt() {
 
 function MyPredictions() {
   return (
-    <div className="solid-panel rounded-2xl overflow-hidden">
+    <div className="solid-panel rounded-none border overflow-hidden">
       <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-border flex items-center justify-between">
         <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary">
           My Predictions
@@ -387,7 +387,7 @@ function Leaderboard() {
   }
 
   return (
-    <div className="solid-panel rounded-2xl overflow-hidden">
+    <div className="solid-panel rounded-none border overflow-hidden">
       <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-border flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
         <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary">
           Agent Leaderboard
@@ -536,8 +536,7 @@ export function DashboardView() {
     return (
       <div className="space-y-8">
         <ConnectPrompt />
-        {/* Show allocation chart as public preview */}
-        <div className="solid-panel rounded-2xl p-6 sm:p-8">
+        <div className="solid-panel rounded-none border p-6 sm:p-10">
           <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary mb-6">
             Strategy Overview
           </p>
@@ -550,7 +549,7 @@ export function DashboardView() {
   return (
     <div className="space-y-8 sm:space-y-10">
       {/* ── Stat tiles row ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-border/60 border border-border/60 rounded-none">
         {[
           { label: 'USDC Balance', value: balance ? `${parseFloat(balance.formatted).toFixed(2)}` : '—', sub: 'Arc Testnet', accent: 'text-accent-gold' },
           { label: 'Total Earned', value: `${totalEarned.toFixed(2)} USDC`, sub: 'From predictions', accent: 'text-positive' },
@@ -562,10 +561,10 @@ export function DashboardView() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.07 }}
-            className="solid-panel rounded-2xl px-4 sm:px-5 py-4 sm:py-5 flex flex-col gap-1.5"
+            className="bg-[#0A0A0A] px-5 sm:px-6 py-6 sm:py-8 flex flex-col gap-2 hover:bg-[#0C0C12] transition-colors"
           >
             <p className="text-[9px] font-medium uppercase tracking-[0.25em] text-text-tertiary">{s.label}</p>
-            <p className={`font-display text-xl sm:text-2xl font-light tracking-tight ${s.accent || 'text-text-primary'}`}>
+            <p className={`font-display text-2xl sm:text-3xl font-light tracking-tight ${s.accent || 'text-text-primary'}`}>
               {s.value}
             </p>
             {s.sub && <p className="text-[9px] text-text-tertiary font-mono">{s.sub}</p>}
@@ -574,9 +573,9 @@ export function DashboardView() {
       </div>
 
       {/* ── Portfolio Overview (ring chart + wallet summary) ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-        <div className="lg:col-span-2 solid-panel rounded-2xl p-5 sm:p-8">
-          <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-px bg-border/60 border border-border/60 rounded-none">
+        <div className="lg:col-span-2 bg-[#0A0A0A] p-6 sm:p-10">
+          <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary mb-8">
             Portfolio Overview
           </p>
           <RingChart />
@@ -586,26 +585,27 @@ export function DashboardView() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="solid-panel rounded-2xl p-5 sm:p-6 flex flex-col gap-5"
+          className="bg-[#050505] p-6 sm:p-10 flex flex-col gap-6"
         >
           <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary">
-            Wallet
+            Terminal Access
           </p>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 px-4 py-3 border border-positive/30 bg-positive/5 rounded-none">
             <span className="w-2 h-2 rounded-full bg-positive animate-pulse" />
-            <span className="font-mono text-[11px] text-text-primary">
-              {address?.slice(0, 8)}...{address?.slice(-6)}
+            <span className="font-mono text-[11px] text-positive uppercase tracking-widest">
+              Connected
             </span>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-4">
             {[
+              { label: 'Address', value: `${address?.slice(0, 6)}...${address?.slice(-4)}` },
               { label: 'Network', value: 'Arc Testnet' },
               { label: 'Chain ID', value: '5042002' },
               { label: 'Balance', value: balance ? `${parseFloat(balance.formatted).toFixed(4)} USDC` : 'Loading...' },
             ].map(r => (
-              <div key={r.label} className="flex justify-between items-center py-2 border-b border-border/50">
+              <div key={r.label} className="flex justify-between items-end pb-3 border-b border-white/5">
                 <span className="text-[9px] uppercase tracking-[0.2em] text-text-tertiary">{r.label}</span>
-                <span className="font-mono text-[10px] text-text-primary">{r.value}</span>
+                <span className="font-mono text-[11px] text-text-primary">{r.value}</span>
               </div>
             ))}
           </div>
@@ -613,9 +613,9 @@ export function DashboardView() {
             href={`https://testnet.arcscan.app/address/${address}`}
             target="_blank"
             rel="noreferrer"
-            className="text-[9px] uppercase tracking-[0.2em] text-accent-gold hover:underline mt-auto"
+            className="inline-block text-[10px] uppercase tracking-[0.2em] text-brand-red hover:text-white transition-colors mt-auto pt-4"
           >
-            View on Arc Explorer →
+            View on ArcScan →
           </a>
         </motion.div>
       </div>
