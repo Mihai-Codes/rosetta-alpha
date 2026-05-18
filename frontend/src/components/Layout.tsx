@@ -226,7 +226,7 @@ export function Layout({ children, activeTab }: LayoutProps) {
             <p className="uppercase tracking-[0.25em] text-text-secondary mb-3 text-[10px]">Reference</p>
             <p className="font-light leading-relaxed">
               <a href="https://agora.thecanteenapp.com/" target="_blank" rel="noopener noreferrer" className="text-brand-red hover:text-text-primary transition-colors font-medium underline underline-offset-4 decoration-white/10">Agora Agents Hackathon</a><br />
-              Built on the <a href="https://www.bridgewater.com/research-and-insights/the-all-weather-story" target="_blank" rel="noopener noreferrer" className="text-brand-red hover:text-text-primary transition-colors font-medium drop-shadow-[0_0_8px_rgba(216,43,43,0.4)]">All Weather discipline</a>.
+              Engineered for <a href="https://www.principles.com/" target="_blank" rel="noopener noreferrer" className="text-brand-red hover:text-text-primary transition-colors font-medium drop-shadow-[0_0_8px_rgba(216,43,43,0.4)]">Radical Truth</a>.
             </p>
           </div>
         </div>

@@ -156,6 +156,12 @@
 }
 .animate-rain { animation: rain-drop 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
 
+@keyframes levitate {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.animate-levitate { animation: levitate 6s ease-in-out infinite; }
+
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }

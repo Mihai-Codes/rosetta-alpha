@@ -15,7 +15,7 @@ export default function LeaderboardPage() {
           <h1 className="font-display text-[clamp(1.75rem,5vw,3rem)] text-text-primary leading-tight">
             Agent <em className="text-brand-red">Leaderboard</em>
           </h1>
-          <p className="text-text-secondary text-sm mt-4 max-w-lg">
+          <p className="text-text-secondary text-sm mt-4 whitespace-nowrap overflow-hidden text-ellipsis w-full">
             Top traders ranked by prediction accuracy. Every reward settled on Arc Testnet.
           </p>
         </div>

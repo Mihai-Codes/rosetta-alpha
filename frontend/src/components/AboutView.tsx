@@ -1,35 +1,53 @@
 'use client'
 
 import React from 'react'
-import { Layers, Scale } from 'lucide-react'
+import { Scale } from 'lucide-react'
 
 export function AboutView() {
   return (
     <div className="max-w-6xl space-y-24 mx-auto px-4 py-20 animate-rain">
-      <header className="text-center">
-        <p className="text-[11px] font-medium uppercase tracking-[0.4em] text-brand-red mb-6">
-          Institutional reasoning layer
-        </p>
-        <h1 className="font-display text-[clamp(2.5rem,6vw,5rem)] text-text-primary leading-[0.95] mb-10">
-          A Global Macro perspective,<br />
-          <em className="text-brand-red not-italic">in every language.</em>
-        </h1>
-        <div className="grid md:grid-cols-2 gap-12 text-justify">
-          <div className="space-y-4">
-            <h4 className="text-brand-red uppercase tracking-[0.3em] text-[11px] font-bold border-b border-brand-red/20 pb-2">Native Intelligence</h4>
+      
+      {/* Ray Dalio & The Philosophy Section */}
+      <div className="grid md:grid-cols-12 gap-12 items-center">
+        <div className="md:col-span-7 space-y-6">
+          <p className="text-[11px] font-medium uppercase tracking-[0.4em] text-brand-red">
+            Institutional reasoning layer
+          </p>
+          <h1 className="font-display text-[clamp(2.5rem,5vw,4.5rem)] text-text-primary leading-[0.95]">
+            Built on the <br />
+            <em className="text-brand-red not-italic">All Weather</em> discipline.
+          </h1>
+          <div className="space-y-4 pt-4">
             <p className="text-text-secondary leading-relaxed font-light text-[15px]">
-              Most AI investment platforms speak one language and see one market. Rosetta Alpha runs five regional analysts, each native to their market's culture, language, and data sources, then settles their conviction on-chain as verifiable prediction markets. This ensures the local context remains the primary driver of the agent's thesis.
+              Rosetta Alpha is fundamentally inspired by Ray Dalio's pioneering work on the All Weather strategy and Bridgewater's culture of radical truth. By combining multi-agent LLM reasoning with decentralized prediction markets, we've reimagined Dalio's principles for the AI era.
             </p>
-          </div>
-          <div className="space-y-4">
-            <h4 className="text-brand-red uppercase tracking-[0.3em] text-[11px] font-bold border-b border-brand-red/20 pb-2">Cognitive Risk Parity</h4>
             <p className="text-text-secondary leading-relaxed font-light text-[15px]">
-              Ray Dalio's All Weather strategy succeeds because it acknowledges that no single asset class and no single perspective captures every economic regime. Rosetta Alpha extends that discipline to the AI layer: a Chinese analyst reads the <span className="font-medium text-text-primary">财报</span> in Mandarin; a Japanese analyst interprets BoJ policy; a US analyst processes 10-Qs.
+              Most AI investment platforms speak one language and see one market. Rosetta Alpha runs five regional analysts, each native to their market's culture, language, and data sources, then settles their conviction on-chain as verifiable prediction markets.
             </p>
           </div>
         </div>
-      </header>
+        
+        <div className="md:col-span-5 flex justify-center mt-10 md:mt-0">
+          {/* Levitating Ray Dalio Portrait */}
+          <div className="relative group w-64 h-64 sm:w-80 sm:h-80 animate-levitate">
+            <div className="absolute inset-0 bg-gradient-to-tr from-brand-red to-[#C9A84C] opacity-30 blur-2xl group-hover:opacity-60 transition-opacity duration-700" />
+            <div className="absolute inset-0 border border-white/20 bg-[#0A0A0A] shadow-[0_0_40px_rgba(216,43,43,0.3)] z-10 overflow-hidden box-glow-pulse">
+              <img 
+                src="/ray-dalio.webp" 
+                alt="Ray Dalio" 
+                className="w-full h-full object-cover opacity-75 mix-blend-screen grayscale hover:grayscale-0 transition-all duration-700" 
+              />
+            </div>
+            {/* Corner Bracket Accents */}
+            <div className="absolute -top-2 -left-2 w-6 h-6 border-t-2 border-l-2 border-brand-red z-20" />
+            <div className="absolute -bottom-2 -right-2 w-6 h-6 border-b-2 border-r-2 border-brand-red z-20" />
+            <div className="absolute -top-2 -right-2 w-6 h-6 border-t-2 border-r-2 border-[#C9A84C] z-20" />
+            <div className="absolute -bottom-2 -left-2 w-6 h-6 border-b-2 border-l-2 border-[#C9A84C] z-20" />
+          </div>
+        </div>
+      </div>
 
+      {/* Cognitive Risk Parity & Quadrants */}
       <div className="solid-panel rounded-[2rem] p-8 md:p-12 border-white/[0.03] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.6)]">
         <div className="flex flex-col items-center text-center mb-10">
           <Scale className="text-brand-red w-8 h-8 mb-4" />
@@ -38,37 +56,48 @@ export function AboutView() {
           </h3>
           <div className="h-0.5 w-8 bg-brand-red/30 mt-4 rounded-full" />
         </div>
-        
-        <div className="max-w-2xl mx-auto text-center mb-10">
-          <p className="text-text-secondary leading-relaxed text-sm font-light italic">
-            Rosetta Alpha implements the All Weather discipline by maintaining structural equilibrium across the four distinct economic environments that drive asset returns.
-          </p>
-        </div>
 
-        <div className="flex flex-col gap-3 w-full max-w-[900px] mx-auto">
-          {[
-            { label: 'Rising Growth', assets: 'Equities & Commodities', desc: 'Positive growth surprises favor ownership of the productive economy.' },
-            { label: 'Falling Growth', assets: 'Nominal Bonds & Cash', desc: 'Economic contraction increases the value of safe, fixed-return assets.' },
-            { label: 'Rising Inflation', assets: 'ILBs & Commodities', desc: 'Currency devaluation favors inflation-linked bonds and tangible assets.' },
-            { label: 'Falling Inflation', assets: 'Equities & Nominal Bonds', desc: 'Deflationary environments increase real returns on financial capital.' }
-          ].map((item, i) => (
-            <div key={i} className="group flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-5 p-4 lg:p-5 bg-white/[0.01] border border-white/[0.03] rounded-xl transition-all duration-700 hover:bg-brand-red/[0.01] hover:border-brand-red/10">
-              <div className="md:w-[140px] shrink-0">
-                <p className="text-[10px] uppercase tracking-[0.3em] text-brand-red/50 group-hover:text-brand-red transition-all duration-500 font-bold">{item.label}</p>
-              </div>
-              <div className="md:w-[180px] shrink-0 md:border-l border-white/5 md:pl-5">
-                <p className="text-base font-display text-text-primary tracking-tight leading-snug">{item.assets}</p>
-              </div>
-              <div className="flex-1 md:border-l border-white/5 md:pl-5">
-                <p className="text-[13px] text-text-tertiary font-light leading-relaxed">{item.desc}</p>
-              </div>
+        <div className="flex flex-col lg:flex-row items-center gap-12 mb-10">
+          <div className="relative w-64 h-48 sm:w-80 sm:h-56 shrink-0 animate-levitate" style={{ animationDelay: '1.5s' }}>
+            <div className="absolute inset-0 bg-gradient-to-bl from-brand-red to-[#C9A84C] opacity-20 blur-xl" />
+            <img 
+              src="/all-weather-viz.png" 
+              alt="All Weather Visualization" 
+              className="w-full h-full object-cover rounded-2xl border border-white/10 shadow-[0_0_40px_rgba(201,168,76,0.15)] mix-blend-screen grayscale hover:grayscale-0 transition-all duration-700" 
+            />
+          </div>
+
+          <div className="flex-1 text-center lg:text-left">
+            <p className="text-text-secondary leading-relaxed text-sm font-light italic mb-6">
+              Ray Dalio's strategy succeeds because it acknowledges that no single asset class captures every economic regime. Rosetta Alpha extends that discipline to the AI layer: maintaining structural equilibrium across the four distinct economic environments that drive asset returns.
+            </p>
+            
+            <div className="flex flex-col gap-3">
+              {[
+                { label: 'Rising Growth', assets: 'Equities & Commodities', desc: 'Positive growth surprises favor ownership of the productive economy.' },
+                { label: 'Falling Growth', assets: 'Nominal Bonds & Cash', desc: 'Economic contraction increases the value of safe, fixed-return assets.' },
+                { label: 'Rising Inflation', assets: 'ILBs & Commodities', desc: 'Currency devaluation favors inflation-linked bonds and tangible assets.' },
+                { label: 'Falling Inflation', assets: 'Equities & Nominal Bonds', desc: 'Deflationary environments increase real returns on financial capital.' }
+              ].map((item, i) => (
+                <div key={i} className="group flex flex-col md:flex-row items-start md:items-center gap-3 p-4 bg-white/[0.01] border border-white/[0.03] rounded-xl transition-all duration-700 hover:bg-brand-red/[0.01] hover:border-brand-red/10">
+                  <div className="md:w-[130px] shrink-0">
+                    <p className="text-[10px] uppercase tracking-[0.3em] text-brand-red/50 group-hover:text-brand-red transition-all duration-500 font-bold">{item.label}</p>
+                  </div>
+                  <div className="md:w-[170px] shrink-0 md:border-l border-white/5 md:pl-4">
+                    <p className="text-sm font-display text-text-primary tracking-tight leading-snug">{item.assets}</p>
+                  </div>
+                  <div className="flex-1 md:border-l border-white/5 md:pl-4">
+                    <p className="text-[12px] text-text-tertiary font-light leading-relaxed">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
 
       <section className="space-y-6">
-        <h2 className="font-display text-2xl text-text-primary">The pipeline</h2>
+        <h2 className="font-display text-2xl text-text-primary">The Pipeline</h2>
         <ol className="space-y-5 border-l border-border pl-8">
           {[
             { n: '01', t: 'Regional ingest', d: 'Each desk pulls market data, filings, and news in the local language.' },
@@ -78,9 +107,7 @@ export function AboutView() {
             { n: '05', t: 'Market settlement', d: 'A binary prediction market is opened on the thesis question. Settlement is autonomous.' },
           ].map(step => (
             <li key={step.n} className="relative">
-              <span
-                className="absolute -left-[33px] top-0 w-6 h-6 flex items-center justify-center font-mono text-[10px] bg-bg-primary border border-brand-red/60 text-brand-red"
-              >
+              <span className="absolute -left-[33px] top-0 w-6 h-6 flex items-center justify-center font-mono text-[10px] bg-bg-primary border border-brand-red/60 text-brand-red">
                 {step.n}
               </span>
               <p className="font-display text-lg text-text-primary mb-1">{step.t}</p>
