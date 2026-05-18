@@ -58,13 +58,30 @@ export function AboutView() {
         </div>
 
         <div className="flex flex-col lg:flex-row items-center gap-12 mb-10">
-          <div className="relative w-full max-w-sm lg:max-w-md shrink-0 animate-levitate aspect-[1.28]" style={{ animationDelay: '1.5s' }}>
+          <div className="relative w-full max-w-sm shrink-0 animate-levitate" style={{ animationDelay: '1.5s' }}>
             <div className="absolute inset-0 bg-gradient-to-bl from-brand-red to-[#C9A84C] opacity-20 blur-xl" />
-            <img 
-              src="/all-weather-viz.png" 
-              alt="All Weather Visualization" 
-              className="w-full h-full object-contain rounded-xl border border-white/10 shadow-[0_0_40px_rgba(201,168,76,0.15)] transition-all duration-700" 
-            />
+            <div className="relative z-10 grid grid-cols-2 grid-rows-2 aspect-square border border-white/10 shadow-[0_0_40px_rgba(201,168,76,0.15)] rounded-2xl overflow-hidden bg-[#0A0A0A]">
+              <div className="border-r border-b border-white/5 bg-gradient-to-br from-brand-red/10 to-transparent p-5 flex flex-col justify-between">
+                <span className="text-[10px] uppercase tracking-[0.2em] text-brand-red/60 font-bold">Rising Growth</span>
+                <span className="font-display text-lg sm:text-xl text-text-primary leading-tight">Equities<br/>Commodities</span>
+              </div>
+              <div className="border-b border-white/5 bg-gradient-to-bl from-[#C9A84C]/10 to-transparent p-5 flex flex-col justify-between text-right">
+                <span className="text-[10px] uppercase tracking-[0.2em] text-[#C9A84C]/60 font-bold">Falling Growth</span>
+                <span className="font-display text-lg sm:text-xl text-text-primary leading-tight">Nominal Bonds<br/>Cash</span>
+              </div>
+              <div className="border-r border-white/5 bg-gradient-to-tr from-[#4A9F6F]/10 to-transparent p-5 flex flex-col justify-between">
+                <span className="font-display text-lg sm:text-xl text-text-primary leading-tight">ILBs<br/>Commodities</span>
+                <span className="text-[10px] uppercase tracking-[0.2em] text-[#4A9F6F]/60 font-bold">Rising Inflation</span>
+              </div>
+              <div className="bg-gradient-to-tl from-[#7B8FA6]/10 to-transparent p-5 flex flex-col justify-between text-right">
+                <span className="font-display text-lg sm:text-xl text-text-primary leading-tight">Equities<br/>Nominal Bonds</span>
+                <span className="text-[10px] uppercase tracking-[0.2em] text-[#7B8FA6]/60 font-bold">Falling Inflation</span>
+              </div>
+              {/* Center crosshair */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full border border-white/10 bg-[#0A0A0A] flex items-center justify-center">
+                <div className="w-1.5 h-1.5 rounded-full bg-brand-red animate-pulse" />
+              </div>
+            </div>
           </div>
 
           <div className="flex-1">
