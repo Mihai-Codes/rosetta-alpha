@@ -340,7 +340,8 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
       const isUserReject = msg.includes('rejected') || msg.includes('denied') || msg.includes('user refused')
       const isUnsupportedSwitch = msg.includes('unsupported') || msg.includes('does not support') || msg.includes('chain') || msg.includes('switch')
       if (!isUserReject && !isUnsupportedSwitch) {
-        setClaimError('Transaction failed — check your Arc Testnet USDC balance.')
+        console.error("TX ERROR:", err)
+        setClaimError(`Tx failed: ${msg.split('\n')[0].substring(0, 100)}`)
       } else if (isUnsupportedSwitch && !isUserReject) {
         // Wallet doesn't support chain switching (e.g. some smart wallets) — try sending anyway
         try {
@@ -353,9 +354,10 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
           setClaimTxHash(hash)
           setClaimStatus('confirming')
         } catch (innerErr: unknown) {
+          console.error("TX INNER ERROR:", innerErr)
           const innerMsg = (innerErr instanceof Error ? innerErr.message : String(innerErr)).toLowerCase()
           if (!innerMsg.includes('rejected') && !innerMsg.includes('denied')) {
-            setClaimError('Transaction failed — check your Arc Testnet USDC balance.')
+            setClaimError(`Tx failed: ${innerMsg.split('\n')[0].substring(0, 100)}`)
           }
         }
       }
