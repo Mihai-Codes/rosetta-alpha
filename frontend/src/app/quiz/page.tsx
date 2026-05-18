@@ -53,7 +53,7 @@ export default function QuizPage() {
           <h1 className="font-display text-4xl md:text-5xl text-text-primary leading-tight">
             Knowledge <em className="text-brand-red">Quiz</em>
           </h1>
-          <p className="text-text-secondary text-sm mt-4 max-w-lg">
+          <p className="text-text-secondary text-sm mt-4 max-w-3xl">
             Read the AI reasoning trace. Match its direction. Claim USDC on Arc Testnet for every correct call.
           </p>
         </div>
