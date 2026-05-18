@@ -2,11 +2,9 @@
 
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useAccount, useWaitForTransactionReceipt, useSwitchChain, useChainId } from 'wagmi'
-import { getWalletClient } from '@wagmi/core'
+import { useAccount, useWaitForTransactionReceipt, useChainId } from 'wagmi'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
-import { parseEther } from 'viem'
-import { config } from '@/lib/wagmi'
+import { parseEther, toHex } from 'viem'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -233,7 +231,6 @@ function ResultsScreen({
 export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
   const { isConnected } = useAccount()
   const { openConnectModal } = useConnectModal()
-  const { switchChainAsync } = useSwitchChain()
   const currentChainId = useChainId()
 
   const [qIndex, setQIndex] = useState(0)
@@ -315,42 +312,74 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
       openConnectModal?.()
       return
     }
+
+    // Get the raw EIP-1193 provider — bypasses ALL wagmi connector machinery
+    // (fixes Coinbase Smart Wallet crashing on connector.getChainId())
+    const provider = (window as Window & { ethereum?: { request: (args: { method: string; params?: unknown[] }) => Promise<unknown> } }).ethereum
+    if (!provider) {
+      setClaimError('No wallet detected — please install MetaMask or Coinbase Wallet.')
+      return
+    }
+
     setClaiming(true)
     setClaimError(null)
     setClaimTxHash(null)
+
     try {
-      // Step 1: Switch to Arc Testnet if needed
+      // Step 1: Request accounts to ensure wallet is unlocked
+      const accounts = await provider.request({ method: 'eth_requestAccounts' }) as string[]
+      if (!accounts || accounts.length === 0) {
+        setClaimError('No accounts found — please unlock your wallet.')
+        return
+      }
+      const from = accounts[0]
+
+      // Step 2: Switch to Arc Testnet if needed
       if (currentChainId !== ARC_CHAIN_ID) {
         setClaimStatus('switching')
         try {
-          await switchChainAsync({ chainId: ARC_CHAIN_ID })
-        } catch {
-          // Some wallets (Coinbase Smart Wallet) don't support programmatic chain switching
-          // — proceed anyway and let the wallet handle it natively
+          await provider.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: toHex(ARC_CHAIN_ID) }],
+          })
+        } catch (switchErr: unknown) {
+          const switchMsg = (switchErr instanceof Error ? switchErr.message : String(switchErr)).toLowerCase()
+          // Chain not added yet — add it
+          if (switchMsg.includes('4902') || switchMsg.includes('unrecognized') || switchMsg.includes('not found')) {
+            await provider.request({
+              method: 'wallet_addEthereumChain',
+              params: [{
+                chainId: toHex(ARC_CHAIN_ID),
+                chainName: 'Arc Testnet',
+                nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
+                rpcUrls: ['https://rpc.testnet.arc.network'],
+                blockExplorerUrls: ['https://testnet.arcscan.app'],
+              }],
+            })
+          }
+          // If user rejected the switch, silently continue — wallet may handle it
         }
       }
-      // Step 2: Get wallet client lazily at click-time (not at render-time)
-      // This avoids the useWalletClient undefined-on-render timing issue with Coinbase Smart Wallet
-      const wc = await getWalletClient(config)
-      if (!wc) {
-        setClaimError('Wallet not ready — please reconnect and try again.')
-        return
-      }
-      // Broadcast via walletClient directly — bypasses wagmi connector.getChainId()
-      // which crashes on Coinbase Smart Wallet (known wagmi v2 bug with custom chains)
+
+      // Step 3: Send transaction via raw eth_sendTransaction — no wagmi connector involved
       setClaimStatus('broadcasting')
-      const hash = await wc.sendTransaction({
-        to: REWARDS_POOL,
-        value: CLAIM_PROOF_VALUE,
-      })
+      const hash = await provider.request({
+        method: 'eth_sendTransaction',
+        params: [{
+          from,
+          to: REWARDS_POOL,
+          value: toHex(CLAIM_PROOF_VALUE),
+        }],
+      }) as string
+
       setClaimTxHash(hash)
       setClaimStatus('confirming')
-      // Step 3: useWaitForTransactionReceipt watches `hash` and sets txConfirmed
+      // Step 4: useWaitForTransactionReceipt watches `hash` and sets txConfirmed
     } catch (err: unknown) {
       const msg = (err instanceof Error ? err.message : String(err))
       setClaimStatus('idle')
       const msgLower = msg.toLowerCase()
-      const isUserReject = msgLower.includes('rejected') || msgLower.includes('denied') || msgLower.includes('user refused')
+      const isUserReject = msgLower.includes('rejected') || msgLower.includes('denied') || msgLower.includes('user refused') || msgLower.includes('4001')
       if (!isUserReject) {
         console.error('TX ERROR:', err)
         setClaimError(`Tx failed: ${msg.split('\n')[0].substring(0, 120)}`)
