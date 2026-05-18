@@ -1,10 +1,8 @@
 import { getDefaultConfig } from '@rainbow-me/rainbowkit'
 import { mainnet } from 'wagmi/chains'
-import { type Chain } from 'viem'
 
 /** Arc Testnet — official config from docs.arc.network */
-// @ts-expect-error RainbowKit custom chain properties not in viem Chain type
-export const arcTestnet: Chain = {
+export const arcTestnet = {
   id: Number(process.env.NEXT_PUBLIC_ARC_CHAIN_ID) || 5042002,
   name: 'Arc Testnet',
   iconUrl: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI0Q4MkIyQiI+PHBhdGggZD0iTTEyIDJMMjIgMjBIMloiLz48L3N2Zz4=',
@@ -27,7 +25,7 @@ export const arcTestnet: Chain = {
     },
   },
   testnet: true,
-}
+} as any
 
 export const config = getDefaultConfig({
   appName: 'Rosetta Alpha',
