@@ -65,7 +65,7 @@ function PremiumPaywall() {
       {/* Brutalist Redaction Overlay */}
       <div className="relative z-30 w-full max-w-md mx-auto mb-12 sm:mb-20 text-center border-t border-b sm:border border-white/10 bg-[#0A0A0A]/90 backdrop-blur-md p-8 sm:shadow-2xl">
         <div className="flex justify-center mb-5">
-          <div className="w-12 h-12 border border-brand-red/30 bg-brand-red/5 flex items-center justify-center red-pulse rounded-none">
+          <div className="w-12 h-12 border border-brand-red/30 bg-brand-red/5 flex items-center justify-center box-glow-pulse rounded-none">
             <Lock className="w-5 h-5 text-brand-red" />
           </div>
         </div>
