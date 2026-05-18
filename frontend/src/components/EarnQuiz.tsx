@@ -313,9 +313,15 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
       return
     }
 
-    // Get the EIP-1193 provider from the wagmi connector — works for ALL wallet types
-    // including Coinbase Smart Wallet (passkey-based, no window.ethereum injection)
-    // Falls back to window.ethereum for MetaMask / injected wallets
+    // Coinbase Smart Wallet (baseAccount) only supports Base + Ethereum Mainnet.
+    // It cannot sign transactions on custom testnets like Arc Testnet.
+    // Direct the user to MetaMask which supports custom networks.
+    if (connector?.id === 'baseAccount' || connector?.id === 'coinbaseWalletSDK') {
+      setClaimError('Coinbase Smart Wallet only supports Base & Ethereum. Please connect with MetaMask to claim on Arc Testnet.')
+      return
+    }
+
+    // Get the EIP-1193 provider — from connector first, then window.ethereum fallback
     type EIP1193Provider = { request: (args: { method: string; params?: unknown[] }) => Promise<unknown> }
     let provider: EIP1193Provider | undefined
     if (connector) {
@@ -329,7 +335,7 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
       provider = (window as Window & { ethereum?: EIP1193Provider }).ethereum
     }
     if (!provider) {
-      setClaimError('No wallet detected — please install MetaMask or Coinbase Wallet.')
+      setClaimError('No wallet detected — please install MetaMask to claim on Arc Testnet.')
       return
     }
 
