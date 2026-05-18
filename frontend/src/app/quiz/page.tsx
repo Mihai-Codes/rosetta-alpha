@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { Layout } from '@/components/Layout'
+import { EarnQuiz } from '@/components/EarnQuiz'
 
 export default function QuizPage() {
   const router = useRouter()
@@ -16,12 +17,11 @@ export default function QuizPage() {
           <h1 className="font-display text-4xl md:text-5xl text-text-primary leading-tight">
             Knowledge <em className="text-brand-red">Quiz</em>
           </h1>
-        </div>
-        <div className="solid-panel rounded-2xl p-8">
-          <p className="text-text-secondary text-sm">
-            Earn quiz coming soon — test your understanding of thesis reasoning to earn USDC rewards.
+          <p className="text-text-secondary text-sm mt-4 max-w-lg">
+            Read the AI reasoning trace. Match its direction. Claim 0.5 USDC on Arc Testnet for every correct call.
           </p>
         </div>
+        <EarnQuiz />
       </div>
     </Layout>
   )
