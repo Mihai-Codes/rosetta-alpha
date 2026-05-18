@@ -72,12 +72,13 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
         </div>
 
         {/* Region pills — horizontal scroll on mobile */}
-        <div
-          data-reveal-id="regions"
-          className={`flex items-center justify-start sm:justify-center gap-2 sm:gap-3 mb-12 sm:mb-16 overflow-x-auto pb-2 sm:pb-0 scrollbar-hide snap-x snap-mandatory transition-all duration-1000 delay-300 ${
-            visible.regions ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-          }`}
-        >
+        <div className="relative mb-12 sm:mb-16">
+          <div
+            data-reveal-id="regions"
+            className={`flex items-center justify-start sm:justify-center gap-2 sm:gap-3 overflow-x-auto pb-2 sm:pb-0 scrollbar-hide snap-x snap-mandatory transition-all duration-1000 delay-300 ${
+              visible.regions ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+            }`}
+          >
           {REGIONS.map(r => {
             const meta = REGION_META[r]
             return (
@@ -96,6 +97,8 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
               </div>
             )
           })}
+          </div>
+          <div className="pointer-events-none absolute right-0 top-0 h-full w-12 bg-gradient-to-l from-bg-primary to-transparent sm:hidden" />
         </div>
 
         <div

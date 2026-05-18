@@ -50,25 +50,28 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
           <span className="text-[10px] uppercase tracking-[0.25em] text-text-tertiary shrink-0">
             Region
           </span>
-          <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide snap-x pb-1 flex-1">
-            {regions.map(r => {
-              const isActive = regionFilter === r
-              const meta = r === 'ALL' ? null : regionMeta(r)
-              return (
-                <button
-                  key={r}
-                  onClick={() => setRegionFilter(r)}
-                  className={`shrink-0 snap-start px-3 py-2 min-h-[44px] text-[10px] font-medium uppercase tracking-[0.18em] border transition-all ${
-                    isActive
-                      ? 'border-brand-red text-brand-red'
-                      : 'border-border text-text-secondary hover:text-text-primary hover:border-border-strong'
-                  }`}
-                  style={isActive && meta ? { borderColor: meta.color, color: meta.color } : undefined}
-                >
-                  {r === 'ALL' ? 'All' : (meta?.flag ? `${meta.flag} ` : '') + (meta?.name ?? r)}
-                </button>
-              )
-            })}
+          <div className="relative flex-1">
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide snap-x pb-1">
+              {regions.map(r => {
+                const isActive = regionFilter === r
+                const meta = r === 'ALL' ? null : regionMeta(r)
+                return (
+                  <button
+                    key={r}
+                    onClick={() => setRegionFilter(r)}
+                    className={`shrink-0 snap-start px-3 py-2 min-h-[44px] text-[10px] font-medium uppercase tracking-[0.18em] border transition-all ${
+                      isActive
+                        ? 'border-brand-red text-brand-red'
+                        : 'border-border text-text-secondary hover:text-text-primary hover:border-border-strong'
+                    }`}
+                    style={isActive && meta ? { borderColor: meta.color, color: meta.color } : undefined}
+                  >
+                    {r === 'ALL' ? 'All' : (meta?.flag ? `${meta.flag} ` : '') + (meta?.name ?? r)}
+                  </button>
+                )
+              })}
+            </div>
+            <div className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-bg-primary to-transparent sm:hidden" />
           </div>
         </div>
 
@@ -77,20 +80,23 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
           <span className="text-[10px] uppercase tracking-[0.25em] text-text-tertiary shrink-0">
             Signal
           </span>
-          <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide snap-x pb-1 flex-1">
-            {(['ALL', 'LONG', 'SHORT', 'NEUTRAL'] as Direction[]).map(d => (
-              <button
-                key={d}
-                onClick={() => setDirectionFilter(d)}
-                className={`shrink-0 snap-start px-3 py-2 min-h-[44px] text-[10px] font-medium uppercase tracking-[0.18em] border transition-all ${
-                  directionFilter === d
-                    ? 'border-brand-red text-brand-red'
-                    : 'border-border text-text-secondary hover:text-text-primary'
-                }`}
-              >
-                {d === 'ALL' ? 'All' : d}
-              </button>
-            ))}
+          <div className="relative flex-1">
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide snap-x pb-1">
+              {(['ALL', 'LONG', 'SHORT', 'NEUTRAL'] as Direction[]).map(d => (
+                <button
+                  key={d}
+                  onClick={() => setDirectionFilter(d)}
+                  className={`shrink-0 snap-start px-3 py-2 min-h-[44px] text-[10px] font-medium uppercase tracking-[0.18em] border transition-all ${
+                    directionFilter === d
+                      ? 'border-brand-red text-brand-red'
+                      : 'border-border text-text-secondary hover:text-text-primary'
+                  }`}
+                >
+                  {d === 'ALL' ? 'All' : d}
+                </button>
+              ))}
+            </div>
+            <div className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-bg-primary to-transparent sm:hidden" />
           </div>
         </div>
       </div>
