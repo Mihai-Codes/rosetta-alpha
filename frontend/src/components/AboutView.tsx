@@ -17,7 +17,7 @@ export function AboutView() {
             Built on the <br />
             <em className="text-brand-red not-italic">All Weather</em> discipline.
           </h1>
-          <div className="space-y-4 pt-4">
+          <div className="space-y-4 pt-4 text-justify">
             <p className="text-text-secondary leading-relaxed font-light text-[15px]">
               Rosetta Alpha is fundamentally inspired by Ray Dalio's pioneering work on the All Weather strategy and Bridgewater's culture of radical truth. By combining multi-agent LLM reasoning with decentralized prediction markets, we've reimagined Dalio's principles for the AI era.
             </p>
@@ -67,8 +67,8 @@ export function AboutView() {
             />
           </div>
 
-          <div className="flex-1 text-center lg:text-left">
-            <p className="text-text-secondary leading-relaxed text-sm font-light italic mb-6">
+          <div className="flex-1 text-center lg:text-justify">
+            <p className="text-text-secondary leading-relaxed text-sm font-light italic mb-6 text-justify">
               Ray Dalio's strategy succeeds because it acknowledges that no single asset class captures every economic regime. Rosetta Alpha extends that discipline to the AI layer: maintaining structural equilibrium across the four distinct economic environments that drive asset returns.
             </p>
             
