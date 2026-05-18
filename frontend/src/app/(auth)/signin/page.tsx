@@ -2,17 +2,25 @@
 
 import React from 'react'
 import { signIn } from 'next-auth/react'
+import { useSearchParams } from 'next/navigation'
 
-export default function SignInPage() {
-  const [email, setEmail] = React.useState('')
-  const [loading, setLoading] = React.useState(false)
+const ERROR_MESSAGES: Record<string, string> = {
+  OAuthSignin: 'Could not initiate OAuth sign-in. Try again.',
+  OAuthCallback: 'OAuth callback failed. Check provider configuration.',
+  OAuthCreateAccount: 'Could not create account from OAuth profile.',
+  EmailCreateAccount: 'Could not create account for this email.',
+  Callback: 'Authentication callback error.',
+  OAuthAccountNotLinked: 'This email is already linked to another provider.',
+  EmailSignin: 'Failed to send sign-in email.',
+  CredentialsSignin: 'Invalid credentials.',
+  SessionRequired: 'You must be signed in to access this page.',
+  Default: 'Authentication failed. Please try again.',
+}
 
-  const handleEmailSignIn = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    await signIn('resend', { email, callbackUrl: '/desks' })
-    setLoading(false)
-  }
+function SignInContent() {
+  const searchParams = useSearchParams()
+  const errorCode = searchParams.get('error')
+  const errorMessage = errorCode ? (ERROR_MESSAGES[errorCode] ?? ERROR_MESSAGES.Default) : null
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-bg-primary px-4 py-16">
@@ -28,41 +36,17 @@ export default function SignInPage() {
         </div>
 
         <div className="solid-panel p-6 sm:p-8 rounded-none border">
-          {/* Email Magic Link Form */}
-          <form onSubmit={handleEmailSignIn} className="mb-6">
-            <div className="mb-4">
-              <label htmlFor="email" className="block text-[10px] font-medium uppercase tracking-[0.2em] text-text-secondary mb-2">
-                Corporate Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="analyst@fund.com"
-                className="w-full bg-[#0A0A0A] border border-border text-text-primary px-4 py-3 min-h-[44px] focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red transition-all font-mono text-sm placeholder:text-text-tertiary"
-              />
+          {/* Error Banner */}
+          {errorMessage && (
+            <div className="mb-5 px-4 py-3 border border-[#9F4A4A] bg-[#9F4A4A]/10 text-[#9F4A4A] text-[11px] font-mono uppercase tracking-[0.12em] leading-relaxed">
+              <span className="font-bold mr-2">⚠ AUTH ERROR:</span>
+              {errorMessage}
             </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 min-h-[44px] bg-brand-red text-bg-primary text-[11px] font-bold uppercase tracking-[0.2em] transition-all hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? 'Initiating Link...' : 'Send Magic Link'}
-            </button>
-          </form>
+          )}
 
-          <div className="flex items-center gap-4 mb-6">
-            <div className="h-[1px] flex-1 bg-border" />
-            <span className="text-[10px] font-mono uppercase tracking-widest text-text-tertiary">Or connect via</span>
-            <div className="h-[1px] flex-1 bg-border" />
-          </div>
-
-          {/* OAuth Buttons */}
           <div className="space-y-3">
             <button
-              onClick={() => signIn('google', { callbackUrl: '/desks' })}
+              onClick={() => signIn('google', { callbackUrl: '/feed' })}
               className="w-full flex items-center justify-center gap-3 px-4 py-3 min-h-[44px] border border-border bg-[#0A0A0A] hover:bg-white/[0.02] hover:border-text-secondary text-text-primary text-[11px] font-medium uppercase tracking-[0.1em] transition-all duration-200 active:scale-[0.98]"
             >
               <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
@@ -71,27 +55,17 @@ export default function SignInPage() {
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
-              Google
+              Continue with Google
             </button>
 
             <button
-              onClick={() => signIn('github', { callbackUrl: '/desks' })}
+              onClick={() => signIn('github', { callbackUrl: '/feed' })}
               className="w-full flex items-center justify-center gap-3 px-4 py-3 min-h-[44px] border border-border bg-[#0A0A0A] hover:bg-white/[0.02] hover:border-text-secondary text-text-primary text-[11px] font-medium uppercase tracking-[0.1em] transition-all duration-200 active:scale-[0.98]"
             >
               <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
               </svg>
-              GitHub
-            </button>
-
-            <button
-              onClick={() => signIn('apple', { callbackUrl: '/desks' })}
-              className="w-full flex items-center justify-center gap-3 px-4 py-3 min-h-[44px] border border-border bg-[#0A0A0A] hover:bg-white/[0.02] hover:border-text-secondary text-text-primary text-[11px] font-medium uppercase tracking-[0.1em] transition-all duration-200 active:scale-[0.98]"
-            >
-              <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
-              </svg>
-              Apple
+              Continue with GitHub
             </button>
           </div>
         </div>
@@ -101,5 +75,13 @@ export default function SignInPage() {
         </p>
       </div>
     </div>
+  )
+}
+
+export default function SignInPage() {
+  return (
+    <React.Suspense fallback={null}>
+      <SignInContent />
+    </React.Suspense>
   )
 }

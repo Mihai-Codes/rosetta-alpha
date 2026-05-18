@@ -1,20 +1,16 @@
 import NextAuth from 'next-auth'
 import GitHub from 'next-auth/providers/github'
 import Google from 'next-auth/providers/google'
-import Apple from 'next-auth/providers/apple'
-import Resend from 'next-auth/providers/resend'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import { prisma } from './src/lib/prisma'
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
+  session: { strategy: 'jwt' },
+  trustHost: true,
   providers: [
     GitHub,
     Google,
-    Apple,
-    Resend({
-      from: process.env.EMAIL_FROM || 'Terminal <onboarding@resend.dev>',
-    }),
   ],
   pages: {
     signIn: '/signin',
@@ -29,6 +25,18 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         return false // Redirect to sign-in
       }
       return true
+    },
+    jwt({ token, user }) {
+      if (user) {
+        token.id = user.id
+      }
+      return token
+    },
+    session({ session, token }) {
+      if (token?.id && session.user) {
+        session.user.id = token.id as string
+      }
+      return session
     },
   },
 })
