@@ -46,7 +46,7 @@ function SignInContent() {
 
           <div className="space-y-3">
             <button
-              onClick={() => signIn('google', { callbackUrl: '/feed' })}
+              onClick={() => signIn('google', { callbackUrl: '/' })}
               className="w-full flex items-center justify-center gap-3 px-4 py-3 min-h-[44px] border border-border bg-[#0A0A0A] hover:bg-white/[0.02] hover:border-text-secondary text-text-primary text-[11px] font-medium uppercase tracking-[0.1em] transition-all duration-200 active:scale-[0.98]"
             >
               <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
@@ -59,7 +59,7 @@ function SignInContent() {
             </button>
 
             <button
-              onClick={() => signIn('github', { callbackUrl: '/feed' })}
+              onClick={() => signIn('github', { callbackUrl: '/' })}
               className="w-full flex items-center justify-center gap-3 px-4 py-3 min-h-[44px] border border-border bg-[#0A0A0A] hover:bg-white/[0.02] hover:border-text-secondary text-text-primary text-[11px] font-medium uppercase tracking-[0.1em] transition-all duration-200 active:scale-[0.98]"
             >
               <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 24 24">

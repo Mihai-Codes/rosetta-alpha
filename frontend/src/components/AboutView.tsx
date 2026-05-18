@@ -17,11 +17,11 @@ export function AboutView() {
             Built on the <br />
             <em className="text-brand-red not-italic">All Weather</em> discipline.
           </h1>
-          <div className="space-y-4 pt-4 text-justify">
-            <p className="text-text-secondary leading-relaxed font-light text-[15px]">
+          <div className="space-y-4 pt-4 text-center">
+            <p className="text-text-secondary leading-relaxed font-light text-[15px] max-w-3xl mx-auto">
               Rosetta Alpha is fundamentally inspired by Ray Dalio's pioneering work on the All Weather strategy and Bridgewater's culture of radical truth. By combining multi-agent LLM reasoning with decentralized prediction markets, we've reimagined Dalio's principles for the AI era.
             </p>
-            <p className="text-text-secondary leading-relaxed font-light text-[15px]">
+            <p className="text-text-secondary leading-relaxed font-light text-[15px] max-w-3xl mx-auto">
               Most AI investment platforms speak one language and see one market. Rosetta Alpha runs five regional analysts, each native to their market's culture, language, and data sources, then settles their conviction on-chain as verifiable prediction markets.
             </p>
           </div>
@@ -67,8 +67,8 @@ export function AboutView() {
             />
           </div>
 
-          <div className="flex-1 text-center lg:text-justify">
-            <p className="text-text-secondary leading-relaxed text-sm font-light italic mb-6 text-justify">
+          <div className="flex-1 text-center">
+            <p className="text-text-secondary leading-relaxed text-sm font-light italic mb-6 text-center max-w-2xl mx-auto">
               Ray Dalio's strategy succeeds because it acknowledges that no single asset class captures every economic regime. Rosetta Alpha extends that discipline to the AI layer: maintaining structural equilibrium across the four distinct economic environments that drive asset returns.
             </p>
             
@@ -87,7 +87,7 @@ export function AboutView() {
                     <p className="text-sm font-display text-text-primary tracking-tight leading-snug">{item.assets}</p>
                   </div>
                   <div className="flex-1 md:border-l border-white/5 md:pl-4">
-                    <p className="text-[12px] text-text-tertiary font-light leading-relaxed">{item.desc}</p>
+                    <p className="text-[12px] text-text-tertiary font-light leading-relaxed text-left">{item.desc}</p>
                   </div>
                 </div>
               ))}

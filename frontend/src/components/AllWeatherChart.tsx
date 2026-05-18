@@ -6,7 +6,7 @@ const ALLOCATIONS = [
   { label: 'Equities',      pct: 30, color: '#F0EDE8', regime: 'Rising Growth' },
   { label: 'Long Bonds',    pct: 40, color: '#C9A84C', regime: 'Falling Growth' },
   { label: 'Commodities',   pct: 15, color: '#D82B2B', regime: 'Rising Inflation' },
-  { label: 'Crypto / Gold', pct: 15, color: '#2A2A38', regime: 'Falling Inflation' },
+  { label: 'Crypto / Gold', pct: 15, color: '#FFFFFF', regime: 'Falling Inflation' },
 ]
 
 export function AllWeatherChart() {

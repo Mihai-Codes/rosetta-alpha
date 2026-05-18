@@ -35,7 +35,7 @@ export const REGION_META: Record<string, { name: string; flag: string; color: st
   cn:     { name: 'China',         flag: 'CN', color: '#C9A84C' },
   eu:     { name: 'Europe',        flag: 'EU', color: '#F0EDE8' },
   jp:     { name: 'Japan',         flag: 'JP', color: '#7B8FA6' },
-  crypto: { name: 'Digital Assets', flag: 'DA', color: '#2A2A38' },
+  crypto: { name: 'Digital Assets', flag: 'DA', color: '#FFFFFF' },
 }
 
 export function regionMeta(desk: string) {

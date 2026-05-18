@@ -154,7 +154,7 @@ const QUADRANTS: Quadrant[] = [
   { label: 'Equities',    pct: 40, color: '#F0EDE8' },
   { label: 'Bonds',       pct: 30, color: '#C9A84C' },
   { label: 'Commodities', pct: 15, color: '#D82B2B' },
-  { label: 'Crypto',      pct: 15, color: '#2A2A38' },
+  { label: 'Crypto',      pct: 15, color: '#FFFFFF' },
 ]
 
 function RingChart() {
@@ -245,7 +245,7 @@ function ConnectPrompt() {
       </div>
       <div>
         <p className="text-text-primary text-sm font-medium mb-1">Connect your wallet to view your portfolio</p>
-        <p className="text-text-tertiary text-xs">
+        <p className="text-text-tertiary text-xs whitespace-nowrap">
           Track quiz performance, prediction history, and USDC earned on Arc Testnet.
         </p>
       </div>

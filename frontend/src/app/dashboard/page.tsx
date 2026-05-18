@@ -15,7 +15,7 @@ export default function DashboardPage() {
           <h1 className="font-display text-4xl md:text-5xl text-text-primary leading-tight">
             Dashboard
           </h1>
-          <p className="text-text-secondary text-sm mt-4 max-w-lg">
+          <p className="text-text-secondary text-sm mt-4 whitespace-nowrap overflow-hidden text-ellipsis w-full">
             Track your prediction accuracy, USDC earnings, and Arc Testnet settlements in one place.
           </p>
         </div>
