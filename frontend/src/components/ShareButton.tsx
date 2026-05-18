@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Share2, ExternalLink, Copy, Check, X } from 'lucide-react'
+import { Share2, Copy, Check, X } from 'lucide-react'
 
 interface ShareButtonProps {
   region: string       // e.g. 'us', 'cn', 'eu', 'jp', 'crypto'
@@ -142,7 +142,10 @@ export function ShareButton(props: ShareButtonProps) {
               onClick={() => setOpen(false)}
               className="flex items-center gap-2.5 px-3 py-3 text-[11px] text-text-secondary hover:text-text-primary hover:bg-white/[0.03] transition-colors"
             >
-              <ExternalLink className="w-3.5 h-3.5 text-[#1D9BF0]" />
+              <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 shrink-0" fill="none" stroke="#1D9BF0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 4l11.733 16H20L8.267 4z" />
+                <path d="M4 20l6.768-6.768M20 4l-6.768 6.768" />
+              </svg>
               Share on X
             </a>
             <button
