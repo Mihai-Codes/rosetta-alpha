@@ -1,9 +1,10 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useAccount } from 'wagmi'
+import { useAccount, useSendTransaction } from 'wagmi'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
+import { parseEther } from 'viem'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -165,9 +166,17 @@ function ConfidenceMeter({ value }: { value: number }) {
 
 // ─── Main EarnQuiz component ──────────────────────────────────────────────────
 
+// Rosetta Rewards Pool address on Arc Testnet — receives claim registration txs
+const REWARDS_POOL = '0x06775Be99CfBC9A6D0819ff87A67954a2E976A16' as `0x${string}`
+
+// 0.001 USDC (native on Arc) as a claim-registration proof tx
+// In production the pool would send 0.5 USDC back; here we prove Arc interaction
+const CLAIM_PROOF_VALUE = parseEther('0.001')
+
 export function EarnQuiz() {
   const { isConnected } = useAccount()
   const { openConnectModal } = useConnectModal()
+  const { sendTransactionAsync } = useSendTransaction()
 
   const [qIndex, setQIndex] = useState(0)
   const [phase, setPhase] = useState<QuizPhase>('question')
@@ -176,9 +185,13 @@ export function EarnQuiz() {
   const [totalAnswered, setTotalAnswered] = useState(0)
   const [claiming, setClaiming] = useState(false)
   const [claimedTxs, setClaimedTxs] = useState<string[]>([])
+  const [claimError, setClaimError] = useState<string | null>(null)
   const [finished, setFinished] = useState(false)
 
   const q = QUIZ_QUESTIONS[qIndex]
+
+  // Clear error when moving to next question
+  useEffect(() => { setClaimError(null) }, [qIndex])
 
   function handleAnswer(direction: UserAnswer) {
     if (phase !== 'question') return
@@ -198,11 +211,26 @@ export function EarnQuiz() {
       return
     }
     setClaiming(true)
-    // Simulate Arc Testnet tx latency
-    await new Promise((r) => setTimeout(r, 1800))
-    setClaiming(false)
-    setClaimedTxs((txs) => [...txs, q.arcTx])
-    setPhase('claimed')
+    setClaimError(null)
+    try {
+      // Real Arc Testnet tx — sends 0.001 USDC to Rosetta Rewards Pool
+      // as a claim-registration proof; tx hash is real and verifiable on ArcScan
+      const txHash = await sendTransactionAsync({
+        to: REWARDS_POOL,
+        value: CLAIM_PROOF_VALUE,
+        chainId: 5042002,
+      })
+      setClaimedTxs((txs) => [...txs, txHash])
+      setPhase('claimed')
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Transaction failed'
+      // User rejected — don't show error, just let them retry
+      if (!msg.toLowerCase().includes('rejected') && !msg.toLowerCase().includes('denied')) {
+        setClaimError('Transaction failed — check your Arc Testnet balance and try again.')
+      }
+    } finally {
+      setClaiming(false)
+    }
   }
 
   function handleNext() {
@@ -394,13 +422,32 @@ export function EarnQuiz() {
                 ✗ No match — AI called {q.aiDirection}. No reward this round.
               </motion.div>
             )}
-            {phase === 'claimed' && (
+            {phase === 'claimed' && claimedTxs.length > 0 && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="mx-6 mb-4 px-4 py-3 rounded-xl bg-positive/10 border border-positive/30 text-positive text-[10px] uppercase tracking-[0.15em] font-medium"
+                className="mx-6 mb-4 px-4 py-3 rounded-xl bg-positive/10 border border-positive/30 space-y-1"
               >
-                ✓ 0.5 USDC claimed on Arc Testnet — {q.arcTx}
+                <p className="text-positive text-[10px] uppercase tracking-[0.15em] font-medium">
+                  ✓ Claim registered on Arc Testnet
+                </p>
+                <a
+                  href={`https://testnet.arcscan.app/tx/${claimedTxs[claimedTxs.length - 1]}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block font-mono text-[10px] text-accent-gold hover:underline truncate"
+                >
+                  {claimedTxs[claimedTxs.length - 1]}
+                </a>
+              </motion.div>
+            )}
+            {claimError && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="mx-6 mb-4 px-4 py-3 rounded-xl bg-negative/10 border border-negative/30 text-negative text-[10px] font-medium"
+              >
+                {claimError}
               </motion.div>
             )}
           </AnimatePresence>
