@@ -2,7 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
 import { Brain, Layers, HardDrive, CircleDollarSign, Menu, X, LogOut } from 'lucide-react'
 import { WalletButton } from './WalletButton'
@@ -50,8 +50,15 @@ function QuoteMatrix() {
 export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
   const { data: session } = useSession()
   const pathname = usePathname()
+  const router = useRouter()
   const isSignedIn = !!session?.user
   const [mobileOpen, setMobileOpen] = React.useState(false)
+
+  const handleSignOut = React.useCallback(async () => {
+    await signOut({ redirect: false })
+    router.refresh()
+    router.push('/')
+  }, [router])
 
   // Close drawer on route change
   React.useEffect(() => { setMobileOpen(false) }, [pathname])
@@ -103,7 +110,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
                 )}
                 <WalletButton />
                 <button
-                  onClick={() => signOut({ callbackUrl: '/' })}
+                  onClick={handleSignOut}
                   className="hidden md:flex items-center justify-center w-9 h-9 text-text-tertiary hover:text-brand-red transition-colors"
                   aria-label="Sign out"
                   title="Sign out"
@@ -160,7 +167,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
 
             {isSignedIn ? (
               <button
-                onClick={() => signOut({ callbackUrl: '/' })}
+                onClick={handleSignOut}
                 className="mt-4 flex items-center justify-center gap-2 px-5 py-4 min-h-[44px] border border-border bg-[#0A0A0A] hover:border-brand-red/50 text-text-secondary hover:text-brand-red text-[10px] font-medium uppercase tracking-[0.2em] transition-all duration-300"
               >
                 <LogOut className="w-3.5 h-3.5" />
