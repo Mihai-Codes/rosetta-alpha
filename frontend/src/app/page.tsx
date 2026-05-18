@@ -25,7 +25,11 @@ export default function HomePage() {
   return (
     <Layout activeTab="desks">
       <HeroSection latestHash="0x46d3f229..." onScrollDown={() => {
-        document.getElementById('desks-section')?.scrollIntoView({ behavior: 'smooth' })
+        const el = document.getElementById('desks-section')
+        if (el) {
+          const y = el.getBoundingClientRect().top + window.scrollY - 120
+          window.scrollTo({ top: y, behavior: 'smooth' })
+        }
       }} />
       <div id="desks-section" className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-16">
         <DesksView desks={data} loading={loading} isAuthenticated={!!session?.user} />
