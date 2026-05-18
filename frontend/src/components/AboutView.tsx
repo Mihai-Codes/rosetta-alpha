@@ -58,12 +58,12 @@ export function AboutView() {
         </div>
 
         <div className="flex flex-col lg:flex-row items-center gap-12 mb-10">
-          <div className="relative w-full max-w-sm lg:max-w-md shrink-0 animate-levitate aspect-[1.62]" style={{ animationDelay: '1.5s' }}>
+          <div className="relative w-full max-w-sm lg:max-w-md shrink-0 animate-levitate aspect-[1.28]" style={{ animationDelay: '1.5s' }}>
             <div className="absolute inset-0 bg-gradient-to-bl from-brand-red to-[#C9A84C] opacity-20 blur-xl" />
             <img 
               src="/all-weather-viz.png" 
               alt="All Weather Visualization" 
-              className="w-full h-full object-contain rounded-2xl border border-white/10 shadow-[0_0_40px_rgba(201,168,76,0.15)] mix-blend-screen grayscale hover:grayscale-0 transition-all duration-700" 
+              className="w-full h-full object-contain rounded-xl border border-white/10 shadow-[0_0_40px_rgba(201,168,76,0.15)] transition-all duration-700" 
             />
           </div>
 
