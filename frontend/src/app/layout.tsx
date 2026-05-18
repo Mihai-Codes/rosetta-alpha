@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
+import { headers } from 'next/headers'
+import { cookieToInitialState } from 'wagmi'
 import { AuthProvider } from '@/lib/session-provider'
 import { Web3Provider } from '@/providers/Web3Provider'
+import { config } from '@/lib/wagmi'
 import '../index.css'
 
 export const metadata: Metadata = {
@@ -21,16 +24,22 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  /**
+   * Extract wagmi state from cookies on the server so the client
+   * starts hydrated — no "disconnected" flash or failed first reconnect.
+   */
+  const initialState = cookieToInitialState(config, (await headers()).get('cookie'))
+
   return (
     <html lang="en" className="dark">
       <body className="bg-bg-primary text-text-primary antialiased">
         <AuthProvider>
-          <Web3Provider>{children}</Web3Provider>
+          <Web3Provider initialState={initialState}>{children}</Web3Provider>
         </AuthProvider>
       </body>
     </html>

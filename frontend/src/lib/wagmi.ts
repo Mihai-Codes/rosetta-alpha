@@ -7,7 +7,7 @@ import {
   injectedWallet,
   okxWallet,
 } from '@rainbow-me/rainbowkit/wallets'
-import { createConfig, http } from 'wagmi'
+import { createConfig, http, cookieStorage, createStorage } from 'wagmi'
 import { mainnet } from 'wagmi/chains'
 
 /** Arc Testnet — official config from docs.arc.network */
@@ -39,14 +39,22 @@ export const arcTestnet = {
 const PROJECT_ID =
   process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'bec422518cfa4cfbc6e83d3c1bd8d07b'
 
+const APP_URL = 'https://rosetta-alpha.vercel.app'
+
+/**
+ * Force Base Smart Wallet into smart-wallet-only mode.
+ * Without this, the connector tries dual-mode (extension + smart wallet)
+ * and throws "unsupported connection" on custom chains like Arc Testnet.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+;(base as any).preference = { options: 'smartWalletOnly' }
+
 /**
  * Explicit wallet list via connectorsForWallets.
  * Using this instead of getDefaultConfig prevents WalletConnect relay from
  * initializing eagerly on page load — fixing the "this page couldn't load" error.
  * WalletConnect is included last as a lazy fallback.
  */
-const APP_URL = 'https://rosetta-alpha.vercel.app'
-
 const connectors = connectorsForWallets(
   [
     {
@@ -80,18 +88,33 @@ const connectors = connectorsForWallets(
   }
 )
 
-export const config = createConfig({
-  connectors,
-  chains: [arcTestnet, mainnet],
-  /**
-   * Explicit HTTP transports bypass the WalletConnect relay for RPC calls.
-   * This is the key fix for slow/failing wallet connections on custom chains.
-   */
-  transports: {
-    [arcTestnet.id]: http(
-      process.env.NEXT_PUBLIC_ARC_RPC_URL || 'https://rpc.testnet.arc.network'
-    ),
-    [mainnet.id]: http(),
-  },
-  ssr: true,
-})
+/**
+ * Factory function — required for cookie-based SSR persistence.
+ * Call getConfig() in layout.tsx to extract initialState from cookies,
+ * then pass it to WagmiProvider so the wallet stays connected on refresh.
+ */
+export function getConfig() {
+  return createConfig({
+    connectors,
+    chains: [arcTestnet, mainnet],
+    /**
+     * cookieStorage persists wallet state server-side.
+     * Prevents the "disconnected" flash on page refresh.
+     */
+    storage: createStorage({ storage: cookieStorage }),
+    /**
+     * Explicit HTTP transports bypass the WalletConnect relay for RPC calls.
+     * This is the key fix for slow/failing wallet connections on custom chains.
+     */
+    transports: {
+      [arcTestnet.id]: http(
+        process.env.NEXT_PUBLIC_ARC_RPC_URL || 'https://rpc.testnet.arc.network'
+      ),
+      [mainnet.id]: http(),
+    },
+    ssr: true,
+  })
+}
+
+/** Singleton config instance — used by WagmiProvider and cookieToInitialState */
+export const config = getConfig()
