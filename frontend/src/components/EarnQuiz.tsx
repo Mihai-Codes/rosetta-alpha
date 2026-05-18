@@ -328,7 +328,7 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
       const hash = await sendTransactionAsync({
         to: REWARDS_POOL,
         value: CLAIM_PROOF_VALUE,
-        chainId: ARC_CHAIN_ID,
+        // chainId omitted to prevent Coinbase Smart Wallet getChainId() crash
       })
       setClaimTxHash(hash)
       setClaimStatus('confirming')
@@ -349,7 +349,7 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
           const hash = await sendTransactionAsync({
             to: REWARDS_POOL,
             value: CLAIM_PROOF_VALUE,
-            chainId: ARC_CHAIN_ID,
+            // chainId omitted to prevent Coinbase Smart Wallet getChainId() crash
           })
           setClaimTxHash(hash)
           setClaimStatus('confirming')
