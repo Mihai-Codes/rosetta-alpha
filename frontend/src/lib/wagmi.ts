@@ -45,12 +45,14 @@ const PROJECT_ID =
  * initializing eagerly on page load — fixing the "this page couldn't load" error.
  * WalletConnect is included last as a lazy fallback.
  */
+const APP_URL = 'https://rosetta-alpha.vercel.app'
+
 const connectors = connectorsForWallets(
   [
     {
       groupName: 'Recommended',
       wallets: [
-        base,          // Coinbase / Base Smart Wallet (passkey, no extension needed)
+        base,           // Coinbase / Base Smart Wallet (passkey, no extension needed)
         metaMaskWallet, // MetaMask browser extension
         rainbowWallet,  // Rainbow mobile + desktop
       ],
@@ -59,12 +61,23 @@ const connectors = connectorsForWallets(
       groupName: 'More',
       wallets: [
         okxWallet,
-        injectedWallet,     // any other injected (Brave, frame, etc.)
+        injectedWallet,      // any other injected (Brave, frame, etc.)
         walletConnectWallet, // QR-code fallback for any WC-compatible wallet
       ],
     },
   ],
-  { appName: 'Rosetta Alpha', projectId: PROJECT_ID }
+  {
+    appName: 'Rosetta Alpha',
+    projectId: PROJECT_ID,
+    /**
+     * Explicit appUrl + metadata ensure the WalletConnect Verify API can
+     * match this domain against the project allowlist on dashboard.reown.com.
+     * Without this, the iframe may fail even if the domain is allowlisted.
+     */
+    appUrl: APP_URL,
+    appIcon: `${APP_URL}/arc-logo.svg`,
+    appDescription: 'Institutional AI-powered investment thesis platform on Arc Testnet',
+  }
 )
 
 export const config = createConfig({
