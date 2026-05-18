@@ -29,6 +29,13 @@ const WC_CONNECT_SRC = [
   'https://rpc.testnet.arc.network',
   'wss://rpc.testnet.arc.network',
   'https://cca-lite.coinbase.com',
+  // Coinbase Smart Wallet internal RPC — blocked by CSP causes silent claim failure
+  'https://eth.merkle.io',
+  'wss://eth.merkle.io',
+  // Coinbase Smart Wallet passkey and account endpoints
+  'https://keys.coinbase.com',
+  'https://api.developer.coinbase.com',
+  'https://wallet.coinbase.com',
 ].join(' ')
 
 const securityHeaders = [
