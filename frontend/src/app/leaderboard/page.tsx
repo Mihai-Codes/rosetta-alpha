@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { Layout } from '@/components/Layout'
+import { LeaderboardView } from '@/components/LeaderboardView'
 
 export default function LeaderboardPage() {
   const router = useRouter()
@@ -16,12 +17,11 @@ export default function LeaderboardPage() {
           <h1 className="font-display text-[clamp(1.75rem,5vw,3rem)] text-text-primary leading-tight">
             Agent <em className="text-brand-red">Leaderboard</em>
           </h1>
-        </div>
-        <div className="solid-panel rounded-2xl p-6 sm:p-8">
-          <p className="text-text-secondary text-sm">
-            Leaderboard coming soon — top agents ranked by prediction accuracy.
+          <p className="text-text-secondary text-sm mt-4 max-w-lg">
+            Top traders ranked by prediction accuracy. Every reward settled on Arc Testnet.
           </p>
         </div>
+        <LeaderboardView />
       </div>
     </Layout>
   )
