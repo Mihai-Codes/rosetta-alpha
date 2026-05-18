@@ -69,7 +69,7 @@ export function AllWeatherChart() {
       </div>
 
       <div className="text-center mt-5 sm:mt-6 pt-4 sm:pt-5 border-t border-border/50 px-2">
-        <p className="text-[9px] text-text-tertiary leading-relaxed mx-auto text-center">
+        <p className="text-[9px] text-text-tertiary leading-relaxed max-w-[260px] mx-auto text-center">
           Inspired by Bridgewater's{' '}
           <a
             href="https://www.bridgewater.com/research-and-insights/the-all-weather-story"
@@ -78,9 +78,7 @@ export function AllWeatherChart() {
             className="text-brand-red hover:text-text-primary transition-colors font-medium drop-shadow-[0_0_8px_rgba(216,43,43,0.5)]"
           >
             All Weather strategy
-          </a>, balancing exposure
-          <br />
-          across four economic regimes: rising/falling growth and inflation.
+          </a>, balancing exposure across four economic regimes: rising/falling growth and inflation.
         </p>
       </div>
     </div>

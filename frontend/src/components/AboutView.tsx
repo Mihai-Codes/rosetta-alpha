@@ -59,8 +59,7 @@ export function AboutView() {
 
         <div className="flex flex-col lg:flex-row items-center gap-12 mb-10">
           <div className="relative w-full max-w-sm shrink-0 animate-levitate" style={{ animationDelay: '1.5s' }}>
-            <div className="absolute inset-0 bg-gradient-to-bl from-brand-red to-[#C9A84C] opacity-20 blur-xl" />
-            <div className="relative z-10 grid grid-cols-2 grid-rows-2 aspect-square border border-white/10 shadow-[0_0_40px_rgba(201,168,76,0.15)] rounded-2xl overflow-hidden bg-[#0A0A0A]">
+            <div className="relative z-10 grid grid-cols-2 grid-rows-2 aspect-square border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.8)] rounded-2xl overflow-hidden bg-[#0A0A0A]">
               <div className="border-r border-b border-white/5 bg-gradient-to-br from-brand-red/10 to-transparent p-5 flex flex-col justify-between">
                 <span className="text-[10px] uppercase tracking-[0.2em] text-brand-red/60 font-bold">Rising Growth</span>
                 <span className="font-display text-lg sm:text-xl text-text-primary leading-tight">Equities<br/>Commodities</span>
