@@ -26,6 +26,7 @@ const AUTH_TABS: { id: Tab; label: string; href: string }[] = [
   { id: 'feed', label: 'Live Feed', href: '/feed' },
   { id: 'registry', label: 'Registry', href: '/registry' },
   { id: 'dashboard', label: 'Dashboard', href: '/dashboard' },
+  { id: 'quiz', label: 'Quiz', href: '/quiz' },
 ]
 
 function QuoteMatrix() {
