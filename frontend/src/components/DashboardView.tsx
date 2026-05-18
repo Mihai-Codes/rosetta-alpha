@@ -232,32 +232,7 @@ function RingChart() {
 
 // ─── Wallet gate / connect prompt ─────────────────────────────────────────────
 
-function ConnectPrompt() {
-  const { openConnectModal } = useConnectModal()
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="border border-dashed border-white/10 bg-white/[0.02] rounded-2xl p-10 flex flex-col items-center gap-5 text-center"
-    >
-      <div className="w-12 h-12 rounded-full border border-accent-gold/30 flex items-center justify-center">
-        <span className="text-accent-gold text-lg">◈</span>
-      </div>
-      <div>
-        <p className="text-text-primary text-sm font-medium mb-1">Connect your wallet to view your portfolio</p>
-        <p className="text-text-tertiary text-xs whitespace-nowrap">
-          Track quiz performance, prediction history, and USDC earned on Arc Testnet.
-        </p>
-      </div>
-      <button
-        onClick={openConnectModal}
-        className="px-8 py-3 rounded-full border border-accent-gold/40 text-accent-gold text-[10px] uppercase tracking-[0.2em] font-medium hover:border-accent-gold hover:shadow-[0_0_30px_rgba(201,168,76,0.25)] transition-all duration-300"
-      >
-        Connect Wallet
-      </button>
-    </motion.div>
-  )
-}
+
 
 // ─── My Predictions section ───────────────────────────────────────────────────
 
@@ -532,15 +507,62 @@ export function DashboardView() {
   const totalEarned = PREDICTIONS.filter(p => p.status === 'RESOLVED_WIN').reduce((s, p) => s + p.pnl, 0)
   const accuracy = Math.round((PREDICTIONS.filter(p => p.status === 'RESOLVED_WIN').length / PREDICTIONS.length) * 100)
 
+  const { openConnectModal } = useConnectModal()
+
   if (!isConnected) {
     return (
-      <div className="space-y-8">
-        <ConnectPrompt />
-        <div className="solid-panel rounded-none border p-6 sm:p-10">
-          <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary mb-6">
-            Strategy Overview
-          </p>
-          <RingChart />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-px bg-border/60 border border-border/60 rounded-none animate-rain">
+        {/* Terminal Lock Screen */}
+        <div className="lg:col-span-2 bg-[#0A0A0A] p-8 sm:p-16 flex flex-col items-center justify-center min-h-[400px] text-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-brand-red/5 to-transparent opacity-50" />
+          <div className="relative z-10 flex flex-col items-center">
+            <div className="w-16 h-16 border border-brand-red/30 bg-brand-red/5 flex items-center justify-center box-glow-pulse mb-6 rounded-none">
+              <span className="text-brand-red text-2xl">◈</span>
+            </div>
+            <p className="font-mono text-brand-red text-[11px] uppercase tracking-[0.3em] mb-3">
+              Hardware Key Required
+            </p>
+            <p className="font-display text-text-primary text-3xl mb-4">
+              Connect Web3 Wallet
+            </p>
+            <p className="text-text-secondary text-sm max-w-md leading-relaxed mb-10 font-light">
+              Authenticate via MetaMask to view your proprietary portfolio, track prediction accuracy, and claim USDC settlements on Arc Testnet.
+            </p>
+            <button
+              onClick={openConnectModal}
+              className="px-10 py-4 bg-brand-red text-bg-primary text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-white hover:text-bg-primary transition-colors duration-300 min-h-[44px]"
+            >
+              Establish Connection →
+            </button>
+          </div>
+        </div>
+
+        {/* Locked Analytics Preview */}
+        <div className="bg-[#050505] p-6 sm:p-10 flex flex-col">
+          <div className="flex items-center justify-between mb-10">
+            <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary">
+              Target Allocation
+            </p>
+            <span className="flex items-center gap-1.5 px-2 py-1 bg-brand-red/10 border border-brand-red/20 text-brand-red text-[9px] uppercase tracking-[0.2em]">
+              <Lock className="w-3 h-3" /> Locked
+            </span>
+          </div>
+          
+          <div className="opacity-40 grayscale pointer-events-none transition-all duration-700 hover:grayscale-0 hover:opacity-100">
+            <RingChart />
+          </div>
+          
+          <div className="mt-12 space-y-4">
+            <div className="h-px w-full bg-border/50" />
+            <div className="flex justify-between items-center">
+              <span className="text-[9px] uppercase tracking-[0.2em] text-text-tertiary">Live PnL</span>
+              <span className="font-mono text-[11px] text-text-tertiary">-- USDC</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-[9px] uppercase tracking-[0.2em] text-text-tertiary">Win Rate</span>
+              <span className="font-mono text-[11px] text-text-tertiary">-- %</span>
+            </div>
+          </div>
         </div>
       </div>
     )

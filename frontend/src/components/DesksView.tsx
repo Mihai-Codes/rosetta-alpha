@@ -75,7 +75,7 @@ function PremiumPaywall() {
         <p className="font-display text-text-primary text-xl mb-3">
           Institutional Access Required
         </p>
-        <p className="text-text-secondary text-xs font-light mb-8 leading-relaxed max-w-[280px] mx-auto">
+        <p className="text-text-secondary text-xs font-light mb-8 leading-relaxed max-w-[320px] mx-auto">
           Authenticate to decrypt the full multi-agent reasoning chain and verify provenance on Arc L1.
         </p>
         <Link
