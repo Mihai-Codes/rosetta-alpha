@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useSendTransaction } from 'wagmi'
+import { useAccount, useSendTransaction } from 'wagmi'
+import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { parseEther } from 'viem'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -161,7 +162,7 @@ function ResultsScreen({
   onRetry: () => void
 }) {
   const perfect = score === total
-  const pct = Math.round((score / total) * 100)
+  const pct = total > 0 ? Math.round((score / total) * 100) : 0
 
   return (
     <motion.div
@@ -228,6 +229,8 @@ function ResultsScreen({
 
 export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
   const { sendTransactionAsync } = useSendTransaction()
+  const { isConnected } = useAccount()
+  const { openConnectModal } = useConnectModal()
 
   const [qIndex, setQIndex] = useState(0)
   const [answers, setAnswers] = useState<(number | undefined)[]>(
@@ -240,12 +243,31 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
   const [claimed, setClaimed] = useState(false)
   const [claimError, setClaimError] = useState<string | null>(null)
 
-  const currentQ = questions[qIndex]
+  // ── Guards ───────────────────────────────────────────────────────────────
+
+  if (questions.length === 0) {
+    return (
+      <div className="solid-panel rounded-2xl p-8 text-center">
+        <p className="text-text-tertiary text-sm">No quiz questions available for this thesis.</p>
+      </div>
+    )
+  }
+
+  // Bounds check
+  const safeQIndex = Math.min(qIndex, questions.length - 1)
+  const currentQ = questions[safeQIndex]
+
+  // Validate correctIndex is in bounds
+  const validQ = currentQ.options.length > currentQ.correctIndex ? currentQ : {
+    ...currentQ,
+    correctIndex: 0,
+  }
+
   const score = answers.reduce<number>((acc, ans, i) => {
-    if (ans === questions[i].correctIndex) return acc + 1
+    if (i < questions.length && ans !== undefined && ans === questions[i].correctIndex) return acc + 1
     return acc
   }, 0)
-  const perfect = score === questions.length && finished
+  const perfect = finished && questions.length > 0 && score === questions.length
 
   // ── Handle answer selection ──────────────────────────────────────────────
 
@@ -276,6 +298,10 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
   // ── Send proof-of-claim tx to Arc on perfect score ───────────────────────
 
   async function sendClaimTx() {
+    if (!isConnected) {
+      openConnectModal?.()
+      return
+    }
     setClaiming(true)
     setClaimError(null)
     try {
@@ -390,14 +416,31 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
           </div>
 
           {/* Options */}
-          <div className="px-6 pb-6 space-y-3">
+          <div
+            className="px-6 pb-6 space-y-3"
+            role="group"
+            aria-label={`Question ${qIndex + 1} options`}
+            onKeyDown={(e: React.KeyboardEvent) => {
+              if (revealed) return
+              const opts = currentQ.options
+              if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                e.preventDefault()
+                setSelected(i => i === null ? 0 : Math.min(i + 1, opts.length - 1))
+              } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                e.preventDefault()
+                setSelected(i => i === null ? opts.length - 1 : Math.max(i - 1, 0))
+              } else if (e.key === 'Enter' || e.key === ' ') {
+                if (selected !== null) handleSelect(selected)
+              }
+            }}
+          >
             {currentQ.options.map((option, i) => (
               <OptionButton
                 key={i}
                 label={option}
                 index={i}
                 selected={selected === i}
-                correct={i === currentQ.correctIndex}
+                correct={i === validQ.correctIndex}
                 revealed={revealed}
                 disabled={false}
                 onClick={() => handleSelect(i)}
@@ -417,14 +460,14 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
               >
                 <div
                   className={`mx-6 mb-4 px-4 py-3 rounded-xl text-[10px] uppercase tracking-[0.15em] font-medium border ${
-                    selected === currentQ.correctIndex
+                    selected === validQ.correctIndex
                       ? 'bg-[#4A9F6F]/10 border-[#4A9F6F]/30 text-positive'
                       : 'bg-[#9F4A4A]/10 border-[#9F4A4A]/30 text-negative'
                   }`}
                 >
-                  {selected === currentQ.correctIndex
-                    ? `✓ Correct — ${currentQ.options[currentQ.correctIndex]}`
-                    : `✗ Incorrect — the answer was ${currentQ.options[currentQ.correctIndex]}`}
+                  {selected === validQ.correctIndex
+                    ? `✓ Correct — ${currentQ.options[validQ.correctIndex]}`
+                    : `✗ Incorrect — the answer was ${currentQ.options[validQ.correctIndex]}`}
                 </div>
               </motion.div>
             )}
