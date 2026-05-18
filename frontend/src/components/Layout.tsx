@@ -52,6 +52,13 @@ export function Layout({ children, activeTab }: LayoutProps) {
   const router = useRouter()
   const isSignedIn = !!session?.user
   const [mobileOpen, setMobileOpen] = React.useState(false)
+  const [scrolled, setScrolled] = React.useState(false)
+
+  React.useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20)
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const handleSignOut = React.useCallback(async () => {
     await signOut({ redirect: false })
@@ -72,7 +79,13 @@ export function Layout({ children, activeTab }: LayoutProps) {
       </div>
 
       {/* ── Header ── */}
-      <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.03]" style={{ background: 'transparent' }}>
+      <header 
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled 
+            ? 'bg-bg-primary/85 backdrop-blur-md border-b border-white/[0.05] shadow-[0_4px_30px_rgba(0,0,0,0.5)]' 
+            : 'bg-transparent border-b border-transparent'
+        }`}
+      >
         <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 h-16 flex items-center justify-between">
 
           {/* Logo */}
