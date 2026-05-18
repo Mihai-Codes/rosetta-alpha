@@ -60,6 +60,7 @@ logs/
 # Generated artifacts — not for commit
 dashboard_screenshot.png
 results.json
+frontend/scripts/screenshots/
 
 # AdalFlow optimization artifacts
 adalflow_traces/
