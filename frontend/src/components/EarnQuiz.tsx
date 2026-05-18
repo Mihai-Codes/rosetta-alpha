@@ -1,520 +1,461 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useAccount, useSendTransaction } from 'wagmi'
-import { useConnectModal } from '@rainbow-me/rainbowkit'
+import { useSendTransaction } from 'wagmi'
 import { parseEther } from 'viem'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-interface QuizQuestion {
-  id: number
-  ticker: string
-  desk: string
-  question: string
-  summary: string
-  aiDirection: 'LONG' | 'SHORT' | 'NEUTRAL'
-  confidence: number
-  arcTx: string
-  traceHash: string
+export interface QuizQuestion {
+  text: string
+  options: string[]   // exactly 4 items
+  correctIndex: number
 }
 
-type UserAnswer = 'LONG' | 'SHORT' | 'NEUTRAL'
-
-type QuizPhase = 'question' | 'reveal' | 'claimed' | 'wrong'
-
-// ─── Static quiz data (derived from results.json thesis data) ─────────────────
-
-const QUIZ_QUESTIONS: QuizQuestion[] = [
-  {
-    id: 1,
-    ticker: 'BTC',
-    desk: 'Crypto',
-    question: 'Will BTC-USD close higher than $65,000 on June 15, 2026?',
-    summary:
-      'Bitcoin exhibits bullish divergence on the daily chart. ETF inflows remain positive and on-chain metrics show decreased exchange reserves, signaling supply tightening. Breaking through the $64k resistance level with volume — R1 reasoning suggests high probability of continued upward momentum.',
-    aiDirection: 'LONG',
-    confidence: 0.73,
-    arcTx: '0x50fd3228...',
-    traceHash: '0x7c2d...4f9a',
-  },
-  {
-    id: 2,
-    ticker: 'AAPL',
-    desk: 'US Equities',
-    question: 'Will AAPL stock price remain within a 1% band over the next 30 days?',
-    summary:
-      'Apple shows strong fundamentals but technical indicators suggest consolidation after recent earnings. RSI and MACD show neutral momentum. Institutional ownership is high and stable. Macro environment remains stable with no major catalysts on the immediate horizon.',
-    aiDirection: 'NEUTRAL',
-    confidence: 0.70,
-    arcTx: '0x293d33c4...',
-    traceHash: '0x56a2...8b1e',
-  },
-  {
-    id: 3,
-    ticker: 'ETH',
-    desk: 'Crypto',
-    question: 'Will ETH outperform BTC by more than 5% over the next 14 days?',
-    summary:
-      'Ethereum is showing relative weakness vs Bitcoin on the weekly. Staking yields are compressing and Layer-2 fee revenue has declined. Large unlock events from early stakers create near-term selling pressure. On-chain data shows ETH/BTC ratio at 6-month lows with no clear reversal signal.',
-    aiDirection: 'SHORT',
-    confidence: 0.65,
-    arcTx: '0x8d2f119a...',
-    traceHash: '0x3e7c...1a2b',
-  },
-]
-
-// ─── Direction badge colors ───────────────────────────────────────────────────
-
-const DIRECTION_STYLES: Record<UserAnswer, string> = {
-  LONG: 'border-positive text-positive bg-positive/10 hover:bg-positive/20',
-  SHORT: 'border-negative text-negative bg-negative/10 hover:bg-negative/20',
-  NEUTRAL: 'border-accent-gold text-accent-gold bg-accent-gold/10 hover:bg-accent-gold/20',
+export interface EarnQuizProps {
+  thesisId: string
+  questions: QuizQuestion[]
+  onComplete: (score: number) => void
 }
 
-const DIRECTION_ACTIVE: Record<UserAnswer, string> = {
-  LONG: 'border-positive text-positive bg-positive/20 shadow-[0_0_20px_rgba(34,197,94,0.25)]',
-  SHORT: 'border-negative text-negative bg-negative/20 shadow-[0_0_20px_rgba(239,68,68,0.25)]',
-  NEUTRAL: 'border-accent-gold text-accent-gold bg-accent-gold/20 shadow-[0_0_20px_rgba(201,168,76,0.25)]',
-}
+// Arc Testnet constants
+const REWARDS_POOL = '0x06775Be99CfBC9A6D0819ff87A67954a2E976A16' as `0x${string}`
+const CLAIM_PROOF_VALUE = parseEther('0.001')
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+// Color tokens from design system
+const GREEN = '#4A9F6F'
+const RED = '#9F4A4A'
+const GOLD = '#C9A84C'
 
-function ProgressBar({ current, total }: { current: number; total: number }) {
+// ─── Progress dots ──────────────────────────────────────────────────────────
+
+function ProgressDots({
+  current,
+  total,
+  answered,
+}: {
+  current: number
+  total: number
+  answered: (number | undefined)[]
+}) {
   return (
-    <div className="flex items-center gap-3 mb-8">
-      <div className="flex gap-1.5">
-        {Array.from({ length: total }).map((_, i) => (
+    <div className="flex items-center gap-2 mb-6">
+      {Array.from({ length: total }).map((_, i) => {
+        const isDone = answered[i] !== undefined
+        const isCurrent = i === current
+        return (
           <div
             key={i}
-            className={`h-1 rounded-full transition-all duration-500 ${
-              i < current
-                ? 'w-6 bg-accent-gold'
-                : i === current
-                ? 'w-6 bg-accent-gold/50'
+            className={`h-1.5 rounded-full transition-all duration-500 ${
+              isDone
+                ? 'w-8 bg-positive'
+                : isCurrent
+                ? 'w-8 bg-accent-gold/70 animate-pulse'
                 : 'w-4 bg-border-strong'
             }`}
           />
-        ))}
-      </div>
-      <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-text-tertiary">
-        {current + 1} / {total}
+        )
+      })}
+      <span className="ml-2 font-mono text-[10px] text-text-tertiary tracking-widest">
+        {String(current + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
       </span>
     </div>
   )
 }
 
-function DirectionButton({
-  direction,
+// ─── Option button ──────────────────────────────────────────────────────────
+
+function OptionButton({
+  label,
+  index,
   selected,
+  correct,
+  revealed,
   disabled,
   onClick,
 }: {
-  direction: UserAnswer
+  label: string
+  index: number
   selected: boolean
+  correct: boolean
+  revealed: boolean
   disabled: boolean
   onClick: () => void
 }) {
-  const LABELS: Record<UserAnswer, string> = {
-    LONG: '↑ Long',
-    SHORT: '↓ Short',
-    NEUTRAL: '→ Neutral',
+  // Determine visual state
+  let borderClass = 'border-border hover:border-border-strong'
+  let bgClass = 'bg-bg-primary'
+  let textClass = 'text-text-primary'
+
+  if (revealed) {
+    if (correct) {
+      borderClass = 'border-[#4A9F6F]'
+      bgClass = 'bg-[#4A9F6F]/10'
+      textClass = 'text-positive'
+    } else if (selected && !correct) {
+      borderClass = 'border-[#9F4A4A]'
+      bgClass = 'bg-[#9F4A4A]/10'
+      textClass = 'text-negative'
+    } else {
+      borderClass = 'border-border opacity-40'
+      textClass = 'text-text-tertiary'
+    }
+  } else if (selected) {
+    borderClass = 'border-accent-gold'
+    bgClass = 'bg-accent-gold/10'
   }
 
   return (
     <button
       onClick={onClick}
-      disabled={disabled}
+      disabled={disabled || revealed}
       className={`
-        flex-1 py-3 px-4 rounded-xl border text-xs font-medium uppercase tracking-[0.15em]
+        w-full min-h-[44px] px-5 py-3.5 rounded-xl border
+        text-left text-sm font-medium leading-snug
         transition-all duration-200
-        ${selected ? DIRECTION_ACTIVE[direction] : DIRECTION_STYLES[direction]}
-        ${disabled && !selected ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}
+        flex items-start gap-3
+        ${borderClass} ${bgClass} ${textClass}
+        ${disabled && !revealed ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:border-accent-gold/60'}
       `}
     >
-      {LABELS[direction]}
+      {/* Letter badge */}
+      <span
+        className={`shrink-0 mt-0.5 w-6 h-6 rounded flex items-center justify-center text-[10px] font-bold border transition-colors
+          ${revealed && correct
+            ? 'border-[#4A9F6F] text-positive bg-[#4A9F6F]/15'
+            : revealed && selected && !correct
+            ? 'border-[#9F4A4A] text-negative bg-[#9F4A4A]/15'
+            : selected
+            ? 'border-accent-gold text-accent-gold bg-accent-gold/15'
+            : 'border-border-strong text-text-tertiary'
+          }`}
+      >
+        {String.fromCharCode(65 + index)}
+      </span>
+
+      <span className="flex-1">{label}</span>
+
+      {/* Reveal icons */}
+      {revealed && correct && (
+        <span className="shrink-0 mt-0.5 text-positive text-sm">✓</span>
+      )}
+      {revealed && selected && !correct && (
+        <span className="shrink-0 mt-0.5 text-negative text-sm">✗</span>
+      )}
     </button>
   )
 }
 
-function ConfidenceMeter({ value }: { value: number }) {
-  const pct = Math.round(value * 100)
-  const color = value >= 0.7 ? '#22C55E' : value >= 0.55 ? '#C9A84C' : '#EF4444'
+// ─── Score results screen ───────────────────────────────────────────────────
+
+function ResultsScreen({
+  score,
+  total,
+  thesisId,
+  onRetry,
+}: {
+  score: number
+  total: number
+  thesisId: string
+  onRetry: () => void
+}) {
+  const perfect = score === total
+  const pct = Math.round((score / total) * 100)
+
   return (
-    <div className="space-y-1.5">
-      <div className="flex justify-between items-center">
-        <span className="text-[9px] uppercase tracking-[0.2em] text-text-tertiary">
-          AI Conviction
-        </span>
-        <span className="text-[11px] font-mono font-bold" style={{ color }}>
-          {pct}%
-        </span>
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="solid-panel rounded-2xl p-8 sm:p-10 text-center space-y-6"
+    >
+      <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-brand-red">
+        Quiz Complete
+      </p>
+
+      {/* Score display */}
+      <div>
+        <p className="font-display text-6xl sm:text-7xl font-light text-text-primary leading-none">
+          {score}
+          <span className="text-3xl text-text-tertiary">/{total}</span>
+        </p>
+        <p className="mt-3 text-[10px] uppercase tracking-[0.25em] text-text-tertiary">
+          {pct}% accuracy
+        </p>
       </div>
-      <div className="h-1 rounded-full bg-bg-tertiary overflow-hidden">
-        <motion.div
-          className="h-full rounded-full"
-          style={{ background: color }}
-          initial={{ width: 0 }}
-          animate={{ width: `${pct}%` }}
-          transition={{ duration: 0.8, ease: 'easeOut', delay: 0.3 }}
-        />
-      </div>
-    </div>
+
+      {perfect ? (
+        <div className="space-y-4">
+          {/* Gold badge */}
+          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-[#C9A84C] bg-[#C9A84C]/10">
+            <span className="w-2 h-2 rounded-full bg-[#C9A84C] animate-pulse" />
+            <span
+              className="text-[10px] font-bold uppercase tracking-[0.25em]"
+              style={{ color: GOLD }}
+            >
+              Reward Pending
+            </span>
+          </div>
+
+          <p className="text-text-secondary text-xs leading-relaxed max-w-xs mx-auto">
+            All {total}/{total} correct. Your USDC reward is being processed — a claim
+            transaction has been sent to the rewards pool on Arc Testnet.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          <p className="text-[10px] uppercase tracking-[0.25em] text-text-tertiary">
+            {total - score} question{total - score !== 1 ? 's' : ''} incorrect
+          </p>
+          <p className="inline-block text-[10px] uppercase tracking-[0.2em] px-3 py-1.5 rounded border border-border text-text-tertiary">
+            Try again tomorrow
+          </p>
+        </div>
+      )}
+
+      <button
+        onClick={onRetry}
+        className="mt-2 px-8 py-3 rounded-full border border-accent-gold/40 text-accent-gold text-[10px] uppercase tracking-[0.2em] font-medium hover:border-accent-gold hover:shadow-[0_0_30px_rgba(201,168,76,0.25)] transition-all duration-300"
+      >
+        Retake Quiz
+      </button>
+    </motion.div>
   )
 }
 
-// ─── Main EarnQuiz component ──────────────────────────────────────────────────
+// ─── Main EarnQuiz component ────────────────────────────────────────────────
 
-// Rosetta Rewards Pool address on Arc Testnet — receives claim registration txs
-const REWARDS_POOL = '0x06775Be99CfBC9A6D0819ff87A67954a2E976A16' as `0x${string}`
-
-// 0.001 USDC (native on Arc) as a claim-registration proof tx
-// In production the pool would send 0.5 USDC back; here we prove Arc interaction
-const CLAIM_PROOF_VALUE = parseEther('0.001')
-
-export function EarnQuiz() {
-  const { isConnected } = useAccount()
-  const { openConnectModal } = useConnectModal()
+export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
   const { sendTransactionAsync } = useSendTransaction()
 
   const [qIndex, setQIndex] = useState(0)
-  const [phase, setPhase] = useState<QuizPhase>('question')
-  const [selected, setSelected] = useState<UserAnswer | null>(null)
-  const [score, setScore] = useState(0)
-  const [totalAnswered, setTotalAnswered] = useState(0)
-  const [claiming, setClaiming] = useState(false)
-  const [claimedTxs, setClaimedTxs] = useState<string[]>([])
-  const [claimError, setClaimError] = useState<string | null>(null)
+  const [answers, setAnswers] = useState<(number | undefined)[]>(
+    new Array(questions.length).fill(undefined)
+  )
+  const [revealed, setRevealed] = useState(false)
+  const [selected, setSelected] = useState<number | null>(null)
   const [finished, setFinished] = useState(false)
+  const [claiming, setClaiming] = useState(false)
+  const [claimed, setClaimed] = useState(false)
+  const [claimError, setClaimError] = useState<string | null>(null)
 
-  const q = QUIZ_QUESTIONS[qIndex]
+  const currentQ = questions[qIndex]
+  const score = answers.reduce<number>((acc, ans, i) => {
+    if (ans === questions[i].correctIndex) return acc + 1
+    return acc
+  }, 0)
+  const perfect = score === questions.length && finished
 
-  // Clear error when moving to next question
-  useEffect(() => { setClaimError(null) }, [qIndex])
+  // ── Handle answer selection ──────────────────────────────────────────────
 
-  function handleAnswer(direction: UserAnswer) {
-    if (phase !== 'question') return
-    setSelected(direction)
-    setTotalAnswered((t) => t + 1)
-    if (direction === q.aiDirection) {
-      setScore((s) => s + 1)
-      setPhase('reveal')
+  function handleSelect(index: number) {
+    if (revealed) return
+    setSelected(index)
+    setRevealed(true)
+    setAnswers(prev => {
+      const next = [...prev]
+      next[qIndex] = index
+      return next
+    })
+  }
+
+  // ── Advance to next question ────────────────────────────────────────────
+
+  function handleNext() {
+    if (qIndex + 1 >= questions.length) {
+      setFinished(true)
+      onComplete(score)
     } else {
-      setPhase('wrong')
+      setQIndex(i => i + 1)
+      setSelected(null)
+      setRevealed(false)
     }
   }
 
-  async function handleClaim() {
-    if (!isConnected) {
-      openConnectModal?.()
-      return
-    }
+  // ── Send proof-of-claim tx to Arc on perfect score ───────────────────────
+
+  async function sendClaimTx() {
     setClaiming(true)
     setClaimError(null)
     try {
-      // Real Arc Testnet tx — sends 0.001 USDC to Rosetta Rewards Pool
-      // as a claim-registration proof; tx hash is real and verifiable on ArcScan
-      const txHash = await sendTransactionAsync({
+      await sendTransactionAsync({
         to: REWARDS_POOL,
         value: CLAIM_PROOF_VALUE,
         chainId: 5042002,
       })
-      setClaimedTxs((txs) => [...txs, txHash])
-      setPhase('claimed')
+      setClaimed(true)
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Transaction failed'
-      // User rejected — don't show error, just let them retry
       if (!msg.toLowerCase().includes('rejected') && !msg.toLowerCase().includes('denied')) {
-        setClaimError('Transaction failed — check your Arc Testnet balance and try again.')
+        setClaimError('Transaction failed — check your Arc Testnet balance.')
       }
     } finally {
       setClaiming(false)
     }
   }
 
-  function handleNext() {
-    if (qIndex + 1 >= QUIZ_QUESTIONS.length) {
-      setFinished(true)
-    } else {
-      setQIndex((i) => i + 1)
-      setPhase('question')
-      setSelected(null)
-    }
+  // ── Retry quiz ────────────────────────────────────────────────────────────
+
+  function handleRetry() {
+    setQIndex(0)
+    setSelected(null)
+    setRevealed(false)
+    setAnswers(new Array(questions.length).fill(undefined))
+    setFinished(false)
+    setClaimed(false)
+    setClaimError(null)
   }
 
-  // ── Finished screen ──────────────────────────────────────────────────────────
+  // ── Results screen ────────────────────────────────────────────────────────
+
   if (finished) {
-    const accuracy = Math.round((score / QUIZ_QUESTIONS.length) * 100)
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="solid-panel rounded-2xl p-8 md:p-12 text-center space-y-6 max-w-2xl mx-auto"
-      >
-        <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-brand-red">
-          Session Complete
-        </p>
-        <h2 className="font-display text-3xl md:text-4xl text-text-primary">
-          {accuracy >= 70 ? '🎯 Sharp Alpha' : accuracy >= 40 ? '📊 Decent Read' : '📉 Keep Studying'}
-        </h2>
-        <p className="text-text-secondary text-sm">
-          You matched the AI on{' '}
-          <span className="text-accent-gold font-semibold">
-            {score} / {QUIZ_QUESTIONS.length}
-          </span>{' '}
-          thesis directions.
-        </p>
-        <div className="grid grid-cols-3 gap-4 pt-2">
-          <div className="solid-panel rounded-xl p-4">
-            <p className="text-2xl font-mono font-bold text-positive">{score}</p>
-            <p className="text-[9px] uppercase tracking-[0.2em] text-text-tertiary mt-1">Correct</p>
-          </div>
-          <div className="solid-panel rounded-xl p-4">
-            <p className="text-2xl font-mono font-bold text-accent-gold">{accuracy}%</p>
-            <p className="text-[9px] uppercase tracking-[0.2em] text-text-tertiary mt-1">Accuracy</p>
-          </div>
-          <div className="solid-panel rounded-xl p-4">
-            <p className="text-2xl font-mono font-bold text-text-primary">{claimedTxs.length}</p>
-            <p className="text-[9px] uppercase tracking-[0.2em] text-text-tertiary mt-1">USDC Claimed</p>
-          </div>
-        </div>
-        {claimedTxs.length > 0 && (
-          <div className="space-y-2 pt-2">
-            <p className="text-[9px] uppercase tracking-[0.2em] text-text-tertiary">Arc Testnet Receipts</p>
-            {claimedTxs.map((tx) => (
-              <a
-                key={tx}
-                href={`https://testnet.arcscan.app/tx/${tx}`}
-                target="_blank"
-                rel="noreferrer"
-                className="block font-mono text-[10px] text-accent-gold hover:underline truncate"
+      <div className="max-w-xl mx-auto">
+        {perfect && !claimed && (
+          <div className="mb-4">
+            {!claiming && !claimError && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex items-center gap-3"
               >
-                {tx}
-              </a>
-            ))}
+                <button
+                  onClick={sendClaimTx}
+                  className="flex-1 py-3 rounded-xl bg-[#C9A84C] text-bg-primary text-[10px] font-bold uppercase tracking-[0.25em] hover:brightness-110 transition-all duration-200"
+                >
+                  Claim USDC Reward on Arc
+                </button>
+              </motion.div>
+            )}
+            {claiming && (
+              <p className="text-center text-[10px] uppercase tracking-[0.2em] text-text-tertiary py-3">
+                Broadcasting to Arc Testnet…
+              </p>
+            )}
+            {claimError && (
+              <p className="text-center text-[10px] text-negative py-3">{claimError}</p>
+            )}
           </div>
         )}
-        <button
-          onClick={() => {
-            setQIndex(0)
-            setPhase('question')
-            setSelected(null)
-            setScore(0)
-            setTotalAnswered(0)
-            setClaimedTxs([])
-            setFinished(false)
-          }}
-          className="mt-4 px-8 py-3 rounded-full border border-accent-gold/40 text-accent-gold text-[10px] uppercase tracking-[0.2em] font-medium hover:border-accent-gold hover:shadow-[0_0_30px_rgba(201,168,76,0.25)] transition-all duration-300"
-        >
-          Play Again
-        </button>
-      </motion.div>
+        <ResultsScreen
+          score={score}
+          total={questions.length}
+          thesisId={thesisId}
+          onRetry={handleRetry}
+        />
+      </div>
     )
   }
 
-  // ── Question card ────────────────────────────────────────────────────────────
+  // ── Question screen ──────────────────────────────────────────────────────
+
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      {/* Stats bar */}
-      <div className="flex items-center justify-between">
-        <ProgressBar current={qIndex} total={QUIZ_QUESTIONS.length} />
-        <div className="flex items-center gap-4 text-[10px] uppercase tracking-[0.2em]">
-          <span className="text-text-tertiary">
-            Score{' '}
-            <span className="text-accent-gold font-semibold">{score}</span>
-          </span>
-          {claimedTxs.length > 0 && (
-            <span className="text-text-tertiary">
-              Earned{' '}
-              <span className="text-positive font-semibold">{claimedTxs.length * 0.5} USDC</span>
-            </span>
-          )}
-        </div>
-      </div>
+    <div className="max-w-xl mx-auto">
+      <ProgressDots
+        current={qIndex}
+        total={questions.length}
+        answered={answers}
+      />
 
       <AnimatePresence mode="wait">
         <motion.div
           key={qIndex}
-          initial={{ opacity: 0, x: 40 }}
+          initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -40 }}
-          transition={{ duration: 0.3 }}
+          exit={{ opacity: 0, x: -30 }}
+          transition={{ duration: 0.25 }}
           className="solid-panel rounded-2xl overflow-hidden"
         >
           {/* Card header */}
-          <div className="px-6 pt-6 pb-4 border-b border-border flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-[9px] font-medium uppercase tracking-[0.3em] text-text-tertiary px-2 py-1 rounded border border-border">
-                {q.desk}
+          <div className="px-6 pt-6 pb-5 border-b border-border">
+            <div className="flex items-center justify-between">
+              <span className="text-[9px] font-medium uppercase tracking-[0.3em] text-text-tertiary">
+                Quiz
               </span>
-              <span className="text-[10px] font-mono font-bold text-text-primary">{q.ticker}</span>
+              <span
+                className="font-mono text-[10px] text-text-tertiary"
+                aria-label={`Question ${qIndex + 1} of ${questions.length}`}
+              >
+                Q{qIndex + 1}
+              </span>
             </div>
-            <span className="text-[9px] uppercase tracking-[0.2em] text-text-tertiary">
-              Thesis #{q.id}
-            </span>
           </div>
 
-          {/* Question */}
-          <div className="px-6 pt-5 pb-4">
-            <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-brand-red mb-3">
-              Prediction
+          {/* Question text */}
+          <div className="px-6 pt-5 pb-6">
+            <p className="text-text-primary text-sm sm:text-base leading-relaxed font-medium">
+              {currentQ.text}
             </p>
-            <p className="text-text-primary text-sm md:text-base leading-relaxed font-medium mb-4">
-              {q.question}
-            </p>
-            <p className="text-text-secondary text-xs leading-relaxed">{q.summary}</p>
           </div>
 
-          {/* Reveal panel */}
+          {/* Options */}
+          <div className="px-6 pb-6 space-y-3">
+            {currentQ.options.map((option, i) => (
+              <OptionButton
+                key={i}
+                label={option}
+                index={i}
+                selected={selected === i}
+                correct={i === currentQ.correctIndex}
+                revealed={revealed}
+                disabled={false}
+                onClick={() => handleSelect(i)}
+              />
+            ))}
+          </div>
+
+          {/* Feedback banner */}
           <AnimatePresence>
-            {(phase === 'reveal' || phase === 'claimed' || phase === 'wrong') && (
+            {revealed && (
               <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.4 }}
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
                 className="overflow-hidden"
               >
-                <div className="px-6 pb-4 border-t border-border mt-2 pt-4 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <p className="text-[9px] uppercase tracking-[0.2em] text-text-tertiary">
-                      AI Direction
-                    </p>
-                    <span
-                      className={`text-[10px] font-bold uppercase tracking-[0.15em] px-3 py-1 rounded-full border ${
-                        DIRECTION_ACTIVE[q.aiDirection]
-                      }`}
-                    >
-                      {q.aiDirection}
-                    </span>
-                  </div>
-                  <ConfidenceMeter value={q.confidence} />
-                  <div className="flex items-center justify-between pt-1">
-                    <div className="space-y-0.5">
-                      <p className="text-[9px] uppercase tracking-[0.2em] text-text-tertiary">
-                        Trace Hash
-                      </p>
-                      <p className="font-mono text-[10px] text-text-secondary">{q.traceHash}</p>
-                    </div>
-                    <a
-                      href={`https://testnet.arcscan.app/tx/${q.arcTx}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-[9px] uppercase tracking-[0.2em] text-accent-gold hover:underline"
-                    >
-                      View on Arc →
-                    </a>
-                  </div>
+                <div
+                  className={`mx-6 mb-4 px-4 py-3 rounded-xl text-[10px] uppercase tracking-[0.15em] font-medium border ${
+                    selected === currentQ.correctIndex
+                      ? 'bg-[#4A9F6F]/10 border-[#4A9F6F]/30 text-positive'
+                      : 'bg-[#9F4A4A]/10 border-[#9F4A4A]/30 text-negative'
+                  }`}
+                >
+                  {selected === currentQ.correctIndex
+                    ? `✓ Correct — ${currentQ.options[currentQ.correctIndex]}`
+                    : `✗ Incorrect — the answer was ${currentQ.options[currentQ.correctIndex]}`}
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
 
-          {/* Result banner */}
+          {/* Next button */}
           <AnimatePresence>
-            {phase === 'wrong' && (
+            {revealed && (
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="mx-6 mb-4 px-4 py-3 rounded-xl bg-negative/10 border border-negative/30 text-negative text-[10px] uppercase tracking-[0.15em] font-medium"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 8 }}
+                transition={{ duration: 0.25, delay: 0.1 }}
+                className="px-6 pb-6"
               >
-                ✗ No match — AI called {q.aiDirection}. No reward this round.
-              </motion.div>
-            )}
-            {phase === 'claimed' && claimedTxs.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="mx-6 mb-4 px-4 py-3 rounded-xl bg-positive/10 border border-positive/30 space-y-1"
-              >
-                <p className="text-positive text-[10px] uppercase tracking-[0.15em] font-medium">
-                  ✓ Claim registered on Arc Testnet
-                </p>
-                <a
-                  href={`https://testnet.arcscan.app/tx/${claimedTxs[claimedTxs.length - 1]}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="block font-mono text-[10px] text-accent-gold hover:underline truncate"
+                <button
+                  onClick={handleNext}
+                  className="w-full py-3 rounded-xl border border-border-strong text-text-primary text-[10px] font-medium uppercase tracking-[0.2em] hover:border-accent-gold/50 hover:text-accent-gold transition-all duration-200"
                 >
-                  {claimedTxs[claimedTxs.length - 1]}
-                </a>
-              </motion.div>
-            )}
-            {claimError && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="mx-6 mb-4 px-4 py-3 rounded-xl bg-negative/10 border border-negative/30 text-negative text-[10px] font-medium"
-              >
-                {claimError}
+                  {qIndex + 1 >= questions.length ? 'See Results →' : 'Next Question →'}
+                </button>
               </motion.div>
             )}
           </AnimatePresence>
-
-          {/* Action buttons */}
-          <div className="px-6 pb-6 space-y-4">
-            {phase === 'question' && (
-              <div className="flex gap-3">
-                {(['LONG', 'SHORT', 'NEUTRAL'] as UserAnswer[]).map((d) => (
-                  <DirectionButton
-                    key={d}
-                    direction={d}
-                    selected={selected === d}
-                    disabled={phase !== 'question'}
-                    onClick={() => handleAnswer(d)}
-                  />
-                ))}
-              </div>
-            )}
-
-            {phase === 'reveal' && (
-              <button
-                onClick={handleClaim}
-                disabled={claiming}
-                className="
-                  w-full py-3 rounded-xl
-                  bg-accent-gold text-bg-primary
-                  text-[10px] font-bold uppercase tracking-[0.25em]
-                  hover:brightness-110 transition-all duration-200
-                  disabled:opacity-60 disabled:cursor-not-allowed
-                  flex items-center justify-center gap-2
-                "
-              >
-                {claiming ? (
-                  <>
-                    <span className="w-3 h-3 rounded-full border-2 border-bg-primary/40 border-t-bg-primary animate-spin" />
-                    Broadcasting to Arc...
-                  </>
-                ) : !isConnected ? (
-                  'Connect Wallet to Claim 0.5 USDC'
-                ) : (
-                  'Claim 0.5 USDC →'
-                )}
-              </button>
-            )}
-
-            {(phase === 'claimed' || phase === 'wrong') && (
-              <button
-                onClick={handleNext}
-                className="
-                  w-full py-3 rounded-xl border border-border-strong
-                  text-text-primary text-[10px] font-medium uppercase tracking-[0.2em]
-                  hover:border-accent-gold/50 hover:text-accent-gold
-                  transition-all duration-200
-                "
-              >
-                {qIndex + 1 >= QUIZ_QUESTIONS.length ? 'View Results →' : 'Next Question →'}
-              </button>
-            )}
-          </div>
         </motion.div>
       </AnimatePresence>
 
       {/* Bottom hint */}
-      {phase === 'question' && (
-        <p className="text-center text-[9px] uppercase tracking-[0.2em] text-text-tertiary">
-          Match the AI direction → claim 0.5 USDC on Arc Testnet
+      {selected === null && (
+        <p className="text-center text-[9px] uppercase tracking-[0.2em] text-text-tertiary mt-4">
+          Select an answer to reveal the correct response
         </p>
       )}
     </div>

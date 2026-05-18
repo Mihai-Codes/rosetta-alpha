@@ -76,9 +76,8 @@ Five LLM agents (one per region, each thinking in its native language) produce s
 ✅ 12. Kimi K2.6        → /dashboard page — SVG ring chart + My Predictions table + Agent Leaderboard
        → AdaL integrated, fixed Kimi output artifacts, verified build [DONE]
 
-⏳ 13. MiniMax M2       → EarnQuiz.tsx ENHANCED version (richer multi-step flow)
-       → OPTIONAL: current EarnQuiz.tsx works; MiniMax can rebuild with richer UX
-       → See Section 14 for exact prompt
+✅ 13. MiniMax M2       → EarnQuiz.tsx — multiple choice, per-question reveal, green/red feedback, score screen, gold badge on 3/3, Arc tx claim
+       → AdaL integrated (MiniMax style), fixed TypeScript errors, quiz/page.tsx wired with mock questions [DONE]
 
 ⏳ 14. You (Mihai)      → Demo video / pitch script
 ```
