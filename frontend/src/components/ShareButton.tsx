@@ -21,6 +21,9 @@ const REGION_LABEL: Record<string, string> = {
   crypto: 'Digital Assets',
 }
 
+/** Max tweet text length — leave 20 chars for the permalink + whitespace */
+const MAX_TWEET_LENGTH = 260
+
 function buildTweetText({
   region,
   ticker,
@@ -34,29 +37,52 @@ function buildTweetText({
   const regionName = REGION_LABEL[region.toLowerCase()] ?? region
   const excerpt = summary
     ? summary.length > 100
-      ? summary.slice(0, 100)
+      ? summary.slice(0, 97) + '...'
       : summary
     : ''
-  const hashRef = arcHash
-    ? arcHash.length > 8
-      ? arcHash.slice(0, 8)
-      : arcHash
-    : ''
+  const hashRef = arcHash && arcHash.length > 8
+    ? arcHash.slice(0, 8)
+    : arcHash || ''
 
-  let tweet = `${flagEmoji} Rosetta Alpha's ${regionName} agent: `
-  tweet += `${direction} ${ticker} — ${pct}% confidence\n`
-  tweet += `'${excerpt}...'\n`
+  let tweet = `${flagEmoji} ${regionName}: ${direction} $${ticker} — ${pct}%\n`
+  if (excerpt) tweet += `"${excerpt}"\n`
   if (arcHash && hashRef) {
-    tweet += `Verified on Arc: ${hashRef}\n`
+    tweet += `🔗 https://testnet.arcscan.app/tx/${arcHash}\n`
   }
-  tweet += 'Full reasoning → rosetta-alpha.vercel.app'
+  tweet += 'rosetta-alpha.vercel.app'
+
+  // Truncate to prevent X's 280-char cap from eating the permalink
+  if (tweet.length > MAX_TWEET_LENGTH) {
+    tweet = tweet.slice(0, MAX_TWEET_LENGTH - 3) + '...'
+  }
+
   return tweet
+}
+
+/**
+ * Determine if the modal should render above or below the button.
+ * On small viewports (mobile), "above" clips — use "below" with scroll.
+ */
+function useModalPosition(ref: React.RefObject<HTMLDivElement | null>): 'above' | 'below' {
+  const [position, setPosition] = React.useState<'above' | 'below'>('above')
+
+  React.useEffect(() => {
+    if (!ref.current) return
+    const rect = ref.current.getBoundingClientRect()
+    const spaceAbove = rect.top
+    const spaceBelow = window.innerHeight - rect.bottom
+    // Only use "above" if there's enough room (> 300px for the modal)
+    setPosition(spaceAbove > 300 ? 'above' : 'below')
+  }, [ref])
+
+  return position
 }
 
 export function ShareButton(props: ShareButtonProps) {
   const [open, setOpen] = React.useState(false)
   const [copied, setCopied] = React.useState(false)
   const ref = React.useRef<HTMLDivElement>(null)
+  const modalPosition = useModalPosition(ref)
 
   // Close on outside click
   React.useEffect(() => {
@@ -64,21 +90,22 @@ export function ShareButton(props: ShareButtonProps) {
     const handler = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
     }
-    document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
+    // Delay adding listener to avoid catching the click that opened it
+    const timer = setTimeout(() => document.addEventListener('mousedown', handler), 0)
+    return () => {
+      clearTimeout(timer)
+      document.removeEventListener('mousedown', handler)
+    }
   }, [open])
 
   const tweetText = buildTweetText(props)
-  const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`
+  const tweetUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(tweetText)}`
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(tweetText)
       setCopied(true)
-      setTimeout(() => {
-        setCopied(false)
-        setOpen(false)
-      }, 1500)
+      setTimeout(() => { setCopied(false); setOpen(false) }, 1500)
     } catch {
       // fallback for non-HTTPS contexts
       const el = document.createElement('textarea')
@@ -88,10 +115,7 @@ export function ShareButton(props: ShareButtonProps) {
       document.execCommand('copy')
       document.body.removeChild(el)
       setCopied(true)
-      setTimeout(() => {
-        setCopied(false)
-        setOpen(false)
-      }, 1500)
+      setTimeout(() => { setCopied(false); setOpen(false) }, 1500)
     }
   }
 
@@ -109,7 +133,11 @@ export function ShareButton(props: ShareButtonProps) {
 
       {open && (
         <div
-          className="absolute bottom-full right-0 mb-2 z-50 w-56 rounded-lg overflow-hidden shadow-xl animate-in fade-in slide-in-from-bottom-2 duration-150"
+          className={`absolute z-50 w-56 rounded-lg overflow-hidden shadow-xl animate-in fade-in duration-150 max-h-[90vh] overflow-y-auto ${
+            modalPosition === 'above'
+              ? 'bottom-full right-0 mb-2 slide-in-from-bottom-2'
+              : 'top-full right-0 mt-2 slide-in-from-top-2'
+          }`}
           style={{ background: '#111118', border: '1px solid #C9A84C' }}
         >
           {/* Header */}
@@ -119,7 +147,7 @@ export function ShareButton(props: ShareButtonProps) {
             </span>
             <button
               onClick={() => setOpen(false)}
-              className="text-text-tertiary hover:text-text-primary transition-colors"
+              className="text-text-tertiary hover:text-text-primary transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
               aria-label="Close share menu"
             >
               <X className="w-3 h-3" />
@@ -128,19 +156,19 @@ export function ShareButton(props: ShareButtonProps) {
 
           {/* Tweet preview */}
           <div className="px-3 py-2 border-b border-[#C9A84C]/10" style={{ background: '#111118' }}>
-            <p className="text-[10px] text-text-tertiary font-mono leading-relaxed line-clamp-4 whitespace-pre-wrap">
-              {tweetText.length > 160 ? tweetText.slice(0, 157) + '…' : tweetText}
+            <p className="text-[10px] text-text-tertiary font-mono leading-relaxed line-clamp-4 whitespace-pre-wrap break-all">
+              {tweetText.length > 200 ? tweetText.slice(0, 197) + '…' : tweetText}
             </p>
           </div>
 
-          {/* Actions */}
+          {/* Actions — min touch targets for mobile */}
           <div className="flex flex-col">
             <a
               href={tweetUrl}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-2.5 px-3 py-3 text-[11px] text-text-secondary hover:text-text-primary hover:bg-white/[0.03] transition-colors"
+              className="flex items-center gap-2.5 px-3 py-3 min-h-[44px] text-[11px] text-text-secondary hover:text-text-primary hover:bg-white/[0.03] transition-colors"
             >
               <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 shrink-0" fill="none" stroke="#1D9BF0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M4 4l11.733 16H20L8.267 4z" />
@@ -150,7 +178,7 @@ export function ShareButton(props: ShareButtonProps) {
             </a>
             <button
               onClick={handleCopy}
-              className="flex items-center gap-2.5 px-3 py-3 text-[11px] text-text-secondary hover:text-text-primary hover:bg-white/[0.03] transition-colors border-t border-[#C9A84C]/10"
+              className="flex items-center gap-2.5 px-3 py-3 min-h-[44px] text-[11px] text-text-secondary hover:text-text-primary hover:bg-white/[0.03] transition-colors border-t border-[#C9A84C]/10"
             >
               {copied ? (
                 <>
