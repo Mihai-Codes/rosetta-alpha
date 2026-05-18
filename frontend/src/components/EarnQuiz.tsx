@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useAccount, useSendTransaction, useWaitForTransactionReceipt, useSwitchChain, useChainId } from 'wagmi'
+import { useAccount, useWalletClient, useWaitForTransactionReceipt, useSwitchChain, useChainId } from 'wagmi'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { parseEther } from 'viem'
 
@@ -229,7 +229,7 @@ function ResultsScreen({
 // ─── Main EarnQuiz component ────────────────────────────────────────────────
 
 export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
-  const { sendTransactionAsync } = useSendTransaction()
+  const { data: walletClient } = useWalletClient()
   const { isConnected } = useAccount()
   const { openConnectModal } = useConnectModal()
   const { switchChainAsync } = useSwitchChain()
@@ -314,6 +314,10 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
       openConnectModal?.()
       return
     }
+    if (!walletClient) {
+      setClaimError('Wallet not ready — please reconnect.')
+      return
+    }
     setClaiming(true)
     setClaimError(null)
     setClaimTxHash(null)
@@ -321,45 +325,31 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
       // Step 1: Switch to Arc Testnet if needed
       if (currentChainId !== ARC_CHAIN_ID) {
         setClaimStatus('switching')
-        await switchChainAsync({ chainId: ARC_CHAIN_ID })
+        try {
+          await switchChainAsync({ chainId: ARC_CHAIN_ID })
+        } catch {
+          // Some wallets (Coinbase Smart Wallet) don't support programmatic chain switching
+          // — proceed anyway and let the wallet handle it natively
+        }
       }
-      // Step 2: Broadcast the proof-of-claim transaction
+      // Step 2: Broadcast via walletClient directly — bypasses wagmi connector.getChainId()
+      // which crashes on Coinbase Smart Wallet (known wagmi v2 bug with custom chains)
       setClaimStatus('broadcasting')
-      const hash = await sendTransactionAsync({
+      const hash = await walletClient.sendTransaction({
         to: REWARDS_POOL,
         value: CLAIM_PROOF_VALUE,
-        // chainId omitted to prevent Coinbase Smart Wallet getChainId() crash
       })
       setClaimTxHash(hash)
       setClaimStatus('confirming')
       // Step 3: useWaitForTransactionReceipt watches `hash` and sets txConfirmed
     } catch (err: unknown) {
-      const msg = (err instanceof Error ? err.message : String(err)).toLowerCase()
+      const msg = (err instanceof Error ? err.message : String(err))
       setClaimStatus('idle')
-      // Silently ignore user rejections and unsupported chain-switch errors
-      const isUserReject = msg.includes('rejected') || msg.includes('denied') || msg.includes('user refused')
-      const isUnsupportedSwitch = msg.includes('unsupported') || msg.includes('does not support') || msg.includes('chain') || msg.includes('switch')
-      if (!isUserReject && !isUnsupportedSwitch) {
-        console.error("TX ERROR:", err)
-        setClaimError(`Tx failed: ${msg.split('\n')[0].substring(0, 100)}`)
-      } else if (isUnsupportedSwitch && !isUserReject) {
-        // Wallet doesn't support chain switching (e.g. some smart wallets) — try sending anyway
-        try {
-          setClaimStatus('broadcasting')
-          const hash = await sendTransactionAsync({
-            to: REWARDS_POOL,
-            value: CLAIM_PROOF_VALUE,
-            // chainId omitted to prevent Coinbase Smart Wallet getChainId() crash
-          })
-          setClaimTxHash(hash)
-          setClaimStatus('confirming')
-        } catch (innerErr: unknown) {
-          console.error("TX INNER ERROR:", innerErr)
-          const innerMsg = (innerErr instanceof Error ? innerErr.message : String(innerErr)).toLowerCase()
-          if (!innerMsg.includes('rejected') && !innerMsg.includes('denied')) {
-            setClaimError(`Tx failed: ${innerMsg.split('\n')[0].substring(0, 100)}`)
-          }
-        }
+      const msgLower = msg.toLowerCase()
+      const isUserReject = msgLower.includes('rejected') || msgLower.includes('denied') || msgLower.includes('user refused')
+      if (!isUserReject) {
+        console.error('TX ERROR:', err)
+        setClaimError(`Tx failed: ${msg.split('\n')[0].substring(0, 120)}`)
       }
     } finally {
       setClaiming(false)
