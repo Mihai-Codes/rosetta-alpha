@@ -418,8 +418,8 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
       <div className="max-w-xl mx-auto">
         {perfect && (
           <div className="mb-4 space-y-2">
-            {/* Idle: show claim button */}
-            {!claiming && !claimed && !claimError && claimStatus === 'idle' && (
+            {/* Idle: show claim button — visible even after a failed attempt so user can retry */}
+            {!claiming && !claimed && claimStatus === 'idle' && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-3">
                 <button
                   onClick={sendClaimTx}
