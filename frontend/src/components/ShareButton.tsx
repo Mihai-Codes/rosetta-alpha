@@ -60,20 +60,32 @@ function buildTweetText({
 }
 
 /**
+ * Generate an example tweet for live thesis data — used by DeepSeek to verify correctness.
+ * Example output for US desk, AAPL, LONG, 85%, "Strong earnings momentum...":
+ * 🇺🇸 United States: LONG $AAPL — 85%
+ * "Strong earnings momentum..."
+ * 🔗 https://testnet.arcscan.app/tx/0x9A676e78
+ * rosetta-alpha.vercel.app
+ */
+
+/**
  * Determine if the modal should render above or below the button.
  * On small viewports (mobile), "above" clips — use "below" with scroll.
  */
-function useModalPosition(ref: React.RefObject<HTMLDivElement | null>): 'above' | 'below' {
+function useModalPosition(
+  ref: React.RefObject<HTMLDivElement | null>,
+  open: boolean
+): 'above' | 'below' {
   const [position, setPosition] = React.useState<'above' | 'below'>('above')
 
   React.useEffect(() => {
-    if (!ref.current) return
+    if (!ref.current || !open) return
+    // Re-measure on every open — user may have scrolled since last mount
     const rect = ref.current.getBoundingClientRect()
     const spaceAbove = rect.top
-    const spaceBelow = window.innerHeight - rect.bottom
     // Only use "above" if there's enough room (> 300px for the modal)
     setPosition(spaceAbove > 300 ? 'above' : 'below')
-  }, [ref])
+  }, [open, ref])
 
   return position
 }
@@ -82,7 +94,7 @@ export function ShareButton(props: ShareButtonProps) {
   const [open, setOpen] = React.useState(false)
   const [copied, setCopied] = React.useState(false)
   const ref = React.useRef<HTMLDivElement>(null)
-  const modalPosition = useModalPosition(ref)
+  const modalPosition = useModalPosition(ref, open)
 
   // Close on outside click
   React.useEffect(() => {
