@@ -35,21 +35,24 @@ function buildTweetText({
 }: ShareButtonProps): string {
   const pct = (confidence * 100).toFixed(0)
   const regionName = REGION_LABEL[region.toLowerCase()] ?? region
+  // Keep excerpt tight — leave room for URL + hashtags
   const excerpt = summary
-    ? summary.length > 100
-      ? summary.slice(0, 97) + '...'
+    ? summary.length > 80
+      ? summary.slice(0, 77) + '...'
       : summary
     : ''
-  const hashRef = arcHash && arcHash.length > 8
-    ? arcHash.slice(0, 8)
-    : arcHash || ''
 
-  let tweet = `${flagEmoji} ${regionName}: ${direction} $${ticker} — ${pct}%\n`
+  // Hook: user just received a signal from an AI hedge fund
+  let tweet = `🤖 AI hedge fund just flagged this:\n\n`
+  tweet += `${flagEmoji} ${regionName} • ${direction} $${ticker} — ${pct}% confidence\n`
   if (excerpt) tweet += `"${excerpt}"\n`
-  if (arcHash && hashRef) {
+  tweet += `\n`
+  if (arcHash) {
+    tweet += `📊 Verified on Arc Testnet\n`
     tweet += `🔗 https://testnet.arcscan.app/tx/${arcHash}\n`
+    tweet += `\n`
   }
-  tweet += 'rosetta-alpha.vercel.app'
+  tweet += `Try it → rosetta-alpha.vercel.app`
 
   // Truncate to prevent X's 280-char cap from eating the permalink
   if (tweet.length > MAX_TWEET_LENGTH) {
@@ -145,44 +148,44 @@ export function ShareButton(props: ShareButtonProps) {
 
       {open && (
         <div
-          className={`absolute z-50 w-56 rounded-lg overflow-hidden shadow-xl animate-in fade-in duration-150 max-h-[90vh] overflow-y-auto ${
+          className={`absolute z-50 w-72 rounded-lg overflow-hidden border border-[#C9A84C]/40 shadow-[0_0_20px_rgba(201,168,76,0.1),_0_8px_32px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-200 max-h-[85vh] overflow-y-auto ${
             modalPosition === 'above'
-              ? 'bottom-full right-0 mb-2 slide-in-from-bottom-2'
-              : 'top-full right-0 mt-2 slide-in-from-top-2'
+              ? 'bottom-full right-0 mb-2 origin-bottom-right slide-in-from-bottom-2'
+              : 'top-full right-0 mt-2 origin-top-right slide-in-from-top-2'
           }`}
-          style={{ background: '#111118', border: '1px solid #C9A84C' }}
+          style={{ background: '#111118' }}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-3 py-2 border-b border-[#C9A84C]/20">
-            <span className="text-[9px] uppercase tracking-[0.25em] text-text-tertiary">
+          <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#C9A84C]/20 bg-[#111118]">
+            <span className="text-[9px] uppercase tracking-[0.25em] text-text-tertiary font-medium">
               Share Thesis
             </span>
             <button
               onClick={() => setOpen(false)}
-              className="text-text-tertiary hover:text-text-primary transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
+              className="text-text-tertiary hover:text-text-primary transition-colors min-h-[32px] min-w-[32px] flex items-center justify-center -mr-2"
               aria-label="Close share menu"
             >
-              <X className="w-3 h-3" />
+              <X className="w-3.5 h-3.5" />
             </button>
           </div>
 
           {/* Tweet preview */}
-          <div className="px-3 py-2 border-b border-[#C9A84C]/10" style={{ background: '#111118' }}>
-            <p className="text-[10px] text-text-tertiary font-mono leading-relaxed line-clamp-4 whitespace-pre-wrap break-all">
+          <div className="px-4 py-3 border-b border-[#C9A84C]/10 bg-black/20">
+            <p className="text-[11px] text-[#F0EDE8]/80 font-mono leading-normal tracking-tight line-clamp-5 whitespace-pre-wrap break-all">
               {tweetText.length > 200 ? tweetText.slice(0, 197) + '…' : tweetText}
             </p>
           </div>
 
           {/* Actions — min touch targets for mobile */}
-          <div className="flex flex-col">
+          <div className="flex flex-col bg-[#111118]">
             <a
               href={tweetUrl}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-2.5 px-3 py-3 min-h-[44px] text-[11px] text-text-secondary hover:text-text-primary hover:bg-white/[0.03] transition-colors"
+              className="flex items-center gap-3 px-4 py-3.5 min-h-[48px] text-[11px] font-medium text-text-secondary hover:text-[#1D9BF0] hover:bg-[#1D9BF0]/10 transition-colors group"
             >
-              <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 shrink-0" fill="none" stroke="#1D9BF0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0 text-[#1D9BF0] opacity-80 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M4 4l11.733 16H20L8.267 4z" />
                 <path d="M4 20l6.768-6.768M20 4l-6.768 6.768" />
               </svg>
@@ -190,16 +193,16 @@ export function ShareButton(props: ShareButtonProps) {
             </a>
             <button
               onClick={handleCopy}
-              className="flex items-center gap-2.5 px-3 py-3 min-h-[44px] text-[11px] text-text-secondary hover:text-text-primary hover:bg-white/[0.03] transition-colors border-t border-[#C9A84C]/10"
+              className="flex items-center gap-3 px-4 py-3.5 min-h-[48px] text-[11px] font-medium text-text-secondary hover:text-[#C9A84C] hover:bg-[#C9A84C]/10 transition-colors border-t border-[#C9A84C]/10"
             >
               {copied ? (
                 <>
-                  <Check className="w-3.5 h-3.5 text-positive" />
+                  <Check className="w-4 h-4 text-positive" />
                   <span className="text-positive">Copied!</span>
                 </>
               ) : (
                 <>
-                  <Copy className="w-3.5 h-3.5" />
+                  <Copy className="w-4 h-4" />
                   Copy to clipboard
                 </>
               )}
