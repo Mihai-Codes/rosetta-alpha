@@ -1,103 +1,238 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useAccount, useBalance } from 'wagmi'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { arcTestnet } from '@/lib/wagmi'
-import { AllWeatherChart } from '@/components/AllWeatherChart'
 
-// ─── Mock prediction history ──────────────────────────────────────────────────
+// ─── Typed mock data interfaces ───────────────────────────────────────────────
 
-const HISTORY = [
+interface PredictionRow {
+  id: string
+  thesis: string          // e.g. "BTC > $65k by June 15?"
+  region: string          // e.g. "crypto", "us", "cn"
+  direction: 'LONG' | 'SHORT' | 'NEUTRAL'
+  stake: number           // USDC amount
+  status: 'OPEN' | 'RESOLVED_WIN' | 'RESOLVED_LOSS'
+  pnl: number             // positive = profit, negative = loss
+  arcTx?: string
+}
+
+interface AgentLeaderboardRow {
+  rank: number
+  agent: string           // e.g. "Alpha-7", "Nexus-AI"
+  region: string          // e.g. "United States", "Crypto", "China"
+  accuracy: number        // 0–100
+  theses: number          // total theses generated
+  streak: number          // current win streak
+}
+
+// ─── Mock data ────────────────────────────────────────────────────────────────
+
+const PREDICTIONS: PredictionRow[] = [
   {
-    id: 1,
-    ticker: 'BTC',
-    desk: 'Crypto',
-    question: 'BTC > $65k by June 15, 2026?',
-    userCall: 'LONG' as const,
-    aiCall: 'LONG' as const,
-    match: true,
-    usdc: 0.5,
-    arcTx: '0x50fd3228...',
-    ts: '2026-05-17',
+    id: 'p1',
+    thesis: 'BTC > $65k by June 15, 2026?',
+    region: 'crypto',
+    direction: 'LONG',
+    stake: 50,
+    status: 'RESOLVED_WIN',
+    pnl: 47.5,
+    arcTx: '0x50fd3228a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6',
   },
   {
-    id: 2,
-    ticker: 'AAPL',
-    desk: 'US Equities',
-    question: 'AAPL within 1% band over 30 days?',
-    userCall: 'LONG' as const,
-    aiCall: 'NEUTRAL' as const,
-    match: false,
-    usdc: 0,
-    arcTx: null,
-    ts: '2026-05-17',
+    id: 'p2',
+    thesis: 'AAPL within 1% band over 30 days?',
+    region: 'us',
+    direction: 'NEUTRAL',
+    stake: 25,
+    status: 'RESOLVED_LOSS',
+    pnl: -25,
   },
   {
-    id: 3,
-    ticker: 'ETH',
-    desk: 'Crypto',
-    question: 'ETH outperforms BTC +5% in 14 days?',
-    userCall: 'SHORT' as const,
-    aiCall: 'SHORT' as const,
-    match: true,
-    usdc: 0.5,
-    arcTx: '0x8d2f119a...',
-    ts: '2026-05-17',
+    id: 'p3',
+    thesis: 'ETH outperforms BTC +5% in 14 days?',
+    region: 'crypto',
+    direction: 'SHORT',
+    stake: 75,
+    status: 'OPEN',
+    pnl: 0,
+  },
+  {
+    id: 'p4',
+    thesis: 'CNY strengthens >2% vs USD in Q3?',
+    region: 'cn',
+    direction: 'SHORT',
+    stake: 40,
+    status: 'RESOLVED_WIN',
+    pnl: 38.0,
+    arcTx: '0x8d2f119ab1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6',
+  },
+  {
+    id: 'p5',
+    thesis: 'Nikkei 225 closes >38,000 by July?',
+    region: 'jp',
+    direction: 'LONG',
+    stake: 60,
+    status: 'OPEN',
+    pnl: 0,
   },
 ]
 
-type Direction = 'LONG' | 'SHORT' | 'NEUTRAL'
+const AGENT_LEADERBOARD: AgentLeaderboardRow[] = [
+  { rank: 1, agent: 'Alpha-7',      region: 'Crypto',          accuracy: 91, theses: 142, streak: 12 },
+  { rank: 2, agent: 'Nexus-AI',     region: 'United States',   accuracy: 87, theses: 198, streak: 8 },
+  { rank: 3, agent: 'Dragon-9',     region: 'China',           accuracy: 84, theses: 156, streak: 5 },
+  { rank: 4, agent: 'Samurai-X',    region: 'Japan',           accuracy: 81, theses: 134, streak: 4 },
+  { rank: 5, agent: 'EuroQuant',    region: 'Europe',          accuracy: 79, theses: 167, streak: 3 },
+  { rank: 6, agent: 'Meridian',     region: 'Crypto',          accuracy: 76, theses: 98,  streak: 2 },
+  { rank: 7, agent: 'Sentinel-V',   region: 'United States',   accuracy: 74, theses: 189, streak: 1 },
+  { rank: 8, agent: 'Phoenix-3',    region: 'China',           accuracy: 72, theses: 112, streak: 0 },
+  { rank: 9, agent: 'Horizon',      region: 'Europe',          accuracy: 69, theses: 145, streak: 0 },
+  { rank: 10, agent: 'Nova-Prime',  region: 'Japan',           accuracy: 67, theses: 78,  streak: 0 },
+]
+
+const REGION_META: Record<string, { name: string; flag: string; color: string }> = {
+  us:     { name: 'United States', flag: '🇺🇸', color: '#4A7FBF' },
+  cn:     { name: 'China',         flag: '🇨🇳', color: '#BF4A4A' },
+  eu:     { name: 'Europe',        flag: '🇪🇺', color: '#4A8F6F' },
+  jp:     { name: 'Japan',         flag: '🇯🇵', color: '#8F6F4A' },
+  crypto: { name: 'Crypto',        flag: '₿',  color: '#7A4ABF' },
+}
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function directionColor(d: Direction) {
-  if (d === 'LONG') return 'text-positive'
-  if (d === 'SHORT') return 'text-negative'
-  return 'text-accent-gold'
+function statusColor(s: PredictionRow['status']) {
+  if (s === 'OPEN')         return 'text-accent-gold border-accent-gold/40 bg-accent-gold/5'
+  if (s === 'RESOLVED_WIN') return 'text-positive border-positive/40 bg-positive/5'
+  return 'text-negative border-negative/40 bg-negative/5'
 }
 
-function directionLabel(d: Direction) {
-  if (d === 'LONG') return '↑ Long'
-  if (d === 'SHORT') return '↓ Short'
+function statusLabel(s: PredictionRow['status']) {
+  if (s === 'OPEN')         return 'OPEN'
+  if (s === 'RESOLVED_WIN') return 'RESOLVED WIN'
+  return 'RESOLVED LOSS'
+}
+
+function directionArrow(d: PredictionRow['direction']) {
+  if (d === 'LONG')   return '↑ Long'
+  if (d === 'SHORT')  return '↓ Short'
   return '→ Neutral'
 }
 
-// ─── Stat tile ────────────────────────────────────────────────────────────────
+function directionColor(d: PredictionRow['direction']) {
+  if (d === 'LONG')   return 'text-positive'
+  if (d === 'SHORT')  return 'text-negative'
+  return 'text-text-secondary'
+}
 
-function StatTile({
-  label,
-  value,
-  sub,
-  accent,
-  delay = 0,
-}: {
+function truncateHash(hash: string, head = 6, tail = 4): string {
+  if (!hash || hash.length < head + tail + 2) return hash
+  return `${hash.slice(0, head)}…${hash.slice(-tail)}`
+}
+
+function formatUSDC(n: number): string {
+  if (n === 0) return '0.00 USDC'
+  const s = n < 0 ? '-' : '+'
+  return `${s}${Math.abs(n).toFixed(2)} USDC`
+}
+
+function formatPercent(n: number): string {
+  return `${n}%`
+}
+
+// ─── SVG Ring Chart (pure SVG, no libraries) ──────────────────────────────────
+
+interface Quadrant {
   label: string
-  value: string
-  sub?: string
-  accent?: string
-  delay?: number
-}) {
+  pct: number
+  color: string
+}
+
+const QUADRANTS: Quadrant[] = [
+  { label: 'Equities',    pct: 40, color: '#4A9F6F' },
+  { label: 'Bonds',       pct: 30, color: '#C9A84C' },
+  { label: 'Commodities', pct: 15, color: '#7B8FA6' },
+  { label: 'Crypto',      pct: 15, color: '#D82B2B' },
+]
+
+function RingChart() {
+  const total = QUADRANTS.reduce((s, q) => s + q.pct, 0)
+  const radius = 72
+  const cx = 80
+  const cy = 80
+  const circumference = 2 * Math.PI * radius
+  let offset = 0
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay }}
-      className="solid-panel rounded-2xl px-6 py-6 flex flex-col gap-2"
-    >
-      <p className="text-[9px] font-medium uppercase tracking-[0.25em] text-text-tertiary">{label}</p>
-      <p className={`font-display text-2xl sm:text-3xl font-light tracking-tight ${accent ?? 'text-text-primary'}`}>
-        {value}
-      </p>
-      {sub && <p className="text-[10px] text-text-tertiary font-mono">{sub}</p>}
-    </motion.div>
+    <div className="flex flex-col items-center gap-4 sm:gap-6 w-full max-w-xs mx-auto">
+      <div className="relative">
+        <svg width="200" height="200" viewBox={`0 0 160 160`} className="transform -rotate-90">
+          {/* Track */}
+          <circle
+            cx={cx}
+            cy={cy}
+            r={radius}
+            fill="none"
+            stroke="#1A1A24"
+            strokeWidth="18"
+          />
+          {/* Segments */}
+          {QUADRANTS.map((q, i) => {
+            const len = (q.pct / total) * circumference
+            const seg = (
+              <circle
+                key={i}
+                cx={cx}
+                cy={cy}
+                r={radius}
+                fill="none"
+                stroke={q.color}
+                strokeWidth="18"
+                strokeDasharray={`${len} ${circumference}`}
+                strokeDashoffset={-offset}
+                strokeLinecap="butt"
+                style={{ transition: 'stroke-dashoffset 1.2s ease-out' }}
+              />
+            )
+            offset += len
+            return seg
+          })}
+        </svg>
+        {/* Center label */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+          <p className="font-display text-xl sm:text-2xl text-text-primary font-light tracking-tight">
+            ALL WEATHER
+          </p>
+          <p className="text-[9px] uppercase tracking-[0.25em] text-text-tertiary mt-0.5">
+            Risk Parity
+          </p>
+        </div>
+      </div>
+
+      {/* Stat pills */}
+      <div className="grid grid-cols-2 gap-2 w-full">
+        {QUADRANTS.map(q => (
+          <div
+            key={q.label}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border/40 bg-bg-primary/60"
+          >
+            <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: q.color }} />
+            <div className="min-w-0">
+              <p className="text-[10px] text-text-secondary font-medium truncate">{q.label}</p>
+              <p className="text-[10px] font-mono text-text-primary">{q.pct}%</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 
-// ─── Wallet gate ──────────────────────────────────────────────────────────────
+// ─── Wallet gate / connect prompt ─────────────────────────────────────────────
 
-function WalletGate() {
+function ConnectPrompt() {
   const { openConnectModal } = useConnectModal()
   return (
     <motion.div
@@ -124,17 +259,17 @@ function WalletGate() {
   )
 }
 
-// ─── Prediction history table ─────────────────────────────────────────────────
+// ─── My Predictions section ───────────────────────────────────────────────────
 
-function PredictionHistory() {
+function MyPredictions() {
   return (
     <div className="solid-panel rounded-2xl overflow-hidden">
-      <div className="px-6 py-5 border-b border-border flex items-center justify-between">
+      <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-border flex items-center justify-between">
         <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary">
-          Prediction History
+          My Predictions
         </p>
-        <span className="text-[9px] uppercase tracking-[0.2em] text-brand-red font-medium">
-          {HISTORY.filter(h => h.match).length}/{HISTORY.length} Correct
+        <span className="text-[9px] uppercase tracking-[0.2em] text-accent-gold font-medium">
+          {PREDICTIONS.filter(p => p.status === 'RESOLVED_WIN').length}/{PREDICTIONS.length} Wins
         </span>
       </div>
 
@@ -143,58 +278,43 @@ function PredictionHistory() {
         <table className="w-full text-xs">
           <thead>
             <tr className="border-b border-border">
-              {['Asset', 'Your Call', 'AI Call', 'Match', 'USDC', 'Date', 'Arc Tx'].map(h => (
-                <th key={h} className="px-6 py-3 text-left text-[9px] uppercase tracking-[0.2em] text-text-tertiary font-medium">
+              {['Thesis', 'Region', 'Direction', 'Stake', 'Status', 'PnL'].map(h => (
+                <th key={h} className="px-5 py-3 text-left text-[9px] uppercase tracking-[0.2em] text-text-tertiary font-medium">
                   {h}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {HISTORY.map((row, i) => (
+            {PREDICTIONS.map((row, i) => (
               <motion.tr
                 key={row.id}
-                initial={{ opacity: 0, x: -10 }}
+                initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 * i }}
-                className="border-b border-border/50 hover:bg-bg-tertiary/40 transition-colors"
+                transition={{ delay: i * 0.06 }}
+                className="border-b border-border/40 hover:bg-bg-tertiary/40 transition-colors"
               >
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono font-bold text-text-primary text-[11px]">{row.ticker}</span>
-                    <span className="text-[9px] text-text-tertiary uppercase tracking-[0.15em]">{row.desk}</span>
-                  </div>
+                <td className="px-5 py-4">
+                  <span className="text-text-primary text-[11px] font-medium">{row.thesis}</span>
                 </td>
-                <td className={`px-6 py-4 font-mono font-bold text-[10px] ${directionColor(row.userCall)}`}>
-                  {directionLabel(row.userCall)}
+                <td className="px-5 py-4">
+                  <span className="text-[10px] text-text-secondary">{REGION_META[row.region]?.name ?? row.region}</span>
                 </td>
-                <td className={`px-6 py-4 font-mono font-bold text-[10px] ${directionColor(row.aiCall)}`}>
-                  {directionLabel(row.aiCall)}
+                <td className={`px-5 py-4 font-mono text-[10px] font-bold ${directionColor(row.direction)}`}>
+                  {directionArrow(row.direction)}
                 </td>
-                <td className="px-6 py-4">
-                  <span className={`text-[10px] font-medium ${row.match ? 'text-positive' : 'text-negative'}`}>
-                    {row.match ? '✓ Match' : '✗ Miss'}
+                <td className="px-5 py-4">
+                  <span className="font-mono text-[11px] text-text-primary">{row.stake} USDC</span>
+                </td>
+                <td className="px-5 py-4">
+                  <span className={`text-[9px] uppercase tracking-[0.15em] font-medium px-2 py-1 rounded border ${statusColor(row.status)}`}>
+                    {statusLabel(row.status)}
                   </span>
                 </td>
-                <td className="px-6 py-4">
-                  <span className={`font-mono text-[11px] font-bold ${row.usdc > 0 ? 'text-positive' : 'text-text-tertiary'}`}>
-                    {row.usdc > 0 ? `+${row.usdc} USDC` : '—'}
+                <td className="px-5 py-4">
+                  <span className={`font-mono text-[11px] font-bold ${row.pnl >= 0 ? 'text-positive' : 'text-negative'}`}>
+                    {formatUSDC(row.pnl)}
                   </span>
-                </td>
-                <td className="px-6 py-4 text-text-tertiary font-mono text-[10px]">{row.ts}</td>
-                <td className="px-6 py-4">
-                  {row.arcTx ? (
-                    <a
-                      href={`https://testnet.arcscan.app/tx/${row.arcTx}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="font-mono text-[10px] text-accent-gold hover:underline"
-                    >
-                      {row.arcTx}
-                    </a>
-                  ) : (
-                    <span className="text-text-tertiary text-[10px] font-mono">—</span>
-                  )}
                 </td>
               </motion.tr>
             ))}
@@ -203,37 +323,31 @@ function PredictionHistory() {
       </div>
 
       {/* Mobile cards */}
-      <div className="md:hidden divide-y divide-border/50">
-        {HISTORY.map((row, i) => (
+      <div className="md:hidden divide-y divide-border/40">
+        {PREDICTIONS.map((row, i) => (
           <motion.div
             key={row.id}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.1 * i }}
-            className="px-5 py-4 space-y-2"
+            transition={{ delay: i * 0.06 }}
+            className="px-4 py-4 space-y-2.5"
           >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="font-mono font-bold text-text-primary text-[11px]">{row.ticker}</span>
-                <span className="text-[9px] text-text-tertiary uppercase tracking-[0.15em]">{row.desk}</span>
-              </div>
-              <span className={`text-[10px] font-medium ${row.match ? 'text-positive' : 'text-negative'}`}>
-                {row.match ? '✓ Match' : '✗ Miss'}
+            <div className="flex items-start justify-between gap-3">
+              <span className="text-text-primary text-[11px] font-medium leading-relaxed">{row.thesis}</span>
+              <span className={`text-[9px] uppercase tracking-[0.15em] font-medium px-2 py-1 rounded border shrink-0 ${statusColor(row.status)}`}>
+                {statusLabel(row.status)}
               </span>
             </div>
-            <p className="text-text-secondary text-[11px] leading-relaxed">{row.question}</p>
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] text-text-secondary">{REGION_META[row.region]?.name ?? row.region}</span>
+              <span className={`font-mono text-[10px] font-bold ${directionColor(row.direction)}`}>
+                {directionArrow(row.direction)}
+              </span>
+            </div>
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className={`font-mono text-[10px] font-bold ${directionColor(row.userCall)}`}>
-                  You: {directionLabel(row.userCall)}
-                </span>
-                <span className="text-text-tertiary text-[9px]">vs</span>
-                <span className={`font-mono text-[10px] font-bold ${directionColor(row.aiCall)}`}>
-                  AI: {directionLabel(row.aiCall)}
-                </span>
-              </div>
-              <span className={`font-mono text-[11px] font-bold ${row.usdc > 0 ? 'text-positive' : 'text-text-tertiary'}`}>
-                {row.usdc > 0 ? `+${row.usdc} USDC` : '—'}
+              <span className="font-mono text-[11px] text-text-primary">{row.stake} USDC staked</span>
+              <span className={`font-mono text-[11px] font-bold ${row.pnl >= 0 ? 'text-positive' : 'text-negative'}`}>
+                {formatUSDC(row.pnl)}
               </span>
             </div>
             {row.arcTx && (
@@ -243,11 +357,167 @@ function PredictionHistory() {
                 rel="noreferrer"
                 className="block font-mono text-[10px] text-accent-gold hover:underline truncate"
               >
-                {row.arcTx}
+                Arc: {truncateHash(row.arcTx, 6, 4)}
               </a>
             )}
           </motion.div>
         ))}
+      </div>
+    </div>
+  )
+}
+
+// ─── Leaderboard section (agents) ─────────────────────────────────────────────
+
+function Leaderboard() {
+  const [sort, setSort] = useState<'rank' | 'accuracy' | 'theses' | 'streak'>('rank')
+
+  const sorted = [...AGENT_LEADERBOARD].sort((a, b) => {
+    if (sort === 'accuracy') return b.accuracy - a.accuracy
+    if (sort === 'theses')   return b.theses - a.theses
+    if (sort === 'streak')   return b.streak - a.streak
+    return a.rank - b.rank
+  })
+
+  const medalBorder = (rank: number) => {
+    if (rank === 1) return 'border-l-2 border-l-accent-gold'
+    if (rank === 2) return 'border-l-2 border-l-[#C0C0C0]'
+    if (rank === 3) return 'border-l-2 border-l-[#CD7F32]'
+    return ''
+  }
+
+  return (
+    <div className="solid-panel rounded-2xl overflow-hidden">
+      <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-border flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
+        <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary">
+          Agent Leaderboard
+        </p>
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-[9px] uppercase tracking-[0.2em] text-text-tertiary">Sort</span>
+          {(['rank', 'accuracy', 'theses', 'streak'] as const).map(k => (
+            <button
+              key={k}
+              onClick={() => setSort(k)}
+              className={`px-3 py-1.5 text-[9px] uppercase tracking-[0.2em] font-medium border transition-all ${
+                sort === k
+                  ? 'border-brand-red text-brand-red'
+                  : 'border-border text-text-tertiary hover:border-border-strong hover:text-text-secondary'
+              }`}
+            >
+              {k}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Desktop table */}
+      <div className="hidden md:block overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="border-b border-border">
+              {['Rank', 'Agent', 'Region', 'Accuracy', 'Theses', 'Streak'].map(h => (
+                <th key={h} className="px-5 py-3 text-left text-[9px] uppercase tracking-[0.2em] text-text-tertiary font-medium">
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {sorted.map((row, i) => (
+              <motion.tr
+                key={row.rank}
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.04 }}
+                className={`border-b border-border/40 hover:bg-bg-tertiary/40 transition-colors ${medalBorder(row.rank)}`}
+              >
+                <td className="px-5 py-4">
+                  <span className={`font-display text-lg font-bold ${
+                    row.rank === 1 ? 'text-accent-gold' :
+                    row.rank === 2 ? 'text-text-secondary' :
+                    row.rank === 3 ? 'text-[#CD7F32]' :
+                    'text-text-tertiary'
+                  }`}>
+                    #{row.rank}
+                  </span>
+                </td>
+                <td className="px-5 py-4">
+                  <span className="font-mono text-[11px] text-text-primary font-bold">{row.agent}</span>
+                </td>
+                <td className="px-5 py-4">
+                  <span className="text-[10px] text-text-secondary">{row.region}</span>
+                </td>
+                <td className={`px-5 py-4 font-mono font-bold text-[11px] ${
+                  row.accuracy >= 80 ? 'text-positive' :
+                  row.accuracy >= 65 ? 'text-accent-gold' :
+                  'text-text-secondary'
+                }`}>
+                  {row.accuracy}%
+                </td>
+                <td className="px-5 py-4">
+                  <span className="font-mono text-[11px] text-text-secondary">{row.theses}</span>
+                </td>
+                <td className="px-5 py-4">
+                  {row.streak > 0 ? (
+                    <span className="text-[10px] text-brand-red font-medium">
+                      🔥 {row.streak}
+                    </span>
+                  ) : (
+                    <span className="text-text-tertiary text-[10px]">—</span>
+                  )}
+                </td>
+              </motion.tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Mobile cards */}
+      <div className="md:hidden divide-y divide-border/40">
+        {sorted.map((row, i) => (
+          <motion.div
+            key={row.rank}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: i * 0.05 }}
+            className={`px-4 py-4 space-y-2 ${medalBorder(row.rank)}`}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className={`font-display text-xl font-bold ${
+                  row.rank === 1 ? 'text-accent-gold' :
+                  row.rank === 2 ? 'text-text-secondary' :
+                  row.rank === 3 ? 'text-[#CD7F32]' :
+                  'text-text-tertiary'
+                }`}>
+                  #{row.rank}
+                </span>
+                <div>
+                  <p className="font-mono text-[11px] text-text-primary font-bold">{row.agent}</p>
+                  <p className="text-[9px] text-text-secondary">{row.region}</p>
+                </div>
+              </div>
+              <span className={`font-mono font-bold text-sm ${
+                row.accuracy >= 80 ? 'text-positive' :
+                row.accuracy >= 65 ? 'text-accent-gold' :
+                'text-text-secondary'
+              }`}>
+                {row.accuracy}%
+              </span>
+            </div>
+            <div className="flex items-center gap-4 text-[10px]">
+              <span className="text-text-secondary">{row.theses} theses</span>
+              {row.streak > 0 && <span className="text-brand-red">🔥 {row.streak} streak</span>}
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Footer */}
+      <div className="px-4 sm:px-6 py-4 border-t border-border/40">
+        <p className="text-[9px] uppercase tracking-[0.2em] text-text-tertiary">
+          Rankings update after each quiz round · Settled on Arc Testnet
+        </p>
       </div>
     </div>
   )
@@ -259,89 +529,64 @@ export function DashboardView() {
   const { address, isConnected } = useAccount()
   const { data: balance } = useBalance({ address, chainId: arcTestnet.id })
 
-  const totalEarned = HISTORY.filter(h => h.match).reduce((s, h) => s + h.usdc, 0)
-  const accuracy = Math.round((HISTORY.filter(h => h.match).length / HISTORY.length) * 100)
+  const totalEarned = PREDICTIONS.filter(p => p.status === 'RESOLVED_WIN').reduce((s, p) => s + p.pnl, 0)
+  const accuracy = Math.round((PREDICTIONS.filter(p => p.status === 'RESOLVED_WIN').length / PREDICTIONS.length) * 100)
 
   if (!isConnected) {
     return (
       <div className="space-y-8">
-        <WalletGate />
-        {/* Still show the allocation chart — public info */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <AllWeatherChart />
-          <div className="solid-panel rounded-2xl p-6 flex flex-col justify-center gap-4">
-            <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary">
-              Strategy Overview
-            </p>
-            <p className="font-display text-2xl text-text-primary leading-snug">
-              All-Weather<br />
-              <em className="text-brand-red">Risk Parity</em>
-            </p>
-            <p className="text-text-secondary text-xs leading-relaxed max-w-sm">
-              Rosetta allocates across four economic regimes using Ray Dalio's All-Weather framework.
-              Every thesis is settled on Arc L1 with a cryptographic trace hash.
-            </p>
-            <div className="grid grid-cols-2 gap-3 pt-2">
-              {[
-                { label: 'Active Desks', value: '4' },
-                { label: 'Rebalance', value: 'Daily' },
-                { label: 'Chain', value: 'Arc Testnet' },
-                { label: 'Provenance', value: 'IPFS + Arc L1' },
-              ].map(s => (
-                <div key={s.label} className="glass-panel rounded-xl px-4 py-3">
-                  <p className="text-[9px] uppercase tracking-[0.2em] text-text-tertiary">{s.label}</p>
-                  <p className="font-mono text-[11px] text-text-primary font-bold mt-0.5">{s.value}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+        <ConnectPrompt />
+        {/* Show allocation chart as public preview */}
+        <div className="solid-panel rounded-2xl p-6 sm:p-8">
+          <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary mb-6">
+            Strategy Overview
+          </p>
+          <RingChart />
         </div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-8">
-      {/* Stat tiles */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatTile
-          label="USDC Balance"
-          value={balance ? `${parseFloat(balance.formatted).toFixed(2)}` : '—'}
-          sub={balance ? 'USDC · Arc Testnet' : 'Connect to view'}
-          accent="text-accent-gold"
-          delay={0}
-        />
-        <StatTile
-          label="Total Earned"
-          value={`${totalEarned} USDC`}
-          sub="From quiz rewards"
-          accent="text-positive"
-          delay={0.08}
-        />
-        <StatTile
-          label="Accuracy"
-          value={`${accuracy}%`}
-          sub={`${HISTORY.filter(h => h.match).length}/${HISTORY.length} calls correct`}
-          delay={0.16}
-        />
-        <StatTile
-          label="Arc Receipts"
-          value={String(HISTORY.filter(h => h.arcTx).length)}
-          sub="On-chain settlements"
-          delay={0.24}
-        />
+    <div className="space-y-8 sm:space-y-10">
+      {/* ── Stat tiles row ── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        {[
+          { label: 'USDC Balance', value: balance ? `${parseFloat(balance.formatted).toFixed(2)}` : '—', sub: 'Arc Testnet', accent: 'text-accent-gold' },
+          { label: 'Total Earned', value: `${totalEarned.toFixed(2)} USDC`, sub: 'From predictions', accent: 'text-positive' },
+          { label: 'Accuracy', value: `${accuracy}%`, sub: `${PREDICTIONS.filter(p => p.status === 'RESOLVED_WIN').length}/${PREDICTIONS.length} correct`, accent: '' },
+          { label: 'Active Stakes', value: String(PREDICTIONS.filter(p => p.status === 'OPEN').length), sub: 'Open positions', accent: '' },
+        ].map((s, i) => (
+          <motion.div
+            key={s.label}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.07 }}
+            className="solid-panel rounded-2xl px-4 sm:px-5 py-4 sm:py-5 flex flex-col gap-1.5"
+          >
+            <p className="text-[9px] font-medium uppercase tracking-[0.25em] text-text-tertiary">{s.label}</p>
+            <p className={`font-display text-xl sm:text-2xl font-light tracking-tight ${s.accent || 'text-text-primary'}`}>
+              {s.value}
+            </p>
+            {s.sub && <p className="text-[9px] text-text-tertiary font-mono">{s.sub}</p>}
+          </motion.div>
+        ))}
       </div>
 
-      {/* AllWeather + wallet summary */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <AllWeatherChart />
+      {/* ── Portfolio Overview (ring chart + wallet summary) ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="lg:col-span-2 solid-panel rounded-2xl p-5 sm:p-8">
+          <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary mb-6">
+            Portfolio Overview
+          </p>
+          <RingChart />
         </div>
+
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="solid-panel rounded-2xl p-6 flex flex-col gap-5"
+          className="solid-panel rounded-2xl p-5 sm:p-6 flex flex-col gap-5"
         >
           <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary">
             Wallet
@@ -375,8 +620,11 @@ export function DashboardView() {
         </motion.div>
       </div>
 
-      {/* Prediction history */}
-      <PredictionHistory />
+      {/* ── My Predictions ── */}
+      <MyPredictions />
+
+      {/* ── Agent Leaderboard ── */}
+      <Leaderboard />
     </div>
   )
 }

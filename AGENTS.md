@@ -73,9 +73,8 @@ Five LLM agents (one per region, each thinking in its native language) produce s
 ⏳ 11. Gemini 3.1 Pro   → Visual review round 2 (post-ShareButton, all pages)
        → See Section 12 for exact prompt to paste into AI Studio
 
-⏳ 12. Kimi K2.6        → /dashboard page EXTENDED version (SVG ring chart + richer tables)
-       → OPTIONAL: current DashboardView.tsx works; Kimi can enhance it
-       → See Section 13 for exact prompt
+✅ 12. Kimi K2.6        → /dashboard page — SVG ring chart + My Predictions table + Agent Leaderboard
+       → AdaL integrated, fixed Kimi output artifacts, verified build [DONE]
 
 ⏳ 13. MiniMax M2       → EarnQuiz.tsx ENHANCED version (richer multi-step flow)
        → OPTIONAL: current EarnQuiz.tsx works; MiniMax can rebuild with richer UX
