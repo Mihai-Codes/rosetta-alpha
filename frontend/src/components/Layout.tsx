@@ -17,13 +17,13 @@ interface LayoutProps {
 }
 
 const PUBLIC_TABS: { id: Tab; label: string; href: string }[] = [
-  { id: 'desks', label: 'Desks', href: '/desks' },
+  { id: 'desks', label: 'Desks', href: '/' },
   { id: 'leaderboard', label: 'Leaderboard', href: '/leaderboard' },
   { id: 'about', label: 'About', href: '/about' },
 ]
 
 const AUTH_TABS: { id: Tab; label: string; href: string }[] = [
-  { id: 'desks', label: 'Desks', href: '/desks' },
+  { id: 'desks', label: 'Desks', href: '/' },
   { id: 'feed', label: 'Live Feed', href: '/feed' },
   { id: 'registry', label: 'Registry', href: '/registry' },
   { id: 'dashboard', label: 'Dashboard', href: '/dashboard' },
@@ -77,7 +77,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
         <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 h-16 flex items-center justify-between">
 
           {/* Logo */}
-          <Link href="/" className="flex items-baseline gap-1 group logo-container" aria-label="Rosetta Alpha home">
+          <Link href="/" className="flex items-baseline gap-0.5 group logo-container" aria-label="Rosetta Alpha home">
             <span className="font-display text-2xl text-text-primary leading-none logo-r">R</span>
             <span className="font-display text-2xl text-brand-red leading-none logo-triangle">△</span>
             <span className="hidden sm:inline-block ml-2 text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary">
@@ -191,7 +191,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
       <main className="flex-1 w-full z-10">{children}</main>
 
       <footer className="border-t border-white/[0.05] py-12 sm:py-16 mt-16 sm:mt-24 bg-bg-primary z-10 relative">
-        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 text-[11px] text-text-tertiary">
+        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-10 text-[11px] text-text-tertiary">
           <div>
             <p className="font-display text-text-primary text-base mb-2">
               Rosetta <span className="text-brand-red">Alpha</span>
@@ -203,7 +203,7 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
           </div>
           <div>
             <p className="uppercase tracking-[0.25em] text-text-secondary mb-3 text-[10px]">Stack</p>
-            <ul className="space-y-2 font-light">
+            <ul className="space-y-3 font-light">
               <li className="flex items-center gap-2"><Brain className="w-3.5 h-3.5 text-brand-red opacity-80"/> AdalFlow · Multi-agent reasoning</li>
               <li className="flex items-center gap-2"><Layers className="w-3.5 h-3.5 text-brand-red opacity-80"/> Arc L1 · On-chain provenance</li>
               <li className="flex items-center gap-2"><HardDrive className="w-3.5 h-3.5 text-brand-red opacity-80"/> IPFS · Permanent storage</li>

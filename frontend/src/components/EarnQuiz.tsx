@@ -87,7 +87,7 @@ function OptionButton({
   // Determine visual state
   let borderClass = 'border-border hover:border-border-strong'
   let bgClass = 'bg-bg-primary'
-  let textClass = 'text-text-primary'
+  let textClass = 'text-text-secondary hover:text-text-primary'
 
   if (revealed) {
     if (correct) {
@@ -122,7 +122,7 @@ function OptionButton({
     >
       {/* Letter badge */}
       <span
-        className={`shrink-0 mt-0.5 w-6 h-6 rounded flex items-center justify-center text-[10px] font-bold border transition-colors
+        className={`shrink-0 mt-0 w-6 h-6 rounded flex items-center justify-center text-[10px] font-bold border transition-colors
           ${revealed && correct
             ? 'border-[#4A9F6F] text-positive bg-[#4A9F6F]/15'
             : revealed && selected && !correct
@@ -410,7 +410,7 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
 
           {/* Question text */}
           <div className="px-6 pt-5 pb-6">
-            <p className="text-text-primary text-sm sm:text-base leading-relaxed font-medium">
+            <p className="text-text-primary text-[13px] leading-relaxed font-medium">
               {currentQ.text}
             </p>
           </div>

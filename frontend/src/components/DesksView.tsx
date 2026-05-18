@@ -80,7 +80,7 @@ function PremiumPaywall() {
         </p>
         <Link
           href="/signin"
-          className="w-full flex items-center justify-center gap-2 py-4 bg-brand-red text-bg-primary text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-white hover:text-bg-primary transition-colors duration-300 min-h-[44px]"
+          className="w-full flex items-center justify-center gap-2 py-5 bg-brand-red text-bg-primary text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-white hover:text-bg-primary transition-colors duration-300 min-h-[56px]"
         >
           Authenticate Session →
         </Link>

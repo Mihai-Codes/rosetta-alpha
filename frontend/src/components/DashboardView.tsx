@@ -151,10 +151,10 @@ interface Quadrant {
 }
 
 const QUADRANTS: Quadrant[] = [
-  { label: 'Equities',    pct: 40, color: '#4A9F6F' },
+  { label: 'Equities',    pct: 40, color: '#F0EDE8' },
   { label: 'Bonds',       pct: 30, color: '#C9A84C' },
-  { label: 'Commodities', pct: 15, color: '#7B8FA6' },
-  { label: 'Crypto',      pct: 15, color: '#D82B2B' },
+  { label: 'Commodities', pct: 15, color: '#D82B2B' },
+  { label: 'Crypto',      pct: 15, color: '#2A2A38' },
 ]
 
 function RingChart() {
@@ -238,7 +238,7 @@ function ConnectPrompt() {
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      className="solid-panel rounded-2xl p-10 flex flex-col items-center gap-5 text-center"
+      className="border border-dashed border-white/10 bg-white/[0.02] rounded-2xl p-10 flex flex-col items-center gap-5 text-center"
     >
       <div className="w-12 h-12 rounded-full border border-accent-gold/30 flex items-center justify-center">
         <span className="text-accent-gold text-lg">◈</span>
