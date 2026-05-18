@@ -4,6 +4,7 @@ import React from 'react'
 import { TrendingUp, TrendingDown, Minus, ExternalLink, Copy, Check, ChevronDown } from 'lucide-react'
 import { DeskProps } from './DeskCard'
 import { regionMeta, copyToClipboard, truncateHash } from '../lib/format'
+import { ShareButton } from './ShareButton'
 
 interface ThesisCardProps {
   desk: DeskProps
@@ -285,19 +286,30 @@ export function ThesisCard({ desk }: ThesisCardProps) {
           )}
         </div>
 
-        {desk.arc_tx ? (
-          <a
-            href={`https://testnet.arcscan.app/tx/${desk.arc_tx}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.25em] text-text-tertiary hover:text-brand-red transition-colors min-h-[44px] sm:min-h-0"
-          >
-            <ExternalLink className="w-3 h-3" />
-            Verified on Arc L1
-          </a>
-        ) : (
-          <span className="text-[10px] uppercase tracking-[0.25em] text-text-tertiary">Verified on Arc L1</span>
-        )}
+        <div className="flex items-center gap-3">
+          {desk.arc_tx ? (
+            <a
+              href={`https://testnet.arcscan.app/tx/${desk.arc_tx}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.25em] text-text-tertiary hover:text-brand-red transition-colors min-h-[44px] sm:min-h-0"
+            >
+              <ExternalLink className="w-3 h-3" />
+              Verified on Arc L1
+            </a>
+          ) : (
+            <span className="text-[10px] uppercase tracking-[0.25em] text-text-tertiary">Verified on Arc L1</span>
+          )}
+          <ShareButton
+            region={desk.desk}
+            ticker={desk.ticker}
+            direction={desk.direction}
+            confidence={desk.confidence}
+            summary={desk.summary}
+            arcHash={desk.arc_tx}
+            flagEmoji={meta.flag}
+          />
+        </div>
       </footer>
     </article>
   )
