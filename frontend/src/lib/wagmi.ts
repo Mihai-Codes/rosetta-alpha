@@ -1,4 +1,13 @@
-import { getDefaultConfig } from '@rainbow-me/rainbowkit'
+import { connectorsForWallets } from '@rainbow-me/rainbowkit'
+import {
+  metaMaskWallet,
+  base,
+  rainbowWallet,
+  walletConnectWallet,
+  injectedWallet,
+  okxWallet,
+} from '@rainbow-me/rainbowkit/wallets'
+import { createConfig, http } from 'wagmi'
 import { mainnet } from 'wagmi/chains'
 
 /** Arc Testnet — official config from docs.arc.network */
@@ -25,11 +34,51 @@ export const arcTestnet = {
     },
   },
   testnet: true,
-} as any
+} as const
 
-export const config = getDefaultConfig({
-  appName: 'Rosetta Alpha',
-  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'bec422518cfa4cfbc6e83d3c1bd8d07b',
+const PROJECT_ID =
+  process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'bec422518cfa4cfbc6e83d3c1bd8d07b'
+
+/**
+ * Explicit wallet list via connectorsForWallets.
+ * Using this instead of getDefaultConfig prevents WalletConnect relay from
+ * initializing eagerly on page load — fixing the "this page couldn't load" error.
+ * WalletConnect is included last as a lazy fallback.
+ */
+const connectors = connectorsForWallets(
+  [
+    {
+      groupName: 'Recommended',
+      wallets: [
+        base,          // Coinbase / Base Smart Wallet (passkey, no extension needed)
+        metaMaskWallet, // MetaMask browser extension
+        rainbowWallet,  // Rainbow mobile + desktop
+      ],
+    },
+    {
+      groupName: 'More',
+      wallets: [
+        okxWallet,
+        injectedWallet,     // any other injected (Brave, frame, etc.)
+        walletConnectWallet, // QR-code fallback for any WC-compatible wallet
+      ],
+    },
+  ],
+  { appName: 'Rosetta Alpha', projectId: PROJECT_ID }
+)
+
+export const config = createConfig({
+  connectors,
   chains: [arcTestnet, mainnet],
+  /**
+   * Explicit HTTP transports bypass the WalletConnect relay for RPC calls.
+   * This is the key fix for slow/failing wallet connections on custom chains.
+   */
+  transports: {
+    [arcTestnet.id]: http(
+      process.env.NEXT_PUBLIC_ARC_RPC_URL || 'https://rpc.testnet.arc.network'
+    ),
+    [mainnet.id]: http(),
+  },
   ssr: true,
 })

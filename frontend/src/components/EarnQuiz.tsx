@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useAccount, useSendTransaction } from 'wagmi'
+import { useAccount, useSendTransaction, useWaitForTransactionReceipt, useSwitchChain, useChainId } from 'wagmi'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { parseEther } from 'viem'
 
@@ -21,8 +21,11 @@ export interface EarnQuizProps {
 }
 
 // Arc Testnet constants
-const REWARDS_POOL = '0x06775Be99CfBC9A6D0819ff87A67954a2E976A16' as `0x${string}`
+const ARC_CHAIN_ID = 5042002
+// PaymentRouter on Arc Testnet — deployed & verified on arcscan.app
+const REWARDS_POOL = '0x9A676e781A523b5d0C0e43731313A708CB607508' as `0x${string}`
 const CLAIM_PROOF_VALUE = parseEther('0.001')
+const ARCSCAN_TX = (hash: string) => `https://testnet.arcscan.app/tx/${hash}`
 
 // Color tokens from design system
 const GREEN = '#4A9F6F'
@@ -231,6 +234,8 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
   const { sendTransactionAsync } = useSendTransaction()
   const { isConnected } = useAccount()
   const { openConnectModal } = useConnectModal()
+  const { switchChainAsync } = useSwitchChain()
+  const currentChainId = useChainId()
 
   const [qIndex, setQIndex] = useState(0)
   const [answers, setAnswers] = useState<(number | undefined)[]>(
@@ -242,6 +247,15 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
   const [claiming, setClaiming] = useState(false)
   const [claimed, setClaimed] = useState(false)
   const [claimError, setClaimError] = useState<string | null>(null)
+  const [claimTxHash, setClaimTxHash] = useState<string | null>(null)
+  const [claimStatus, setClaimStatus] = useState<'idle' | 'switching' | 'broadcasting' | 'confirming' | 'confirmed'>('idle')
+
+  // Watch confirmation once we have a hash
+  const { isSuccess: txConfirmed } = useWaitForTransactionReceipt({
+    hash: claimTxHash as `0x${string}` | undefined,
+    chainId: ARC_CHAIN_ID,
+    query: { enabled: !!claimTxHash },
+  })
 
   // ── Guards ───────────────────────────────────────────────────────────────
 
@@ -304,22 +318,41 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
     }
     setClaiming(true)
     setClaimError(null)
+    setClaimTxHash(null)
     try {
-      await sendTransactionAsync({
+      // Step 1: Switch to Arc Testnet if needed
+      if (currentChainId !== ARC_CHAIN_ID) {
+        setClaimStatus('switching')
+        await switchChainAsync({ chainId: ARC_CHAIN_ID })
+      }
+      // Step 2: Broadcast the proof-of-claim transaction
+      setClaimStatus('broadcasting')
+      const hash = await sendTransactionAsync({
         to: REWARDS_POOL,
         value: CLAIM_PROOF_VALUE,
-        chainId: 5042002,
+        chainId: ARC_CHAIN_ID,
       })
-      setClaimed(true)
+      setClaimTxHash(hash)
+      setClaimStatus('confirming')
+      // Step 3: useWaitForTransactionReceipt watches `hash` and sets txConfirmed
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Transaction failed'
+      setClaimStatus('idle')
       if (!msg.toLowerCase().includes('rejected') && !msg.toLowerCase().includes('denied')) {
-        setClaimError('Transaction failed — check your Arc Testnet balance.')
+        setClaimError('Transaction failed — check your Arc Testnet USDC balance.')
       }
     } finally {
       setClaiming(false)
     }
   }
+
+  // Update claimStatus and claimed when receipt arrives
+  React.useEffect(() => {
+    if (txConfirmed && claimTxHash) {
+      setClaimStatus('confirmed')
+      setClaimed(true)
+    }
+  }, [txConfirmed, claimTxHash])
 
   // ── Retry quiz ────────────────────────────────────────────────────────────
 
@@ -331,6 +364,8 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
     setFinished(false)
     setClaimed(false)
     setClaimError(null)
+    setClaimTxHash(null)
+    setClaimStatus('idle')
   }
 
   // ── Results screen ────────────────────────────────────────────────────────
@@ -338,14 +373,11 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
   if (finished) {
     return (
       <div className="max-w-xl mx-auto">
-        {perfect && !claimed && (
-          <div className="mb-4">
-            {!claiming && !claimError && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex items-center gap-3"
-              >
+        {perfect && (
+          <div className="mb-4 space-y-2">
+            {/* Idle: show claim button */}
+            {!claiming && !claimed && !claimError && claimStatus === 'idle' && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-3">
                 <button
                   onClick={sendClaimTx}
                   className="flex-1 py-3 rounded-xl bg-[#C9A84C] text-bg-primary text-[10px] font-bold uppercase tracking-[0.25em] hover:brightness-110 transition-all duration-200"
@@ -354,13 +386,61 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
                 </button>
               </motion.div>
             )}
-            {claiming && (
-              <p className="text-center text-[10px] uppercase tracking-[0.2em] text-text-tertiary py-3">
+
+            {/* Switching chain */}
+            {claimStatus === 'switching' && (
+              <p className="text-center text-[10px] uppercase tracking-[0.2em] text-accent-gold py-3 animate-pulse">
+                Switching to Arc Testnet…
+              </p>
+            )}
+
+            {/* Broadcasting */}
+            {claimStatus === 'broadcasting' && (
+              <p className="text-center text-[10px] uppercase tracking-[0.2em] text-text-tertiary py-3 animate-pulse">
                 Broadcasting to Arc Testnet…
               </p>
             )}
+
+            {/* Confirming — show hash immediately */}
+            {(claimStatus === 'confirming' || claimStatus === 'confirmed') && claimTxHash && (
+              <motion.div
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="rounded-xl border border-border bg-bg-secondary p-4 space-y-2"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-[9px] uppercase tracking-[0.25em] text-text-tertiary">
+                    Arc Testnet
+                  </span>
+                  <span className={`text-[9px] uppercase tracking-[0.2em] font-bold ${claimStatus === 'confirmed' ? 'text-positive' : 'text-accent-gold animate-pulse'}`}>
+                    {claimStatus === 'confirmed' ? '✓ Confirmed' : '⏳ Confirming…'}
+                  </span>
+                </div>
+                <p className="font-mono text-[10px] text-text-secondary break-all leading-relaxed">
+                  {claimTxHash}
+                </p>
+                <a
+                  href={ARCSCAN_TX(claimTxHash)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-accent-gold hover:underline"
+                >
+                  View on ArcScan →
+                </a>
+              </motion.div>
+            )}
+
+            {/* Error */}
             {claimError && (
-              <p className="text-center text-[10px] text-negative py-3">{claimError}</p>
+              <div className="rounded-xl border border-[#9F4A4A]/40 bg-[#9F4A4A]/10 px-4 py-3">
+                <p className="text-[10px] text-negative">{claimError}</p>
+                <button
+                  onClick={sendClaimTx}
+                  className="mt-2 text-[9px] uppercase tracking-[0.2em] text-accent-gold hover:underline"
+                >
+                  Retry →
+                </button>
+              </div>
             )}
           </div>
         )}
