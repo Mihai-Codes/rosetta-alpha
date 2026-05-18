@@ -2,9 +2,11 @@
 
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useAccount, useWalletClient, useWaitForTransactionReceipt, useSwitchChain, useChainId } from 'wagmi'
+import { useAccount, useWaitForTransactionReceipt, useSwitchChain, useChainId } from 'wagmi'
+import { getWalletClient } from '@wagmi/core'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { parseEther } from 'viem'
+import { config } from '@/lib/wagmi'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -229,7 +231,6 @@ function ResultsScreen({
 // ─── Main EarnQuiz component ────────────────────────────────────────────────
 
 export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
-  const { data: walletClient } = useWalletClient()
   const { isConnected } = useAccount()
   const { openConnectModal } = useConnectModal()
   const { switchChainAsync } = useSwitchChain()
@@ -314,10 +315,6 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
       openConnectModal?.()
       return
     }
-    if (!walletClient) {
-      setClaimError('Wallet not ready — please reconnect.')
-      return
-    }
     setClaiming(true)
     setClaimError(null)
     setClaimTxHash(null)
@@ -332,10 +329,17 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
           // — proceed anyway and let the wallet handle it natively
         }
       }
-      // Step 2: Broadcast via walletClient directly — bypasses wagmi connector.getChainId()
+      // Step 2: Get wallet client lazily at click-time (not at render-time)
+      // This avoids the useWalletClient undefined-on-render timing issue with Coinbase Smart Wallet
+      const wc = await getWalletClient(config)
+      if (!wc) {
+        setClaimError('Wallet not ready — please reconnect and try again.')
+        return
+      }
+      // Broadcast via walletClient directly — bypasses wagmi connector.getChainId()
       // which crashes on Coinbase Smart Wallet (known wagmi v2 bug with custom chains)
       setClaimStatus('broadcasting')
-      const hash = await walletClient.sendTransaction({
+      const hash = await wc.sendTransaction({
         to: REWARDS_POOL,
         value: CLAIM_PROOF_VALUE,
       })
