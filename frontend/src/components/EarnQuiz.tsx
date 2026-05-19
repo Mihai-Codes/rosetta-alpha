@@ -22,8 +22,9 @@ export interface EarnQuizProps {
 
 // Arc Testnet constants
 const ARC_CHAIN_ID = 5042002
-// Rewards pool on Arc Testnet — receives 0-value proof-of-claim transactions
-const REWARDS_POOL = '0x9A676e781A523b5d0C0e43731313A708CB607508' as `0x${string}`
+// Proof-of-claim recipient — standard burn address (EOA, always accepts tx)
+// Using burn address instead of a contract to guarantee tx success on Arc Testnet
+const REWARDS_POOL = '0x000000000000000000000000000000000000dEaD' as `0x${string}`
 const ARCSCAN_TX = (hash: string) => `https://testnet.arcscan.app/tx/${hash}`
 
 // Encode thesis ID as calldata for the proof-of-claim transaction
