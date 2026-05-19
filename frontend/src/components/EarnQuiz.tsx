@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAccount, useWaitForTransactionReceipt, useChainId } from 'wagmi'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
-import { parseEther, toHex } from 'viem'
+import { toHex } from 'viem'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -22,10 +22,17 @@ export interface EarnQuizProps {
 
 // Arc Testnet constants
 const ARC_CHAIN_ID = 5042002
-// PaymentRouter on Arc Testnet — deployed & verified on arcscan.app
+// Rewards pool on Arc Testnet — receives 0-value proof-of-claim transactions
 const REWARDS_POOL = '0x9A676e781A523b5d0C0e43731313A708CB607508' as `0x${string}`
-const CLAIM_PROOF_VALUE = parseEther('0.001')
 const ARCSCAN_TX = (hash: string) => `https://testnet.arcscan.app/tx/${hash}`
+
+// Encode thesis ID as calldata for the proof-of-claim transaction
+function encodeClaimData(thesisId: string): string {
+  // Simple UTF-8 hex encoding of "ROSETTA_CLAIM:<thesisId>"
+  const msg = `ROSETTA_CLAIM:${thesisId}`
+  return '0x' + Array.from(new TextEncoder().encode(msg))
+    .map(b => b.toString(16).padStart(2, '0')).join('')
+}
 
 // Color tokens from design system
 const GOLD = '#C9A84C'
@@ -396,15 +403,19 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
         return
       }
 
-      // Step 3: Send transaction via raw eth_sendTransaction — no wagmi connector involved
-      console.log('[Quiz] Step 3: eth_sendTransaction from:', from, 'to:', REWARDS_POOL, 'value:', toHex(CLAIM_PROOF_VALUE))
+      // Step 3: Send 0-value proof-of-claim transaction with thesis ID encoded as calldata
+      // USDC on Arc uses 6 decimals — sending value to this contract address reverts
+      // A 0-value tx with calldata is the correct pattern for on-chain proof-of-claim
+      const calldata = encodeClaimData(thesisId)
+      console.log('[Quiz] Step 3: eth_sendTransaction from:', from, 'to:', REWARDS_POOL, 'calldata:', calldata)
       setClaimStatus('broadcasting')
       const hash = await provider.request({
         method: 'eth_sendTransaction',
         params: [{
           from,
           to: REWARDS_POOL,
-          value: toHex(CLAIM_PROOF_VALUE),
+          value: '0x0',
+          data: calldata,
         }],
       }) as string
 
