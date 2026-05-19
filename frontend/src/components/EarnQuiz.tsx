@@ -408,6 +408,22 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
       // A 0-value tx with calldata is the correct pattern for on-chain proof-of-claim
       const calldata = encodeClaimData(thesisId)
       console.log('[Quiz] Step 3: eth_sendTransaction from:', from, 'to:', REWARDS_POOL, 'calldata:', calldata)
+
+      // Estimate gas — some wallets (Brave) require explicit gas limit
+      let gasHex = '0x15F90' // 90000 — safe default for a simple calldata tx
+      try {
+        const gasEst = await provider.request({
+          method: 'eth_estimateGas',
+          params: [{ from, to: REWARDS_POOL, value: '0x0', data: calldata }],
+        }) as string
+        // Add 20% buffer
+        const gasWithBuffer = Math.ceil(parseInt(gasEst, 16) * 1.2)
+        gasHex = toHex(gasWithBuffer)
+        console.log('[Quiz] gas estimate:', gasEst, '→ with buffer:', gasHex)
+      } catch (gasErr) {
+        console.warn('[Quiz] gas estimation failed, using default:', gasErr)
+      }
+
       setClaimStatus('broadcasting')
       const hash = await provider.request({
         method: 'eth_sendTransaction',
@@ -416,6 +432,7 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
           to: REWARDS_POOL,
           value: '0x0',
           data: calldata,
+          gas: gasHex,
         }],
       }) as string
 
