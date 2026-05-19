@@ -387,6 +387,15 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
         }
       }
 
+      // Step 2b: Verify we are actually on Arc Testnet before broadcasting
+      const chainHex = await provider.request({ method: 'eth_chainId' }) as string
+      const actualChainId = parseInt(chainHex, 16)
+      console.log('[Quiz] actual chainId after switch:', actualChainId)
+      if (actualChainId !== ARC_CHAIN_ID) {
+        setClaimError(`Please switch your wallet to Arc Testnet (Chain ID ${ARC_CHAIN_ID}) before claiming.`)
+        return
+      }
+
       // Step 3: Send transaction via raw eth_sendTransaction — no wagmi connector involved
       console.log('[Quiz] Step 3: eth_sendTransaction from:', from, 'to:', REWARDS_POOL, 'value:', toHex(CLAIM_PROOF_VALUE))
       setClaimStatus('broadcasting')
