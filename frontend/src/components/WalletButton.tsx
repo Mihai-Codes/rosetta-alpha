@@ -19,14 +19,32 @@ export function WalletButton() {
 
   const handleDisconnect = async () => {
     setDropdownOpen(false)
-    // Disconnect ALL registered connectors sequentially.
-    // wagmi v2 re-connects immediately after disconnectAsync() if another connector
-    // (e.g. Brave, injected) is still "authorized". Disconnecting all prevents this.
+
+    // Step 1: Revoke browser-level wallet permissions via wallet_revokePermissions.
+    // This is the ONLY way to truly prevent wallets from auto-reconnecting.
+    // MetaMask, Brave, OKX and Coinbase all support this EIP-2255 method.
+    // Without this, shimDisconnect only sets a flag that gets cleared when we wipe wagmi.store.
+    const providers: any[] = []
+    if (typeof window !== 'undefined') {
+      const win = window as any
+      if (win.ethereum) providers.push(win.ethereum)
+      if (win.okxwallet && win.okxwallet !== win.ethereum) providers.push(win.okxwallet)
+    }
+    for (const provider of providers) {
+      try {
+        await provider.request({
+          method: 'wallet_revokePermissions',
+          params: [{ eth_accounts: {} }],
+        })
+      } catch { /* wallet may not support it — ignore */ }
+    }
+
+    // Step 2: Disconnect all wagmi connectors so shimDisconnect flags are written.
     for (const connector of connectors) {
       try { await disconnectAsync({ connector }) } catch { /* ignore */ }
     }
-    // Route through the server-side disconnect endpoint which sets Set-Cookie: wagmi.store=''
-    // BEFORE Next.js SSR runs cookieToInitialState() — eliminates the race condition.
+
+    // Step 3: Server-side cookie wipe via /api/disconnect — eliminates SSR race condition.
     const redirectTo = window.location.pathname
     window.location.href = `/api/disconnect?next=${encodeURIComponent(redirectTo)}`
   }
