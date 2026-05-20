@@ -101,9 +101,9 @@ export function WalletButton() {
     const trySwitch = async () => {
       try {
         if (isCoinbaseConnector) {
-          // Coinbase often rejects wallet_switchEthereumChain for custom networks.
-          // Lead with add-chain to avoid noisy unsupported switch popups.
-          await addArcChain()
+          // Coinbase may not support programmatic switch/add for this custom chain.
+          // Avoid triggering wallet popups; show manual-switch banner instead.
+          setWrongNetworkBanner(true)
           return
         }
 
@@ -161,9 +161,6 @@ export function WalletButton() {
           <button
             onClick={async () => {
               if (isCoinbaseConnector) {
-                try {
-                  await addArcChain()
-                } catch {}
                 return
               }
               switchChain({ chainId: ARC_CHAIN_ID }, { onError: () => {} })

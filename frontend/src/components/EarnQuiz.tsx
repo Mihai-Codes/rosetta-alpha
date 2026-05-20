@@ -373,18 +373,8 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
           connector?.id?.toLowerCase().includes('base')
 
         if (isCoinbaseConnector) {
-          // Coinbase can throw noisy "unsupported wallet_switchEthereumChain" for custom networks.
-          // Lead with add-network flow to avoid that popup.
-          await provider.request({
-            method: 'wallet_addEthereumChain',
-            params: [{
-              chainId: toHex(ARC_CHAIN_ID),
-              chainName: 'Arc Testnet',
-              nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
-              rpcUrls: ['https://rpc.testnet.arc.network'],
-              blockExplorerUrls: ['https://testnet.arcscan.app'],
-            }],
-          })
+          setClaimError('Coinbase Wallet cannot auto-switch to Arc Testnet in-app. Please switch to Arc Testnet manually in Coinbase Wallet, then retry claim.')
+          return
         } else {
           try {
             await provider.request({

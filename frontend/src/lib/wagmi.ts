@@ -4,7 +4,6 @@ import {
   okxWallet as defaultOkxWallet,
   braveWallet,
   coinbaseWallet,
-  injectedWallet as defaultInjectedWallet,
 } from '@rainbow-me/rainbowkit/wallets'
 import { createConfig, http, createConnector, cookieStorage, createStorage } from 'wagmi'
 import { mainnet } from 'wagmi/chains'
@@ -36,40 +35,6 @@ const customMetaMaskWallet = (options: any) => {
         return { ...connector, ...walletDetails }
       })
     }
-  }
-}
-
-/**
- * Custom Browser Wallet Wrapper — explicit Brave-first provider selection for
- * "Browser Wallet" option to avoid MetaMask hijacking when both are installed.
- */
-const customBrowserWallet = () => {
-  const wallet = defaultInjectedWallet()
-  return {
-    ...wallet,
-    createConnector: (walletDetails: any) => {
-      return createConnector((config) => {
-        const connector = injected({
-          target: {
-            id: 'browserWallet',
-            name: 'Browser Wallet',
-            provider: (window) => {
-              const eth = (window as any)?.ethereum
-              const providers = eth?.providers
-              if (Array.isArray(providers)) {
-                const brave = providers.find((p: any) => p?.isBraveWallet)
-                if (brave) return brave
-              }
-              if (eth?.isBraveWallet) return eth
-              return eth
-            },
-          },
-          shimDisconnect: true,
-          unstable_shimAsyncInject: 3000,
-        })(config)
-        return { ...connector, ...walletDetails }
-      })
-    },
   }
 }
 
@@ -118,10 +83,7 @@ const connectors = connectorsForWallets(
         coinbaseWallet,
       ],
     },
-    {
-      groupName: 'More',
-      wallets: [customBrowserWallet],
-    },
+
   ],
   {
     appName: 'Rosetta Alpha',
