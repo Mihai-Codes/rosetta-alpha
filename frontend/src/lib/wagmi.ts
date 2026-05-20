@@ -6,7 +6,7 @@ import {
   coinbaseWallet,
   injectedWallet,
 } from '@rainbow-me/rainbowkit/wallets'
-import { createConfig, http, createConnector } from 'wagmi'
+import { createConfig, http, createConnector, cookieStorage, createStorage } from 'wagmi'
 import { mainnet } from 'wagmi/chains'
 import { injected } from 'wagmi/connectors'
 import { arcTestnet } from './chains'
@@ -107,7 +107,7 @@ export function getConfig() {
   return createConfig({
     connectors,
     chains: [arcTestnet, mainnet],
-    // No storage: wagmi defaults to noopStorage — zero persistence, zero ghost reconnects
+    storage: createStorage({ storage: cookieStorage }),
     transports: {
       [arcTestnet.id]: http(
         process.env.NEXT_PUBLIC_ARC_RPC_URL || 'https://rpc.testnet.arc.network'

@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { headers } from 'next/headers'
+import { cookieToInitialState } from 'wagmi'
+import { getConfig } from '@/lib/wagmi'
 import { AuthProvider } from '@/lib/session-provider'
 import { Web3Provider } from '@/providers/Web3Provider'
 import '../index.css'
@@ -27,14 +29,16 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  // wagmi uses noopStorage — no wallet state is persisted across page loads.
-  // initialState is not needed.
+  const initialState = cookieToInitialState(
+    getConfig(),
+    (await headers()).get('cookie')
+  )
 
   return (
     <html lang="en" className="dark">
       <body className="bg-bg-primary text-text-primary antialiased">
         <AuthProvider>
-          <Web3Provider>{children}</Web3Provider>
+          <Web3Provider initialState={initialState}>{children}</Web3Provider>
         </AuthProvider>
       </body>
     </html>
