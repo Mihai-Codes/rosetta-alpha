@@ -24,7 +24,6 @@ function WelcomeBanner() {
 
   useEffect(() => {
     setMounted(true)
-    if (typeof window === 'undefined') return
     if (!localStorage.getItem(WELCOME_KEY)) {
       // Small delay so the slide-down animates on mount rather than flashing
       const timer = setTimeout(() => setVisible(true), 50)
