@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import posthog from 'posthog-js'
 import { CheckCircle2, ExternalLink, Search, Download, ArrowUpDown } from 'lucide-react'
 import { DeskProps } from './DeskCard'
 import { regionMeta, truncateHash, formatRelative } from '../lib/format'
@@ -50,6 +51,7 @@ export function RegistryTable({ desks }: RegistryTableProps) {
   }
 
   const exportCsv = () => {
+    posthog.capture('registry_exported_csv')
     const headers = ['Desk', 'Ticker', 'Direction', 'Confidence', 'Question', 'IPFS CID', 'Arc Tx']
     const rows = entries.map(e => [
       e.desk, e.ticker, e.direction, e.confidence.toFixed(2),
@@ -111,8 +113,9 @@ export function RegistryTable({ desks }: RegistryTableProps) {
           return (
             <div
               key={i}
-              className="solid-panel p-4 border-l-2"
+              className="solid-panel p-4 border-l-2 cursor-pointer"
               style={{ borderLeftColor: meta.color }}
+              onClick={() => posthog.capture('registry_row_clicked', { region: e.desk, hash_truncated: e.arc_tx?.slice(0, 10) })}
             >
               {/* Row 1: Region + Asset + Direction */}
               <div className="flex items-center justify-between mb-2">

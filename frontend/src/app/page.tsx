@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import posthog from 'posthog-js'
 import { useSession } from 'next-auth/react'
 import { HeroSection } from '@/components/HeroSection'
 import { DesksView } from '@/components/DesksView'
@@ -22,15 +23,28 @@ export default function HomePage() {
     return () => clearInterval(interval)
   }, [])
 
+  // Track hero view on mount
+  React.useEffect(() => {
+    posthog.capture('hero_viewed')
+  }, [])
+
+  function handleCtaClick(which: 'enter_terminal' | 'try_quiz' | 'view_desks') {
+    posthog.capture('cta_clicked', { button: which })
+  }
+
   return (
     <Layout activeTab="desks">
-      <HeroSection latestHash="0x46d3f229..." onScrollDown={() => {
-        const el = document.getElementById('desks-section')
-        if (el) {
-          const y = el.getBoundingClientRect().top + window.scrollY - 120
-          window.scrollTo({ top: y, behavior: 'smooth' })
-        }
-      }} />
+      <HeroSection
+        latestHash="0x46d3f229..."
+        onScrollDown={() => {
+          handleCtaClick('enter_terminal')
+          const el = document.getElementById('desks-section')
+          if (el) {
+            const y = el.getBoundingClientRect().top + window.scrollY - 120
+            window.scrollTo({ top: y, behavior: 'smooth' })
+          }
+        }}
+      />
       <div id="desks-section" className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-16">
         <DesksView desks={data} loading={loading} isAuthenticated={!!session?.user} />
       </div>

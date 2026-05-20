@@ -1,9 +1,14 @@
 'use client'
 
+import React from 'react'
+import posthog from 'posthog-js'
 import { Layout } from '@/components/Layout'
 import { LeaderboardView } from '@/components/LeaderboardView'
 
 export default function LeaderboardPage() {
+  React.useEffect(() => {
+    posthog.capture('leaderboard_viewed')
+  }, [])
 
   return (
     <Layout activeTab="leaderboard">

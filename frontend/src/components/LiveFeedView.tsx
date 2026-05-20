@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import posthog from 'posthog-js'
 import { TrendingUp, TrendingDown, Minus, ChevronDown } from 'lucide-react'
 import { DeskProps } from './DeskCard'
 import { regionMeta, formatRelative, truncateHash } from '../lib/format'
@@ -33,10 +34,14 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
 
   const regions = ['ALL', ...Array.from(new Set(desks.map(d => d.desk.toLowerCase())))]
 
-  const toggleExpand = (key: string) => {
+  const toggleExpand = (key: string, desk?: string, ticker?: string) => {
     setExpanded(prev => {
       const next = new Set(prev)
-      next.has(key) ? next.delete(key) : next.add(key)
+      const opening = !next.has(key)
+      opening ? next.add(key) : next.delete(key)
+      if (opening && desk && ticker) {
+        posthog.capture('feed_trace_expanded', { region: desk, ticker })
+      }
       return next
     })
   }
@@ -131,7 +136,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                 className="border-b border-white/[0.02] last:border-b-0 transition-all duration-300"
               >
                 <button
-                  onClick={() => toggleExpand(key)}
+                  onClick={() => toggleExpand(key, e.desk, e.ticker)}
                   className="w-full flex items-start gap-3 sm:gap-4 p-4 sm:p-5 text-left min-h-[44px] hover:bg-white/[0.03] transition-colors"
                   style={{ borderLeft: `2px solid ${meta.color}` }}
                 >

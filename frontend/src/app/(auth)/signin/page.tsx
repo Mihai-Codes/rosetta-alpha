@@ -3,6 +3,7 @@
 import React from 'react'
 import { signIn } from 'next-auth/react'
 import { useSearchParams } from 'next/navigation'
+import posthog from 'posthog-js'
 
 const ERROR_MESSAGES: Record<string, string> = {
   OAuthSignin: 'Could not initiate OAuth sign-in. Try again.',
@@ -15,6 +16,17 @@ const ERROR_MESSAGES: Record<string, string> = {
   CredentialsSignin: 'Invalid credentials.',
   SessionRequired: 'You must be signed in to access this page.',
   Default: 'Authentication failed. Please try again.',
+}
+
+async function handleSignIn(provider: 'google' | 'github') {
+  posthog.capture('sign_in_attempt', { provider })
+  try {
+    await signIn(provider, { callbackUrl: '/' })
+    // Note: sign_in_success is tracked in SessionAnalytics (layout-level) on
+    // first session appearance to handle the OAuth redirect lifecycle correctly.
+  } catch {
+    // signIn throws on hard errors only; redirect-based auth resolves via callback
+  }
 }
 
 function SignInContent() {
@@ -46,7 +58,7 @@ function SignInContent() {
 
           <div className="space-y-3">
             <button
-              onClick={() => signIn('google', { callbackUrl: '/' })}
+              onClick={() => handleSignIn('google')}
               className="w-full flex items-center justify-center gap-3 px-4 py-3 min-h-[44px] border border-border bg-[#0A0A0A] hover:bg-white/[0.02] hover:border-text-secondary text-text-primary text-[11px] font-medium uppercase tracking-[0.1em] transition-all duration-200 active:scale-[0.98]"
             >
               <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
@@ -59,7 +71,7 @@ function SignInContent() {
             </button>
 
             <button
-              onClick={() => signIn('github', { callbackUrl: '/' })}
+              onClick={() => handleSignIn('github')}
               className="w-full flex items-center justify-center gap-3 px-4 py-3 min-h-[44px] border border-border bg-[#0A0A0A] hover:bg-white/[0.02] hover:border-text-secondary text-text-primary text-[11px] font-medium uppercase tracking-[0.1em] transition-all duration-200 active:scale-[0.98]"
             >
               <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 24 24">

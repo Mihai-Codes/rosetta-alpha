@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import posthog from 'posthog-js'
 import { LiveFeedView } from '@/components/LiveFeedView'
 import { Layout } from '@/components/Layout'
 import { SEED_DATA, fetchDesks } from '@/lib/data'
@@ -15,6 +16,10 @@ export default function FeedPage() {
       setData(desks)
       setLoading(false)
     })
+  }, [])
+
+  React.useEffect(() => {
+    posthog.capture('feed_viewed')
   }, [])
 
   return (

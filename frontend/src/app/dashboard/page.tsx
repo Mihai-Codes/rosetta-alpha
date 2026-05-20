@@ -1,9 +1,14 @@
 'use client'
 
+import React from 'react'
+import posthog from 'posthog-js'
 import { Layout } from '@/components/Layout'
 import { DashboardView } from '@/components/DashboardView'
 
 export default function DashboardPage() {
+  React.useEffect(() => {
+    posthog.capture('dashboard_viewed')
+  }, [])
 
   return (
     <Layout activeTab="dashboard">

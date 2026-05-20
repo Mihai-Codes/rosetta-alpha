@@ -1,5 +1,7 @@
 'use client'
 
+import React from 'react'
+import posthog from 'posthog-js'
 import { Layout } from '@/components/Layout'
 import { EarnQuiz } from '@/components/EarnQuiz'
 
@@ -38,6 +40,10 @@ const MOCK_QUESTIONS = [
 ]
 
 export default function QuizPage() {
+
+  React.useEffect(() => {
+    posthog.capture('quiz_started', { desk: 'CRYPTO', mode: 'live' })
+  }, [])
 
   function handleComplete(score: number) {
     console.log('Quiz complete:', score, '/', MOCK_QUESTIONS.length)

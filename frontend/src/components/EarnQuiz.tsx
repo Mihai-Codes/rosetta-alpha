@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import posthog from 'posthog-js'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAccount, useWaitForTransactionReceipt, useChainId } from 'wagmi'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
@@ -293,6 +294,12 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
     if (revealed) return
     setSelected(index)
     setRevealed(true)
+    const correct = index === questions[safeQIndex].correctIndex
+    posthog.capture('quiz_question_answered', {
+      desk: thesisId,
+      question_index: qIndex,
+      correct,
+    })
     setAnswers(prev => {
       const next = [...prev]
       next[qIndex] = index
@@ -305,6 +312,12 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
   function handleNext() {
     if (qIndex + 1 >= questions.length) {
       setFinished(true)
+      posthog.capture('quiz_completed', {
+        desk: thesisId,
+        score: score + (selected === questions[safeQIndex].correctIndex ? 1 : 0),
+        total: questions.length,
+        mode: 'live',
+      })
       onComplete(score)
     } else {
       setQIndex(i => i + 1)

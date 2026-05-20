@@ -4,6 +4,7 @@ import { useAccount, useBalance, useDisconnect, useConnectors, useSwitchChain } 
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { useRouter } from 'next/navigation'
 import { arcTestnet } from '@/lib/chains'
+import posthog from 'posthog-js'
 import React from 'react'
 
 const ARC_CHAIN_ID = arcTestnet.id
@@ -55,6 +56,7 @@ export function WalletButton() {
   const router = useRouter()
   const handleConnectClick = () => {
     sessionStorage.removeItem('rosetta.wallet.manualDisconnect')
+    posthog.capture('wallet_connect_attempt', { wallet_type: 'rainbowkit' })
     openConnectModal?.()
   }
   const [dropdownOpen, setDropdownOpen] = React.useState(false)
@@ -95,10 +97,12 @@ export function WalletButton() {
     if (chainId === ARC_CHAIN_ID) {
       setWrongNetworkBanner(false)
       switchAttempted.current = false
+      posthog.capture('wallet_connected', { wallet_type: connector?.name ?? connector?.id ?? 'unknown', chain_id: chainId })
       return
     }
     if (switchAttempted.current) return
     switchAttempted.current = true
+    posthog.capture('wrong_network_detected', { chain_id: chainId, connector: connector?.id })
 
     const trySwitch = async () => {
       try {
@@ -109,6 +113,7 @@ export function WalletButton() {
           return
         }
 
+        posthog.capture('network_switch_requested', { from_chain_id: chainId, to_chain_id: ARC_CHAIN_ID })
         await switchChain({ chainId: ARC_CHAIN_ID })
       } catch {
         try {

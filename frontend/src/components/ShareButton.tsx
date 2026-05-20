@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import posthog from 'posthog-js'
 import { Share2, Copy, Check, X } from 'lucide-react'
 
 interface ShareButtonProps {
@@ -97,6 +98,7 @@ export function ShareButton(props: ShareButtonProps) {
   const [open, setOpen] = React.useState(false)
   const [copied, setCopied] = React.useState(false)
   const ref = React.useRef<HTMLDivElement>(null)
+
   const modalPosition = useModalPosition(ref, open)
 
   // Close on outside click
@@ -117,6 +119,7 @@ export function ShareButton(props: ShareButtonProps) {
   const tweetUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(tweetText)}`
 
   const handleCopy = async () => {
+    posthog.capture('thesis_share_copied', { region: props.region, ticker: props.ticker, direction: props.direction })
     try {
       await navigator.clipboard.writeText(tweetText)
       setCopied(true)
@@ -137,7 +140,11 @@ export function ShareButton(props: ShareButtonProps) {
   return (
     <div ref={ref} className="relative">
       <button
-        onClick={() => setOpen(o => !o)}
+        onClick={() => {
+          const next = !open
+          setOpen(next)
+          if (next) posthog.capture('thesis_share_opened', { region: props.region, ticker: props.ticker, direction: props.direction })
+        }}
         aria-label="Share thesis"
         aria-expanded={open}
         className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.25em] text-text-tertiary hover:text-brand-red transition-colors min-h-[44px] sm:min-h-0 px-1"
@@ -182,7 +189,7 @@ export function ShareButton(props: ShareButtonProps) {
               href={tweetUrl}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => setOpen(false)}
+              onClick={() => { setOpen(false); posthog.capture('thesis_share_twitter_clicked', { region: props.region, ticker: props.ticker, direction: props.direction }) }}
               className="flex items-center gap-3 px-4 py-3.5 min-h-[48px] text-[11px] font-medium text-text-secondary hover:text-[#1D9BF0] hover:bg-[#1D9BF0]/10 transition-colors group"
             >
               <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0 text-[#1D9BF0] opacity-80 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
