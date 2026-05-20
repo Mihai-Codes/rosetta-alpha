@@ -1,13 +1,14 @@
 import { connectorsForWallets } from '@rainbow-me/rainbowkit'
 import {
-  metaMaskWallet,
-  injectedWallet,
-  okxWallet,
+  metaMaskWallet as defaultMetaMaskWallet,
+  okxWallet as defaultOkxWallet,
   braveWallet,
   coinbaseWallet,
+  injectedWallet,
 } from '@rainbow-me/rainbowkit/wallets'
-import { createConfig, http, cookieStorage, createStorage } from 'wagmi'
+import { createConfig, http, cookieStorage, createStorage, createConnector } from 'wagmi'
 import { mainnet } from 'wagmi/chains'
+import { injected } from 'wagmi/connectors'
 import { arcTestnet } from './chains'
 
 export { arcTestnet }
@@ -18,6 +19,51 @@ const PROJECT_ID =
 const APP_URL = 'https://rosetta-alpha.vercel.app'
 
 /**
+ * Custom MetaMask Wrapper for Wagmi v2
+ * Completely strips out the WalletConnect QR code fallback.
+ * By returning a pure injected connector, RainbowKit will cleanly show the 
+ * "Install Extension" UI instead of trying (and failing) to load the 
+ * verify.walletconnect.com iframe.
+ */
+const customMetaMaskWallet = (options: any) => {
+  const wallet = defaultMetaMaskWallet(options)
+  return {
+    ...wallet,
+    qrCode: undefined, // Disable WalletConnect fallback UI
+    createConnector: (walletDetails: any) => {
+      return createConnector((config) => {
+        const connector = injected({ target: 'metaMask' })(config)
+        return {
+          ...connector,
+          ...walletDetails,
+        }
+      })
+    }
+  }
+}
+
+/**
+ * Custom OKX Wrapper for Wagmi v2
+ * Same logic as MetaMask — pure injected, zero WalletConnect.
+ */
+const customOkxWallet = (options: any) => {
+  const wallet = defaultOkxWallet(options)
+  return {
+    ...wallet,
+    qrCode: undefined, // Disable WalletConnect fallback UI
+    createConnector: (walletDetails: any) => {
+      return createConnector((config) => {
+        const connector = injected({ target: 'okxWallet' })(config)
+        return {
+          ...connector,
+          ...walletDetails,
+        }
+      })
+    }
+  }
+}
+
+/**
  * Explicit wallet list via connectorsForWallets.
  */
 const connectors = connectorsForWallets(
@@ -25,36 +71,22 @@ const connectors = connectorsForWallets(
     {
       groupName: 'Recommended',
       wallets: [
-        metaMaskWallet,  // MetaMask browser extension
-        braveWallet,     // Brave built-in wallet
-        okxWallet,       // OKX injected extension
-        coinbaseWallet,  // Coinbase Wallet browser extension
+        customMetaMaskWallet,
+        braveWallet,
+        customOkxWallet,
+        coinbaseWallet,
       ],
     },
     {
       groupName: 'More',
       wallets: [
-        injectedWallet,  // Any other EIP-6963 wallet: Rabby, Frame, Brave (fallback), etc.
+        injectedWallet,
       ],
     },
   ],
   {
     appName: 'Rosetta Alpha',
     projectId: PROJECT_ID,
-    appUrl: APP_URL,
-    appIcon: `${APP_URL}/arc-logo.svg`,
-    appDescription: 'Institutional AI-powered investment thesis platform on Arc Testnet',
-    walletConnectParameters: {
-      // By omitting walletconnect verification entirely or passing standard metadata,
-      // it stops trying to embed the verify iframe that crashes custom networks.
-      metadata: {
-        name: 'Rosetta Alpha',
-        description: 'Institutional AI-powered investment thesis platform',
-        url: APP_URL,
-        icons: [`${APP_URL}/arc-logo.svg`],
-        verifyUrl: '' // Empty verify URL prevents the iframe from trying to load
-      }
-    },
   }
 )
 
@@ -77,5 +109,5 @@ export function getConfig() {
   })
 }
 
-/** Singleton config instance — used by WagmiProvider and cookieToInitialState */
+/** Singleton config instance */
 export const config = getConfig()
