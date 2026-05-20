@@ -4,6 +4,7 @@ import {
   braveWallet,
   okxWallet,
   coinbaseWallet,
+  injectedWallet,
 } from '@rainbow-me/rainbowkit/wallets'
 import { createConfig, http, cookieStorage, createStorage } from 'wagmi'
 import { mainnet } from 'wagmi/chains'
@@ -23,16 +24,16 @@ const APP_URL = 'https://rosetta-alpha.vercel.app'
  * With multiInjectedProviderDiscovery enabled, any other EIP-6963 wallets (Rabby, Phantom, etc.)
  * are automatically discovered and shown without needing an explicit injectedWallet entry.
  */
+// In E2E test mode, use generic injectedWallet so EthereumWalletMock's window.ethereum is used
+const isE2ETest = process.env.NEXT_PUBLIC_E2E_TEST === 'true'
+
 const connectors = connectorsForWallets(
   [
     {
       groupName: 'Recommended',
-      wallets: [
-        metaMaskWallet,
-        braveWallet,
-        okxWallet,
-        coinbaseWallet,
-      ],
+      wallets: isE2ETest
+        ? [injectedWallet]
+        : [metaMaskWallet, braveWallet, okxWallet, coinbaseWallet],
     },
   ],
   {

@@ -207,6 +207,7 @@ export function WalletButton() {
   return (
     <div className="relative">
       <button
+        data-testid="wallet-connected-btn"
         onClick={() => setDropdownOpen(!dropdownOpen)}
         className="
           flex items-center gap-2 px-4 py-2
