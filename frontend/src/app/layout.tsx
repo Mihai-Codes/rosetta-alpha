@@ -42,13 +42,14 @@ export default async function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className="bg-bg-primary text-text-primary antialiased">
-        <PostHogProvider>
-          <AuthProvider>
+        {/* AuthProvider must be outermost so SessionTracker in PostHogProvider can call useSession() */}
+        <AuthProvider>
+          <PostHogProvider>
             <Web3Provider initialState={initialState}>{children}</Web3Provider>
-          </AuthProvider>
-          {/* Exit survey: appears after 60s if not already seen */}
-          <FeedbackSurvey />
-        </PostHogProvider>
+            {/* Exit survey: appears after 60s if not already seen */}
+            <FeedbackSurvey />
+          </PostHogProvider>
+        </AuthProvider>
         {/* Simple Analytics — privacy-first traffic analytics (no cookies, GDPR compliant) */}
         <SimpleAnalytics />
       </body>
