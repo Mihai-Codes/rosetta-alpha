@@ -32,7 +32,10 @@ const customMetaMaskWallet = (options: any) => {
     qrCode: undefined, // Disable WalletConnect fallback UI
     createConnector: (walletDetails: any) => {
       return createConnector((config) => {
-        const connector = injected({ target: 'metaMask' })(config)
+        const connector = injected({
+          target: 'metaMask',
+          shimDisconnect: true, // Tracks disconnect state in storage — prevents auto-reconnect
+        })(config)
         return {
           ...connector,
           ...walletDetails,
@@ -53,7 +56,10 @@ const customOkxWallet = (options: any) => {
     qrCode: undefined, // Disable WalletConnect fallback UI
     createConnector: (walletDetails: any) => {
       return createConnector((config) => {
-        const connector = injected({ target: 'okxWallet' })(config)
+        const connector = injected({
+          target: 'okxWallet',
+          shimDisconnect: true, // Tracks disconnect state in storage — prevents auto-reconnect
+        })(config)
         return {
           ...connector,
           ...walletDetails,
