@@ -350,14 +350,11 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
     setClaiming(true)
     setClaimError(null)
     setClaimTxHash(null)
-    console.log('[Quiz] sendClaimTx: start — isConnected:', isConnected, 'connector:', connector?.id, 'currentChainId:', currentChainId)
-    console.log('[Quiz] provider resolved:', !!provider, provider)
+    // debug logs removed for production
 
     try {
       // Step 1: Request accounts to ensure wallet is unlocked
-      console.log('[Quiz] Step 1: eth_requestAccounts')
       const accounts = await provider.request({ method: 'eth_requestAccounts' }) as string[]
-      console.log('[Quiz] accounts:', accounts)
       if (!accounts || accounts.length === 0) {
         setClaimError('No accounts found — please unlock your wallet.')
         return
@@ -365,7 +362,6 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
       const from = accounts[0]
 
       // Step 2: Switch to Arc Testnet if needed
-      console.log('[Quiz] Step 2: currentChainId:', currentChainId, 'need switch:', currentChainId !== ARC_CHAIN_ID)
       if (currentChainId !== ARC_CHAIN_ID) {
         setClaimStatus('switching')
         try {
@@ -373,13 +369,10 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
             method: 'wallet_switchEthereumChain',
             params: [{ chainId: toHex(ARC_CHAIN_ID) }],
           })
-          console.log('[Quiz] chain switched OK')
         } catch (switchErr: unknown) {
           const switchMsg = (switchErr instanceof Error ? switchErr.message : String(switchErr)).toLowerCase()
-          console.warn('[Quiz] switchChain error:', switchErr)
           // Chain not added yet — add it
           if (switchMsg.includes('4902') || switchMsg.includes('unrecognized') || switchMsg.includes('not found')) {
-            console.log('[Quiz] adding Arc Testnet chain...')
             await provider.request({
               method: 'wallet_addEthereumChain',
               params: [{
@@ -390,7 +383,6 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
                 blockExplorerUrls: ['https://testnet.arcscan.app'],
               }],
             })
-            console.log('[Quiz] chain added OK')
           }
         }
       }
@@ -398,7 +390,6 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
       // Step 2b: Verify we are actually on Arc Testnet before broadcasting
       const chainHex = await provider.request({ method: 'eth_chainId' }) as string
       const actualChainId = parseInt(chainHex, 16)
-      console.log('[Quiz] actual chainId after switch:', actualChainId)
       if (actualChainId !== ARC_CHAIN_ID) {
         setClaimError(`Please switch your wallet to Arc Testnet (Chain ID ${ARC_CHAIN_ID}) before claiming.`)
         return
@@ -408,7 +399,6 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
       // USDC on Arc uses 6 decimals — sending value to this contract address reverts
       // A 0-value tx with calldata is the correct pattern for on-chain proof-of-claim
       const calldata = encodeClaimData(thesisId)
-      console.log('[Quiz] Step 3: eth_sendTransaction from:', from, 'to:', REWARDS_POOL, 'calldata:', calldata)
 
       // Estimate gas — some wallets (Brave) require explicit gas limit
       let gasHex = '0x15F90' // 90000 — safe default for a simple calldata tx
@@ -420,9 +410,8 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
         // Add 20% buffer
         const gasWithBuffer = Math.ceil(parseInt(gasEst, 16) * 1.2)
         gasHex = toHex(gasWithBuffer)
-        console.log('[Quiz] gas estimate:', gasEst, '→ with buffer:', gasHex)
-      } catch (gasErr) {
-        console.warn('[Quiz] gas estimation failed, using default:', gasErr)
+      } catch {
+        // gas estimation failed — use safe default
       }
 
       setClaimStatus('broadcasting')
@@ -437,19 +426,15 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
         }],
       }) as string
 
-      console.log('[Quiz] tx hash:', hash)
       setClaimTxHash(hash)
       setClaimStatus('confirming')
     } catch (err: unknown) {
       const msg = (err instanceof Error ? err.message : String(err))
-      console.error('[Quiz] CATCH err:', err)
       setClaimStatus('idle')
       const msgLower = msg.toLowerCase()
       const isUserReject = msgLower.includes('rejected') || msgLower.includes('denied') || msgLower.includes('user refused') || msgLower.includes('4001')
       if (!isUserReject) {
         setClaimError(`Tx failed: ${msg.split('\n')[0].substring(0, 120)}`)
-      } else {
-        console.log('[Quiz] user rejected — silent')
       }
     } finally {
       setClaiming(false)

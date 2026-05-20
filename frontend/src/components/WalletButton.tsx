@@ -20,20 +20,26 @@ export function WalletButton() {
   const [dropdownOpen, setDropdownOpen] = React.useState(false)
   const [wrongNetworkBanner, setWrongNetworkBanner] = React.useState(false)
 
-  // Auto-prompt switch to Arc Testnet when wallet connects on wrong chain
+  // Auto-prompt switch to Arc Testnet when wallet connects on wrong chain.
+  // switchAttempted ref prevents infinite loop when switchChain itself triggers chainId change.
+  const switchAttempted = React.useRef(false)
   React.useEffect(() => {
-    if (!isConnected || !chainId) return
-    if (chainId !== ARC_CHAIN_ID) {
-      switchChain(
-        { chainId: ARC_CHAIN_ID },
-        {
-          onError: () => setWrongNetworkBanner(true),
-        }
-      )
-    } else {
-      setWrongNetworkBanner(false)
+    if (!isConnected || !chainId) {
+      switchAttempted.current = false
+      return
     }
-  }, [isConnected, chainId, switchChain])
+    if (chainId === ARC_CHAIN_ID) {
+      setWrongNetworkBanner(false)
+      switchAttempted.current = false
+      return
+    }
+    if (switchAttempted.current) return
+    switchAttempted.current = true
+    switchChain(
+      { chainId: ARC_CHAIN_ID },
+      { onError: () => setWrongNetworkBanner(true) }
+    )
+  }, [isConnected, chainId]) // intentionally omit switchChain to avoid loop
 
   const { data: balance } = useBalance({
     address,
