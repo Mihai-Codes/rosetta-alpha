@@ -32,6 +32,8 @@ export function WalletButton() {
 
   // Auto-prompt switch to Arc Testnet when wallet connects on wrong chain.
   // switchAttempted ref prevents infinite loop when switchChain itself triggers chainId change.
+  // Some wallets (Coinbase) don't support wallet_switchEthereumChain for custom chains,
+  // so we fall back to wallet_addEthereumChain which works universally.
   const switchAttempted = React.useRef(false)
   React.useEffect(() => {
     if (!isConnected || !chainId) {
@@ -45,10 +47,33 @@ export function WalletButton() {
     }
     if (switchAttempted.current) return
     switchAttempted.current = true
-    switchChain(
-      { chainId: ARC_CHAIN_ID },
-      { onError: () => setWrongNetworkBanner(true) }
-    )
+
+    const trySwitch = async () => {
+      try {
+        await switchChain({ chainId: ARC_CHAIN_ID })
+      } catch {
+        // wallet_switchEthereumChain failed (e.g. Coinbase doesn't support custom chains).
+        // Fall back to wallet_addEthereumChain which works on all wallets.
+        try {
+          const provider = (window as any).ethereum
+          if (provider?.request) {
+            await provider.request({
+              method: 'wallet_addEthereumChain',
+              params: [{
+                chainId: '0x' + ARC_CHAIN_ID.toString(16),
+                chainName: 'Arc Testnet',
+                nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
+                rpcUrls: ['https://rpc.testnet.arc.network'],
+                blockExplorerUrls: ['https://testnet.arcscan.app'],
+              }],
+            })
+          }
+        } catch {
+          setWrongNetworkBanner(true)
+        }
+      }
+    }
+    trySwitch()
   }, [isConnected, chainId]) // intentionally omit switchChain to avoid loop
 
   const { data: balance } = useBalance({

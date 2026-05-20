@@ -57,8 +57,17 @@ const customOkxWallet = (options: any) => {
     createConnector: (walletDetails: any) => {
       return createConnector((config) => {
         const connector = injected({
-          target: 'okxWallet',
-          shimDisconnect: true, // Tracks disconnect state in storage — prevents auto-reconnect
+          // Use a provider function — 'okxWallet' string is not a known target in wagmi v2.
+          // OKX Wallet extension injects itself at window.okxwallet (lowercase).
+          target: {
+            id: 'okxWallet',
+            name: 'OKX Wallet',
+            provider: () =>
+              typeof window !== 'undefined'
+                ? (window as any).okxwallet ?? (window as any).OKXWallet
+                : undefined,
+          },
+          shimDisconnect: true,
         })(config)
         return {
           ...connector,
