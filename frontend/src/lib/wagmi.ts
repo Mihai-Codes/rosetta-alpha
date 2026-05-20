@@ -51,28 +51,32 @@ const customMetaMaskWallet = (options: any) => {
  */
 const customOkxWallet = (options: any) => {
   const wallet = defaultOkxWallet(options)
+  const isOkxInstalled = typeof window !== 'undefined' &&
+    ((window as any).okxwallet || (window as any).OKXWallet)
+
+  if (isOkxInstalled) {
+    // OKX is installed — use the original RainbowKit connector which has proper
+    // disconnect handling. Only strip qrCode to prevent WalletConnect fallback UI.
+    return { ...wallet, qrCode: undefined }
+  }
+
+  // OKX not installed — return a no-op connector so RainbowKit shows "Install" UI
+  // without initializing WalletConnect or crashing the page.
   return {
     ...wallet,
-    qrCode: undefined, // Disable WalletConnect fallback UI
+    qrCode: undefined,
+    installed: false,
     createConnector: (walletDetails: any) => {
       return createConnector((config) => {
         const connector = injected({
-          // Use a provider function — 'okxWallet' string is not a known target in wagmi v2.
-          // OKX Wallet extension injects itself at window.okxwallet (lowercase).
           target: {
             id: 'okxWallet',
             name: 'OKX Wallet',
-            provider: () =>
-              typeof window !== 'undefined'
-                ? (window as any).okxwallet ?? (window as any).OKXWallet
-                : undefined,
+            provider: () => undefined,
           },
           shimDisconnect: true,
         })(config)
-        return {
-          ...connector,
-          ...walletDetails,
-        }
+        return { ...connector, ...walletDetails }
       })
     }
   }

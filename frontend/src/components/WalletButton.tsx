@@ -53,7 +53,7 @@ export function WalletButton() {
         await switchChain({ chainId: ARC_CHAIN_ID })
       } catch {
         // wallet_switchEthereumChain failed (e.g. Coinbase doesn't support custom chains).
-        // Fall back to wallet_addEthereumChain which works on all wallets.
+        // Try wallet_addEthereumChain as fallback.
         try {
           const provider = (window as any).ethereum
           if (provider?.request) {
@@ -69,7 +69,18 @@ export function WalletButton() {
             })
           }
         } catch {
-          setWrongNetworkBanner(true)
+          // Both switch methods failed — verify actual chain before showing banner.
+          // Some wallets (Coinbase) silently handle the switch and connect correctly.
+          try {
+            const provider = (window as any).ethereum
+            const chainHex = await provider?.request({ method: 'eth_chainId' })
+            const actualChainId = parseInt(chainHex, 16)
+            if (actualChainId !== ARC_CHAIN_ID) {
+              setWrongNetworkBanner(true)
+            }
+          } catch {
+            setWrongNetworkBanner(true)
+          }
         }
       }
     }
