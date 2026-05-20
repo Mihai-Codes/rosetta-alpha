@@ -31,6 +31,7 @@ const customMetaMaskWallet = (options: any) => {
         const connector = injected({
           target: 'metaMask',
           shimDisconnect: true,
+          unstable_shimAsyncInject: 3000,
         })(config)
         return { ...connector, ...walletDetails }
       })
@@ -58,8 +59,13 @@ const customOkxWallet = (options: any) => {
     createConnector: (walletDetails: any) => {
       return createConnector((config) => {
         const connector = injected({
-          target: { id: 'okxWallet', name: 'OKX Wallet', provider: () => undefined },
+          target: {
+            id: 'okxWallet',
+            name: 'OKX Wallet',
+            provider: (window) => (window as any).okxwallet || (window as any).OKXWallet,
+          },
           shimDisconnect: true,
+          unstable_shimAsyncInject: 3000,
         })(config)
         return { ...connector, ...walletDetails }
       })

@@ -57,7 +57,7 @@ function WalletReconnectBridge() {
     }
 
     attemptedRef.current = true
-    const timers = [0, 500, 1500].map((delay) =>
+    const timers = [0, 500, 1500, 3000, 6000].map((delay) =>
       window.setTimeout(() => {
         reconnect({ connectors })
       }, delay)
