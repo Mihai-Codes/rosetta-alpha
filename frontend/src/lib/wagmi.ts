@@ -1,7 +1,6 @@
 import { connectorsForWallets } from '@rainbow-me/rainbowkit'
 import {
   metaMaskWallet,
-  base,
   injectedWallet,
   okxWallet,
   braveWallet,
@@ -19,70 +18,58 @@ const PROJECT_ID =
 const APP_URL = 'https://rosetta-alpha.vercel.app'
 
 /**
- * Force Base Smart Wallet into smart-wallet-only mode.
- * Without this, the connector tries dual-mode (extension + smart wallet)
- * and throws "unsupported connection" on custom chains like Arc Testnet.
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-;(base as any).preference = { options: 'smartWalletOnly' }
-
-/**
  * Explicit wallet list via connectorsForWallets.
- * Using this instead of getDefaultConfig prevents WalletConnect relay from
- * initializing eagerly on page load — fixing the "this page couldn't load" error.
- * WalletConnect is included last as a lazy fallback.
+ *
+ * Design decisions:
+ * - Base Smart Wallet (passkey) removed — incompatible with Arc Testnet custom RPC.
+ * - coinbaseWallet kept — browser extension path works fine on Arc Testnet.
+ * - injectedWallet in "More" catches Brave (when not auto-detected), Rabby, Frame, etc.
+ * - walletConnectParameters.disableProviderPing suppresses the WalletConnect relay
+ *   iframe that causes "this page couldn't load" errors in MetaMask/OKX modals.
  */
 const connectors = connectorsForWallets(
   [
     {
       groupName: 'Recommended',
       wallets: [
-        metaMaskWallet, // MetaMask browser extension
-        braveWallet,    // Brave built-in wallet
-        okxWallet,      // OKX injected extension
-        coinbaseWallet, // Coinbase Wallet extension (not Smart Wallet)
-        base,           // Coinbase / Base Smart Wallet (passkey, no extension needed)
+        metaMaskWallet,  // MetaMask browser extension
+        braveWallet,     // Brave built-in wallet
+        okxWallet,       // OKX injected extension
+        coinbaseWallet,  // Coinbase Wallet browser extension
       ],
     },
     {
       groupName: 'More',
       wallets: [
-        injectedWallet, // Brave, Frame, or any other EIP-6963 injected wallet
+        injectedWallet,  // Any other EIP-6963 wallet: Rabby, Frame, Brave (fallback), etc.
       ],
     },
   ],
   {
     appName: 'Rosetta Alpha',
     projectId: PROJECT_ID,
-    /**
-     * Explicit appUrl + metadata ensure the WalletConnect Verify API can
-     * match this domain against the project allowlist on dashboard.reown.com.
-     * Without this, the iframe may fail even if the domain is allowlisted.
-     */
     appUrl: APP_URL,
     appIcon: `${APP_URL}/arc-logo.svg`,
     appDescription: 'Institutional AI-powered investment thesis platform on Arc Testnet',
+    walletConnectParameters: {
+      /**
+       * Disables the relay ping that loads verify.walletconnect.com in an iframe.
+       * Without this, clicking MetaMask or OKX shows "this page couldn't load"
+       * because the WalletConnect verification iframe fails on custom/testnet chains.
+       */
+      disableProviderPing: true,
+    },
   }
 )
 
 /**
  * Factory function — required for cookie-based SSR persistence.
- * Call getConfig() in layout.tsx to extract initialState from cookies,
- * then pass it to WagmiProvider so the wallet stays connected on refresh.
  */
 export function getConfig() {
   return createConfig({
     connectors,
     chains: [arcTestnet, mainnet],
-    /**
-     * cookieStorage persists wallet state server-side.
-     * Prevents the "disconnected" flash on page refresh.
-     */
     storage: createStorage({ storage: cookieStorage }),
-    /**
-     * Explicit HTTP transports bypass the WalletConnect relay for RPC calls.
-     * This is the key fix for slow/failing wallet connections on custom chains.
-     */
     transports: {
       [arcTestnet.id]: http(
         process.env.NEXT_PUBLIC_ARC_RPC_URL || 'https://rpc.testnet.arc.network'
