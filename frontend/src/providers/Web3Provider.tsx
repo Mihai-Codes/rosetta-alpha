@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit'
-import { type State, WagmiProvider, useAccount, useConnectors, useReconnect } from 'wagmi'
+import { type State, WagmiProvider, useAccount, useConfig, useConnectors, useReconnect } from 'wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useSession } from 'next-auth/react'
 import { getConfig } from '@/lib/wagmi'
@@ -29,6 +29,7 @@ function WalletReconnectBridge() {
   const { status: sessionStatus } = useSession()
   const { isConnected, isConnecting, isReconnecting } = useAccount()
   const connectors = useConnectors()
+  const config = useConfig()
   const { reconnect, isPending } = useReconnect()
   const attemptedRef = useRef(false)
 
@@ -57,14 +58,46 @@ function WalletReconnectBridge() {
     }
 
     attemptedRef.current = true
+
+    const recoverSilently = async () => {
+      for (const connector of connectors) {
+        try {
+          const provider = await connector.getProvider() as { request?: (args: { method: string }) => Promise<unknown> } | undefined
+          const accounts = await provider?.request?.({ method: 'eth_accounts' })
+          if (!Array.isArray(accounts) || accounts.length === 0) continue
+
+          const data = await connector.connect({ isReconnecting: true } as never)
+          const nextConnection = {
+            accounts: data.accounts,
+            chainId: data.chainId,
+            connector,
+          }
+
+          await config.storage?.removeItem(`${connector.id}.disconnected`)
+          await config.storage?.setItem('recentConnectorId', connector.id)
+
+          config.setState((state) => ({
+            ...state,
+            current: connector.uid,
+            connections: new Map(state.connections).set(connector.uid, nextConnection as never),
+            status: 'connected',
+          }))
+          return
+        } catch {
+          // Try the next connector. Some installed wallets expose providers but reject silent reads.
+        }
+      }
+    }
+
     const timers = [0, 500, 1500, 3000, 6000].map((delay) =>
       window.setTimeout(() => {
         reconnect({ connectors })
+        window.setTimeout(recoverSilently, 250)
       }, delay)
     )
 
     return () => timers.forEach((timer) => window.clearTimeout(timer))
-  }, [connectors, isConnected, isConnecting, isPending, isReconnecting, reconnect, sessionStatus])
+  }, [config, connectors, isConnected, isConnecting, isPending, isReconnecting, reconnect, sessionStatus])
 
   return null
 }
