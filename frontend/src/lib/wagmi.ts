@@ -19,13 +19,6 @@ const APP_URL = 'https://rosetta-alpha.vercel.app'
 
 /**
  * Explicit wallet list via connectorsForWallets.
- *
- * Design decisions:
- * - Base Smart Wallet (passkey) removed — incompatible with Arc Testnet custom RPC.
- * - coinbaseWallet kept — browser extension path works fine on Arc Testnet.
- * - injectedWallet in "More" catches Brave (when not auto-detected), Rabby, Frame, etc.
- * - walletConnectParameters.disableProviderPing suppresses the WalletConnect relay
- *   iframe that causes "this page couldn't load" errors in MetaMask/OKX modals.
  */
 const connectors = connectorsForWallets(
   [
@@ -52,12 +45,15 @@ const connectors = connectorsForWallets(
     appIcon: `${APP_URL}/arc-logo.svg`,
     appDescription: 'Institutional AI-powered investment thesis platform on Arc Testnet',
     walletConnectParameters: {
-      /**
-       * Disables the relay ping that loads verify.walletconnect.com in an iframe.
-       * Without this, clicking MetaMask or OKX shows "this page couldn't load"
-       * because the WalletConnect verification iframe fails on custom/testnet chains.
-       */
-      disableProviderPing: true,
+      // By omitting walletconnect verification entirely or passing standard metadata,
+      // it stops trying to embed the verify iframe that crashes custom networks.
+      metadata: {
+        name: 'Rosetta Alpha',
+        description: 'Institutional AI-powered investment thesis platform',
+        url: APP_URL,
+        icons: [`${APP_URL}/arc-logo.svg`],
+        verifyUrl: '' // Empty verify URL prevents the iframe from trying to load
+      }
     },
   }
 )
@@ -77,6 +73,7 @@ export function getConfig() {
       [mainnet.id]: http(),
     },
     ssr: true,
+    multiInjectedProviderDiscovery: false // Prevents Wagmi from adding duplicate EIP-6963 wallets
   })
 }
 
