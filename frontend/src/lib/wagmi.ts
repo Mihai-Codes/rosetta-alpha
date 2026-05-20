@@ -4,6 +4,8 @@ import {
   base,
   injectedWallet,
   okxWallet,
+  braveWallet,
+  coinbaseWallet,
 } from '@rainbow-me/rainbowkit/wallets'
 import { createConfig, http, cookieStorage, createStorage } from 'wagmi'
 import { mainnet } from 'wagmi/chains'
@@ -35,9 +37,11 @@ const connectors = connectorsForWallets(
     {
       groupName: 'Recommended',
       wallets: [
-        base,           // Coinbase / Base Smart Wallet (passkey, no extension needed)
         metaMaskWallet, // MetaMask browser extension
+        braveWallet,    // Brave built-in wallet
         okxWallet,      // OKX injected extension
+        coinbaseWallet, // Coinbase Wallet extension (not Smart Wallet)
+        base,           // Coinbase / Base Smart Wallet (passkey, no extension needed)
       ],
     },
     {

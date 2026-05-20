@@ -1,9 +1,11 @@
 'use client'
 
-import { useAccount, useBalance, useDisconnect } from 'wagmi'
+import { useAccount, useBalance, useDisconnect, useSwitchChain } from 'wagmi'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { arcTestnet } from '@/lib/wagmi'
 import React from 'react'
+
+const ARC_CHAIN_ID = arcTestnet.id
 
 /** Truncate address: 0x1234...abcd */
 function truncateAddress(address: string): string {
@@ -11,10 +13,27 @@ function truncateAddress(address: string): string {
 }
 
 export function WalletButton() {
-  const { address, isConnected } = useAccount()
+  const { address, isConnected, chainId } = useAccount()
   const { disconnect } = useDisconnect()
   const { openConnectModal } = useConnectModal()
+  const { switchChain } = useSwitchChain()
   const [dropdownOpen, setDropdownOpen] = React.useState(false)
+  const [wrongNetworkBanner, setWrongNetworkBanner] = React.useState(false)
+
+  // Auto-prompt switch to Arc Testnet when wallet connects on wrong chain
+  React.useEffect(() => {
+    if (!isConnected || !chainId) return
+    if (chainId !== ARC_CHAIN_ID) {
+      switchChain(
+        { chainId: ARC_CHAIN_ID },
+        {
+          onError: () => setWrongNetworkBanner(true),
+        }
+      )
+    } else {
+      setWrongNetworkBanner(false)
+    }
+  }, [isConnected, chainId, switchChain])
 
   const { data: balance } = useBalance({
     address,
@@ -36,6 +55,30 @@ export function WalletButton() {
       )
       setDropdownOpen(false)
     }
+  }
+
+  if (wrongNetworkBanner && isConnected) {
+    return (
+      <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#E8A020]/50 bg-[#E8A020]/10 text-[10px] text-[#E8A020] font-medium uppercase tracking-[0.15em]">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#E8A020] animate-pulse shrink-0" />
+          <span className="hidden sm:inline">Switch to Arc Testnet</span>
+          <button
+            onClick={() => switchChain({ chainId: ARC_CHAIN_ID }, { onError: () => {} })}
+            className="underline hover:no-underline transition-all"
+          >
+            Switch
+          </button>
+          <button
+            onClick={() => setWrongNetworkBanner(false)}
+            className="ml-1 hover:text-white transition-colors"
+            aria-label="Dismiss"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+    )
   }
 
   if (!isConnected) {
