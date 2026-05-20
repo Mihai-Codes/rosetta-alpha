@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { headers } from 'next/headers'
 import { cookieToInitialState } from 'wagmi'
+import { auth } from '../../auth'
 import { AuthProvider } from '@/lib/session-provider'
 import { Web3Provider } from '@/providers/Web3Provider'
 import { serverConfig } from '@/lib/wagmi-server'
@@ -29,11 +30,15 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  /**
-   * Extract wagmi state from cookies on the server so the client
-   * starts hydrated — no "disconnected" flash or failed first reconnect.
-   */
-  const initialState = cookieToInitialState(serverConfig, (await headers()).get('cookie'))
+  const cookieHeader = (await headers()).get('cookie')
+
+  // Only hydrate wagmi wallet state when the user has an active NextAuth session.
+  // If unauthenticated, pass undefined so wagmi starts fresh — this is the definitive
+  // fix for wallet connections persisting across sign-out/sign-in cycles.
+  const session = await auth()
+  const initialState = session
+    ? cookieToInitialState(serverConfig, cookieHeader)
+    : undefined
 
   return (
     <html lang="en" className="dark">
