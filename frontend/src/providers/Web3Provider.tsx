@@ -1,7 +1,7 @@
 'use client'
 
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit'
-import { WagmiProvider, type State } from 'wagmi'
+import { WagmiProvider } from 'wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { config } from '@/lib/wagmi'
 import '@rainbow-me/rainbowkit/styles.css'
@@ -23,13 +23,13 @@ customTheme.colors.connectButtonBackground = '#111118'
 
 interface Web3ProviderProps {
   children: React.ReactNode
-  /** Cookie-extracted initial wallet state — prevents disconnect flash on refresh */
-  initialState?: State
 }
 
-export function Web3Provider({ children, initialState }: Web3ProviderProps) {
+// No initialState — wagmi uses noopStorage so there is no persisted state to hydrate.
+// This eliminates ghost wallet reconnections across sign-out/sign-in cycles.
+export function Web3Provider({ children }: Web3ProviderProps) {
   return (
-    <WagmiProvider config={config} initialState={initialState}>
+    <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider theme={customTheme} modalSize="compact">
           {children}
