@@ -1,9 +1,40 @@
 'use client'
 
-import React, { useEffect, Suspense } from 'react'
+import React, { useEffect, Suspense, useRef } from 'react'
 import posthog from 'posthog-js'
 import { PostHogProvider as PHProvider, usePostHog } from 'posthog-js/react'
 import { usePathname, useSearchParams } from 'next/navigation'
+import { useSession } from 'next-auth/react'
+
+/**
+ * Fires sign_in_success once when the session transitions to authenticated.
+ * Must be inside both PHProvider (for posthog context) and SessionProvider.
+ */
+function SessionTracker() {
+  const { data: session, status } = useSession()
+  const firedRef = useRef(false)
+
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user && !firedRef.current) {
+      firedRef.current = true
+      // Identify user in PostHog
+      if (session.user.email) {
+        posthog.identify(session.user.email, {
+          email: session.user.email,
+          name: session.user.name ?? undefined,
+        })
+      }
+      posthog.capture('sign_in_success', {
+        provider: 'oauth', // next-auth doesn't expose provider on client session
+      })
+    }
+    if (status === 'unauthenticated') {
+      firedRef.current = false
+    }
+  }, [status, session])
+
+  return null
+}
 
 /** Tracks SPA navigation as $pageview events (App Router safe — wrapped in Suspense). */
 function PostHogPageView() {
@@ -51,6 +82,8 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
       <Suspense fallback={null}>
         <PostHogPageView />
       </Suspense>
+      {/* Tracks sign_in_success + identifies user on session start */}
+      <SessionTracker />
       {children}
     </PHProvider>
   )

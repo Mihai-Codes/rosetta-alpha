@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import posthog from 'posthog-js'
 import { motion } from 'framer-motion'
 import { useAccount, useBalance } from 'wagmi'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
@@ -268,7 +269,8 @@ function MyPredictions() {
                 initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.06 }}
-                className="border-b border-border/40 hover:bg-bg-tertiary/40 transition-colors"
+                className="border-b border-border/40 hover:bg-bg-tertiary/40 transition-colors cursor-pointer"
+                onClick={() => posthog.capture('dashboard_prediction_clicked', { thesis: row.thesis, region: row.region, status: row.status })}
               >
                 <td className="px-5 py-4">
                   <span className="text-text-primary text-[11px] font-medium">{row.thesis}</span>

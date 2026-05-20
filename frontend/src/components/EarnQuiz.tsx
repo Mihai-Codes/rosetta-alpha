@@ -174,6 +174,11 @@ function ResultsScreen({
   const perfect = score === total
   const pct = total > 0 ? Math.round((score / total) * 100) : 0
 
+  function handleRetryClick() {
+    posthog.capture('quiz_conversion_modal_cta_clicked', { score, total, desk: thesisId })
+    onRetry()
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
@@ -226,7 +231,7 @@ function ResultsScreen({
       )}
 
       <button
-        onClick={onRetry}
+        onClick={handleRetryClick}
         className="mt-2 px-8 py-3 rounded-full border border-accent-gold/40 text-accent-gold text-[10px] uppercase tracking-[0.2em] font-medium hover:border-accent-gold hover:shadow-[0_0_30px_rgba(201,168,76,0.25)] transition-all duration-300"
       >
         Retake Quiz
@@ -479,6 +484,10 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
     if (txConfirmed && claimTxHash) {
       setClaimStatus('confirmed')
       setClaimed(true)
+      posthog.capture('quiz_reward_claimed', {
+        desk: thesisId,
+        amount_usdc: 1, // fixed reward per perfect score on Arc Testnet
+      })
     }
   }, [txConfirmed, claimTxHash])
 
@@ -497,6 +506,13 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
   }
 
   // ── Results screen ────────────────────────────────────────────────────────
+
+  // Fire quiz_conversion_modal_shown for non-perfect scores (the retry/conversion surface)
+  React.useEffect(() => {
+    if (finished && !perfect) {
+      posthog.capture('quiz_conversion_modal_shown', { score })
+    }
+  }, [finished]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (finished) {
     return (
