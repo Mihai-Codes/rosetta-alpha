@@ -5,6 +5,7 @@ import { TrendingUp, TrendingDown, Minus, ExternalLink, Copy, Check, ChevronDown
 import { DeskProps } from './DeskCard'
 import { regionMeta, copyToClipboard, truncateHash } from '../lib/format'
 import { ShareButton } from './ShareButton'
+import Link from 'next/link'
 
 interface ThesisCardProps {
   desk: DeskProps
@@ -309,6 +310,15 @@ export function ThesisCard({ desk }: ThesisCardProps) {
             arcHash={desk.arc_tx}
             flagEmoji={meta.flag}
           />
+        </div>
+        {/* Quiz CTA — bottom of card, after ShareButton */}
+        <div className="border-t border-border/40 mt-3 pt-3 flex justify-end">
+          <Link
+            href={`/quiz?desk=${desk.desk.toLowerCase()}`}
+            className="text-[10px] uppercase tracking-[0.25em] text-text-secondary hover:text-[#C9A84C] hover:underline transition-colors"
+          >
+            Test your understanding → Take the quiz
+          </Link>
         </div>
       </footer>
     </article>

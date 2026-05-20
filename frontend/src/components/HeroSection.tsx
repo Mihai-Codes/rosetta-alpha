@@ -1,7 +1,8 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ArrowDown } from 'lucide-react'
+import Link from 'next/link'
 import { REGION_META, truncateHash } from '../lib/format'
 
 interface HeroSectionProps {
@@ -131,7 +132,17 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
           )}
         </div>
 
-        <div className="mt-16 sm:mt-20 flex justify-center">
+        <div className="mt-10 flex items-center justify-center gap-4 sm:gap-6">
+          <Link
+            href="/quiz"
+            className="group inline-flex items-center gap-2.5 px-6 sm:px-8 py-3.5 rounded-full border border-[#C9A84C]/50 text-text-secondary text-[11px] uppercase tracking-[0.25em] font-medium transition-all duration-500 hover:border-[#C9A84C] hover:text-[#C9A84C] hover:shadow-[0_0_20px_rgba(201,168,76,0.15)] quiz-pulse-border min-h-[44px]"
+          >
+            <span className="text-base">🎯</span>
+            Try the quiz <span className="hidden sm:inline">— no wallet needed</span>
+          </Link>
+        </div>
+
+        <div className="mt-12 sm:mt-16 flex justify-center">
           <button
             onClick={onScrollDown}
             className="animate-bounce p-3 rounded-full border border-white/[0.05] text-text-tertiary bg-white/[0.02] hover:text-white hover:border-white/[0.2] transition-colors cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center"
