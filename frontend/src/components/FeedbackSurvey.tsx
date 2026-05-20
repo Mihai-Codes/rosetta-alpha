@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState, useRef } from 'react'
 import posthog from 'posthog-js'
-import { usePathname } from 'next/navigation'
 
 const STORAGE_KEY = 'feedback_survey_shown'
 const DELAY_MS = 60_000
@@ -17,7 +16,6 @@ const MAX_CHARS = 280
  * Dismiss: "Maybe later" → sets localStorage, closes immediately.
  */
 export function FeedbackSurvey() {
-  const pathname = usePathname()
   const [visible, setVisible] = useState(false)
   const [text, setText] = useState('')
   const [submitted, setSubmitted] = useState(false)
