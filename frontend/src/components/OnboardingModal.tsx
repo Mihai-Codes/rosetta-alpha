@@ -40,6 +40,10 @@ export function OnboardingModal({ isSignedIn }: OnboardingModalProps) {
   const [currentSlide, setCurrentSlide] = React.useState(0)
   const { openConnectModal } = useConnectModal()
   const { isConnected } = useAccount()
+  const handleConnectClick = () => {
+    sessionStorage.removeItem('rosetta.wallet.manualDisconnect')
+    openConnectModal?.()
+  }
 
   React.useEffect(() => {
     // Only show if signed in, wallet not connected, and not previously dismissed
@@ -122,7 +126,7 @@ export function OnboardingModal({ isSignedIn }: OnboardingModalProps) {
           {/* Connect button on last slide */}
           {slide.isConnectSlide && (
             <button
-              onClick={openConnectModal}
+              onClick={handleConnectClick}
               className="
                 mt-6 inline-flex items-center gap-2 px-6 py-3
                 bg-accent-gold/10 border border-accent-gold/40 rounded-lg

@@ -36,7 +36,6 @@ function WalletReconnectBridge() {
     if (typeof window === 'undefined') return
 
     if (isConnected) {
-      sessionStorage.removeItem('rosetta.wallet.manualDisconnect')
       attemptedRef.current = true
       return
     }

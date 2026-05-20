@@ -51,6 +51,10 @@ export function WalletButton() {
   }
   const { openConnectModal } = useConnectModal()
   const { switchChain } = useSwitchChain()
+  const handleConnectClick = () => {
+    sessionStorage.removeItem('rosetta.wallet.manualDisconnect')
+    openConnectModal?.()
+  }
   const [dropdownOpen, setDropdownOpen] = React.useState(false)
   const [wrongNetworkBanner, setWrongNetworkBanner] = React.useState(false)
 
@@ -160,7 +164,7 @@ export function WalletButton() {
   if (!isConnected) {
     return (
       <button
-        onClick={openConnectModal}
+        onClick={handleConnectClick}
         className="
           flex items-center gap-2 px-5 py-2
           solid-panel rounded-full

@@ -317,6 +317,7 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
 
   async function sendClaimTx() {
     if (!isConnected) {
+      sessionStorage.removeItem('rosetta.wallet.manualDisconnect')
       openConnectModal?.()
       return
     }

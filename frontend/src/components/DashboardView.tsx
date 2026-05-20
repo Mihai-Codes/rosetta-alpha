@@ -509,6 +509,10 @@ export function DashboardView() {
   const accuracy = Math.round((PREDICTIONS.filter(p => p.status === 'RESOLVED_WIN').length / PREDICTIONS.length) * 100)
 
   const { openConnectModal } = useConnectModal()
+  const handleConnectClick = () => {
+    sessionStorage.removeItem('rosetta.wallet.manualDisconnect')
+    openConnectModal?.()
+  }
 
   if (!isConnected) {
     return (
@@ -530,7 +534,7 @@ export function DashboardView() {
               Authenticate via MetaMask to view your proprietary portfolio, track prediction accuracy, and claim USDC settlements on Arc Testnet.
             </p>
             <button
-              onClick={openConnectModal}
+              onClick={handleConnectClick}
               className="px-10 py-4 bg-brand-red text-bg-primary text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-white hover:text-bg-primary transition-colors duration-300 min-h-[44px]"
             >
               Establish Connection →
