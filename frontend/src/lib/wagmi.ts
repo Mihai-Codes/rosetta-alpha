@@ -93,15 +93,12 @@ const connectors = connectorsForWallets(
 )
 
 /**
- * Wagmi config with NO persistent storage.
+ * Wagmi config with cookieStorage for SSR-safe wallet persistence.
  *
- * Using noopStorage (the wagmi default when no storage is specified) means
- * wagmi never reads or writes connection state to cookies or localStorage.
- * This permanently fixes ghost wallet reconnections — wagmi always starts
- * disconnected on page load. Users reconnect once per session (acceptable UX).
- *
- * All previous attempts to clear cookieStorage failed because wagmi's internal
- * state subscription re-wrote the cookie faster than we could delete it.
+ * The server reads wagmi.store in app/layout.tsx and passes it to WagmiProvider
+ * as initialState so signed-in users keep their wallet connection on refresh.
+ * Sign-out and manual wallet disconnect still route through /api/disconnect,
+ * which deletes wagmi.store before the next SSR pass.
  */
 export function getConfig() {
   return createConfig({

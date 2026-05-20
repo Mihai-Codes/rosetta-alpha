@@ -66,6 +66,8 @@ export function Layout({ children, activeTab }: LayoutProps) {
   const connectors = useConnectors()
 
   const handleSignOut = React.useCallback(async () => {
+    sessionStorage.setItem('rosetta.wallet.manualDisconnect', '1')
+
     // Step 1: Revoke browser-level wallet permissions so wallets cannot auto-reconnect
     if (typeof window !== 'undefined') {
       const win = window as any

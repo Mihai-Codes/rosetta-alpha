@@ -2,7 +2,7 @@
 
 import { useAccount, useBalance, useDisconnect, useConnectors, useSwitchChain } from 'wagmi'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
-import { arcTestnet } from '@/lib/wagmi'
+import { arcTestnet } from '@/lib/chains'
 import React from 'react'
 
 const ARC_CHAIN_ID = arcTestnet.id
@@ -19,6 +19,7 @@ export function WalletButton() {
 
   const handleDisconnect = async () => {
     setDropdownOpen(false)
+    sessionStorage.setItem('rosetta.wallet.manualDisconnect', '1')
 
     // Step 1: Revoke browser-level wallet permissions via wallet_revokePermissions.
     // This is the ONLY way to truly prevent wallets from auto-reconnecting.

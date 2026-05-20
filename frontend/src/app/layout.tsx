@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { headers } from 'next/headers'
 import { cookieToInitialState } from 'wagmi'
-import { getConfig } from '@/lib/wagmi'
+import { serverConfig } from '@/lib/wagmi-server'
 import { AuthProvider } from '@/lib/session-provider'
 import { Web3Provider } from '@/providers/Web3Provider'
 import '../index.css'
@@ -30,7 +30,7 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   const initialState = cookieToInitialState(
-    getConfig(),
+    serverConfig,
     (await headers()).get('cookie')
   )
 
