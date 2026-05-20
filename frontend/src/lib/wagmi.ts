@@ -4,7 +4,6 @@ import {
   braveWallet,
   okxWallet,
   coinbaseWallet,
-  injectedWallet,
 } from '@rainbow-me/rainbowkit/wallets'
 import { createConfig, http, cookieStorage, createStorage } from 'wagmi'
 import { mainnet } from 'wagmi/chains'
@@ -21,8 +20,8 @@ const APP_URL = 'https://rosetta-alpha.vercel.app'
  * Standard RainbowKit wallet list.
  * EIP-6963 multiInjectedProviderDiscovery handles deduplication via rdns,
  * so we use standard connectors instead of custom wrappers.
- * injectedWallet acts as a catch-all for other EIP-6963 wallets (Rabby, Phantom, etc.)
- * and hides itself when more specific wallets are already displayed.
+ * With multiInjectedProviderDiscovery enabled, any other EIP-6963 wallets (Rabby, Phantom, etc.)
+ * are automatically discovered and shown without needing an explicit injectedWallet entry.
  */
 const connectors = connectorsForWallets(
   [
@@ -33,7 +32,6 @@ const connectors = connectorsForWallets(
         braveWallet,
         okxWallet,
         coinbaseWallet,
-        injectedWallet,
       ],
     },
   ],
