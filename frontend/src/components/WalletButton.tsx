@@ -1,6 +1,7 @@
 'use client'
 
 import { useAccount, useBalance, useDisconnect, useSwitchChain } from 'wagmi'
+import { cookieStorage } from '@wagmi/core'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { arcTestnet } from '@/lib/wagmi'
 import React from 'react'
@@ -14,7 +15,7 @@ function truncateAddress(address: string): string {
 
 export function WalletButton() {
   const { address, isConnected, chainId } = useAccount()
-  const { disconnect } = useDisconnect()
+  const { disconnectAsync } = useDisconnect()
   const { openConnectModal } = useConnectModal()
   const { switchChain } = useSwitchChain()
   const [dropdownOpen, setDropdownOpen] = React.useState(false)
@@ -151,16 +152,15 @@ export function WalletButton() {
               View on Arc Explorer
             </button>
             <button
-              onClick={() => {
-                disconnect()
+              onClick={async () => {
                 setDropdownOpen(false)
-                // Clear wagmi cookieStorage so the wallet doesn't auto-reconnect on refresh
-                document.cookie.split(';').forEach(c => {
-                  if (c.trim().startsWith('wagmi')) {
-                    document.cookie = c.trim().split('=')[0] + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
-                  }
-                })
-                // Hard reload to fully reset wagmi state
+                await disconnectAsync()
+                // Remove the exact cookie key wagmi uses for cookieStorage persistence.
+                // Key format: `${config.storage.key}.store` → defaults to "wagmi.store"
+                // Must be deleted AFTER disconnectAsync() resolves so the server-side
+                // cookieToInitialState() in layout.tsx reads an empty state on next load.
+                cookieStorage.removeItem('wagmi.store')
+                document.cookie = 'wagmi.store=;max-age=-1;path=/'
                 window.location.reload()
               }}
               className="w-full px-4 py-3 text-left text-xs text-negative hover:bg-bg-tertiary transition-colors border-t border-border"
