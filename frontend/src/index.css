@@ -169,6 +169,15 @@
   animation: quiz-pulse 2s infinite;
 }
 
+@keyframes slide-down {
+  0% { opacity: 0; transform: translateY(-24px); max-height: 0; }
+  100% { opacity: 1; transform: translateY(0); max-height: 200px; }
+}
+
+.animate-slide-down {
+  animation: slide-down 200ms ease-out forwards;
+}
+
 @keyframes levitate {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-12px); }
