@@ -4,7 +4,6 @@ import {
   okxWallet as defaultOkxWallet,
   braveWallet,
   coinbaseWallet,
-  injectedWallet,
 } from '@rainbow-me/rainbowkit/wallets'
 import { createConfig, http, createConnector, cookieStorage, createStorage } from 'wagmi'
 import { mainnet } from 'wagmi/chains'
@@ -84,10 +83,7 @@ const connectors = connectorsForWallets(
         coinbaseWallet,
       ],
     },
-    {
-      groupName: 'More',
-      wallets: [injectedWallet],
-    },
+
   ],
   {
     appName: 'Rosetta Alpha',

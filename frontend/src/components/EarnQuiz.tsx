@@ -373,7 +373,12 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
         } catch (switchErr: unknown) {
           const switchMsg = (switchErr instanceof Error ? switchErr.message : String(switchErr)).toLowerCase()
           // Chain not added yet — add it
-          if (switchMsg.includes('4902') || switchMsg.includes('unrecognized') || switchMsg.includes('not found')) {
+          if (
+            switchMsg.includes('4902') ||
+            switchMsg.includes('unrecognized') ||
+            switchMsg.includes('not found') ||
+            switchMsg.includes('unsupported')
+          ) {
             await provider.request({
               method: 'wallet_addEthereumChain',
               params: [{
