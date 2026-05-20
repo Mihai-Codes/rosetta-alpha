@@ -3,17 +3,18 @@
 import React, { useEffect, useState, useRef } from 'react'
 import posthog from 'posthog-js'
 import { usePathname } from 'next/navigation'
-import { X } from 'lucide-react'
 
-const STORAGE_KEY = 'feedback_shown'
+const STORAGE_KEY = 'feedback_survey_shown'
 const DELAY_MS = 60_000
 const MAX_CHARS = 280
 
 /**
- * Exit survey that slides up from the bottom-right corner after 60 seconds.
- * Only shown once per browser (localStorage guard). Captures response via PostHog.
+ * Feedback survey — slides up from the bottom-right corner after 60 seconds.
+ * Shown once per browser (localStorage guard).
  *
- * Design: #111118 background, #C9A84C (accent-gold) border, Playfair Display title.
+ * Trigger: user on page >= 60s AND 'feedback_survey_shown' not set.
+ * Submit: captures exit_survey_response to PostHog + sets localStorage.
+ * Dismiss: "Maybe later" → sets localStorage, closes immediately.
  */
 export function FeedbackSurvey() {
   const pathname = usePathname()
@@ -23,14 +24,8 @@ export function FeedbackSurvey() {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    // Only show if not shown before
-    if (typeof window === 'undefined') return
     if (localStorage.getItem(STORAGE_KEY)) return
-
-    timerRef.current = setTimeout(() => {
-      setVisible(true)
-    }, DELAY_MS)
-
+    timerRef.current = setTimeout(() => setVisible(true), DELAY_MS)
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current)
     }
@@ -43,13 +38,13 @@ export function FeedbackSurvey() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!text.trim()) return
+    const trimmed = text.trim()
+    if (!trimmed) return
 
-    posthog.capture('exit_survey_submitted', {
-      response: text.trim(),
-      page: pathname,
+    posthog.capture('exit_survey_response', {
+      response: trimmed,
+      page: window.location.pathname,
     })
-
     localStorage.setItem(STORAGE_KEY, '1')
     setSubmitted(true)
     setTimeout(() => setVisible(false), 2000)
@@ -59,90 +54,92 @@ export function FeedbackSurvey() {
 
   return (
     <div
-      className={`
-        fixed bottom-6 right-6 z-[9999]
-        w-[min(340px,calc(100vw-3rem))]
-        border border-[#C9A84C]/60
-        rounded-none shadow-2xl
-        transition-all duration-500 ease-out
-        ${visible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}
-      `}
-      style={{ backgroundColor: '#111118' }}
+      className="animate-survey-slide-up fixed bottom-6 right-6 z-[9999] w-[320px] rounded-xl shadow-[var(--shadow-lg)] overflow-hidden"
+      style={{ backgroundColor: '#111118', border: '1px solid #2A2A38' }}
       role="dialog"
+      aria-modal="false"
       aria-label="Feedback survey"
     >
-      {/* Header */}
-      <div className="flex items-start justify-between px-5 pt-5 pb-3 border-b border-[#C9A84C]/20">
-        <h3 className="font-display text-[15px] text-text-primary leading-snug pr-4">
-          Quick question
-        </h3>
-        <button
-          onClick={handleDismiss}
-          aria-label="Close survey"
-          className="shrink-0 text-text-tertiary hover:text-text-primary transition-colors mt-0.5"
+      {/* ── Header ── */}
+      <div
+        className="flex items-center justify-between px-5 py-4"
+        style={{ borderBottom: '1px solid #2A2A38' }}
+      >
+        <h3
+          className="font-[Playfair_Display] text-[16px] leading-snug"
+          style={{ color: '#F0EDE8' }}
         >
-          <X className="w-4 h-4" />
-        </button>
+          What would make Rosetta Alpha more useful to you?
+        </h3>
       </div>
 
-      {/* Body */}
-      <div className="px-5 py-4">
+      {/* ── Body ── */}
+      <div className="px-5 pt-4 pb-5">
         {submitted ? (
-          <p className="text-positive text-[12px] font-medium tracking-wide py-2">
-            ✓ Thank you — your feedback helps us improve Rosetta Alpha.
+          <p
+            className="py-2 text-[14px]"
+            style={{ color: '#F0EDE8', fontFamily: 'Inter, sans-serif' }}
+          >
+            Thanks! 🙏
           </p>
         ) : (
           <form onSubmit={handleSubmit} noValidate>
-            <p className="text-text-secondary text-[11px] leading-relaxed mb-3">
-              What would make Rosetta Alpha more useful to you?
-            </p>
+            {/* Textarea */}
             <div className="relative">
               <textarea
                 value={text}
                 onChange={e => setText(e.target.value.slice(0, MAX_CHARS))}
                 placeholder="Share your thoughts…"
                 rows={4}
-                className="
-                  w-full resize-none
-                  bg-white/[0.04] border border-border
-                  focus:border-[#C9A84C]/60 focus:outline-none
-                  text-text-primary text-[12px] leading-relaxed
-                  px-3 py-2.5
-                  placeholder:text-text-tertiary
-                  transition-colors duration-200
-                "
-                aria-label="Feedback text"
+                className="w-full resize-none rounded-lg px-3 py-2.5 text-[13px] leading-relaxed placeholder:text-[#A09C94] transition-colors duration-200"
+                style={{
+                  backgroundColor: '#1A1A24',
+                  border: '1px solid #2A2A38',
+                  color: '#F0EDE8',
+                  fontFamily: 'Inter, sans-serif',
+                  outline: 'none',
+                }}
+                onFocus={e => { e.target.style.borderColor = '#C9A84C' }}
+                onBlur={e => { e.target.style.borderColor = '#2A2A38' }}
+                aria-label="Feedback response"
               />
+              {/* Character counter */}
               <span
-                className={`absolute bottom-2 right-2.5 text-[10px] tabular-nums ${
-                  text.length >= MAX_CHARS ? 'text-brand-red' : 'text-text-tertiary'
-                }`}
+                className="absolute bottom-2 right-2.5 text-[10px] tabular-nums select-none"
+                style={{
+                  color: text.length >= MAX_CHARS ? '#9F4A4A' : '#A09C94',
+                  fontFamily: 'Inter, sans-serif',
+                }}
               >
                 {text.length}/{MAX_CHARS}
               </span>
             </div>
+
+            {/* Actions */}
             <div className="flex items-center justify-between mt-3">
               <button
                 type="button"
                 onClick={handleDismiss}
-                className="text-[10px] uppercase tracking-[0.12em] text-text-tertiary hover:text-text-secondary transition-colors"
+                className="text-[11px] tracking-wide transition-colors duration-200"
+                style={{ color: '#A09C94', fontFamily: 'Inter, sans-serif' }}
+                onMouseEnter={e => { (e.target as HTMLElement).style.color = '#F0EDE8' }}
+                onMouseLeave={e => { (e.target as HTMLElement).style.color = '#A09C94' }}
               >
-                Skip
+                Maybe later
               </button>
               <button
                 type="submit"
                 disabled={!text.trim()}
-                className="
-                  px-4 py-2
-                  text-[10px] uppercase tracking-[0.15em] font-medium
-                  border border-[#C9A84C]/50
-                  text-[#C9A84C]
-                  hover:bg-[#C9A84C]/10
-                  disabled:opacity-40 disabled:cursor-not-allowed
-                  transition-all duration-200
-                "
+                className="px-4 py-2 rounded-lg text-[11px] font-medium tracking-wide transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                style={{
+                  backgroundColor: '#C9A84C',
+                  color: '#0A0A0F',
+                  fontFamily: 'Inter, sans-serif',
+                }}
+                onMouseEnter={e => { if (text.trim()) (e.target as HTMLElement).style.backgroundColor = '#D4B456' }}
+                onMouseLeave={e => { (e.target as HTMLElement).style.backgroundColor = '#C9A84C' }}
               >
-                Send
+                Send feedback
               </button>
             </div>
           </form>
