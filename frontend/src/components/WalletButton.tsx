@@ -60,12 +60,15 @@ export function WalletButton() {
   const isCoinbaseConnector =
     connector?.id === 'coinbaseWalletSDK' ||
     connector?.id === 'coinbaseWallet' ||
-    connector?.id === 'baseAccount'
+    connector?.id === 'baseAccount' ||
+    connector?.id?.toLowerCase().includes('coinbase') ||
+    connector?.id?.toLowerCase().includes('base')
 
   const addArcChain = async () => {
-    const provider = (window as any).ethereum
-    if (!provider?.request) return
-    await provider.request({
+    const provider = await connector?.getProvider?.() as any
+    const targetProvider = provider?.request ? provider : (window as any).ethereum
+    if (!targetProvider?.request) return
+    await targetProvider.request({
       method: 'wallet_addEthereumChain',
       params: [{
         chainId: '0x' + ARC_CHAIN_ID.toString(16),

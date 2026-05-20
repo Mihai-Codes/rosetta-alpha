@@ -365,30 +365,54 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
       // Step 2: Switch to Arc Testnet if needed
       if (currentChainId !== ARC_CHAIN_ID) {
         setClaimStatus('switching')
-        try {
+        const isCoinbaseConnector =
+          connector?.id === 'coinbaseWalletSDK' ||
+          connector?.id === 'coinbaseWallet' ||
+          connector?.id === 'baseAccount' ||
+          connector?.id?.toLowerCase().includes('coinbase') ||
+          connector?.id?.toLowerCase().includes('base')
+
+        if (isCoinbaseConnector) {
+          // Coinbase can throw noisy "unsupported wallet_switchEthereumChain" for custom networks.
+          // Lead with add-network flow to avoid that popup.
           await provider.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId: toHex(ARC_CHAIN_ID) }],
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: toHex(ARC_CHAIN_ID),
+              chainName: 'Arc Testnet',
+              nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
+              rpcUrls: ['https://rpc.testnet.arc.network'],
+              blockExplorerUrls: ['https://testnet.arcscan.app'],
+            }],
           })
-        } catch (switchErr: unknown) {
-          const switchMsg = (switchErr instanceof Error ? switchErr.message : String(switchErr)).toLowerCase()
-          // Chain not added yet — add it
-          if (
-            switchMsg.includes('4902') ||
-            switchMsg.includes('unrecognized') ||
-            switchMsg.includes('not found') ||
-            switchMsg.includes('unsupported')
-          ) {
+        } else {
+          try {
             await provider.request({
-              method: 'wallet_addEthereumChain',
-              params: [{
-                chainId: toHex(ARC_CHAIN_ID),
-                chainName: 'Arc Testnet',
-                nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
-                rpcUrls: ['https://rpc.testnet.arc.network'],
-                blockExplorerUrls: ['https://testnet.arcscan.app'],
-              }],
+              method: 'wallet_switchEthereumChain',
+              params: [{ chainId: toHex(ARC_CHAIN_ID) }],
             })
+          } catch (switchErr: unknown) {
+            const switchMsg = (switchErr instanceof Error ? switchErr.message : String(switchErr)).toLowerCase()
+            // Chain not added yet — add it
+            if (
+              switchMsg.includes('4902') ||
+              switchMsg.includes('unrecognized') ||
+              switchMsg.includes('not found') ||
+              switchMsg.includes('unsupported')
+            ) {
+              await provider.request({
+                method: 'wallet_addEthereumChain',
+                params: [{
+                  chainId: toHex(ARC_CHAIN_ID),
+                  chainName: 'Arc Testnet',
+                  nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
+                  rpcUrls: ['https://rpc.testnet.arc.network'],
+                  blockExplorerUrls: ['https://testnet.arcscan.app'],
+                }],
+              })
+            } else {
+              throw switchErr
+            }
           }
         }
       }
