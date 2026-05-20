@@ -1,12 +1,11 @@
 'use client'
 
+import { useRef } from 'react'
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit'
 import { WagmiProvider } from 'wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { config } from '@/lib/wagmi'
 import '@rainbow-me/rainbowkit/styles.css'
-
-const queryClient = new QueryClient()
 
 const customTheme = darkTheme({
   accentColor: '#C9A84C',
@@ -15,7 +14,6 @@ const customTheme = darkTheme({
   overlayBlur: 'small',
 })
 
-// Override modal colors to match Rosetta design system
 customTheme.colors.modalBackground = '#111118'
 customTheme.colors.modalBorder = '#2A2A38'
 customTheme.colors.profileForeground = '#111118'
@@ -25,13 +23,20 @@ interface Web3ProviderProps {
   children: React.ReactNode
 }
 
-// reconnectOnMount=false: prevents wagmi's built-in reconnect() from firing on every
-// component mount and re-authorizing wallets that are still connected at the browser level.
-// This is the definitive fix for ghost wallet reconnections after sign-out/sign-in.
 export function Web3Provider({ children }: Web3ProviderProps) {
+  // useRef ensures a single QueryClient instance per component lifetime, but does NOT
+  // persist the module-level singleton across OAuth redirects/sign-in cycles.
+  // Module-level QueryClient singletons cache "connected" wallet state through sign-out.
+  const queryClientRef = useRef<QueryClient | null>(null)
+  if (!queryClientRef.current) {
+    queryClientRef.current = new QueryClient()
+  }
+
   return (
+    // reconnectOnMount=false: prevents wagmi from auto-reconnecting browser-authorized
+    // wallets on every mount — eliminates ghost connections after sign-out/sign-in.
     <WagmiProvider config={config} reconnectOnMount={false}>
-      <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClientRef.current}>
         <RainbowKitProvider theme={customTheme} modalSize="compact">
           {children}
         </RainbowKitProvider>
