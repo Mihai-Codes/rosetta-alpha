@@ -1,6 +1,6 @@
 'use client'
 
-import { useAccount, useBalance, useDisconnect, useSwitchChain } from 'wagmi'
+import { useAccount, useBalance, useDisconnect, useConnectors, useSwitchChain } from 'wagmi'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { arcTestnet } from '@/lib/wagmi'
 import React from 'react'
@@ -15,13 +15,18 @@ function truncateAddress(address: string): string {
 export function WalletButton() {
   const { address, isConnected, chainId } = useAccount()
   const { disconnectAsync } = useDisconnect()
+  const connectors = useConnectors()
 
   const handleDisconnect = async () => {
     setDropdownOpen(false)
-    await disconnectAsync()
+    // Disconnect ALL registered connectors sequentially.
+    // wagmi v2 re-connects immediately after disconnectAsync() if another connector
+    // (e.g. Brave, injected) is still "authorized". Disconnecting all prevents this.
+    for (const connector of connectors) {
+      try { await disconnectAsync({ connector }) } catch { /* ignore */ }
+    }
     // Route through the server-side disconnect endpoint which sets Set-Cookie: wagmi.store=''
-    // BEFORE Next.js SSR runs cookieToInitialState() — eliminates the race condition where
-    // wagmi's state subscription re-writes the cookie after client-side deletion.
+    // BEFORE Next.js SSR runs cookieToInitialState() — eliminates the race condition.
     const redirectTo = window.location.pathname
     window.location.href = `/api/disconnect?next=${encodeURIComponent(redirectTo)}`
   }
