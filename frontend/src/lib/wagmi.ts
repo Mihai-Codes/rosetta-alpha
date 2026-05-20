@@ -96,7 +96,8 @@ const customBrowserWallet = (_options: any) => {
                 const brave = providers.find((p: any) => p?.isBraveWallet)
                 if (brave) return brave
               }
-              return eth
+              if (eth?.isBraveWallet) return eth
+              return undefined
             },
           },
           shimDisconnect: true,

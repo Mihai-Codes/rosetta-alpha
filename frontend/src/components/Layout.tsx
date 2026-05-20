@@ -84,8 +84,10 @@ export function Layout({ children, activeTab }: LayoutProps) {
     }
     // Step 3: Sign out NextAuth session
     await signOut({ redirect: false })
-    // Step 4: Wipe wagmi.store cookie server-side before SSR re-hydrates it
-    window.location.href = `/api/disconnect?next=${encodeURIComponent('/')}`
+    // Step 4: Wipe wagmi cookies server-side without full page reload
+    await fetch('/api/disconnect?mode=json', { method: 'GET', credentials: 'include' })
+    router.replace('/')
+    router.refresh()
   }, [connectors, disconnectAsync])
 
   // Close drawer on route change

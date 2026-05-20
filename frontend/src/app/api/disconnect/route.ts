@@ -13,7 +13,10 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
   const redirectTo = searchParams.get('next') ?? '/'
 
-  const response = NextResponse.redirect(new URL(redirectTo, req.url))
+  const mode = searchParams.get('mode')
+  const response = mode === 'json'
+    ? NextResponse.json({ ok: true })
+    : NextResponse.redirect(new URL(redirectTo, req.url))
 
   // Nuke wagmi cookieStorage keys at the HTTP layer with matching path/samesite.
   // wagmi stores shimDisconnect flags separately from wagmi.store, and stale

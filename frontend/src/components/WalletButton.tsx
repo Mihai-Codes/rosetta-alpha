@@ -2,6 +2,7 @@
 
 import { useAccount, useBalance, useDisconnect, useConnectors, useSwitchChain } from 'wagmi'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
+import { useRouter } from 'next/navigation'
 import { arcTestnet } from '@/lib/chains'
 import React from 'react'
 
@@ -45,12 +46,13 @@ export function WalletButton() {
       try { await disconnectAsync({ connector }) } catch { /* ignore */ }
     }
 
-    // Step 3: Server-side cookie wipe via /api/disconnect — eliminates SSR race condition.
-    const redirectTo = window.location.pathname
-    window.location.href = `/api/disconnect?next=${encodeURIComponent(redirectTo)}`
+    // Step 3: Server-side cookie wipe via /api/disconnect, without full-page reload.
+    await fetch('/api/disconnect?mode=json', { method: 'GET', credentials: 'include' })
+    router.refresh()
   }
   const { openConnectModal } = useConnectModal()
   const { switchChain } = useSwitchChain()
+  const router = useRouter()
   const handleConnectClick = () => {
     sessionStorage.removeItem('rosetta.wallet.manualDisconnect')
     openConnectModal?.()
