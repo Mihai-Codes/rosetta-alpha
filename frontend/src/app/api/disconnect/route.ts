@@ -21,14 +21,21 @@ export async function GET(req: Request) {
   // Nuke wagmi cookieStorage keys at the HTTP layer with matching path/samesite.
   // wagmi stores shimDisconnect flags separately from wagmi.store, and stale
   // wagmi.<connector>.disconnected cookies make connector.isAuthorized() return false.
+  // Cover both legacy connector IDs and EIP-6963 rdns-based IDs.
   const cookieNames = [
     'wagmi.store',
     'wagmi.recentConnectorId',
+    // Legacy connector IDs
     'wagmi.injected.connected',
     'wagmi.injected.disconnected',
     'wagmi.metaMask.disconnected',
     'wagmi.coinbaseWallet.disconnected',
     'wagmi.okxWallet.disconnected',
+    // EIP-6963 rdns-based connector IDs
+    'wagmi.io.metamask.disconnected',
+    'wagmi.com.brave.wallet.disconnected',
+    'wagmi.com.okex.wallet.disconnected',
+    'wagmi.coinbaseWalletSDK.disconnected',
   ]
 
   for (const cookieName of cookieNames) {
