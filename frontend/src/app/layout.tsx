@@ -9,6 +9,8 @@ import { FeedbackSurvey } from '@/components/FeedbackSurvey'
 import { SimpleAnalytics } from '@simpleanalytics/next'
 import '../index.css'
 
+
+
 export const metadata: Metadata = {
   title: 'Rosetta Alpha — AI-Powered Global Macro Intelligence',
   description:
@@ -39,13 +41,6 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className="dark">
-      <head>
-        {/* Simple Analytics — privacy-first traffic analytics (no cookies, GDPR compliant) */}
-        <SimpleAnalytics
-          collectDnt={false}
-          hostname={process.env.NEXT_PUBLIC_SIMPLE_ANALYTICS_HOSTNAME ?? 'rosetta-alpha.vercel.app'}
-        />
-      </head>
       <body className="bg-bg-primary text-text-primary antialiased">
         <PostHogProvider>
           <AuthProvider>
@@ -54,6 +49,8 @@ export default async function RootLayout({
           {/* Exit survey: appears after 60s if not already seen */}
           <FeedbackSurvey />
         </PostHogProvider>
+        {/* Simple Analytics — privacy-first traffic analytics (no cookies, GDPR compliant) */}
+        <SimpleAnalytics />
       </body>
     </html>
   )

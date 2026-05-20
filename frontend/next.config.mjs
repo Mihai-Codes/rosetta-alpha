@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+import withSimpleAnalytics from '@simpleanalytics/next/plugin'
 
 /**
  * Content Security Policy for WalletConnect / Reown AppKit.
@@ -28,6 +29,13 @@ const WC_CONNECT_SRC = [
   'https://keys.walletconnect.org',
   'https://rpc.testnet.arc.network',
   'wss://rpc.testnet.arc.network',
+  // PostHog ingest
+  'https://us.i.posthog.com',
+  'https://app.posthog.com',
+  // Simple Analytics proxied ingest
+  'https://simpleanalyticscdn.com',
+  'https://queue.simpleanalyticscdn.com',
+  'https://scripts.simpleanalyticscdn.com',
   'https://cca-lite.coinbase.com',
   // Coinbase Smart Wallet internal RPC — blocked by CSP causes silent claim failure
   'https://eth.merkle.io',
@@ -85,6 +93,7 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts'],
   },
+
 }
 
-export default nextConfig
+export default withSimpleAnalytics(nextConfig)
