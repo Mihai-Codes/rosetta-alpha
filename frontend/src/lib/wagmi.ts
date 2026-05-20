@@ -39,6 +39,41 @@ const customMetaMaskWallet = (options: any) => {
 }
 
 /**
+ * Custom Brave Wrapper — explicitly resolves Brave provider even when multiple
+ * injected providers are present (e.g., MetaMask extension installed too).
+ */
+const customBraveWallet = (_options: any) => {
+  const wallet = braveWallet()
+  return {
+    ...wallet,
+    qrCode: undefined,
+    createConnector: (walletDetails: any) => {
+      return createConnector((config) => {
+        const connector = injected({
+          target: {
+            id: 'braveWallet',
+            name: 'Brave Wallet',
+            provider: (window) => {
+              const eth = (window as any)?.ethereum
+              const providers = eth?.providers
+              if (Array.isArray(providers)) {
+                const brave = providers.find((p: any) => p?.isBraveWallet)
+                if (brave) return brave
+              }
+              if (eth?.isBraveWallet) return eth
+              return undefined
+            },
+          },
+          shimDisconnect: true,
+          unstable_shimAsyncInject: 3000,
+        })(config)
+        return { ...connector, ...walletDetails }
+      })
+    },
+  }
+}
+
+/**
  * Custom OKX Wrapper — uses native RainbowKit connector when installed,
  * no-op (install screen) when not installed.
  */
@@ -78,7 +113,7 @@ const connectors = connectorsForWallets(
       groupName: 'Recommended',
       wallets: [
         customMetaMaskWallet,
-        braveWallet,
+        customBraveWallet,
         customOkxWallet,
         coinbaseWallet,
       ],

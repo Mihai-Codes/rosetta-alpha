@@ -152,7 +152,7 @@ export function WalletButton() {
     }
   }
 
-  if (wrongNetworkBanner && isConnected) {
+  if (wrongNetworkBanner && isConnected && !isCoinbaseConnector) {
     return (
       <div className="flex items-center gap-2">
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#E8A020]/50 bg-[#E8A020]/10 text-[10px] text-[#E8A020] font-medium uppercase tracking-[0.15em]">
@@ -161,6 +161,7 @@ export function WalletButton() {
           <button
             onClick={async () => {
               if (isCoinbaseConnector) {
+                window.open('https://www.coinbase.com/learn/wallet/How-to-add-custom-networks-Coinbase-Wallet', '_blank')
                 return
               }
               switchChain({ chainId: ARC_CHAIN_ID }, { onError: () => {} })
