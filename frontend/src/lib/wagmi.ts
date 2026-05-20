@@ -1,13 +1,13 @@
 import { connectorsForWallets } from '@rainbow-me/rainbowkit'
 import {
-  metaMaskWallet as defaultMetaMaskWallet,
-  okxWallet as defaultOkxWallet,
+  metaMaskWallet,
   braveWallet,
+  okxWallet,
   coinbaseWallet,
+  injectedWallet,
 } from '@rainbow-me/rainbowkit/wallets'
-import { createConfig, http, createConnector, cookieStorage, createStorage } from 'wagmi'
+import { createConfig, http, cookieStorage, createStorage } from 'wagmi'
 import { mainnet } from 'wagmi/chains'
-import { injected } from 'wagmi/connectors'
 import { arcTestnet } from './chains'
 
 export { arcTestnet }
@@ -18,107 +18,24 @@ const PROJECT_ID =
 const APP_URL = 'https://rosetta-alpha.vercel.app'
 
 /**
- * Custom MetaMask Wrapper — pure injected, no WalletConnect QR fallback.
+ * Standard RainbowKit wallet list.
+ * EIP-6963 multiInjectedProviderDiscovery handles deduplication via rdns,
+ * so we use standard connectors instead of custom wrappers.
+ * injectedWallet acts as a catch-all for other EIP-6963 wallets (Rabby, Phantom, etc.)
+ * and hides itself when more specific wallets are already displayed.
  */
-const customMetaMaskWallet = (options: any) => {
-  const wallet = defaultMetaMaskWallet(options)
-  return {
-    ...wallet,
-    qrCode: undefined,
-    createConnector: (walletDetails: any) => {
-      return createConnector((config) => {
-        const connector = injected({
-          target: 'metaMask',
-          shimDisconnect: true,
-          unstable_shimAsyncInject: 3000,
-        })(config)
-        return { ...connector, ...walletDetails }
-      })
-    }
-  }
-}
-
-/**
- * Custom Brave Wrapper — explicitly resolves Brave provider even when multiple
- * injected providers are present (e.g., MetaMask extension installed too).
- */
-const customBraveWallet = (_options: any) => {
-  const wallet = braveWallet()
-  return {
-    ...wallet,
-    qrCode: undefined,
-    createConnector: (walletDetails: any) => {
-      return createConnector((config) => {
-        const connector = injected({
-          target: {
-            id: 'braveWallet',
-            name: 'Brave Wallet',
-            provider: (window) => {
-              const eth = (window as any)?.ethereum
-              const providers = eth?.providers
-              if (Array.isArray(providers)) {
-                const brave = providers.find((p: any) => p?.isBraveWallet)
-                if (brave) return brave
-              }
-              if (eth?.isBraveWallet) return eth
-              return undefined
-            },
-          },
-          shimDisconnect: true,
-          unstable_shimAsyncInject: 3000,
-        })(config)
-        return { ...connector, ...walletDetails }
-      })
-    },
-  }
-}
-
-/**
- * Custom OKX Wrapper — uses native RainbowKit connector when installed,
- * no-op (install screen) when not installed.
- */
-const customOkxWallet = (options: any) => {
-  const wallet = defaultOkxWallet(options)
-  const isOkxInstalled = typeof window !== 'undefined' &&
-    ((window as any).okxwallet || (window as any).OKXWallet)
-
-  if (isOkxInstalled) {
-    return { ...wallet, qrCode: undefined }
-  }
-
-  return {
-    ...wallet,
-    qrCode: undefined,
-    installed: false,
-    createConnector: (walletDetails: any) => {
-      return createConnector((config) => {
-        const connector = injected({
-          target: {
-            id: 'okxWallet',
-            name: 'OKX Wallet',
-            provider: (window) => (window as any).okxwallet || (window as any).OKXWallet,
-          },
-          shimDisconnect: true,
-          unstable_shimAsyncInject: 3000,
-        })(config)
-        return { ...connector, ...walletDetails }
-      })
-    }
-  }
-}
-
 const connectors = connectorsForWallets(
   [
     {
       groupName: 'Recommended',
       wallets: [
-        customMetaMaskWallet,
-        customBraveWallet,
-        customOkxWallet,
+        metaMaskWallet,
+        braveWallet,
+        okxWallet,
         coinbaseWallet,
+        injectedWallet,
       ],
     },
-
   ],
   {
     appName: 'Rosetta Alpha',
@@ -131,6 +48,11 @@ const connectors = connectorsForWallets(
 
 /**
  * Wagmi config with cookieStorage for SSR-safe wallet persistence.
+ *
+ * EIP-6963 multiInjectedProviderDiscovery is enabled so each wallet extension
+ * self-identifies via standardized rdns, eliminating provider hijacking and
+ * "Browser Wallet" ambiguity. RainbowKit auto-deduplicates discovered wallets
+ * against the explicit list above using rdns matching.
  *
  * The server reads wagmi.store in app/layout.tsx and passes it to WagmiProvider
  * as initialState so signed-in users keep their wallet connection on refresh.
@@ -149,7 +71,7 @@ export function getConfig() {
       [mainnet.id]: http(),
     },
     ssr: true,
-    multiInjectedProviderDiscovery: false,
+    multiInjectedProviderDiscovery: true,
   })
 }
 
