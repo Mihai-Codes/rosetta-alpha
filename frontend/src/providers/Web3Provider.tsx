@@ -25,11 +25,12 @@ interface Web3ProviderProps {
   children: React.ReactNode
 }
 
-// No initialState — wagmi uses noopStorage so there is no persisted state to hydrate.
-// This eliminates ghost wallet reconnections across sign-out/sign-in cycles.
+// reconnectOnMount=false: prevents wagmi's built-in reconnect() from firing on every
+// component mount and re-authorizing wallets that are still connected at the browser level.
+// This is the definitive fix for ghost wallet reconnections after sign-out/sign-in.
 export function Web3Provider({ children }: Web3ProviderProps) {
   return (
-    <WagmiProvider config={config}>
+    <WagmiProvider config={config} reconnectOnMount={false}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider theme={customTheme} modalSize="compact">
           {children}
