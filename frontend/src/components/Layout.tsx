@@ -4,6 +4,7 @@ import React from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
+import { useDisconnect, useConnectors } from 'wagmi'
 import { Brain, Layers, HardDrive, CircleDollarSign, Menu, X, LogOut } from 'lucide-react'
 import { WalletButton } from './WalletButton'
 import { OnboardingModal } from './OnboardingModal'
@@ -61,11 +62,29 @@ export function Layout({ children, activeTab }: LayoutProps) {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  const { disconnectAsync } = useDisconnect()
+  const connectors = useConnectors()
+
   const handleSignOut = React.useCallback(async () => {
+    // Step 1: Revoke browser-level wallet permissions so wallets cannot auto-reconnect
+    if (typeof window !== 'undefined') {
+      const win = window as any
+      const providers = [win.ethereum, win.okxwallet].filter(Boolean)
+      for (const provider of providers) {
+        try {
+          await provider.request({ method: 'wallet_revokePermissions', params: [{ eth_accounts: {} }] })
+        } catch { /* wallet may not support it */ }
+      }
+    }
+    // Step 2: Disconnect all wagmi connectors
+    for (const connector of connectors) {
+      try { await disconnectAsync({ connector }) } catch { /* ignore */ }
+    }
+    // Step 3: Sign out NextAuth session
     await signOut({ redirect: false })
-    // Hard reload to completely bust the Next.js App Router client cache
-    window.location.href = '/'
-  }, [])
+    // Step 4: Wipe wagmi.store cookie server-side before SSR re-hydrates it
+    window.location.href = `/api/disconnect?next=${encodeURIComponent('/')}`
+  }, [connectors, disconnectAsync])
 
   // Close drawer on route change
   React.useEffect(() => { setMobileOpen(false) }, [pathname])
