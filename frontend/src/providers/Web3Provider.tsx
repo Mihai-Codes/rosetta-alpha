@@ -2,9 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit'
-import { type State, WagmiProvider, useAccount, useConfig, useConnectors, useDisconnect, useReconnect } from 'wagmi'
+import { type State, WagmiProvider, useAccount, useConfig, useConnectors, useDisconnect } from 'wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useSession } from 'next-auth/react'
 import { getConfig } from '@/lib/wagmi'
 import '@rainbow-me/rainbowkit/styles.css'
 
@@ -25,14 +24,18 @@ interface Web3ProviderProps {
   initialState?: State
 }
 
+/**
+ * WalletReconnectBridge — handles only the manual-disconnect guard.
+ * With EIP-6963 + cookieStorage + reconnectOnMount (default true),
+ * wagmi natively handles session restoration. This bridge only needs to
+ * enforce the "user clicked Disconnect" contract by force-clearing state
+ * when the manualDisconnect flag is set.
+ */
 function WalletReconnectBridge() {
-  const { status: sessionStatus } = useSession()
-  const { isConnected, isConnecting, isReconnecting } = useAccount()
+  const { isConnected } = useAccount()
   const connectors = useConnectors()
   const config = useConfig()
   const { disconnectAsync } = useDisconnect()
-  const { reconnect, isPending } = useReconnect()
-  const attemptedRef = useRef(false)
   const forcedDisconnectRef = useRef(false)
 
   useEffect(() => {
@@ -40,58 +43,27 @@ function WalletReconnectBridge() {
 
     const manualDisconnect = sessionStorage.getItem('rosetta.wallet.manualDisconnect') === '1'
 
-    if (manualDisconnect) {
-      attemptedRef.current = false
-
-      if (isConnected && !forcedDisconnectRef.current) {
-        forcedDisconnectRef.current = true
-        void (async () => {
-          for (const connector of connectors) {
-            try { await disconnectAsync({ connector }) } catch { /* ignore */ }
-          }
-
-          config.setState((state) => ({
-            ...state,
-            current: null,
-            connections: new Map(),
-            status: 'disconnected',
-          }))
-        })()
-      }
-
+    if (!manualDisconnect) {
+      forcedDisconnectRef.current = false
       return
     }
 
-    forcedDisconnectRef.current = false
-
-    if (isConnected) {
-      attemptedRef.current = true
-      return
+    // User explicitly disconnected — prevent wagmi from auto-reconnecting.
+    if (isConnected && !forcedDisconnectRef.current) {
+      forcedDisconnectRef.current = true
+      void (async () => {
+        for (const connector of connectors) {
+          try { await disconnectAsync({ connector }) } catch { /* ignore */ }
+        }
+        config.setState((state) => ({
+          ...state,
+          current: null,
+          connections: new Map(),
+          status: 'disconnected',
+        }))
+      })()
     }
-
-    if (sessionStatus !== 'authenticated') {
-      attemptedRef.current = false
-      return
-    }
-
-    if (
-      attemptedRef.current ||
-      isConnecting ||
-      isReconnecting ||
-      isPending
-    ) {
-      return
-    }
-
-    attemptedRef.current = true
-    const timers = [0, 500, 1500, 3000, 6000].map((delay) =>
-      window.setTimeout(() => {
-        reconnect({ connectors })
-      }, delay)
-    )
-
-    return () => timers.forEach((timer) => window.clearTimeout(timer))
-  }, [config, connectors, disconnectAsync, isConnected, isConnecting, isPending, isReconnecting, reconnect, sessionStatus])
+  }, [config, connectors, disconnectAsync, isConnected])
 
   return null
 }
@@ -107,7 +79,6 @@ export function Web3Provider({ children, initialState }: Web3ProviderProps) {
     <WagmiProvider
       config={config}
       initialState={initialState}
-      reconnectOnMount={false}
     >
       <QueryClientProvider client={queryClientRef.current}>
         <WalletReconnectBridge />
