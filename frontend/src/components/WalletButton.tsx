@@ -1,7 +1,6 @@
 'use client'
 
 import { useAccount, useBalance, useDisconnect, useSwitchChain } from 'wagmi'
-import { cookieStorage } from '@wagmi/core'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { arcTestnet } from '@/lib/wagmi'
 import React from 'react'
@@ -16,6 +15,16 @@ function truncateAddress(address: string): string {
 export function WalletButton() {
   const { address, isConnected, chainId } = useAccount()
   const { disconnectAsync } = useDisconnect()
+
+  const handleDisconnect = async () => {
+    setDropdownOpen(false)
+    await disconnectAsync()
+    // Route through the server-side disconnect endpoint which sets Set-Cookie: wagmi.store=''
+    // BEFORE Next.js SSR runs cookieToInitialState() — eliminates the race condition where
+    // wagmi's state subscription re-writes the cookie after client-side deletion.
+    const redirectTo = window.location.pathname
+    window.location.href = `/api/disconnect?next=${encodeURIComponent(redirectTo)}`
+  }
   const { openConnectModal } = useConnectModal()
   const { switchChain } = useSwitchChain()
   const [dropdownOpen, setDropdownOpen] = React.useState(false)
@@ -152,17 +161,7 @@ export function WalletButton() {
               View on Arc Explorer
             </button>
             <button
-              onClick={async () => {
-                setDropdownOpen(false)
-                await disconnectAsync()
-                // Remove the exact cookie key wagmi uses for cookieStorage persistence.
-                // Key format: `${config.storage.key}.store` → defaults to "wagmi.store"
-                // Must be deleted AFTER disconnectAsync() resolves so the server-side
-                // cookieToInitialState() in layout.tsx reads an empty state on next load.
-                cookieStorage.removeItem('wagmi.store')
-                document.cookie = 'wagmi.store=;max-age=-1;path=/'
-                window.location.reload()
-              }}
+              onClick={handleDisconnect}
               className="w-full px-4 py-3 text-left text-xs text-negative hover:bg-bg-tertiary transition-colors border-t border-border"
             >
               Disconnect
