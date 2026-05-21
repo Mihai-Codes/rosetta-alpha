@@ -199,8 +199,8 @@ function RingChart() {
         </svg>
         {/* Center label */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <p className="font-mono text-[10px] sm:text-[11px] text-text-secondary tracking-[0.3em] uppercase mb-2 leading-tight text-center pl-1">
-            All<br/>Weather
+          <p className="font-mono text-[10px] text-text-secondary tracking-widest uppercase mb-1 text-center pl-[0.1em]">
+            All Weather
           </p>
           <p className="font-display text-4xl sm:text-5xl text-text-primary font-bold leading-none">
             {total}%
