@@ -244,7 +244,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
       {/* Footer: provenance & actions */}
       <footer className="px-4 sm:px-6 py-4 border-t border-border flex flex-col gap-4 mt-auto bg-[#0A0A0A]">
         {/* Top Row: IPFS & Arc */}
-        <div className="flex items-center justify-between w-full gap-2">
+        <div className="flex flex-row items-center justify-between w-full">
           {desk.ipfs_thesis_cid && desk.ipfs_thesis_cid !== 'bafkrei...' && (
             <a href={`https://dweb.link/ipfs/${desk.ipfs_thesis_cid}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-text-tertiary hover:text-brand-red transition-colors">
               <ExternalLink className="w-3 h-3" />
@@ -252,7 +252,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
             </a>
           )}
           {desk.arc_tx && (
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 shrink-0">
               <a href={`https://testnet.arcscan.app/tx/${desk.arc_tx}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-text-tertiary hover:text-brand-red transition-colors">
                 <ExternalLink className="w-3 h-3" />
                 <span>Arc L1: <span className="font-mono text-text-secondary">{truncateHash(desk.arc_tx, 6, 4)}</span></span>
