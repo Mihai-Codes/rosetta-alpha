@@ -161,18 +161,18 @@ const QUADRANTS: Quadrant[] = [
 
 function RingChart() {
   const total = QUADRANTS.reduce((s, q) => s + q.pct, 0)
-  const radius = 90
-  const cx = 110
-  const cy = 110
+  const radius = 96
+  const cx = 120
+  const cy = 120
   const circumference = 2 * Math.PI * radius
   let offset = 0
 
   return (
     <div className="flex flex-col items-center gap-4 sm:gap-6 w-full max-w-xs mx-auto">
       <div className="relative">
-        <svg width="220" height="220" viewBox={`0 0 220 220`} className="transform -rotate-90">
+        <svg width="240" height="240" viewBox={`0 0 240 240`} className="transform -rotate-90">
           {/* Track */}
-          <circle cx={110} cy={110}
+          <circle cx={120} cy={120}
             r={radius}
             fill="none"
             stroke="#1A1A24"
@@ -202,11 +202,11 @@ function RingChart() {
         </svg>
         {/* Center label */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <p className="font-mono text-[14px] sm:text-base text-text-primary font-bold tracking-[0.15em] uppercase text-center leading-tight">
-            All<br/>Weather
+          <p className="font-mono text-[11px] text-text-secondary tracking-[0.3em] uppercase mb-1">
+            All Weather
           </p>
-          <p className="text-[8px] uppercase tracking-[0.25em] text-brand-red mt-1.5">
-            {total}% Div.
+          <p className="font-display text-3xl sm:text-4xl text-text-primary font-bold leading-none">
+            {total}%
           </p>
         </div>
       </div>
