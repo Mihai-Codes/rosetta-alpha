@@ -172,9 +172,7 @@ function RingChart() {
       <div className="relative">
         <svg width="220" height="220" viewBox={`0 0 220 220`} className="transform -rotate-90">
           {/* Track */}
-          <circle
-            cx={100}
-            cy={100}
+          <circle cx={110} cy={110}
             r={radius}
             fill="none"
             stroke="#1A1A24"
@@ -569,11 +567,9 @@ export function DashboardView() {
           {/* Overlay text */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
             <div className="flex flex-col items-center gap-3">
-               <div className="w-12 h-12 border border-brand-red/30 bg-brand-red/10 flex items-center justify-center rounded-full backdrop-blur-md">
-                 <Lock className="w-5 h-5 text-brand-red" />
-               </div>
-               <span className="font-mono text-[11px] uppercase tracking-[0.3em] text-brand-red bg-bg-primary/90 px-4 py-2 border border-brand-red/20 backdrop-blur-sm shadow-glow-red">
-                 Auth Required
+               <span className="font-mono text-[11px] uppercase tracking-[0.3em] text-brand-red bg-bg-primary/90 px-4 py-2 border border-brand-red/20 backdrop-blur-sm shadow-glow-red flex items-center gap-2">
+                 <span className="w-1.5 h-3 bg-brand-red animate-pulse" />
+                 Awaiting Decryption
                </span>
             </div>
           </div>
