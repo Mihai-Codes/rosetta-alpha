@@ -198,11 +198,11 @@ function RingChart() {
           })}
         </svg>
         {/* Center label */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none p-4">
-          <p className="font-mono text-[9px] sm:text-[10px] text-text-secondary tracking-[0.25em] uppercase mb-1.5 leading-tight text-center">
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+          <p className="font-mono text-[10px] sm:text-[11px] text-text-secondary tracking-[0.3em] uppercase mb-2 leading-tight text-center pl-1">
             All<br/>Weather
           </p>
-          <p className="font-display text-3xl sm:text-4xl text-text-primary font-bold leading-none mt-0.5">
+          <p className="font-display text-4xl sm:text-5xl text-text-primary font-bold leading-none">
             {total}%
           </p>
         </div>
@@ -572,7 +572,7 @@ export function DashboardView() {
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30 bg-bg-primary/40 backdrop-blur-[2px]">
             <div className="flex flex-col items-center gap-3">
                <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-brand-red bg-bg-primary/95 px-5 py-3 border border-brand-red/30 shadow-glow-red flex items-center gap-2">
-                 <Lock className="w-3.5 h-3.5" />
+                 <Key className="w-3.5 h-3.5" />
                  Awaiting Decryption
                </span>
             </div>
