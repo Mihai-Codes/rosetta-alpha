@@ -169,27 +169,16 @@ function RingChart() {
 
   return (
     <div className="flex flex-col items-center gap-4 sm:gap-6 w-full max-w-xs mx-auto">
-      <div className="relative">
-        <svg width="200" height="200" viewBox="0 0 200 200" className="transform -rotate-90">
+      <div className="relative flex items-center justify-center w-[200px] h-[200px] mx-auto">
+        <svg width="200" height="200" viewBox="0 0 200 200" className="transform -rotate-90 absolute inset-0">
           {/* Track */}
-          <circle cx={100} cy={100}
-            r={radius}
-            fill="none"
-            stroke="#1A1A24"
-            strokeWidth="12"
-          />
+          <circle cx={100} cy={100} r={radius} fill="none" stroke="#1A1A24" strokeWidth="12" />
           {/* Segments */}
           {QUADRANTS.map((q, i) => {
             const len = (q.pct / total) * circumference
             const seg = (
-              <circle key={i} cx={100} cy={100}
-                r={radius}
-                fill="none"
-                stroke={q.color}
-                strokeWidth="12"
-                strokeDasharray={`${len} ${circumference}`}
-                strokeDashoffset={-offset}
-                strokeLinecap="butt"
+              <circle key={i} cx={100} cy={100} r={radius} fill="none" stroke={q.color} strokeWidth="12"
+                strokeDasharray={`${len} ${circumference}`} strokeDashoffset={-offset} strokeLinecap="butt"
                 style={{ transition: 'stroke-dashoffset 1.2s ease-out' }}
               />
             )
@@ -197,12 +186,12 @@ function RingChart() {
             return seg
           })}
         </svg>
-        {/* Center label */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <p className="font-mono text-[10px] text-text-secondary tracking-widest uppercase mb-1 text-center pl-[0.1em]">
+        {/* Center label with optical alignment for tracking */}
+        <div className="relative z-10 flex flex-col items-center justify-center pointer-events-none mt-1">
+          <p className="font-mono text-[10px] text-text-secondary tracking-[0.2em] uppercase mb-1" style={{ marginRight: '-0.2em' }}>
             All Weather
           </p>
-          <p className="font-display text-4xl sm:text-5xl text-text-primary font-bold leading-none">
+          <p className="font-display text-4xl text-text-primary font-bold leading-none">
             {total}%
           </p>
         </div>
