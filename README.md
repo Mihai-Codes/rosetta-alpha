@@ -47,6 +47,8 @@ The [Trading-R1 paper](https://arxiv.org/abs/2509.11420) from Tauric Research sh
 
 **Rosetta Alpha** is that primitive, deployed as a full-stack product — built on the [All Weather](https://www.bridgewater.com/research-and-insights/the-all-weather-story) risk-parity framework and applied across five language regions simultaneously.
 
+This problem is compounded by what Cambrian Network's financial agent landscape analysis identifies as the LLM clustering problem: all major models, when prompted generically, converge on near-identical financial advice. Generic prompts produce generic answers produce zero competitive advantage. Rosetta Alpha's multi-model, multi-language routing is a direct architectural response — DeepSeek V4 Pro reasoning in Mandarin about Chinese equities produces structurally different analysis than English-first models reasoning about the same assets.
+
 ---
 
 ## Live Demo
@@ -211,6 +213,8 @@ flowchart LR
 
 Every AI claim is financially accountable. Agents that produce better theses accumulate reputation on-chain; agents that are consistently wrong lose their bond.
 
+This loop also serves as a defense against the failure modes identified in DeepMind's 'AI Agent Traps' research — data poisoning and adversarial manipulation. If an agent's reasoning is compromised, the evidence is permanent (IPFS), the hash is immutable (Arc), and the financial penalty is automatic (bond slash). The accountability is structural, not aspirational.
+
 ---
 
 ## Judging Criteria Mapping
@@ -244,6 +248,8 @@ The AI isn't a single model making a call. It's a **three-layer deliberation cha
 The insight from hackathon Research Brief 01: *"the trace is the product."* Rosetta Alpha operationalizes this — the reasoning trace is published, verified on-chain, and users bet on their ability to understand it. Learn-to-earn via machine reasoning comprehension is a new gamification primitive.
 
 The multi-language angle maps directly to Research Brief 04 — a Tokyo-based retail investor reading a Toyota thesis in Japanese context is a net-new market that doesn't exist on any existing prediction platform.
+
+Prediction market agents remain the most underserved category in the financial agent landscape despite explosive growth in platforms like Polymarket and Kalshi. Rosetta Alpha occupies this gap with a differentiated approach: the reasoning trace is the tradeable asset, not the position.
 
 ---
 
