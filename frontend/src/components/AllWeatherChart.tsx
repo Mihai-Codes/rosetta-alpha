@@ -11,7 +11,7 @@ const ALLOCATIONS = [
 
 export function AllWeatherChart() {
   const total = ALLOCATIONS.reduce((s, a) => s + a.pct, 0)
-  const radius = 90
+  const radius = 64
   const circumference = 2 * Math.PI * radius
   let offset = 0
 
@@ -26,14 +26,14 @@ export function AllWeatherChart() {
 
       {/* Donut chart — needs relative parent for the center label */}
       <div className="relative flex items-center justify-center mb-5 sm:mb-6">
-        <svg width="220" height="220" viewBox="0 0 220 220" className="transform -rotate-90">
-          <circle cx="110" cy="110" r={radius} fill="none" stroke="#2A2A38" strokeWidth="14" />
+        <svg width="180" height="180" viewBox="0 0 180 180" className="transform -rotate-90">
+          <circle cx="90" cy="90" r={radius} fill="none" stroke="#2A2A38" strokeWidth="14" />
           {ALLOCATIONS.map((a, i) => {
             const length = (a.pct / total) * circumference
             const segment = (
               <circle
                 key={i}
-                cx="110" cy="110"
+                cx="90" cy="90"
                 r={radius}
                 fill="none"
                 stroke={a.color}
@@ -49,12 +49,8 @@ export function AllWeatherChart() {
         </svg>
         {/* Center label sits inside the donut — must be absolute */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <p className="font-mono text-[11px] sm:text-[12px] text-text-primary font-bold tracking-[0.15em] uppercase text-center leading-tight">
-            All<br/>Weather
-          </p>
-          <p className="text-[8px] uppercase tracking-[0.25em] text-brand-red mt-1.5">
-            {total}% Div.
-          </p>
+          <p className="font-display text-3xl text-text-primary leading-none">{total}%</p>
+          <p className="text-[9px] uppercase tracking-[0.25em] text-text-tertiary mt-1">Diversified</p>
         </div>
       </div>
 
