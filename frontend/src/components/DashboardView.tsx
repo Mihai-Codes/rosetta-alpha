@@ -187,11 +187,11 @@ function RingChart() {
           })}
         </svg>
         {/* Center label with optical alignment for tracking */}
-        <div className="relative z-10 flex flex-col items-center justify-center pointer-events-none mt-1">
-          <p className="font-mono text-[10px] text-text-secondary tracking-[0.2em] uppercase mb-1" style={{ marginRight: '-0.2em' }}>
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none">
+          <p className="font-mono text-[10px] text-text-secondary tracking-[0.2em] uppercase mb-1 pl-[0.2em]">
             All Weather
           </p>
-          <p className="font-display text-4xl text-text-primary font-bold leading-none">
+          <p className="font-display text-4xl text-text-primary font-bold leading-none" style={{ transform: 'translateX(3px)' }}>
             {total}%
           </p>
         </div>
