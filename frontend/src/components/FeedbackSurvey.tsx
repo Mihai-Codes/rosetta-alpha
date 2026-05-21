@@ -5,8 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import posthog from 'posthog-js'
 import { MessageSquareDashed, X } from 'lucide-react'
 
-const STORAGE_KEY = 'feedback_survey_v3'
-const DELAY_MS = 10_000 // 10 seconds
+const STORAGE_KEY = 'feedback_survey_v5'
+const DELAY_MS = 15_000 // 15 seconds
 const MAX_CHARS = 280
 
 /**
@@ -70,10 +70,10 @@ export function FeedbackSurvey() {
           aria-label="Feedback survey"
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-[#050505]">
-            <div className="flex items-center gap-2">
-              <MessageSquareDashed className="w-3.5 h-3.5 text-brand-red shrink-0" />
-              <h3 className="font-mono text-[9px] sm:text-[9.5px] uppercase tracking-normal text-text-primary">
+          <div className="flex items-start justify-between px-5 py-4 border-b border-border bg-[#050505]">
+            <div className="flex items-start sm:items-center gap-3 pr-2">
+              <MessageSquareDashed className="w-4 h-4 text-brand-red shrink-0 mt-0.5 sm:mt-0" />
+              <h3 className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.05em] text-text-primary leading-tight">
                 What would make Rosetta Alpha more useful to you?
               </h3>
             </div>

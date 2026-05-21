@@ -85,31 +85,33 @@ function CountUpNumber({ target, suffix, prefix, isDecimal = false, decimals = 2
 
 export function StatsBar({ stats }: StatsBarProps) {
   return (
-    <div className="w-full border-y border-white/[0.05] bg-bg-secondary py-12 sm:py-16">
-      <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-8 lg:px-12">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-y-10 gap-x-4">
-          {stats.map((stat, i) => (
-            <div key={i} className="flex flex-col items-center text-center">
-              <span
-                className="text-2xl sm:text-3xl font-bold leading-none mb-3"
-                style={{ fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace", color: '#C9A84C' }}
-              >
-                <CountUpNumber
-                  target={stat.target}
-                  prefix={stat.prefix}
-                  suffix={stat.suffix}
-                  isDecimal={stat.target > 0 && stat.target < 1}
-                  decimals={2}
-                />
-              </span>
-              <span
-                className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-text-secondary opacity-80"
-              >
-                {stat.label}
-              </span>
-            </div>
-          ))}
-        </div>
+    <div className="w-full border-y border-white/[0.05] bg-[#0A0A0A] py-5 sm:py-6 overflow-hidden">
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 flex flex-wrap items-center justify-center gap-x-6 sm:gap-x-12 gap-y-4">
+        {stats.map((stat, i) => (
+          <div key={i} className="flex items-center gap-2 sm:gap-3">
+            <span
+              className="text-lg sm:text-xl font-bold leading-none"
+              style={{ fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace", color: '#C9A84C' }}
+            >
+              <CountUpNumber
+                target={stat.target}
+                prefix={stat.prefix}
+                suffix={stat.suffix}
+                isDecimal={stat.target > 0 && stat.target < 1}
+                decimals={2}
+              />
+            </span>
+            <span
+              className="text-[9px] sm:text-[10px] uppercase tracking-[0.1em] text-text-secondary opacity-70"
+            >
+              {stat.label}
+            </span>
+            {/* Dot separator for desktop */}
+            {i < stats.length - 1 && (
+              <div className="hidden lg:block w-1 h-1 rounded-full bg-white/[0.15] ml-6 sm:ml-12" />
+            )}
+          </div>
+        ))}
       </div>
     </div>
   )
