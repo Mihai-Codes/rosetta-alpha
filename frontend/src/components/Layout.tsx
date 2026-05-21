@@ -217,8 +217,9 @@ export function Layout({ children, activeTab }: LayoutProps) {
       <main className="flex-1 w-full z-10">{children}</main>
 
       <footer className="border-t border-brand-red/30 shadow-[0_-4px_30px_rgba(216,43,43,0.15)] py-8 sm:py-12 mt-0 bg-bg-primary z-10 relative">
-        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-10 text-[11px] text-text-tertiary">
-          <div>
+        <div className="w-full max-w-[1250px] mx-auto px-4 sm:px-8 flex flex-col md:flex-row justify-between items-center gap-12 md:gap-6 text-[11px] text-text-tertiary">
+          {/* Left: Rosetta Alpha */}
+          <div className="flex-1 max-w-[320px]">
             <p className="font-display text-text-primary text-base mb-2">
               Rosetta <span className="text-brand-red">Alpha</span>
             </p>
@@ -227,21 +228,35 @@ export function Layout({ children, activeTab }: LayoutProps) {
               <p>An institutional-grade intelligence layer for global macro.</p>
             </div>
           </div>
-          <div>
-            <p className="uppercase tracking-[0.25em] text-text-secondary mb-3 text-[10px]">Stack</p>
-            <ul className="space-y-3 font-light">
-              <li className="flex items-center gap-2"><Brain className="w-3.5 h-3.5 text-brand-red opacity-80"/> AdalFlow · Multi-agent reasoning</li>
-              <li className="flex items-center gap-2"><Layers className="w-3.5 h-3.5 text-brand-red opacity-80"/> Arc L1 · On-chain provenance</li>
-              <li className="flex items-center gap-2"><HardDrive className="w-3.5 h-3.5 text-brand-red opacity-80"/> IPFS · Permanent storage</li>
-              <li className="flex items-center gap-2"><CircleDollarSign className="w-3.5 h-3.5 text-brand-red opacity-80"/> Circle Paymaster · Gasless USDC</li>
-            </ul>
+
+          {/* Separator 1 - Claw */}
+          <div className="hidden md:block w-[1px] h-28 bg-gradient-to-b from-transparent via-brand-red to-transparent opacity-80 red-pulse shadow-[0_0_12px_rgba(216,43,43,0.8)]" />
+
+          {/* Center: Stack */}
+          <div className="flex-1 max-w-[320px] flex flex-col items-center text-left">
+            <div className="w-fit">
+              <p className="uppercase tracking-[0.25em] text-text-secondary mb-3 text-[10px] text-center md:text-left">Stack</p>
+              <ul className="space-y-3 font-light">
+                <li className="flex items-center gap-2"><Brain className="w-3.5 h-3.5 text-brand-red opacity-80"/> AdalFlow · Multi-agent reasoning</li>
+                <li className="flex items-center gap-2"><Layers className="w-3.5 h-3.5 text-brand-red opacity-80"/> Arc L1 · On-chain provenance</li>
+                <li className="flex items-center gap-2"><HardDrive className="w-3.5 h-3.5 text-brand-red opacity-80"/> IPFS · Permanent storage</li>
+                <li className="flex items-center gap-2"><CircleDollarSign className="w-3.5 h-3.5 text-brand-red opacity-80"/> Circle Paymaster · Gasless USDC</li>
+              </ul>
+            </div>
           </div>
-          <div>
-            <p className="uppercase tracking-[0.25em] text-text-secondary mb-3 text-[10px]">Reference</p>
-            <p className="font-light leading-relaxed">
-              <a href="https://agora.thecanteenapp.com/" target="_blank" rel="noopener noreferrer" className="text-brand-red hover:text-text-primary transition-colors font-medium underline underline-offset-4 decoration-white/10">Agora Agents Hackathon</a><br />
-              Engineered for <a href="https://www.principles.com/" target="_blank" rel="noopener noreferrer" className="text-brand-red hover:text-text-primary transition-colors font-medium drop-shadow-[0_0_8px_rgba(216,43,43,0.4)]">Radical Truth</a>.
-            </p>
+
+          {/* Separator 2 - Claw */}
+          <div className="hidden md:block w-[1px] h-28 bg-gradient-to-b from-transparent via-brand-red to-transparent opacity-80 red-pulse shadow-[0_0_12px_rgba(216,43,43,0.8)]" />
+
+          {/* Right: Reference */}
+          <div className="flex-1 max-w-[320px] flex flex-col items-end text-right">
+            <div className="w-full text-right">
+              <p className="uppercase tracking-[0.25em] text-text-secondary mb-3 text-[10px]">Reference</p>
+              <p className="font-light leading-relaxed">
+                <a href="https://agora.thecanteenapp.com/" target="_blank" rel="noopener noreferrer" className="text-brand-red hover:text-text-primary transition-colors font-medium underline underline-offset-4 decoration-white/10">Agora Agents Hackathon</a><br />
+                Engineered for <a href="https://www.principles.com/" target="_blank" rel="noopener noreferrer" className="text-brand-red hover:text-text-primary transition-colors font-medium drop-shadow-[0_0_8px_rgba(216,43,43,0.4)]">Radical Truth</a>.
+              </p>
+            </div>
           </div>
         </div>
         <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 mt-10 sm:mt-12 pt-6 sm:pt-8 border-t border-white/[0.02] flex items-center justify-center relative flex-wrap gap-4 text-[10px] text-text-tertiary uppercase tracking-[0.25em]">
