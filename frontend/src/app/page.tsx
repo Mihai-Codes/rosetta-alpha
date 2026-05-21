@@ -11,6 +11,7 @@ import { SEED_DATA, fetchDesks } from '@/lib/data'
 import type { DeskProps } from '@/lib/types'
 import { DEFAULT_STATS } from '@/components/StatsBar'
 
+export const dynamic = 'force-dynamic'
 export default function HomePage() {
   const { data: session } = useSession()
   const [data, setData] = React.useState<DeskProps[]>(SEED_DATA)
