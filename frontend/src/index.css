@@ -77,6 +77,10 @@
 }
 
 @keyframes red-pulse {
+  0%, 100% { opacity: 0.8; filter: drop-shadow(0 0 12px rgba(216,43,43,0.8)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 32px rgba(216,43,43,1)) drop-shadow(0 0 16px rgba(216,43,43,1)); }
+}
+@keyframes button-pulse {
   0%, 100% { opacity: 0.95; filter: drop-shadow(0 0 4px rgba(216,43,43,0.3)); }
   50% { opacity: 1; filter: drop-shadow(0 0 10px rgba(216,43,43,0.6)); }
 }

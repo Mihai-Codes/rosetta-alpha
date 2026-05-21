@@ -156,7 +156,7 @@ export function Layout({ children, activeTab }: LayoutProps) {
                 </button>
               </>
             ) : (
-              <button onClick={() => authModalState.open()} className="hidden md:flex items-center gap-2 px-5 py-2 solid-panel rounded-full text-text-primary text-[10px] font-medium uppercase tracking-[0.2em] transition-all duration-300 hover:border-brand-red hover:bg-brand-red/5 hover:!shadow-[0_0_12px_rgba(216,43,43,0.5)] hover:red-pulse cursor-pointer"><span className="w-1.5 h-1.5 rounded-full bg-accent-gold" />Sign In</button>
+              <button onClick={() => authModalState.open()} className="hidden md:flex items-center gap-2 px-5 py-2 solid-panel rounded-full text-text-primary text-[10px] font-medium uppercase tracking-[0.2em] transition-all duration-300 hover:border-brand-red hover:bg-brand-red/5 hover:!shadow-[0_0_12px_rgba(216,43,43,0.5)] hover:button-pulse cursor-pointer"><span className="w-1.5 h-1.5 rounded-full bg-accent-gold" />Sign In</button>
             )}
 
             {/* Hamburger — mobile only */}
@@ -205,7 +205,7 @@ export function Layout({ children, activeTab }: LayoutProps) {
                 Sign Out
               </button>
             ) : (
-              <button onClick={() => { authModalState.open(); setMobileOpen(false); }} className="mt-4 w-full flex items-center justify-center gap-2 px-5 py-4 min-h-[44px] solid-panel rounded-full text-text-primary text-[10px] font-medium uppercase tracking-[0.2em] transition-all duration-300 hover:border-brand-red hover:bg-brand-red/5 hover:!shadow-[0_0_12px_rgba(216,43,43,0.5)] hover:red-pulse cursor-pointer"><span className="w-1.5 h-1.5 rounded-full bg-accent-gold" />Sign In</button>
+              <button onClick={() => { authModalState.open(); setMobileOpen(false); }} className="mt-4 w-full flex items-center justify-center gap-2 px-5 py-4 min-h-[44px] solid-panel rounded-full text-text-primary text-[10px] font-medium uppercase tracking-[0.2em] transition-all duration-300 hover:border-brand-red hover:bg-brand-red/5 hover:!shadow-[0_0_12px_rgba(216,43,43,0.5)] hover:button-pulse cursor-pointer"><span className="w-1.5 h-1.5 rounded-full bg-accent-gold" />Sign In</button>
             )}
           </div>
         )}
