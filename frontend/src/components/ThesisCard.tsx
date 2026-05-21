@@ -37,7 +37,7 @@ function TypewriterText({ text }: { text: string }) {
     return () => clearInterval(interval)
   }, [text])
 
-  return <span>{displayed}<span className="inline-block w-1.5 h-3 ml-0.5 bg-brand-red animate-pulse align-middle" /></span>
+  return <span>{displayed}</span>
 }
 
 /** Collapsible reasoning chain — accordion on mobile, always open on desktop */
