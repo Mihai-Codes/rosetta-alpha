@@ -595,29 +595,40 @@ export function DashboardView() {
 
   return (
     <div className="space-y-8 sm:space-y-10">
-      {/* ── Stat tiles row ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-border/60 border border-border/60 rounded-none mb-6">
-        {[
-          { label: 'USDC Balance', value: balance ? `${parseFloat(balance.formatted).toFixed(2)}` : '—', sub: 'Arc Testnet', accent: 'text-accent-gold' },
-          { label: 'Total Earned', value: `${totalEarned.toFixed(2)} USDC`, sub: 'From predictions', accent: 'text-positive' },
-          { label: 'Accuracy', value: `${accuracy}%`, sub: `${PREDICTIONS.filter(p => p.status === 'RESOLVED_WIN').length}/${PREDICTIONS.length} correct`, accent: '' },
-          { label: 'Active Stakes', value: String(PREDICTIONS.filter(p => p.status === 'OPEN').length), sub: 'Open positions', accent: '' },
-        ].map((s, i) => (
-          <motion.div
-            key={s.label}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.07 }}
-            className="bg-[#050505] px-6 py-8 flex flex-col gap-3 hover:bg-[#0A0A0F] border-b-2 border-transparent hover:border-brand-red/50 transition-colors relative group"
-          >
-            <div className="absolute top-0 left-0 w-full h-[1px] bg-border group-hover:bg-brand-red/30 transition-colors" />
-            <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-text-tertiary">{s.label}</p>
-            <p className={`font-display text-3xl font-bold tracking-tight ${s.accent || 'text-text-primary'}`}>
-              {s.value}
-            </p>
-            {s.sub && <p className="text-[9px] text-text-tertiary font-mono tracking-wide">{s.sub}</p>}
-          </motion.div>
-        ))}
+      {/* ── High-End Terminal Stats Banner ── */}
+      <div className="border border-border/80 bg-[#0A0A0A] rounded-none mb-10 relative overflow-hidden shadow-2xl">
+        <div className="h-[2px] w-full bg-gradient-to-r from-brand-red/80 via-brand-red/20 to-transparent" />
+        <div className="flex items-center justify-between px-5 py-3 border-b border-border/40 bg-[#050505]">
+           <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-text-secondary flex items-center gap-2">
+              <span className="w-1.5 h-1.5 bg-brand-red animate-pulse" /> Live Telemetry
+           </span>
+           <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-text-tertiary">Session Active</span>
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-y lg:divide-y-0 divide-border/40">
+          {[
+            { label: 'USDC Balance', value: balance ? `${parseFloat(balance.formatted).toFixed(2)}` : '—', sub: 'Arc Testnet', accent: 'text-text-primary' },
+            { label: 'Total Earned', value: `+${totalEarned.toFixed(2)}`, sub: 'USDC Generated', accent: 'text-positive' },
+            { label: 'Accuracy', value: `${accuracy}%`, sub: `${PREDICTIONS.filter(p => p.status === 'RESOLVED_WIN').length}/${PREDICTIONS.length} Correct`, accent: 'text-accent-gold' },
+            { label: 'Active Stakes', value: String(PREDICTIONS.filter(p => p.status === 'OPEN').length), sub: 'Open positions', accent: 'text-brand-red' },
+          ].map((s, i) => (
+            <motion.div
+              key={s.label}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.05 }}
+              className="bg-[#050505] px-6 py-8 flex flex-col justify-between hover:bg-[#111111] transition-colors group relative"
+            >
+              <div className="absolute top-0 left-0 w-full h-[1px] bg-transparent group-hover:bg-brand-red/50 transition-colors" />
+              <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-text-tertiary mb-5 group-hover:text-text-secondary transition-colors">{s.label}</p>
+              <div>
+                <p className={`font-mono text-3xl font-bold tracking-tight ${s.accent || 'text-text-primary'}`}>
+                  {s.value}
+                </p>
+                {s.sub && <p className="text-[9px] text-text-tertiary font-mono tracking-widest mt-2">{s.sub}</p>}
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
 
       {/* ── Portfolio Overview (ring chart + wallet summary) ── */}
@@ -633,9 +644,10 @@ export function DashboardView() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-[#050505] p-6 sm:p-10 flex flex-col gap-6"
+          className="bg-[#050505] p-6 sm:p-10 flex flex-col gap-6 border-l border-border/60 relative overflow-hidden"
         >
-          <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-positive/5 via-transparent to-transparent opacity-40 pointer-events-none" />
+          <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary relative z-10">
             Terminal Access
           </p>
           <div className="flex items-center gap-3 px-4 py-3 border border-positive/30 bg-positive/5 rounded-none">

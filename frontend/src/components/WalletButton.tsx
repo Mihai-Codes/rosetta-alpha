@@ -62,6 +62,7 @@ export function WalletButton() {
   const [dropdownOpen, setDropdownOpen] = React.useState(false)
   const [wrongNetworkBanner, setWrongNetworkBanner] = React.useState(false)
   const [copiedAddress, setCopiedAddress] = React.useState(false)
+  const [copiedDash, setCopiedDash] = React.useState(false)
   const isCoinbaseConnector =
     connector?.id === 'coinbaseWalletSDK' ||
     connector?.id === 'coinbaseWallet' ||
