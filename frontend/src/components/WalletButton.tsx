@@ -61,6 +61,7 @@ export function WalletButton() {
   }
   const [dropdownOpen, setDropdownOpen] = React.useState(false)
   const [wrongNetworkBanner, setWrongNetworkBanner] = React.useState(false)
+  const [copiedAddress, setCopiedAddress] = React.useState(false)
   const isCoinbaseConnector =
     connector?.id === 'coinbaseWalletSDK' ||
     connector?.id === 'coinbaseWallet' ||
@@ -145,7 +146,8 @@ export function WalletButton() {
   const copyAddress = () => {
     if (address) {
       navigator.clipboard.writeText(address)
-      setDropdownOpen(false)
+      setCopiedAddress(true)
+      setTimeout(() => { setCopiedAddress(false); setDropdownOpen(false); }, 1500)
     }
   }
 
@@ -241,12 +243,7 @@ export function WalletButton() {
           />
           {/* Dropdown */}
           <div className="absolute right-0 top-full mt-2 z-50 w-52 solid-panel rounded-xl border border-border-strong overflow-hidden shadow-2xl">
-            <button
-              onClick={copyAddress}
-              className="w-full px-4 py-3 text-left text-xs text-text-primary hover:bg-bg-tertiary transition-colors"
-            >
-              Copy Address
-            </button>
+            <button onClick={copyAddress} className="w-full px-4 py-3 text-left text-xs text-text-primary hover:bg-bg-tertiary transition-colors flex justify-between items-center"><span>{copiedAddress ? "Copied!" : "Copy Address"}</span>{copiedAddress && <span className="text-positive text-[10px]">✓</span>}</button>
             <button
               onClick={viewOnExplorer}
               className="w-full px-4 py-3 text-left text-xs text-text-primary hover:bg-bg-tertiary transition-colors border-t border-border"

@@ -107,7 +107,7 @@ export function Layout({ children, activeTab }: LayoutProps) {
       <header 
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled 
-            ? 'bg-bg-primary/85 backdrop-blur-md border-b border-white/[0.05] shadow-[0_4px_30px_rgba(0,0,0,0.5)]' 
+            ? 'bg-bg-primary/90 backdrop-blur-md border-b border-brand-red/30 shadow-[0_4px_30px_rgba(216,43,43,0.15)]' 
             : 'bg-transparent border-b border-transparent'
         }`}
       >
