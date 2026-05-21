@@ -1,7 +1,6 @@
 'use client'
 
 import React from 'react'
-import { ArrowDown } from 'lucide-react'
 import Link from 'next/link'
 import { REGION_META, truncateHash } from '../lib/format'
 
@@ -36,7 +35,7 @@ export function HeroSection({ latestHash, onScrollDown, isAuthenticated }: HeroS
   return (
     <section
       ref={heroRef}
-      className="relative w-full overflow-hidden flex flex-col items-center justify-center pt-28 sm:pt-40 pb-4 sm:pb-6"
+      className="relative w-full overflow-hidden flex flex-col items-center justify-center pt-28 sm:pt-40 pb-2"
       aria-label="Rosetta Alpha hero"
     >
       <div className="absolute inset-0 hero-vignette" aria-hidden />
@@ -109,7 +108,7 @@ export function HeroSection({ latestHash, onScrollDown, isAuthenticated }: HeroS
             visible.actions ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
-          <button type="button" onClick={onScrollDown} className="animate-bounce p-3 rounded-full border border-white/[0.05] text-text-tertiary bg-white/[0.02] hover:text-white hover:border-white/[0.2] transition-colors cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Scroll down to content"><ArrowDown className="w-5 h-5" /></button>
+          
         </div>
       </div>
     </section>

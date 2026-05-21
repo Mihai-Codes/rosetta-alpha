@@ -85,7 +85,7 @@ function CountUpNumber({ target, suffix, prefix, isDecimal = false, decimals = 2
 
 export function StatsBar({ stats }: StatsBarProps) {
   return (
-    <div className="w-full border-y border-white/[0.05] bg-[#0A0A0A] py-5 sm:py-6 overflow-hidden">
+    <div className="w-full border-y border-white/[0.05] bg-[#0A0A0A] py-4 sm:py-5 overflow-hidden">
       <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 flex flex-wrap items-center justify-center gap-x-6 sm:gap-x-12 gap-y-4">
         {stats.map((stat, i) => (
           <div key={i} className="flex items-center gap-2 sm:gap-3">

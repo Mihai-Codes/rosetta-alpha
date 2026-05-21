@@ -60,7 +60,7 @@ function PodiumCard({ trader, isMe }: { trader: Trader; isMe: boolean }) {
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: trader.rank * 0.1 }}
-      className={`flex flex-col items-center gap-3 ${trader.rank === 1 ? 'order-2' : trader.rank === 2 ? 'order-1' : 'order-3'}`}
+      className={`flex flex-col items-center gap-3 w-full ${trader.rank === 1 ? "order-2" : trader.rank === 2 ? "order-1" : "order-3"}`}
     >
       {/* Badge + label */}
       <div className="text-center space-y-1">
@@ -80,7 +80,7 @@ function PodiumCard({ trader, isMe }: { trader: Trader; isMe: boolean }) {
       </div>
       {/* Podium block */}
       <div
-        className={`w-full ${h} rounded-t-xl flex items-center justify-center ${
+        className={`w-full ${h} rounded-none flex items-center justify-center ${
           trader.rank === 1
             ? 'bg-accent-gold/20 border border-accent-gold/40'
             : 'bg-bg-tertiary border border-border'

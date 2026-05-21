@@ -520,26 +520,30 @@ export function DashboardView() {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-px bg-border/60 border border-border/60 rounded-none animate-rain">
         {/* Terminal Lock Screen */}
-        <div className="lg:col-span-2 bg-[#0A0A0A] p-8 sm:p-16 flex flex-col items-center justify-center min-h-[400px] text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-brand-red/5 to-transparent opacity-50" />
-          <div className="relative z-10 flex flex-col items-center">
-            <div className="w-16 h-16 border border-brand-red/30 bg-brand-red/5 flex items-center justify-center box-glow-pulse mb-6 rounded-none">
-              <span className="text-brand-red text-2xl">◈</span>
+        <div className="lg:col-span-2 bg-[#050505] p-8 sm:p-16 flex flex-col items-center justify-center min-h-[450px] text-center relative overflow-hidden border-r border-border/60">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-brand-red/10 via-transparent to-transparent opacity-40 pointer-events-none" />
+          <div className="relative z-10 flex flex-col items-center w-full max-w-md border border-brand-red/20 bg-bg-primary/80 p-8 sm:p-10 shadow-glow-red">
+            <div className="w-16 h-16 border border-brand-red/50 bg-brand-red/10 flex items-center justify-center box-glow-pulse mb-6 rounded-none relative">
+              <Lock className="w-6 h-6 text-brand-red" />
             </div>
-            <p className="font-mono text-brand-red text-[11px] uppercase tracking-[0.3em] mb-3">
-              Hardware Key Required
-            </p>
-            <p className="font-display text-text-primary text-3xl mb-4">
-              Connect Web3 Wallet
-            </p>
-            <p className="text-text-secondary text-sm max-w-md leading-relaxed mb-10 font-light">
-              Authenticate via MetaMask to view your proprietary portfolio, track prediction accuracy, and claim USDC settlements on Arc Testnet.
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-brand-red/10 border border-brand-red/30 text-brand-red text-[9px] font-mono uppercase tracking-widest mb-6">
+              <span className="w-1.5 h-1.5 bg-brand-red animate-pulse rounded-none" />
+              Access Restricted
+            </div>
+            <h2 className="font-display text-text-primary text-2xl sm:text-3xl mb-4 tracking-tight uppercase">
+              Encrypted Portfolio
+            </h2>
+            <div className="w-full h-px bg-brand-red/20 mb-6" />
+            <p className="text-text-secondary text-[11px] leading-relaxed mb-8 font-mono text-left w-full border-l-2 border-brand-red/50 pl-4 bg-[#111111] py-3">
+              > Connect Web3 Wallet to establish secure channel.<br/>
+              > Access proprietary allocation, verify trace accuracy, and sync USDC settlements on Arc Testnet.
             </p>
             <button
               onClick={handleConnectClick}
-              className="px-10 py-4 bg-brand-red text-bg-primary text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-white hover:text-bg-primary transition-colors duration-300 min-h-[44px]"
+              className="group relative overflow-hidden inline-flex items-center gap-3 px-8 py-3.5 bg-brand-red/10 border border-brand-red/50 text-brand-red text-[11px] font-bold uppercase tracking-[0.2em] transition-all duration-300 hover:bg-brand-red hover:text-black w-full justify-center"
             >
-              Establish Connection →
+              <span className="relative z-10">Initialize Handshake</span>
+              <span className="transition-transform duration-300 group-hover:translate-x-1 relative z-10">→</span>
             </button>
           </div>
         </div>
@@ -578,7 +582,7 @@ export function DashboardView() {
   return (
     <div className="space-y-8 sm:space-y-10">
       {/* ── Stat tiles row ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-border/60 border border-border/60 rounded-none">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-border/60 border border-border/60 rounded-none mb-6">
         {[
           { label: 'USDC Balance', value: balance ? `${parseFloat(balance.formatted).toFixed(2)}` : '—', sub: 'Arc Testnet', accent: 'text-accent-gold' },
           { label: 'Total Earned', value: `${totalEarned.toFixed(2)} USDC`, sub: 'From predictions', accent: 'text-positive' },
@@ -590,13 +594,14 @@ export function DashboardView() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.07 }}
-            className="bg-[#0A0A0A] px-5 sm:px-6 py-6 sm:py-8 flex flex-col gap-2 hover:bg-[#0C0C12] transition-colors"
+            className="bg-[#050505] px-6 py-8 flex flex-col gap-3 hover:bg-[#0A0A0F] border-b-2 border-transparent hover:border-brand-red/50 transition-colors relative group"
           >
-            <p className="text-[9px] font-medium uppercase tracking-[0.25em] text-text-tertiary">{s.label}</p>
-            <p className={`font-display text-2xl sm:text-3xl font-light tracking-tight ${s.accent || 'text-text-primary'}`}>
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-border group-hover:bg-brand-red/30 transition-colors" />
+            <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-text-tertiary">{s.label}</p>
+            <p className={`font-display text-3xl font-bold tracking-tight ${s.accent || 'text-text-primary'}`}>
               {s.value}
             </p>
-            {s.sub && <p className="text-[9px] text-text-tertiary font-mono">{s.sub}</p>}
+            {s.sub && <p className="text-[9px] text-text-tertiary font-mono tracking-wide">{s.sub}</p>}
           </motion.div>
         ))}
       </div>
