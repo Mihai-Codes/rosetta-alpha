@@ -174,7 +174,7 @@ export function SignInModal() {
                 </button>
               </div>
               
-              <div className="mt-8 pt-6 border-t border-border text-left overflow-hidden">
+              <div className="mt-8 pt-6 border-t border-border text-center overflow-hidden">
                 <p className="text-text-tertiary font-mono text-[8.5px] sm:text-[9px] uppercase tracking-normal opacity-80 whitespace-nowrap overflow-hidden text-ellipsis">
                   [SYS_MSG] Authenticating confirms Terms of Service agreement.
                 </p>
