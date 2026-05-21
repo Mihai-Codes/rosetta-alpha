@@ -62,13 +62,27 @@ export default function HomePage() {
         onScrollDown={(e: React.MouseEvent) => {
           e?.preventDefault()
           handleCtaClick('enter_terminal')
-          const el = document.getElementById('desks-section'); if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+          const el = document.getElementById('desks-section');
+          if (el) {
+            const target = el.getBoundingClientRect().top + window.scrollY - 80;
+            const start = window.scrollY;
+            const diff = target - start;
+            let startTimestamp = null;
+            const step = (timestamp) => {
+              if (!startTimestamp) startTimestamp = timestamp;
+              const progress = Math.min((timestamp - startTimestamp) / 600, 1);
+              const easeInOut = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+              window.scrollTo(0, start + diff * easeInOut);
+              if (progress < 1) window.requestAnimationFrame(step);
+            };
+            window.requestAnimationFrame(step);
+          }
         }}
       />
       
       <StatsBar stats={stats} />
 
-      <div id="desks-section" className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-0 pt-10 sm:pt-12" style={{ scrollMarginTop: '80px' }}>
+      <div id="desks-section" className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-16 pt-10 sm:pt-12" style={{ scrollMarginTop: '80px' }}>
         <DesksView desks={data} loading={loading} isAuthenticated={!!session?.user} />
       </div>
     </Layout>
