@@ -5,8 +5,6 @@ import posthog from 'posthog-js'
 import { Layout } from '@/components/Layout'
 import { LeaderboardView } from '@/components/LeaderboardView'
 
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
 export default function LeaderboardPage() {
   React.useEffect(() => {
     posthog.capture('leaderboard_viewed')

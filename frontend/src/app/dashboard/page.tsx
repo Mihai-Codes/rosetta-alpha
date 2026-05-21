@@ -88,8 +88,6 @@ function WelcomeBanner() {
   )
 }
 
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
 export default function DashboardPage() {
   useEffect(() => {
     posthog.capture('dashboard_viewed')
