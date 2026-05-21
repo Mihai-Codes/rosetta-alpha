@@ -7,7 +7,7 @@ import { REGION_META, truncateHash } from '../lib/format'
 
 interface HeroSectionProps {
   latestHash?: string
-  onScrollDown: () => void
+  onScrollDown: (e: React.MouseEvent) => void
   isAuthenticated?: boolean
 }
 

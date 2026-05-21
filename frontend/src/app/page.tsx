@@ -11,6 +11,9 @@ import { SEED_DATA, fetchDesks } from '@/lib/data'
 import type { DeskProps } from '@/lib/types'
 import { DEFAULT_STATS } from '@/components/StatsBar'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default function HomePage() {
   const { data: session } = useSession()
   const [data, setData] = React.useState<DeskProps[]>(SEED_DATA)
@@ -58,7 +61,8 @@ export default function HomePage() {
       <HeroSection
         latestHash="0x46d3f229..."
         isAuthenticated={!!session?.user}
-        onScrollDown={() => {
+        onScrollDown={(e: React.MouseEvent) => {
+          e?.preventDefault()
           handleCtaClick('enter_terminal')
           const el = document.getElementById('desks-section'); if (el) { const y = el.getBoundingClientRect().top + window.scrollY - 80; window.scrollTo({ top: y, behavior: 'smooth' }); }
         }}
