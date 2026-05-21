@@ -217,25 +217,28 @@ export function Layout({ children, activeTab }: LayoutProps) {
       <main className="flex-1 w-full z-10">{children}</main>
 
       <footer className="border-t border-brand-red/30 shadow-[0_-4px_30px_rgba(216,43,43,0.15)] py-8 sm:py-12 mt-0 bg-bg-primary z-10 relative">
-        <div className="w-full max-w-[1250px] mx-auto px-4 sm:px-8 flex flex-col md:flex-row justify-between items-center gap-12 md:gap-6 text-[11px] text-text-tertiary">
+        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 flex flex-col lg:flex-row justify-between items-center gap-12 lg:gap-4 text-[11px] text-text-tertiary">
+          
           {/* Left: Rosetta Alpha */}
-          <div className="flex-1 max-w-[320px]">
-            <p className="font-display text-text-primary text-base mb-2">
-              Rosetta <span className="text-brand-red">Alpha</span>
-            </p>
-            <div className="flex flex-col gap-0.5 font-light text-[12px] text-text-secondary">
-              <p>Multi-language reasoning traces secured on Arc L1.</p>
-              <p>An institutional-grade intelligence layer for global macro.</p>
+          <div className="flex-1 flex justify-start w-full lg:w-auto">
+            <div className="xl:ml-12 max-w-[320px]">
+              <p className="font-display text-text-primary text-base mb-2">
+                Rosetta <span className="text-brand-red">Alpha</span>
+              </p>
+              <div className="flex flex-col gap-0.5 font-light text-[12px] text-text-secondary">
+                <p>Multi-language reasoning traces secured on Arc L1.</p>
+                <p>An institutional-grade intelligence layer for global macro.</p>
+              </div>
             </div>
           </div>
 
           {/* Separator 1 - Claw */}
-          <div className="hidden md:block w-[1px] h-28 bg-gradient-to-b from-transparent via-brand-red to-transparent opacity-80 red-pulse shadow-[0_0_12px_rgba(216,43,43,0.8)]" />
+          <div className="hidden lg:block w-[1px] h-28 bg-gradient-to-b from-transparent via-brand-red to-transparent opacity-80 shadow-[0_0_15px_rgba(216,43,43,1)] red-pulse" />
 
           {/* Center: Stack */}
-          <div className="flex-1 max-w-[320px] flex flex-col items-center text-left">
+          <div className="shrink-0 flex flex-col items-center text-left w-full lg:w-[320px]">
             <div className="w-fit">
-              <p className="uppercase tracking-[0.25em] text-text-secondary mb-3 text-[10px] text-center md:text-left">Stack</p>
+              <p className="uppercase tracking-[0.25em] text-text-secondary mb-3 text-[10px] text-center lg:text-left">Stack</p>
               <ul className="space-y-3 font-light">
                 <li className="flex items-center gap-2"><Brain className="w-3.5 h-3.5 text-brand-red opacity-80"/> AdalFlow · Multi-agent reasoning</li>
                 <li className="flex items-center gap-2"><Layers className="w-3.5 h-3.5 text-brand-red opacity-80"/> Arc L1 · On-chain provenance</li>
@@ -246,11 +249,11 @@ export function Layout({ children, activeTab }: LayoutProps) {
           </div>
 
           {/* Separator 2 - Claw */}
-          <div className="hidden md:block w-[1px] h-28 bg-gradient-to-b from-transparent via-brand-red to-transparent opacity-80 red-pulse shadow-[0_0_12px_rgba(216,43,43,0.8)]" />
+          <div className="hidden lg:block w-[1px] h-28 bg-gradient-to-b from-transparent via-brand-red to-transparent opacity-80 shadow-[0_0_15px_rgba(216,43,43,1)] red-pulse" />
 
           {/* Right: Reference */}
-          <div className="flex-1 max-w-[320px] flex flex-col items-end text-right">
-            <div className="w-full text-right">
+          <div className="flex-1 flex justify-end w-full lg:w-auto">
+            <div className="xl:mr-8 max-w-[320px] text-left lg:text-right">
               <p className="uppercase tracking-[0.25em] text-text-secondary mb-3 text-[10px]">Reference</p>
               <p className="font-light leading-relaxed">
                 <a href="https://agora.thecanteenapp.com/" target="_blank" rel="noopener noreferrer" className="text-brand-red hover:text-text-primary transition-colors font-medium underline underline-offset-4 decoration-white/10">Agora Agents Hackathon</a><br />
@@ -258,10 +261,16 @@ export function Layout({ children, activeTab }: LayoutProps) {
               </p>
             </div>
           </div>
+
         </div>
-        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 mt-10 sm:mt-12 pt-6 sm:pt-8 border-t border-white/[0.02] flex items-center justify-center relative flex-wrap gap-4 text-[10px] text-text-tertiary uppercase tracking-[0.25em]">
-          <span className="absolute left-4 sm:left-8 lg:left-12 font-medium text-brand-red hidden xl:block italic tracking-[0.4em]">Decentralized Reason</span>
-          <div className="flex items-center gap-4 sm:gap-6 overflow-hidden">
+
+        {/* Bottom Bar */}
+        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 mt-10 lg:mt-12 pt-6 lg:pt-8 border-t border-white/[0.02] flex items-center justify-between text-[10px] text-text-tertiary uppercase tracking-[0.25em]">
+          <div className="flex-1 hidden xl:flex justify-start">
+            <span className="font-medium text-brand-red italic tracking-[0.4em]">Decentralized Reason</span>
+          </div>
+          
+          <div className="flex-1 flex items-center justify-center gap-4 sm:gap-6 overflow-hidden">
             <QuoteMatrix />
             <div className="hidden sm:flex items-center gap-3">
               <span className="w-px h-4 bg-white/10" />
@@ -271,7 +280,10 @@ export function Layout({ children, activeTab }: LayoutProps) {
               </div>
             </div>
           </div>
-          <span className="absolute right-4 sm:right-8 lg:right-12 xl:block hidden text-white tracking-[0.4em] italic font-medium">PROVENANCE LAYER</span>
+
+          <div className="flex-1 hidden xl:flex justify-end">
+            <span className="text-white tracking-[0.4em] italic font-medium">PROVENANCE LAYER</span>
+          </div>
         </div>
       </footer>
     </div>
