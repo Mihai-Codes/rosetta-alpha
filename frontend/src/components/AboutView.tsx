@@ -48,7 +48,7 @@ export function AboutView() {
       </div>
 
       {/* Cognitive Risk Parity & Quadrants */}
-      <div className="bg-gradient-to-b from-[#050505] to-black rounded-[2rem] p-8 md:p-12 border border-white/[0.05] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.9)]">
+      <div className="bg-gradient-to-b from-[#050505] to-black rounded-[2rem] p-8 md:p-12 border border-brand-red/50 shadow-[0_0_40px_rgba(216,43,43,0.15)]">
         <div className="flex flex-col items-center text-center mb-10">
           <Scale className="text-brand-red w-8 h-8 mb-4" />
           <h3 className="font-display text-2xl text-text-primary tracking-tight">
@@ -59,16 +59,16 @@ export function AboutView() {
 
         <div className="flex flex-col lg:flex-row items-center gap-12 mb-10">
           <div className="relative w-full max-w-sm shrink-0 animate-levitate" style={{ animationDelay: '1.5s' }}>
-            <div className="relative z-10 grid grid-cols-2 grid-rows-2 aspect-square border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.8)] rounded-2xl overflow-hidden bg-[#0A0A0A]">
-              <div className="border-r border-b border-white/5 bg-gradient-to-br from-brand-red/10 to-transparent p-5 flex flex-col justify-between">
+            <div className="relative z-10 grid grid-cols-2 grid-rows-2 aspect-square border border-brand-red/40 shadow-[0_10px_40px_rgba(0,0,0,0.8)] rounded-2xl overflow-hidden bg-[#0A0A0A]">
+              <div className="border-r border-b border-brand-red/30 bg-gradient-to-br from-brand-red/10 to-transparent p-5 flex flex-col justify-between">
                 <span className="text-[10px] uppercase tracking-[0.2em] text-brand-red/60 font-bold">Rising Growth</span>
                 <span className="font-display text-lg sm:text-xl text-text-primary leading-tight">Equities<br/>Commodities</span>
               </div>
-              <div className="border-b border-white/5 bg-gradient-to-bl from-[#C9A84C]/10 to-transparent p-5 flex flex-col justify-between text-right">
+              <div className="border-b border-brand-red/30 bg-gradient-to-bl from-[#C9A84C]/10 to-transparent p-5 flex flex-col justify-between text-right">
                 <span className="text-[10px] uppercase tracking-[0.2em] text-[#C9A84C]/60 font-bold">Falling Growth</span>
                 <span className="font-display text-lg sm:text-xl text-text-primary leading-tight">Nominal Bonds<br/>Cash</span>
               </div>
-              <div className="border-r border-white/5 bg-gradient-to-tr from-[#4A9F6F]/10 to-transparent p-5 flex flex-col justify-between">
+              <div className="border-r border-brand-red/30 bg-gradient-to-tr from-[#4A9F6F]/10 to-transparent p-5 flex flex-col justify-between">
                 <span className="font-display text-lg sm:text-xl text-text-primary leading-tight">ILBs<br/>Commodities</span>
                 <span className="text-[10px] uppercase tracking-[0.2em] text-[#4A9F6F]/60 font-bold">Rising Inflation</span>
               </div>
@@ -77,7 +77,7 @@ export function AboutView() {
                 <span className="text-[10px] uppercase tracking-[0.2em] text-[#7B8FA6]/60 font-bold">Falling Inflation</span>
               </div>
               {/* Center crosshair */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full border border-white/10 bg-[#0A0A0A] flex items-center justify-center">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full border border-brand-red/40 bg-[#0A0A0A] flex items-center justify-center">
                 <div className="w-1.5 h-1.5 rounded-full bg-brand-red animate-pulse" />
               </div>
             </div>
@@ -99,10 +99,10 @@ export function AboutView() {
                   <div className="md:w-[130px] shrink-0">
                     <p className="text-[10px] uppercase tracking-[0.3em] text-brand-red/50 group-hover:text-brand-red transition-all duration-500 font-bold">{item.label}</p>
                   </div>
-                  <div className="md:w-[170px] shrink-0 md:border-l border-white/5 md:pl-4">
+                  <div className="md:w-[170px] shrink-0 md:border-l border-brand-red/30 md:pl-4">
                     <p className="text-sm font-display text-text-primary tracking-tight leading-snug">{item.assets}</p>
                   </div>
-                  <div className="flex-1 md:border-l border-white/5 md:pl-6">
+                  <div className="flex-1 md:border-l border-brand-red/30 md:pl-6">
                     <p className="text-[13px] text-text-secondary font-light leading-normal tracking-wide text-left">{item.desc}</p>
                   </div>
                 </div>
