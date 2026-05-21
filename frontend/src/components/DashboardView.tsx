@@ -182,10 +182,7 @@ function RingChart() {
           {QUADRANTS.map((q, i) => {
             const len = (q.pct / total) * circumference
             const seg = (
-              <circle
-                key={i}
-                cx={110}
-                cy={110}
+              <circle key={i} cx={120} cy={120}
                 r={radius}
                 fill="none"
                 stroke={q.color}

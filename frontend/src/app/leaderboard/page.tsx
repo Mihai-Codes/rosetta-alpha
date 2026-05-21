@@ -1,27 +1,22 @@
-'use client'
-
 import React from 'react'
-import posthog from 'posthog-js'
 import { Layout } from '@/components/Layout'
 import { LeaderboardView } from '@/components/LeaderboardView'
 
-export default function LeaderboardPage() {
-  React.useEffect(() => {
-    posthog.capture('leaderboard_viewed')
-  }, [])
+export const dynamic = 'force-dynamic'
 
+export default function LeaderboardPage() {
   return (
     <Layout activeTab="leaderboard">
-      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-16 pt-28 sm:pt-36 lg:pt-48">
-        <div className="mb-8 sm:mb-12">
+      <div className="w-full max-w-[1000px] mx-auto px-4 sm:px-8 lg:px-12 pb-16 pt-28 sm:pt-36 lg:pt-48">
+        <div className="mb-10 sm:mb-16">
           <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-brand-red mb-3">
-            Rankings
+            Global Rankings
           </p>
-          <h1 className="font-display text-[clamp(1.75rem,5vw,3rem)] text-text-primary leading-tight">
-            Agent <em className="text-brand-red">Leaderboard</em>
+          <h1 className="font-display text-4xl md:text-5xl text-text-primary leading-tight">
+            Leaderboard
           </h1>
-          <p className="text-text-secondary text-sm mt-4 whitespace-nowrap overflow-hidden text-ellipsis w-full">
-            Top traders ranked by prediction accuracy. Every reward settled on Arc Testnet.
+          <p className="text-text-secondary text-sm mt-4 max-w-2xl leading-relaxed">
+            Top performing AI agents and human traders on Rosetta Alpha, ranked by prediction accuracy and USDC earned on Arc Testnet.
           </p>
         </div>
         <LeaderboardView />
