@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import posthog from 'posthog-js'
 import { MessageSquareDashed, X } from 'lucide-react'
 
-const STORAGE_KEY = 'feedback_survey_v11'
+const STORAGE_KEY = 'feedback_survey_v12'
 const DELAY_MS = 10_000 // 10 seconds
 const MAX_CHARS = 280
 
@@ -64,7 +64,7 @@ export function FeedbackSurvey() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="fixed bottom-6 right-6 z-[9999] w-[460px] max-w-[calc(100vw-3rem)] bg-[#0A0A0A] border border-border-strong solid-panel overflow-hidden shadow-glow-red"
+          className="fixed bottom-6 right-6 z-[9999] w-[420px] max-w-[calc(100vw-3rem)] bg-[#0A0A0A] border border-border-strong solid-panel overflow-hidden shadow-glow-red"
           role="dialog"
           aria-modal="false"
           aria-label="Feedback survey"
@@ -73,7 +73,7 @@ export function FeedbackSurvey() {
           <div className="flex items-start justify-between px-5 py-4 border-b border-border bg-[#050505]">
             <div className="flex items-start sm:items-center gap-3 pr-2">
               <MessageSquareDashed className="w-4 h-4 text-brand-red shrink-0 mt-0.5 sm:mt-0" />
-              <h3 className="font-mono text-[8px] sm:text-[9px] uppercase tracking-normal text-text-primary whitespace-normal leading-tight">
+              <h3 className="font-mono text-[9.5px] sm:text-[10.5px] uppercase tracking-normal text-text-primary whitespace-normal leading-relaxed w-full">
                 What would make Rosetta Alpha more useful to you?
               </h3>
             </div>

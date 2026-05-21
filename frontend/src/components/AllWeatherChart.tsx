@@ -60,7 +60,7 @@ export function AllWeatherChart() {
         {ALLOCATIONS.map(a => (
           <div key={a.label} className="flex items-center justify-between text-[11px]">
             <div className="flex items-center gap-2.5">
-              <span className="w-2 h-2 rounded-full shrink-0" style={{ background: a.color }} />
+              <span className="w-1.5 h-3 rounded-none shrink-0 shadow-glow-red" style={{ background: a.color }} />
               <span className="text-text-secondary font-medium">{a.label}</span>
             </div>
             <span className="font-mono text-text-primary">{a.pct}%</span>
