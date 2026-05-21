@@ -8,11 +8,12 @@ import { REGION_META, truncateHash } from '../lib/format'
 interface HeroSectionProps {
   latestHash?: string
   onScrollDown: () => void
+  isAuthenticated?: boolean
 }
 
 const REGIONS = ['us', 'cn', 'eu', 'jp', 'crypto'] as const
 
-export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
+export function HeroSection({ latestHash, onScrollDown, isAuthenticated }: HeroSectionProps) {
   const heroRef = React.useRef<HTMLElement>(null)
   const [visible, setVisible] = React.useState<Record<string, boolean>>({})
 
@@ -132,15 +133,22 @@ export function HeroSection({ latestHash, onScrollDown }: HeroSectionProps) {
           )}
         </div>
 
-        <div className="mt-10 flex items-center justify-center gap-4 sm:gap-6">
-          <Link
-            href="/quiz"
-            className="group inline-flex items-center gap-2.5 px-6 sm:px-8 py-3.5 rounded-full border border-[#C9A84C]/50 text-text-secondary text-[11px] uppercase tracking-[0.25em] font-medium transition-all duration-500 hover:border-[#C9A84C] hover:text-[#C9A84C] hover:shadow-[0_0_20px_rgba(201,168,76,0.15)] quiz-pulse-border min-h-[44px]"
+        {!isAuthenticated && (
+          <div 
+            data-reveal-id="quiz_btn"
+            className={`mt-10 flex items-center justify-center gap-4 sm:gap-6 transition-all duration-1000 delay-[600ms] ${
+              visible.quiz_btn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+            }`}
           >
-            <span className="text-base">🎯</span>
-            Try the quiz <span className="hidden sm:inline">— no wallet needed</span>
-          </Link>
-        </div>
+            <Link
+              href="/quiz"
+              className="group inline-flex items-center gap-2.5 px-6 sm:px-8 py-3.5 rounded-full border border-[#C9A84C]/50 text-text-secondary text-[11px] uppercase tracking-[0.25em] font-medium transition-all duration-500 hover:border-[#C9A84C] hover:text-[#C9A84C] hover:shadow-[0_0_20px_rgba(201,168,76,0.15)] quiz-pulse-border min-h-[44px]"
+            >
+              <span className="text-base">🎯</span>
+              Try the quiz <span className="hidden sm:inline">— no wallet needed</span>
+            </Link>
+          </div>
+        )}
 
         <div className="mt-12 sm:mt-16 flex justify-center">
           <button

@@ -73,7 +73,7 @@ export function FeedbackSurvey() {
           <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-[#050505]">
             <div className="flex items-center gap-2 overflow-hidden">
               <MessageSquareDashed className="w-3.5 h-3.5 text-brand-red shrink-0" />
-              <h3 className="font-mono text-[10px] sm:text-[10.5px] uppercase tracking-[0.05em] text-text-primary whitespace-nowrap overflow-hidden text-ellipsis">
+              <h3 className="font-mono text-[9px] sm:text-[9.5px] uppercase tracking-normal text-text-primary whitespace-nowrap overflow-hidden text-ellipsis">
                 What would make Rosetta Alpha more useful to you?
               </h3>
             </div>

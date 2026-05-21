@@ -36,6 +36,7 @@ export default function HomePage() {
     <Layout activeTab="desks">
       <HeroSection
         latestHash="0x46d3f229..."
+        isAuthenticated={!!session?.user}
         onScrollDown={() => {
           handleCtaClick('enter_terminal')
           const el = document.getElementById('desks-section')
