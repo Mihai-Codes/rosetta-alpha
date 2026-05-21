@@ -109,7 +109,7 @@ export function HeroSection({ latestHash, onScrollDown, isAuthenticated }: HeroS
             visible.actions ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
-          <button type="button" onClick={onScrollDown} className="animate-bounce p-3 rounded-full border border-white/[0.05] text-text-tertiary bg-white/[0.02] hover:text-white hover:border-white/[0.2] transition-colors cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center"$2><ArrowDown className="w-5 h-5" /></button>
+          <button type="button" onClick={onScrollDown} className="animate-bounce p-3 rounded-full border border-white/[0.05] text-text-tertiary bg-white/[0.02] hover:text-white hover:border-white/[0.2] transition-colors cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Scroll down to content"><ArrowDown className="w-5 h-5" /></button>
         </div>
       </div>
     </section>
