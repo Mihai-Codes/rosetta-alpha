@@ -60,7 +60,7 @@ export default function HomePage() {
         isAuthenticated={!!session?.user}
         onScrollDown={() => {
           handleCtaClick('enter_terminal')
-          document.getElementById('desks-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          const el = document.getElementById('desks-section'); if (el) { const y = el.getBoundingClientRect().top + window.scrollY - 80; window.scrollTo({ top: y, behavior: 'smooth' }); }
         }}
       />
       

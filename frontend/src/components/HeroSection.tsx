@@ -36,7 +36,7 @@ export function HeroSection({ latestHash, onScrollDown, isAuthenticated }: HeroS
   return (
     <section
       ref={heroRef}
-      className="relative w-full overflow-hidden flex flex-col items-center justify-center pt-28 sm:pt-40 pb-16 sm:pb-20"
+      className="relative w-full overflow-hidden flex flex-col items-center justify-center pt-28 sm:pt-40 pb-8 sm:pb-10"
       aria-label="Rosetta Alpha hero"
     >
       <div className="absolute inset-0 hero-vignette" aria-hidden />
@@ -109,55 +109,7 @@ export function HeroSection({ latestHash, onScrollDown, isAuthenticated }: HeroS
             visible.actions ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
-          <button
-            onClick={onScrollDown}
-            className="group relative overflow-hidden inline-flex items-center gap-3 px-8 sm:px-10 py-4 solid-panel rounded-full border-brand-red/30 text-brand-red text-[11px] sm:text-[12px] font-medium uppercase tracking-[0.25em] transition-all duration-500 hover:border-brand-red hover:shadow-[0_0_30px_rgba(216,43,43,0.5)] cursor-pointer min-h-[44px] w-full sm:w-auto justify-center"
-          >
-            <div className="absolute inset-0 bg-brand-red translate-y-[101%] group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" />
-            <span className="relative z-10 transition-colors duration-500 group-hover:text-black">Enter Terminal</span>
-            <span className="relative z-10 transition-transform duration-500 group-hover:translate-x-1 group-hover:text-black">→</span>
-          </button>
-
-          {latestHash && (
-            <div className="flex items-center gap-3 px-5 sm:px-6 py-4 solid-panel rounded-full border-brand-red/50 shadow-[0_0_20px_rgba(216,43,43,0.2)] min-h-[44px]">
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-red red-pulse" />
-              <span className="text-[9px] uppercase tracking-[0.25em] text-text-tertiary">
-                Latest Trace
-              </span>
-              {/* Shorter hash on mobile */}
-              <span key={latestHash} className="font-mono text-[11px] text-brand-red animate-in fade-in duration-1000">
-                <span className="sm:hidden">{truncateHash(latestHash, 6, 4)}</span>
-                <span className="hidden sm:inline">{truncateHash(latestHash, 10, 6)}</span>
-              </span>
-            </div>
-          )}
-        </div>
-
-        {!isAuthenticated && (
-          <div 
-            data-reveal-id="quiz_btn"
-            className={`mt-10 flex items-center justify-center gap-4 sm:gap-6 transition-all duration-1000 delay-[600ms] ${
-              visible.quiz_btn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-            }`}
-          >
-            <Link
-              href="/quiz"
-              className="group inline-flex items-center gap-2.5 px-6 sm:px-8 py-3.5 rounded-full border border-[#C9A84C]/50 text-text-secondary text-[11px] uppercase tracking-[0.25em] font-medium transition-all duration-500 hover:border-[#C9A84C] hover:text-[#C9A84C] hover:shadow-[0_0_20px_rgba(201,168,76,0.15)] quiz-pulse-border min-h-[44px]"
-            >
-              <span className="text-base">🎯</span>
-              Try the quiz <span className="hidden sm:inline">— no wallet needed</span>
-            </Link>
-          </div>
-        )}
-
-        <div className="mt-12 sm:mt-16 flex justify-center">
-          <button
-            onClick={onScrollDown}
-            className="animate-bounce p-3 rounded-full border border-white/[0.05] text-text-tertiary bg-white/[0.02] hover:text-white hover:border-white/[0.2] transition-colors cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center"
-            aria-label="Scroll down to content"
-          >
-            <ArrowDown className="w-5 h-5" />
-          </button>
+          <a href="#desks-section" onClick={onScrollDown} className="animate-bounce p-3 rounded-full border border-white/[0.05] text-text-tertiary bg-white/[0.02] hover:text-white hover:border-white/[0.2] transition-colors cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center" aria-label="Scroll down to content"><ArrowDown className="w-5 h-5" /></a>
         </div>
       </div>
     </section>
