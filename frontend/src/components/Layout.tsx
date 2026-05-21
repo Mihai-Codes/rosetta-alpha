@@ -270,7 +270,7 @@ export function Layout({ children, activeTab }: LayoutProps) {
             <span className="font-medium text-brand-red italic tracking-[0.4em]">Decentralized Reason</span>
           </div>
           
-          <div className="flex-1 flex items-center justify-center gap-4 sm:gap-6 overflow-hidden">
+          <div className="shrink-0 flex items-center justify-center gap-4 sm:gap-6">
             <QuoteMatrix />
             <div className="hidden sm:flex items-center gap-3">
               <span className="w-px h-4 bg-white/10" />
