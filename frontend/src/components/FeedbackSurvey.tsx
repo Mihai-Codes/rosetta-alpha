@@ -5,8 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import posthog from 'posthog-js'
 import { MessageSquareDashed, X } from 'lucide-react'
 
-const STORAGE_KEY = 'feedback_survey_shown'
-const DELAY_MS = 60_000 // 60 seconds
+const STORAGE_KEY = 'feedback_survey_v2'
+const DELAY_MS = 25_000 // 25 seconds
 const MAX_CHARS = 280
 
 /**
