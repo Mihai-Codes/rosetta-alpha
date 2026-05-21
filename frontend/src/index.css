@@ -215,3 +215,15 @@
   body { font-size: 18px; }
   .w-full.max-w-\[1440px\] { max-width: 1400px; }
 }
+
+@keyframes button-pulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(216,43,43,0.3); border-color: rgba(216,43,43,0.4); }
+  50% { box-shadow: 0 0 16px rgba(216,43,43,0.6); border-color: rgba(216,43,43,0.8); }
+}
+.btn-pulse {
+  transition: all 0.3s ease;
+}
+.btn-pulse:hover {
+  animation: button-pulse 2.5s ease-in-out infinite;
+  background-color: rgba(216,43,43,0.05) !important;
+}
