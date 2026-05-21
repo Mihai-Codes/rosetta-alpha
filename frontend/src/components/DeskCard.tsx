@@ -111,33 +111,34 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3 border-t border-border/50 bg-card/50 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            {desk.ipfs_thesis_cid && desk.ipfs_thesis_cid.length > 20 && (
-              <a
-                href={`https://gateway.pinata.cloud/ipfs/${desk.ipfs_thesis_cid}`}
-                target="_blank"
-                rel="noreferrer"
-                onClick={e => e.stopPropagation()}
-                className="flex items-center gap-1 text-[9px] font-medium uppercase tracking-widest text-muted-foreground/40 hover:text-brand-red transition-colors"
-              >
-                <ExternalLink className="w-2.5 h-2.5" />
-                IPFS
-              </a>
-            )}
-            {desk.arc_tx && desk.arc_tx.length > 20 && !desk.arc_tx.startsWith('0xmock') && (
-              <a
-                href={`https://testnet.arcscan.app/tx/${desk.arc_tx}`}
-                target="_blank"
-                rel="noreferrer"
-                onClick={e => e.stopPropagation()}
-                className="flex items-center gap-1 text-[9px] font-medium uppercase tracking-widest text-muted-foreground/40 hover:text-brand-red transition-colors"
-              >
-                <ExternalLink className="w-2.5 h-2.5" />
-                Arc
-              </a>
-            )}
-          </div>
+        <div className="px-6 py-3 border-t border-border/50 bg-[#0A0A0A] flex items-center justify-between">
+          {desk.ipfs_thesis_cid && desk.ipfs_thesis_cid.length > 20 ? (
+            <a
+              href={`https://gateway.pinata.cloud/ipfs/${desk.ipfs_thesis_cid}`}
+              target="_blank"
+              rel="noreferrer"
+              onClick={e => e.stopPropagation()}
+              className="flex items-center gap-1.5 text-[9px] font-mono uppercase tracking-widest text-text-tertiary hover:text-brand-red transition-colors"
+            >
+              <ExternalLink className="w-3 h-3" />
+              IPFS: {desk.ipfs_thesis_cid.slice(0,6)}...
+            </a>
+          ) : <div />}
+          
+          {desk.arc_tx && desk.arc_tx.length > 20 && !desk.arc_tx.startsWith("0xmock") ? (
+            <a
+              href={`https://testnet.arcscan.app/tx/${desk.arc_tx}`}
+              target="_blank"
+              rel="noreferrer"
+              onClick={e => e.stopPropagation()}
+              className="flex items-center gap-1.5 text-[9px] font-mono uppercase tracking-widest text-text-tertiary hover:text-brand-red transition-colors"
+            >
+              <ExternalLink className="w-3 h-3" />
+              Arc L1: {desk.arc_tx.slice(0,6)}...
+            </a>
+          ) : <div />}
+        </div>
+        <div className="hidden">
           <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/20 group-hover:text-brand-red/50 transition-colors translate-x-1 group-hover:translate-x-0 duration-200" />
         </div>
       </motion.article>
