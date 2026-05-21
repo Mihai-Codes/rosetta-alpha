@@ -36,7 +36,7 @@ export function HeroSection({ latestHash, onScrollDown, isAuthenticated }: HeroS
   return (
     <section
       ref={heroRef}
-      className="relative w-full overflow-hidden flex flex-col items-center justify-center pt-28 sm:pt-40 pb-8 sm:pb-10"
+      className="relative w-full overflow-hidden flex flex-col items-center justify-center pt-28 sm:pt-40 pb-4 sm:pb-6"
       aria-label="Rosetta Alpha hero"
     >
       <div className="absolute inset-0 hero-vignette" aria-hidden />

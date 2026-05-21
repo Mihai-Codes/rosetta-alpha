@@ -68,7 +68,7 @@ export default function HomePage() {
       
       <StatsBar stats={stats} />
 
-      <div id="desks-section" className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-2 pt-12 sm:pt-16" style={{ scrollMarginTop: '80px' }}>
+      <div id="desks-section" className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-0 pt-10 sm:pt-12" style={{ scrollMarginTop: '80px' }}>
         <DesksView desks={data} loading={loading} isAuthenticated={!!session?.user} />
       </div>
     </Layout>
