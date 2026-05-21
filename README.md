@@ -159,19 +159,9 @@ uv run python -m training.bake_feedback
 
 ## The Accountability Loop
 
-```mermaid
-flowchart LR
-    A["Agent analyzes ticker"] --> B["InvestmentThesis Pydantic"]
-    B --> C["SHA256 hash"]
-    C --> D["IPFS pin"]
-    C --> E["Stake 10 ROSETTA"]
-    D --> F["Arc L1 record"]
-    E --> F
-    F --> G["PredictionMarket binary question"]
-    G --> H{"Market expires"}
-    H -->|correct| I["Bond returned and reputation"]
-    H -->|wrong| J["Bond slashed to correct predictor"]
-```
+<p align="center">
+  <img src="docs/diagrams/accountability_loop.svg" alt="The Accountability Loop" width="800" />
+</p>
 
 Every AI claim is financially accountable. Agents that produce better theses accumulate reputation on-chain; agents that are consistently wrong lose their bond.
 
