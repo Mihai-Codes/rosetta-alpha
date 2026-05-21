@@ -80,11 +80,11 @@ This problem is compounded by what Cambrian Network's financial agent landscape 
 ```mermaid
 flowchart TD
     subgraph Agents["Regional Agents (5 desks)"]
-        US["US · AAPL\nGroq Llama-3.3 · EN\nFallback: Gemini"]
-        CN["China · 600519.SH\nDeepSeek V4 Pro · ZH\nFallback: Groq"]
-        EU["EU · MC.PA\nGemini 3.1 Flash · FR/DE\nFallback: Groq"]
-        JP["Japan · 7203.T\nGemini 3.1 Flash · JA\nFallback: Groq"]
-        CR["Crypto · BTC\nGroq Llama-3.3 · EN\nFallback: Gemini"]
+        US["US · AAPL | Groq Llama-3.3 · EN | Fallback: Gemini"]
+        CN["China · 600519.SH | DeepSeek V4 Pro · ZH | Fallback: Groq"]
+        EU["EU · MC.PA | Gemini 3.1 Flash · FR/DE | Fallback: Groq"]
+        JP["Japan · 7203.T | Gemini 3.1 Flash · JA | Fallback: Groq"]
+        CR["Crypto · BTC | Groq Llama-3.3 · EN | Fallback: Gemini"]
     end
 
     subgraph Data["Data Feeds"]
@@ -99,23 +99,23 @@ flowchart TD
     D2 --> JP
     D3 --> CR
 
-    Agents --> Thesis["InvestmentThesis\nPydantic schema"]
-    Thesis --> Trans["Translator Agent\nDeepSeek / Gemini"]
+    Agents --> Thesis["InvestmentThesis Pydantic schema"]
+    Thesis --> Trans["Translator Agent DeepSeek / Gemini"]
     Trans --> PMQ["PredictionMarketQuestion"]
 
     Thesis --> Hash["SHA-256 canonical hash"]
-    Hash --> IPFS["Pinata IPFS pin\nbafkrei..."]
-    Hash --> Stake["Stake 10 ROSETTA\nRosettaToken.sol"]
-    IPFS --> Registry["ReasoningRegistry.sol\nArc L1 · chain 5042002"]
+    Hash --> IPFS["Pinata IPFS pin bafkrei..."]
+    Hash --> Stake["Stake 10 ROSETTA RosettaToken.sol"]
+    IPFS --> Registry["ReasoningRegistry.sol Arc L1 chain 5042002"]
     Stake --> Registry
-    PMQ --> Market["PredictionMarket.sol\nbinary YES/NO"]
+    PMQ --> Market["PredictionMarket.sol binary YES/NO"]
     Registry --> Market
 
-    Market --> Settler["Autonomous Settler\nreasoning/settler.py"]
-    Settler --> Oracle["OwnerPriceOracle.sol\nresolves at expiry"]
+    Market --> Settler["Autonomous Settler reasoning/settler.py"]
+    Settler --> Oracle["OwnerPriceOracle.sol resolves at expiry"]
 
-    Registry --> Training["AdalFlow Trace Dataset\ntraining/adalflow_trace.py"]
-    Training --> Optimizer["Text-grad Optimizer\ntraining/prompt_optimizer.py"]
+    Registry --> Training["AdalFlow Trace Dataset training/adalflow_trace.py"]
+    Training --> Optimizer["Text-grad Optimizer training/prompt_optimizer.py"]
     Optimizer --> Agents
 ```
 
