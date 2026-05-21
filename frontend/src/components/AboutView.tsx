@@ -48,7 +48,7 @@ export function AboutView() {
       </div>
 
       {/* Cognitive Risk Parity & Quadrants */}
-      <div className="solid-panel bg-[#030303] rounded-[2rem] p-8 md:p-12 border-white/[0.03] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.8)]">
+      <div className="bg-gradient-to-b from-[#050505] to-black rounded-[2rem] p-8 md:p-12 border border-white/[0.05] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.9)]">
         <div className="flex flex-col items-center text-center mb-10">
           <Scale className="text-brand-red w-8 h-8 mb-4" />
           <h3 className="font-display text-2xl text-text-primary tracking-tight">
@@ -59,7 +59,7 @@ export function AboutView() {
 
         <div className="flex flex-col lg:flex-row items-center gap-12 mb-10">
           <div className="relative w-full max-w-sm shrink-0 animate-levitate" style={{ animationDelay: '1.5s' }}>
-            <div className="relative z-10 grid grid-cols-2 grid-rows-2 aspect-square border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.8)] rounded-2xl overflow-hidden bg-[#000000]">
+            <div className="relative z-10 grid grid-cols-2 grid-rows-2 aspect-square border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.8)] rounded-2xl overflow-hidden bg-[#0A0A0A]">
               <div className="border-r border-b border-white/5 bg-gradient-to-br from-brand-red/10 to-transparent p-5 flex flex-col justify-between">
                 <span className="text-[10px] uppercase tracking-[0.2em] text-brand-red/60 font-bold">Rising Growth</span>
                 <span className="font-display text-lg sm:text-xl text-text-primary leading-tight">Equities<br/>Commodities</span>
