@@ -241,66 +241,38 @@ export function ThesisCard({ desk }: ThesisCardProps) {
         </p>
       </section>
 
-      {/* Footer: provenance */}
-      <footer className="px-4 sm:px-8 py-4 sm:py-5 border-t border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mt-auto bg-[#0A0A0A]">
-        <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
+      {/* Footer: provenance & actions */}
+      <footer className="px-4 sm:px-6 py-4 border-t border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-auto bg-[#0A0A0A]">
+        {/* Left: Provenance */}
+        <div className="flex items-center gap-4 sm:gap-6">
           {desk.ipfs_thesis_cid && desk.ipfs_thesis_cid !== 'bafkrei...' && (
-            <a
-              href={`https://dweb.link/ipfs/${desk.ipfs_thesis_cid}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-[11px] text-text-secondary hover:text-brand-red transition-colors min-h-[44px] sm:min-h-0"
-            >
+            <a href={`https://dweb.link/ipfs/${desk.ipfs_thesis_cid}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-text-tertiary hover:text-brand-red transition-colors">
               <ExternalLink className="w-3 h-3" />
-              <span className="uppercase tracking-[0.2em]">IPFS</span>
-              <span className="font-mono">
-                <span className="sm:hidden">{truncateHash(desk.ipfs_thesis_cid, 6, 4)}</span>
-                <span className="hidden sm:inline">{truncateHash(desk.ipfs_thesis_cid, 8, 6)}</span>
-              </span>
+              <span className="hidden sm:inline">IPFS</span>
+              <span className="font-mono">{truncateHash(desk.ipfs_thesis_cid, 6, 4)}</span>
             </a>
           )}
-
           {desk.arc_tx && (
-            <div className="relative flex items-center gap-2">
-              <a
-                href={`https://testnet.arcscan.app/tx/${desk.arc_tx}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-[11px] text-text-secondary hover:text-brand-red transition-colors min-h-[44px] sm:min-h-0"
-              >
+            <div className="flex items-center gap-1.5">
+              <a href={`https://testnet.arcscan.app/tx/${desk.arc_tx}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-text-tertiary hover:text-brand-red transition-colors">
                 <ExternalLink className="w-3 h-3" />
-                <span className="uppercase tracking-[0.2em]">Arc Tx</span>
-                <span className="font-mono">
-                  <span className="sm:hidden">{truncateHash(desk.arc_tx, 6, 4)}</span>
-                  <span className="hidden sm:inline">{truncateHash(desk.arc_tx, 8, 6)}</span>
-                </span>
+                <span className="hidden sm:inline">Arc Tx</span>
+                <span className="font-mono">{truncateHash(desk.arc_tx, 6, 4)}</span>
               </a>
-              <button
-                onClick={handleCopy}
-                aria-label="Copy Arc transaction hash"
-                className="text-text-tertiary hover:text-brand-red transition-colors p-2 min-h-[44px] min-w-[44px] flex items-center justify-center"
-              >
+              <button onClick={handleCopy} aria-label="Copy Arc tx" className="text-text-tertiary hover:text-brand-red transition-colors p-1 relative">
                 {copied ? <Check className="w-3 h-3 text-positive" /> : <Copy className="w-3 h-3" />}
-                {copied && <span className="copy-toast">Copied</span>}
+                {copied && <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-[8px] bg-bg-tertiary px-1.5 py-0.5 rounded text-text-primary">Copied</span>}
               </button>
             </div>
           )}
         </div>
 
-        <div className="flex items-center gap-3">
-          {desk.arc_tx ? (
-            <a
-              href={`https://testnet.arcscan.app/tx/${desk.arc_tx}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.25em] text-text-tertiary hover:text-brand-red transition-colors min-h-[44px] sm:min-h-0"
-            >
-              <ExternalLink className="w-3 h-3" />
-              Verified on Arc L1
-            </a>
-          ) : (
-            <span className="text-[10px] uppercase tracking-[0.25em] text-text-tertiary">Verified on Arc L1</span>
-          )}
+        {/* Right: Actions */}
+        <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-4 border-t border-border/40 sm:border-t-0 pt-3 sm:pt-0">
+          <Link href={`/quiz?desk=${desk.desk.toLowerCase()}`} className="text-[10px] uppercase tracking-[0.2em] text-[#C9A84C] hover:text-white transition-colors whitespace-nowrap">
+            Take the Quiz →
+          </Link>
+          <div className="w-px h-3 bg-border hidden sm:block" />
           <ShareButton
             region={desk.desk}
             ticker={desk.ticker}
@@ -310,15 +282,6 @@ export function ThesisCard({ desk }: ThesisCardProps) {
             arcHash={desk.arc_tx}
             flagEmoji={meta.flag}
           />
-        </div>
-        {/* Quiz CTA — bottom of card, after ShareButton */}
-        <div className="border-t border-border/40 mt-3 pt-3 flex justify-end">
-          <Link
-            href={`/quiz?desk=${desk.desk.toLowerCase()}`}
-            className="text-[10px] uppercase tracking-[0.25em] text-text-secondary hover:text-[#C9A84C] hover:underline transition-colors"
-          >
-            Test your understanding → Take the quiz
-          </Link>
         </div>
       </footer>
     </article>
