@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { authModalState } from './SignInModal'
 import { Lock } from 'lucide-react'
@@ -103,11 +104,11 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
     <div className="flex flex-col gap-8">
       {/* ── Mobile (< md): pill bar + stacked content ── */}
       <div className="md:hidden">
-        <div className="animate-rain mb-6" style={{ animationDelay: '0ms' }}>
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }} className="mb-6">
           <RegionPillBar desks={desks} activeDesk={activeDesk} onSelect={setActiveDesk} />
-        </div>
+        </motion.div>
 
-        <div className="animate-rain" style={{ animationDelay: '150ms' }}>
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }} className="">
           {loading ? (
             <div className="solid-panel rounded-none border-x-0 border-y p-8">
               <ThesisSkeleton />
@@ -122,20 +123,20 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
               <p className="font-display text-xl text-text-tertiary">No desks available</p>
             </div>
           )}
-        </div>
+        </motion.div>
 
-        <div className="animate-rain mt-8" style={{ animationDelay: '300ms' }}>
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }} className="mt-8">
           <AllWeatherChart />
-        </div>
+        </motion.div>
       </div>
 
       {/* ── Tablet & Desktop (≥ md): two/three-column layout ── */}
       <div className="hidden md:flex flex-row items-start gap-6 lg:gap-8">
-        <div className="w-[220px] lg:w-[260px] shrink-0 animate-rain solid-panel rounded-none border overflow-hidden" style={{ animationDelay: '0ms' }}>
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }} className="w-[220px] lg:w-[260px] shrink-0  solid-panel rounded-none border overflow-hidden">
           <RegionSidebar desks={desks} activeDesk={activeDesk} onSelect={setActiveDesk} />
-        </div>
+        </motion.div>
 
-        <div className="flex-1 min-w-0 animate-rain" style={{ animationDelay: '150ms' }}>
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }} className="flex-1 min-w-0 ">
           {loading ? (
             <div className="solid-panel rounded-none border p-10">
               <ThesisSkeleton />
@@ -150,16 +151,16 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
               <p className="font-display text-xl text-text-tertiary">No desks available</p>
             </div>
           )}
-        </div>
+        </motion.div>
 
         {/* Hide chart on tablet to give thesis card room, show on desktop */}
-        <div className="hidden lg:block w-[300px] xl:w-[320px] shrink-0 animate-rain solid-panel rounded-none border overflow-hidden" style={{ animationDelay: '300ms' }}>
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }} className="hidden lg:block w-[300px] xl:w-[320px] shrink-0  solid-panel rounded-none border overflow-hidden">
           <AllWeatherChart />
-        </div>
+        </motion.div>
       </div>
       
       {/* Chart below on tablet (md to lg) */}
-      <div className="hidden md:block lg:hidden w-full animate-rain solid-panel rounded-none border overflow-hidden mt-2" style={{ animationDelay: '300ms' }}>
+      <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }} className="hidden md:block lg:hidden w-full  solid-panel rounded-none border overflow-hidden mt-2">
         <AllWeatherChart />
       </div>
 
