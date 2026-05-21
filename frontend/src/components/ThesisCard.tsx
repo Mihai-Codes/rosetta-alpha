@@ -61,7 +61,7 @@ function ReasoningBlock({
     >
       {/* Mobile: accordion header */}
       <button
-        className="md:hidden w-full flex items-center justify-between gap-3 py-3 px-4 min-h-[44px] rounded-lg bg-white/[0.02] border border-white/[0.04] mb-1 text-left"
+        className="md:hidden w-full flex items-center justify-between gap-3 py-3 px-4 min-h-[44px] rounded-none bg-white/[0.02] border border-white/[0.04] mb-1 text-left"
         onClick={() => setOpen(o => !o)}
         aria-expanded={open}
       >
@@ -177,7 +177,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
   }
 
   return (
-    <article className="solid-panel rounded-2xl overflow-hidden h-full flex flex-col">
+    <article className="solid-panel rounded-none overflow-hidden h-full flex flex-col">
       {/* Header */}
       <header className="px-4 sm:px-8 py-5 sm:py-7 border-b border-border" style={{ borderLeft: `3px solid ${meta.color}` }}>
         <div className="flex items-start justify-between gap-4 sm:gap-6 flex-wrap">

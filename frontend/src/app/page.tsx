@@ -67,8 +67,8 @@ export default function HomePage() {
             const target = el.getBoundingClientRect().top + window.scrollY - 80;
             const start = window.scrollY;
             const diff = target - start;
-            let startTimestamp = null;
-            const step = (timestamp) => {
+            let startTimestamp: number | null = null;
+            const step = (timestamp: number) => {
               if (!startTimestamp) startTimestamp = timestamp;
               const progress = Math.min((timestamp - startTimestamp) / 600, 1);
               const easeInOut = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
