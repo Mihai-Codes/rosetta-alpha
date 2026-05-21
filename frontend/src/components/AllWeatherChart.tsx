@@ -16,7 +16,7 @@ export function AllWeatherChart() {
   let offset = 0
 
   return (
-    <div className="glass-panel border border-border/20 rounded-2xl p-5 sm:p-8 shadow-none h-full">
+    <div className="glass-panel border border-border/20 rounded-none p-5 sm:p-8 shadow-none h-full">
       <div className="mb-5 sm:mb-6">
         <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary mb-2">
           All Weather Allocation
