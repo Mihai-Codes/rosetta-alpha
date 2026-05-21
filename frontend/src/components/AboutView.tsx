@@ -114,7 +114,7 @@ export function AboutView() {
 
       <section className="space-y-6">
         <h2 className="font-display text-2xl text-text-primary">The Pipeline</h2>
-        <ol className="space-y-5 border-l border-border pl-8">
+        <ol className="space-y-5 pl-8">
           {[
             { n: '01', t: 'Regional ingest', d: 'Each desk pulls market data, filings, and news in the local language.' },
             { n: '02', t: 'Multi-agent reasoning', d: 'Specialized analysts (fundamental, technical, sentiment, macro) produce structured ReasoningBlocks.' },

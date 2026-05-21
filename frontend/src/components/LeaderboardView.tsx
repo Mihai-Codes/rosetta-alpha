@@ -133,22 +133,26 @@ export function LeaderboardView() {
     <div className="space-y-10">
 
       {/* ── Stats banner ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-border/60 border border-border/60 rounded-none mb-10">
         {[
-          { label: 'Active Traders',  value: String(TRADERS.length) },
-          { label: 'USDC Distributed', value: `${TRADERS.reduce((s, t) => s + t.earned, 0)} USDC` },
-          { label: 'Correct Calls',   value: String(TRADERS.reduce((s, t) => s + t.correct, 0)) },
-          { label: 'Arc Settlements', value: String(TRADERS.reduce((s, t) => s + t.arcTxCount, 0)) },
+          { label: 'Active Traders',  value: String(TRADERS.length), accent: 'text-accent-gold' },
+          { label: 'USDC Distributed', value: `${TRADERS.reduce((s, t) => s + t.earned, 0)}`, sub: 'USDC', accent: 'text-positive' },
+          { label: 'Correct Calls',   value: String(TRADERS.reduce((s, t) => s + t.correct, 0)), accent: '' },
+          { label: 'Arc Settlements', value: String(TRADERS.reduce((s, t) => s + t.arcTxCount, 0)), accent: '' },
         ].map((s, i) => (
           <motion.div
             key={s.label}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.07 }}
-            className="bg-[#050505] border border-border/60 rounded-none px-5 py-5 hover:border-brand-red/30 transition-colors"
+            className="bg-[#050505] px-6 py-8 flex flex-col gap-3 hover:bg-[#0A0A0F] border-b-2 border-transparent hover:border-brand-red/50 transition-colors relative group"
           >
-            <p className="text-[9px] uppercase tracking-[0.25em] text-text-tertiary mb-1">{s.label}</p>
-            <p className="font-display text-xl sm:text-2xl text-text-primary font-light">{s.value}</p>
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-border group-hover:bg-brand-red/30 transition-colors" />
+            <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-text-tertiary">{s.label}</p>
+            <p className={`font-display text-3xl font-bold tracking-tight ${s.accent || 'text-text-primary'}`}>
+              {s.value}
+            </p>
+            {s.sub && <p className="text-[9px] text-text-tertiary font-mono tracking-wide">{s.sub}</p>}
           </motion.div>
         ))}
       </div>
