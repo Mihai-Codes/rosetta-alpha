@@ -11,7 +11,8 @@ export default auth((req) => {
     (path) => req.nextUrl.pathname.startsWith(path)
   )
   if (isProtected && !isLoggedIn) {
-    const signInUrl = new URL('/signin', req.nextUrl.origin)
+    // With modal-based auth, we redirect to home with a query param to trigger the modal
+    const signInUrl = new URL('/?auth=login', req.nextUrl.origin)
     return NextResponse.redirect(signInUrl)
   }
   return NextResponse.next()

@@ -7,3 +7,4 @@ out/
 
 /generated/prisma
 test-results/
+.cache-synpress

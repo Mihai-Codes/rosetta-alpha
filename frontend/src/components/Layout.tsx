@@ -8,6 +8,7 @@ import { useDisconnect, useConnectors } from 'wagmi'
 import { Brain, Layers, HardDrive, CircleDollarSign, Menu, X, LogOut } from 'lucide-react'
 import { WalletButton } from './WalletButton'
 import { OnboardingModal } from './OnboardingModal'
+import { SignInModal, authModalState } from './SignInModal'
 
 export type Tab = 'desks' | 'feed' | 'registry' | 'about' | 'leaderboard' | 'dashboard' | 'quiz'
 
@@ -155,13 +156,7 @@ export function Layout({ children, activeTab }: LayoutProps) {
                 </button>
               </>
             ) : (
-              <Link
-                href="/signin"
-                className="hidden md:flex items-center gap-2 px-5 py-2 solid-panel rounded-full text-text-primary text-[10px] font-medium uppercase tracking-[0.2em] transition-all duration-300 hover:border-brand-red/50 hover:shadow-[0_0_30px_rgba(216,43,43,0.7)]"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-accent-gold" />
-                Sign In
-              </Link>
+              <button onClick={() => authModalState.open()} className="hidden md:flex items-center gap-2 px-5 py-2 solid-panel rounded-full text-text-primary text-[10px] font-medium uppercase tracking-[0.2em] transition-all duration-300 hover:border-brand-red/50 hover:shadow-[0_0_30px_rgba(216,43,43,0.7)] cursor-pointer"><span className="w-1.5 h-1.5 rounded-full bg-accent-gold" />Sign In</button>
             )}
 
             {/* Hamburger — mobile only */}
@@ -210,19 +205,14 @@ export function Layout({ children, activeTab }: LayoutProps) {
                 Sign Out
               </button>
             ) : (
-              <Link
-                href="/signin"
-                className="mt-4 flex items-center justify-center gap-2 px-5 py-4 min-h-[44px] solid-panel rounded-full text-text-primary text-[10px] font-medium uppercase tracking-[0.2em] transition-all duration-300 hover:border-brand-red/50"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-accent-gold" />
-                Sign In
-              </Link>
+              <button onClick={() => { authModalState.open(); setMobileOpen(false); }} className="mt-4 w-full flex items-center justify-center gap-2 px-5 py-4 min-h-[44px] solid-panel rounded-full text-text-primary text-[10px] font-medium uppercase tracking-[0.2em] transition-all duration-300 hover:border-brand-red/50 cursor-pointer"><span className="w-1.5 h-1.5 rounded-full bg-accent-gold" />Sign In</button>
             )}
           </div>
         )}
       </header>
 
       <OnboardingModal isSignedIn={isSignedIn} />
+      <SignInModal />
 
       <main className="flex-1 w-full z-10">{children}</main>
 

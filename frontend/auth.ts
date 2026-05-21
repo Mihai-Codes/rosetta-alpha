@@ -13,7 +13,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     Google,
   ],
   pages: {
-    signIn: '/signin',
+    signIn: '/?auth=login',
   },
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
