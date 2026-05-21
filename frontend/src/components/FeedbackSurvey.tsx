@@ -73,8 +73,8 @@ export function FeedbackSurvey() {
           <div className="flex items-start justify-between px-5 py-4 border-b border-border bg-[#050505]">
             <div className="flex items-start sm:items-center gap-3 pr-2">
               <MessageSquareDashed className="w-4 h-4 text-brand-red shrink-0 mt-0.5 sm:mt-0" />
-              <h3 className="font-mono text-[9px] sm:text-[10px] uppercase tracking-normal text-text-primary">
-                What would make Rosetta Alpha more useful?
+              <h3 className="font-mono text-[8.5px] sm:text-[9.5px] uppercase tracking-normal text-text-primary">
+                What would make Rosetta Alpha more useful to you?
               </h3>
             </div>
             <button
