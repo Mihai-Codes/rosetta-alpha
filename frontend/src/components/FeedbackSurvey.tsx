@@ -64,7 +64,7 @@ export function FeedbackSurvey() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="fixed bottom-6 right-6 z-[9999] w-[340px] bg-[#0A0A0A] border border-border-strong solid-panel overflow-hidden shadow-glow-red"
+          className="fixed bottom-6 right-6 z-[9999] w-[400px] max-w-[calc(100vw-3rem)] bg-[#0A0A0A] border border-border-strong solid-panel overflow-hidden shadow-glow-red"
           role="dialog"
           aria-modal="false"
           aria-label="Feedback survey"
@@ -73,8 +73,8 @@ export function FeedbackSurvey() {
           <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-[#050505]">
             <div className="flex items-center gap-2 overflow-hidden">
               <MessageSquareDashed className="w-3.5 h-3.5 text-brand-red shrink-0" />
-              <h3 className="font-mono text-[10.5px] uppercase tracking-[0.1em] text-text-primary whitespace-nowrap overflow-hidden text-ellipsis">
-                What would make Rosetta Alpha more useful?
+              <h3 className="font-mono text-[10px] sm:text-[10.5px] uppercase tracking-[0.05em] text-text-primary whitespace-nowrap overflow-hidden text-ellipsis">
+                What would make Rosetta Alpha more useful to you?
               </h3>
             </div>
             <button
@@ -105,7 +105,7 @@ export function FeedbackSurvey() {
                   <textarea
                     value={text}
                     onChange={e => setText(e.target.value.slice(0, MAX_CHARS))}
-                    placeholder="> TYPE RESPONSE HERE_"
+                    placeholder="> Share your thoughts_"
                     rows={3}
                     className="w-full resize-none bg-[#111111] border border-border px-3 py-3 text-[11px] font-mono text-text-primary placeholder:text-text-tertiary focus:border-brand-red/60 focus:outline-none transition-colors duration-200 scrollbar-hide"
                     aria-label="Feedback response"
@@ -123,16 +123,16 @@ export function FeedbackSurvey() {
                       <button
                         type="button"
                         onClick={handleDismiss}
-                        className="text-[9px] font-mono uppercase tracking-[0.15em] text-text-secondary hover:text-text-primary transition-colors"
+                        className="text-[9.5px] font-mono uppercase tracking-[0.1em] text-text-secondary hover:text-text-primary transition-colors whitespace-nowrap"
                       >
-                        [ ABORT ]
+                        [ Maybe Later ]
                       </button>
                       <button
                         type="submit"
                         disabled={!text.trim()}
-                        className="px-4 py-2 border border-brand-red/50 bg-brand-red/10 text-brand-red text-[9px] font-mono uppercase tracking-[0.15em] hover:bg-brand-red hover:text-bg-primary transition-all duration-300 disabled:opacity-30 disabled:hover:bg-brand-red/10 disabled:hover:text-brand-red disabled:cursor-not-allowed"
+                        className="px-4 py-2 border border-brand-red/50 bg-brand-red/10 text-brand-red text-[9.5px] font-mono uppercase tracking-[0.1em] hover:bg-brand-red hover:text-bg-primary transition-all duration-300 disabled:opacity-30 disabled:hover:bg-brand-red/10 disabled:hover:text-brand-red disabled:cursor-not-allowed whitespace-nowrap"
                       >
-                        Transmit
+                        Send Feedback
                       </button>
                     </div>
                   </div>
