@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import posthog from 'posthog-js'
 import { MessageSquareDashed, X } from 'lucide-react'
 
-const STORAGE_KEY = 'feedback_survey_v8'
+const STORAGE_KEY = 'feedback_survey_v9'
 const DELAY_MS = 10_000 // 10 seconds
 const MAX_CHARS = 280
 
@@ -74,7 +74,7 @@ export function FeedbackSurvey() {
             <div className="flex items-start sm:items-center gap-3 pr-2">
               <MessageSquareDashed className="w-4 h-4 text-brand-red shrink-0 mt-0.5 sm:mt-0" />
               <h3 className="font-mono text-[7px] sm:text-[8.5px] uppercase tracking-normal text-text-primary whitespace-nowrap">
-                What would make Rosetta Alpha more useful to you?
+                What would make Rosetta Alpha more useful?
               </h3>
             </div>
             <button
