@@ -143,7 +143,7 @@ export function SignInModal() {
               <div className="space-y-4">
                 <button
                   onClick={() => handleSignIn('google')}
-                  className="group relative w-full flex items-center gap-4 px-5 py-4 border border-border-strong bg-[#0A0A0A] hover:bg-[#111111] hover:border-brand-red/60 text-text-primary text-[11px] font-mono uppercase tracking-[0.15em] transition-all duration-300"
+                  className="group relative w-full flex items-center justify-center gap-4 px-5 py-4 border border-border-strong bg-[#0A0A0A] hover:bg-[#111111] hover:border-brand-red/60 text-text-primary text-[11px] font-mono uppercase tracking-[0.15em] transition-all duration-300"
                 >
                   <div className="absolute inset-0 bg-brand-red/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                   <svg className="w-4 h-4 shrink-0 relative z-10 grayscale group-hover:grayscale-0 transition-all duration-300" viewBox="0 0 24 24">
@@ -158,7 +158,7 @@ export function SignInModal() {
 
                 <button
                   onClick={() => handleSignIn('github')}
-                  className="group relative w-full flex items-center gap-4 px-5 py-4 border border-border-strong bg-[#0A0A0A] hover:bg-[#111111] hover:border-brand-red/60 text-text-primary text-[11px] font-mono uppercase tracking-[0.15em] transition-all duration-300"
+                  className="group relative w-full flex items-center justify-center gap-4 px-5 py-4 border border-border-strong bg-[#0A0A0A] hover:bg-[#111111] hover:border-brand-red/60 text-text-primary text-[11px] font-mono uppercase tracking-[0.15em] transition-all duration-300"
                 >
                   <div className="absolute inset-0 bg-brand-red/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                   <svg className="w-4 h-4 shrink-0 relative z-10 text-text-secondary group-hover:text-white transition-colors duration-300" fill="currentColor" viewBox="0 0 24 24">
