@@ -77,47 +77,9 @@ This problem is compounded by what Cambrian Network's financial agent landscape 
 
 ## Architecture
 
-```mermaid
-flowchart TD
-    subgraph Agents["Regional Agents"]
-        US["US Desk"]
-        CN["China Desk"]
-        EU["EU Desk"]
-        JP["Japan Desk"]
-        CR["Crypto Desk"]
-    end
-
-    subgraph Data["Data Feeds"]
-        D1["Financial Datasets MCP"]
-        D2["AKShare and yfinance"]
-        D3["CoinGecko and DeFiLlama"]
-    end
-
-    D1 --> US
-    D2 --> CN
-    D2 --> EU
-    D2 --> JP
-    D3 --> CR
-
-    Agents --> Thesis["InvestmentThesis Pydantic schema"]
-    Thesis --> Trans["Translator Agent"]
-    Trans --> PMQ["PredictionMarketQuestion"]
-
-    Thesis --> Hash["SHA256 canonical hash"]
-    Hash --> IPFS["Pinata IPFS pin"]
-    Hash --> Stake["Stake 10 ROSETTA"]
-    IPFS --> Registry["ReasoningRegistry Arc L1"]
-    Stake --> Registry
-    PMQ --> Market["PredictionMarket binary YES NO"]
-    Registry --> Market
-
-    Market --> Settler["Autonomous Settler"]
-    Settler --> Oracle["Price Oracle"]
-
-    Registry --> Training["AdalFlow Trace Dataset"]
-    Training --> Optimizer["Textgrad Optimizer"]
-    Optimizer --> Agents
-```
+<p align="center">
+  <img src="docs/diagrams/architecture.svg" alt="Rosetta Alpha Architecture" width="800" />
+</p>
 
 ---
 
