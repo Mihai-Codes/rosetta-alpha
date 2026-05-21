@@ -79,18 +79,18 @@ This problem is compounded by what Cambrian Network's financial agent landscape 
 
 ```mermaid
 flowchart TD
-    subgraph Agents["Regional Agents (5 desks)"]
-        US["US · AAPL | Groq Llama-3.3 · EN | Fallback: Gemini"]
-        CN["China · 600519.SH | DeepSeek V4 Pro · ZH | Fallback: Groq"]
-        EU["EU · MC.PA | Gemini 3.1 Flash · FR/DE | Fallback: Groq"]
-        JP["Japan · 7203.T | Gemini 3.1 Flash · JA | Fallback: Groq"]
-        CR["Crypto · BTC | Groq Llama-3.3 · EN | Fallback: Gemini"]
+    subgraph Agents["Regional Agents"]
+        US["US Desk"]
+        CN["China Desk"]
+        EU["EU Desk"]
+        JP["Japan Desk"]
+        CR["Crypto Desk"]
     end
 
     subgraph Data["Data Feeds"]
         D1["Financial Datasets MCP"]
-        D2["AKShare · yfinance"]
-        D3["CoinGecko · DeFiLlama"]
+        D2["AKShare and yfinance"]
+        D3["CoinGecko and DeFiLlama"]
     end
 
     D1 --> US
@@ -100,22 +100,22 @@ flowchart TD
     D3 --> CR
 
     Agents --> Thesis["InvestmentThesis Pydantic schema"]
-    Thesis --> Trans["Translator Agent DeepSeek / Gemini"]
+    Thesis --> Trans["Translator Agent"]
     Trans --> PMQ["PredictionMarketQuestion"]
 
-    Thesis --> Hash["SHA-256 canonical hash"]
-    Hash --> IPFS["Pinata IPFS pin bafkrei..."]
-    Hash --> Stake["Stake 10 ROSETTA RosettaToken.sol"]
-    IPFS --> Registry["ReasoningRegistry.sol Arc L1 chain 5042002"]
+    Thesis --> Hash["SHA256 canonical hash"]
+    Hash --> IPFS["Pinata IPFS pin"]
+    Hash --> Stake["Stake 10 ROSETTA"]
+    IPFS --> Registry["ReasoningRegistry Arc L1"]
     Stake --> Registry
-    PMQ --> Market["PredictionMarket.sol binary YES/NO"]
+    PMQ --> Market["PredictionMarket binary YES NO"]
     Registry --> Market
 
-    Market --> Settler["Autonomous Settler reasoning/settler.py"]
-    Settler --> Oracle["OwnerPriceOracle.sol resolves at expiry"]
+    Market --> Settler["Autonomous Settler"]
+    Settler --> Oracle["Price Oracle"]
 
-    Registry --> Training["AdalFlow Trace Dataset training/adalflow_trace.py"]
-    Training --> Optimizer["Text-grad Optimizer training/prompt_optimizer.py"]
+    Registry --> Training["AdalFlow Trace Dataset"]
+    Training --> Optimizer["Textgrad Optimizer"]
     Optimizer --> Agents
 ```
 
@@ -200,14 +200,14 @@ uv run python -m training.bake_feedback
 ```mermaid
 flowchart LR
     A["Agent analyzes ticker"] --> B["InvestmentThesis Pydantic"]
-    B --> C["SHA-256 hash"]
-    C --> D["IPFS pin bafkrei..."]
+    B --> C["SHA256 hash"]
+    C --> D["IPFS pin"]
     C --> E["Stake 10 ROSETTA"]
-    D --> F["Arc L1 record ReasoningRegistry.sol"]
+    D --> F["Arc L1 record"]
     E --> F
     F --> G["PredictionMarket binary question"]
     G --> H{"Market expires"}
-    H -->|correct| I["Bond returned + reputation"]
+    H -->|correct| I["Bond returned and reputation"]
     H -->|wrong| J["Bond slashed to correct predictor"]
 ```
 
