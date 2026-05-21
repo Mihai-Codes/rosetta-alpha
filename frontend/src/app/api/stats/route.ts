@@ -1,44 +1,49 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
+const NO_STORE_HEADERS = {
+  'Cache-Control': 'no-store, max-age=0',
+}
+
 /**
  * GET /api/stats
  *
  * Returns live platform statistics for the StatsBar component.
  *
  * Sources:
- *   - theses_published: count of desks in SEED_DATA + any fetched from API results
- *   - arc_tx_count:      number of unique arc_tx hashes across all known theses
- *   - ipfs_pins_count:   number of unique ipfs_cid values across all known theses
- *   - quiz_attempts:     total User registrations (proxy for quiz engagement;
- *                         TODO: replace with actual QuizResult model once available)
+ *   - theses_published: known seed desks/theses for this demo
+ *   - arc_tx_count:      known Arc L1 trace transactions for those theses
+ *   - ipfs_pins_count:   known IPFS thesis pins for those theses
+ *   - quiz_attempts:     real QuizAttempt rows written by /api/quiz
  *   - avg_cost_per_trace: static — Arc's ~$0.01 fee design
  */
 export async function GET() {
   try {
-    // Count total registered users as a proxy for quiz attempts
-    // TODO: Create a QuizResult or QuizAttempt model in Prisma for accurate counts
-    const userCount = await prisma.user.count().catch(() => 0)
+    const quizAttemptCount = await prisma.quizAttempt.count().catch((error) => {
+      console.error('Failed to count quiz attempts:', error)
+      return 0
+    })
 
-    // These are hardcoded from the known seed data (5 theses, each with an Arc TX and IPFS CID)
-    // TODO: Fetch these from an on-chain Arc query or your API results endpoint
-    const stats = {
+    return NextResponse.json({
       theses_published: 5,
       arc_tx_count: 5,
       ipfs_pins_count: 5,
-      quiz_attempts: userCount,
+      quiz_attempts: quizAttemptCount,
       avg_cost_per_trace: 0.01,
-    }
-
-    return NextResponse.json(stats)
+    }, { headers: NO_STORE_HEADERS })
   } catch (error) {
-    // Fallback to hardcoded defaults if the database is unreachable
+    console.error('Failed to load stats:', error)
+
     return NextResponse.json({
       theses_published: 5,
       arc_tx_count: 5,
       ipfs_pins_count: 5,
       quiz_attempts: 0,
       avg_cost_per_trace: 0.01,
-    })
+    }, { headers: NO_STORE_HEADERS })
   }
 }

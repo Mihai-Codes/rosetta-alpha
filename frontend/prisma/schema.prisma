@@ -19,6 +19,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  quizAttempts  QuizAttempt[]
   // Optional for WebAuthn support
   Authenticator Authenticator[]
 
@@ -81,4 +82,19 @@ model Authenticator {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, credentialID])
+}
+
+model QuizAttempt {
+  id        String   @id @default(cuid())
+  userId    String? // Optional, as anonymous users can take the quiz
+  desk      String
+  score     Int
+  total     Int
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([desk])
+  @@index([createdAt])
 }

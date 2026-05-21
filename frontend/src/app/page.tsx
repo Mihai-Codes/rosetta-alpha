@@ -27,22 +27,40 @@ export default function HomePage() {
     return () => clearInterval(interval)
   }, [])
 
-  // Fetch live stats
+  // Fetch live stats and refresh immediately after an in-page quiz attempt is recorded.
   React.useEffect(() => {
-    fetch('/api/stats')
-      .then(res => res.ok ? res.json() : null)
-      .then(data => {
-        if (data) {
-          setStats([
-            { label: 'theses published', target: data.theses_published },
-            { label: 'Arc L1 transactions', target: data.arc_tx_count },
-            { label: 'IPFS pins', target: data.ipfs_pins_count },
-            { label: 'quiz attempts', target: data.quiz_attempts },
-            { label: 'avg cost per trace', target: data.avg_cost_per_trace, prefix: '~$' },
-          ])
-        }
-      })
-      .catch(() => { /* keep defaults */ })
+    let cancelled = false
+
+    const fetchStats = () => {
+      fetch('/api/stats', { cache: 'no-store' })
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (!cancelled && data) {
+            setStats([
+              { label: 'theses published', target: data.theses_published },
+              { label: 'Arc L1 transactions', target: data.arc_tx_count },
+              { label: 'IPFS pins', target: data.ipfs_pins_count },
+              { label: 'quiz attempts', target: data.quiz_attempts },
+              { label: 'avg cost per trace', target: data.avg_cost_per_trace, prefix: '~$' },
+            ])
+          }
+        })
+        .catch(() => { /* keep defaults */ })
+    }
+
+    const refreshStats = () => fetchStats()
+
+    fetchStats()
+    window.addEventListener('rosetta:quiz-attempt-recorded', refreshStats)
+    window.addEventListener('focus', refreshStats)
+    window.addEventListener('pageshow', refreshStats)
+
+    return () => {
+      cancelled = true
+      window.removeEventListener('rosetta:quiz-attempt-recorded', refreshStats)
+      window.removeEventListener('focus', refreshStats)
+      window.removeEventListener('pageshow', refreshStats)
+    }
   }, [])
 
   // Track hero view on mount

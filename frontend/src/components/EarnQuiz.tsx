@@ -258,6 +258,7 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
   const [claimError, setClaimError] = useState<string | null>(null)
   const [claimTxHash, setClaimTxHash] = useState<string | null>(null)
   const [claimStatus, setClaimStatus] = useState<'idle' | 'switching' | 'broadcasting' | 'confirming' | 'confirmed'>('idle')
+  const attemptRecordedRef = React.useRef(false)
 
   // Watch confirmation once we have a hash
   const { isSuccess: txConfirmed } = useWaitForTransactionReceipt({
@@ -286,11 +287,41 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
     correctIndex: 0,
   }
 
-  const score = answers.reduce<number>((acc, ans, i) => {
-    if (i < questions.length && ans !== undefined && ans === questions[i].correctIndex) return acc + 1
-    return acc
-  }, 0)
+  function calculateScore(answerSet: (number | undefined)[]) {
+    return answerSet.reduce<number>((acc, ans, i) => {
+      if (i < questions.length && ans !== undefined && ans === questions[i].correctIndex) return acc + 1
+      return acc
+    }, 0)
+  }
+
+  const score = calculateScore(answers)
   const perfect = finished && questions.length > 0 && score === questions.length
+
+  async function recordQuizAttempt(finalScore: number, total: number) {
+    if (attemptRecordedRef.current) return
+    attemptRecordedRef.current = true
+
+    try {
+      const response = await fetch('/api/quiz', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        cache: 'no-store',
+        body: JSON.stringify({
+          desk: thesisId,
+          score: finalScore,
+          total,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Quiz attempt save failed with status ${response.status}`)
+      }
+
+      window.dispatchEvent(new CustomEvent('rosetta:quiz-attempt-recorded'))
+    } catch (error) {
+      console.error('Failed to record quiz attempt:', error)
+    }
+  }
 
   // ── Handle answer selection ──────────────────────────────────────────────
 
@@ -315,14 +346,20 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
 
   function handleNext() {
     if (qIndex + 1 >= questions.length) {
+      const finalAnswers = [...answers]
+      if (selected !== null) finalAnswers[safeQIndex] = selected
+      const finalScore = calculateScore(finalAnswers)
+
+      setAnswers(finalAnswers)
       setFinished(true)
       posthog.capture('quiz_completed', {
         desk: thesisId,
-        score: score + (selected === questions[safeQIndex].correctIndex ? 1 : 0),
+        score: finalScore,
         total: questions.length,
         mode: 'live',
       })
-      onComplete(score)
+      void recordQuizAttempt(finalScore, questions.length)
+      onComplete(finalScore)
     } else {
       setQIndex(i => i + 1)
       setSelected(null)
@@ -493,6 +530,7 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
   // ── Retry quiz ────────────────────────────────────────────────────────────
 
   function handleRetry() {
+    attemptRecordedRef.current = false
     setQIndex(0)
     setSelected(null)
     setRevealed(false)

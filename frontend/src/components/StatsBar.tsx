@@ -20,6 +20,10 @@ interface StatsBarProps {
  * Counts from 0 → target over ~2s using requestAnimationFrame.
  * Starts only when the element scrolls into view (IntersectionObserver).
  */
+function formatDisplay(value: number, isDecimal: boolean, decimals: number) {
+  return isDecimal ? value.toFixed(decimals) : Math.round(value).toLocaleString()
+}
+
 function CountUpNumber({ target, suffix, prefix, isDecimal = false, decimals = 2 }: {
   target: number
   suffix?: string
@@ -27,13 +31,20 @@ function CountUpNumber({ target, suffix, prefix, isDecimal = false, decimals = 2
   isDecimal?: boolean
   decimals?: number
 }) {
-  const [display, setDisplay] = useState<string>('0')
+  const [display, setDisplay] = useState<string>(() => formatDisplay(0, isDecimal, decimals))
   const ref = useRef<HTMLSpanElement>(null)
   const hasStarted = useRef(false)
 
   useEffect(() => {
     const el = ref.current
     if (!el) return
+
+    // The StatsBar first renders fallback values, then receives live API values.
+    // If the count-up already ran for the fallback, still reflect later target changes.
+    if (hasStarted.current) {
+      setDisplay(formatDisplay(target, isDecimal, decimals))
+      return
+    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -42,7 +53,7 @@ function CountUpNumber({ target, suffix, prefix, isDecimal = false, decimals = 2
           const duration = 2000
 
           if (target === 0) {
-            setDisplay(isDecimal ? (0).toFixed(decimals) : '0')
+            setDisplay(formatDisplay(0, isDecimal, decimals))
             observer.disconnect()
             return
           }
@@ -57,11 +68,7 @@ function CountUpNumber({ target, suffix, prefix, isDecimal = false, decimals = 2
             
             const currentVal = eased * target
             
-            if (isDecimal) {
-              setDisplay(currentVal.toFixed(decimals))
-            } else {
-              setDisplay(Math.round(currentVal).toLocaleString())
-            }
+            setDisplay(formatDisplay(currentVal, isDecimal, decimals))
 
             if (progress < 1) requestAnimationFrame(animate)
           }
