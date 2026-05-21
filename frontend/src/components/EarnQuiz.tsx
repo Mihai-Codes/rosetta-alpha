@@ -192,9 +192,8 @@ function ResultsScreen({
 
       {/* Score display */}
       <div>
-        <p className="font-display text-6xl sm:text-7xl font-light text-text-primary leading-none">
-          {score}
-          <span className="text-3xl text-text-tertiary">/{total}</span>
+        <p className="font-display text-5xl sm:text-6xl font-normal text-text-primary leading-none">
+          {score}<span className="text-text-tertiary">/{total}</span>
         </p>
         <p className="mt-3 text-[10px] uppercase tracking-[0.25em] text-text-tertiary">
           {pct}% accuracy

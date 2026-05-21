@@ -162,15 +162,15 @@ const QUADRANTS: Quadrant[] = [
 function RingChart() {
   const total = QUADRANTS.reduce((s, q) => s + q.pct, 0)
   const radius = 72
-  const cx = 80
-  const cy = 80
+  const cx = 90
+  const cy = 90
   const circumference = 2 * Math.PI * radius
   let offset = 0
 
   return (
     <div className="flex flex-col items-center gap-4 sm:gap-6 w-full max-w-xs mx-auto">
       <div className="relative">
-        <svg width="200" height="200" viewBox={`0 0 160 160`} className="transform -rotate-90">
+        <svg width="180" height="180" viewBox={`0 0 180 180`} className="transform -rotate-90">
           {/* Track */}
           <circle
             cx={cx}
@@ -549,29 +549,43 @@ export function DashboardView() {
         </div>
 
         {/* Locked Analytics Preview */}
-        <div className="bg-[#050505] p-6 sm:p-10 flex flex-col">
-          <div className="flex items-center justify-between mb-10">
-            <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary">
+        <div className="bg-[#050505] p-6 sm:p-10 flex flex-col relative overflow-hidden border-l border-border/60">
+          <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-brand-red/80 to-transparent opacity-60" />
+          
+          <div className="flex items-center justify-between mb-8 relative z-10">
+            <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary flex items-center gap-2">
+              <span className="w-1.5 h-1.5 bg-brand-red/50" />
               Target Allocation
             </p>
-            <span className="flex items-center gap-1.5 px-2 py-1 bg-brand-red/10 border border-brand-red/20 text-brand-red text-[9px] uppercase tracking-[0.2em]">
-              <Lock className="w-3 h-3" /> Locked
+            <span className="flex items-center gap-1.5 px-2 py-1 bg-brand-red/10 border border-brand-red/30 text-brand-red text-[9px] uppercase tracking-[0.2em] shadow-glow-red">
+              <Lock className="w-3 h-3" /> Encrypted
             </span>
           </div>
           
-          <div className="opacity-40 grayscale pointer-events-none transition-all duration-700 hover:grayscale-0 hover:opacity-100">
+          <div className="relative z-10 opacity-10 grayscale pointer-events-none transition-all duration-700 blur-[4px]">
             <RingChart />
           </div>
           
-          <div className="mt-12 space-y-4">
-            <div className="h-px w-full bg-border/50" />
-            <div className="flex justify-between items-center">
-              <span className="text-[9px] uppercase tracking-[0.2em] text-text-tertiary">Live PnL</span>
-              <span className="font-mono text-[11px] text-text-tertiary">-- USDC</span>
+          {/* Overlay text */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+            <div className="flex flex-col items-center gap-3">
+               <div className="w-12 h-12 border border-brand-red/30 bg-brand-red/10 flex items-center justify-center rounded-full backdrop-blur-md">
+                 <Lock className="w-5 h-5 text-brand-red" />
+               </div>
+               <span className="font-mono text-[11px] uppercase tracking-[0.3em] text-brand-red bg-bg-primary/90 px-4 py-2 border border-brand-red/20 backdrop-blur-sm shadow-glow-red">
+                 Auth Required
+               </span>
             </div>
-            <div className="flex justify-between items-center">
+          </div>
+          
+          <div className="mt-10 space-y-4 relative z-10">
+            <div className="flex justify-between items-center opacity-40">
+              <span className="text-[9px] uppercase tracking-[0.2em] text-text-tertiary">Live PnL</span>
+              <span className="font-mono text-[11px] text-brand-red bg-brand-red/10 px-2 border border-brand-red/20 blur-[1px]">████ USDC</span>
+            </div>
+            <div className="flex justify-between items-center opacity-40">
               <span className="text-[9px] uppercase tracking-[0.2em] text-text-tertiary">Win Rate</span>
-              <span className="font-mono text-[11px] text-text-tertiary">-- %</span>
+              <span className="font-mono text-[11px] text-brand-red bg-brand-red/10 px-2 border border-brand-red/20 blur-[1px]">██.█%</span>
             </div>
           </div>
         </div>
