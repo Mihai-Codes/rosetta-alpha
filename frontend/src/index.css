@@ -81,6 +81,7 @@
   50% { opacity: 1; filter: drop-shadow(0 0 32px rgba(216,43,43,1)) drop-shadow(0 0 16px rgba(216,43,43,1)); }
 }
 .red-pulse { animation: red-pulse 2.5s ease-in-out infinite; }
+.hover\:red-pulse:hover { animation: red-pulse 2.5s ease-in-out infinite; }
 
 /* Smooth, hardware-accelerated box glow (prevents Safari filter flickering) */
 @keyframes box-glow-pulse {
