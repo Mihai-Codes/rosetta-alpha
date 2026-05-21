@@ -160,9 +160,9 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
       </div>
       
       {/* Chart below on tablet (md to lg) */}
-      <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }} className="hidden md:block lg:hidden w-full  solid-panel rounded-none border overflow-hidden mt-2">
+      <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }} className="hidden md:block lg:hidden w-full solid-panel rounded-none border overflow-hidden mt-2">
         <AllWeatherChart />
-      </div>
+      </motion.div>
 
     </div>
   )

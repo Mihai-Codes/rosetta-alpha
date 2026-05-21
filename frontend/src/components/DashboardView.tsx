@@ -161,16 +161,16 @@ const QUADRANTS: Quadrant[] = [
 
 function RingChart() {
   const total = QUADRANTS.reduce((s, q) => s + q.pct, 0)
-  const radius = 72
-  const cx = 90
-  const cy = 90
+  const radius = 94
+  const cx = 110
+  const cy = 110
   const circumference = 2 * Math.PI * radius
   let offset = 0
 
   return (
     <div className="flex flex-col items-center gap-4 sm:gap-6 w-full max-w-xs mx-auto">
       <div className="relative">
-        <svg width="180" height="180" viewBox={`0 0 180 180`} className="transform -rotate-90">
+        <svg width="220" height="220" viewBox={`0 0 220 220`} className="transform -rotate-90">
           {/* Track */}
           <circle
             cx={cx}
@@ -204,10 +204,10 @@ function RingChart() {
         </svg>
         {/* Center label */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <p className="font-display text-xl sm:text-2xl text-text-primary font-light tracking-tight">
-            ALL WEATHER
+          <p className="font-mono text-sm sm:text-base text-text-primary font-bold tracking-[0.15em] uppercase text-center leading-tight">
+            All<br/>Weather
           </p>
-          <p className="text-[9px] uppercase tracking-[0.25em] text-text-tertiary mt-0.5">
+          <p className="text-[8px] uppercase tracking-[0.25em] text-brand-red mt-1.5">
             Risk Parity
           </p>
         </div>
