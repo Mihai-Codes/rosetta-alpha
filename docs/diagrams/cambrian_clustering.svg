@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="480" viewBox="0 0 800 480">
+  <rect width="800" height="480" fill="#0a0a0a"/>
+  <text x="400" y="22" font-family="Georgia,serif" font-size="9" fill="#555" text-anchor="middle" letter-spacing="5">AGENTIC FINANCE LANDSCAPE · Q1 2026 · SOURCE: CAMBRIAN NETWORK</text>
+  <line x1="20" y1="30" x2="780" y2="30" stroke="#1e1e1e" stroke-width="1"/>
+
+  <!-- LEFT PANEL: Bar Chart -->
+  <text x="30" y="48" font-family="monospace" font-size="8" fill="#666" letter-spacing="3">AGENTS BY CATEGORY · CAMBRIAN Q1 2026 REPORT</text>
+
+  <!-- Y-axis -->
+  <line x1="80" y1="60" x2="80" y2="270" stroke="#222" stroke-width="1"/>
+  <line x1="80" y1="270" x2="390" y2="270" stroke="#222" stroke-width="1"/>
+
+  <!-- Y-axis labels -->
+  <text x="72" y="63" font-family="monospace" font-size="7" fill="#444" text-anchor="end">20</text>
+  <text x="72" y="113" font-family="monospace" font-size="7" fill="#444" text-anchor="end">16</text>
+  <text x="72" y="163" font-family="monospace" font-size="7" fill="#444" text-anchor="end">12</text>
+  <text x="72" y="213" font-family="monospace" font-size="7" fill="#444" text-anchor="end">8</text>
+  <text x="72" y="258" font-family="monospace" font-size="7" fill="#444" text-anchor="end">4</text>
+  <line x1="78" y1="60" x2="82" y2="60" stroke="#333" stroke-width="1"/>
+  <line x1="78" y1="110" x2="82" y2="110" stroke="#333" stroke-width="1"/>
+  <line x1="78" y1="160" x2="82" y2="160" stroke="#333" stroke-width="1"/>
+  <line x1="78" y1="210" x2="82" y2="210" stroke="#333" stroke-width="1"/>
+  <line x1="78" y1="260" x2="82" y2="260" stroke="#333" stroke-width="1"/>
+
+  <!-- Bar: Trading (20) -->
+  <rect x="95" y="60" width="48" height="210" fill="#22c55e" opacity="0.7" rx="1"/>
+  <text x="119" y="55" font-family="monospace" font-size="8" fill="#22c55e" text-anchor="middle">20</text>
+  <text x="119" y="282" font-family="monospace" font-size="7" fill="#666" text-anchor="middle">Trading</text>
+  <text x="119" y="291" font-family="monospace" font-size="7" fill="#444" text-anchor="middle">Portfolio</text>
+
+  <!-- Bar: Yield (16) -->
+  <rect x="163" y="102" width="48" height="168" fill="#22c55e" opacity="0.5" rx="1"/>
+  <text x="187" y="97" font-family="monospace" font-size="8" fill="#22c55e" opacity="0.8" text-anchor="middle">16</text>
+  <text x="187" y="282" font-family="monospace" font-size="7" fill="#666" text-anchor="middle">Yield</text>
+  <text x="187" y="291" font-family="monospace" font-size="7" fill="#444" text-anchor="middle">Agents</text>
+
+  <!-- Bar: Analysis (4) -->
+  <rect x="231" y="228" width="48" height="42" fill="#f59e0b" opacity="0.6" rx="1"/>
+  <text x="255" y="223" font-family="monospace" font-size="8" fill="#f59e0b" opacity="0.9" text-anchor="middle">4</text>
+  <text x="255" y="282" font-family="monospace" font-size="7" fill="#666" text-anchor="middle">Analysis</text>
+  <text x="255" y="291" font-family="monospace" font-size="7" fill="#444" text-anchor="middle">Agents</text>
+
+  <!-- Bar: Prediction (2) - highlighted red/small -->
+  <rect x="299" y="249" width="48" height="21" fill="#D82B2B" opacity="0.9" rx="1"/>
+  <text x="323" y="244" font-family="monospace" font-size="8" fill="#D82B2B" text-anchor="middle">2</text>
+  <text x="323" y="282" font-family="monospace" font-size="7" fill="#e0e0e0" text-anchor="middle">Prediction</text>
+  <text x="323" y="291" font-family="monospace" font-size="7" fill="#e0e0e0" text-anchor="middle">Markets</text>
+
+  <!-- Arrow pointing to prediction bar -->
+  <line x1="370" y1="225" x2="348" y2="258" stroke="#D82B2B" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="375" y="213" font-family="monospace" font-size="8" fill="#D82B2B">← THE GAP</text>
+  <text x="375" y="224" font-family="monospace" font-size="7" fill="#555">most underserved</text>
+  <text x="375" y="233" font-family="monospace" font-size="7" fill="#555">category despite</text>
+  <text x="375" y="242" font-family="monospace" font-size="7" fill="#555">Polymarket + Kalshi</text>
+  <text x="375" y="251" font-family="monospace" font-size="7" fill="#555">explosive growth</text>
+
+  <line x1="20" y1="306" x2="780" y2="306" stroke="#1e1e1e" stroke-width="1"/>
+
+  <!-- BOTTOM PANEL: LLM Clustering -->
+  <text x="30" y="322" font-family="monospace" font-size="8" fill="#666" letter-spacing="3">LLM CLUSTERING · IDENTICAL OUTPUTS · THE ENEMY OF ALPHA</text>
+
+  <!-- Scatter plot background -->
+  <rect x="20" y="330" width="360" height="120" fill="#0d0d0d" rx="1"/>
+  <text x="200" y="345" font-family="monospace" font-size="7" fill="#333" text-anchor="middle">GENERIC FINANCIAL PROMPT → MODEL OUTPUT SPACE</text>
+
+  <!-- Axis labels -->
+  <text x="30" y="442" font-family="monospace" font-size="7" fill="#333">low confidence</text>
+  <text x="280" y="442" font-family="monospace" font-size="7" fill="#333">high confidence</text>
+  <text x="25" y="436" font-family="monospace" font-size="7" fill="#333" transform="rotate(-90 25 400)">bearish</text>
+  <text x="25" y="355" font-family="monospace" font-size="7" fill="#333" transform="rotate(-90 25 400)">bullish</text>
+
+  <!-- Clustered LLM dots (all generic models converge) -->
+  <circle cx="200" cy="390" r="18" fill="#333" opacity="0.3"/>
+  <circle cx="195" cy="388" r="3" fill="#555"/>
+  <circle cx="203" cy="393" r="3" fill="#555"/>
+  <circle cx="198" cy="384" r="3" fill="#555"/>
+  <circle cx="206" cy="388" r="3" fill="#555"/>
+  <circle cx="192" cy="394" r="3" fill="#555"/>
+  <circle cx="201" cy="397" r="3" fill="#555"/>
+  <circle cx="207" cy="382" r="3" fill="#555"/>
+  <text x="232" y="393" font-family="monospace" font-size="7" fill="#555">GPT/Claude/</text>
+  <text x="232" y="402" font-family="monospace" font-size="7" fill="#555">Gemini cluster</text>
+  <line x1="225" y1="390" x2="213" y2="390" stroke="#444" stroke-width="1" stroke-dasharray="2,2"/>
+
+  <!-- Outlier: DeepSeek on Moutai -->
+  <circle cx="310" cy="345" r="4" fill="#00c2ff"/>
+  <line x1="310" y1="349" x2="290" y2="365" stroke="#00c2ff" stroke-width="1" stroke-dasharray="2,2"/>
+  <text x="248" y="374" font-family="monospace" font-size="7" fill="#00c2ff">DeepSeek</text>
+  <text x="248" y="383" font-family="monospace" font-size="7" fill="#00c2ff">ZH · Moutai</text>
+  <text x="248" y="392" font-family="monospace" font-size="7" fill="#444">PBOC context</text>
+
+  <!-- Outlier: Rosetta US desk -->
+  <circle cx="100" cy="355" r="4" fill="#a855f7"/>
+  <line x1="100" y1="359" x2="118" y2="370" stroke="#a855f7" stroke-width="1" stroke-dasharray="2,2"/>
+  <text x="50" y="380" font-family="monospace" font-size="7" fill="#a855f7">Rosetta</text>
+  <text x="50" y="389" font-family="monospace" font-size="7" fill="#a855f7">EN · AAPL</text>
+
+  <!-- Insight panel -->
+  <rect x="390" y="330" width="390" height="120" fill="#0d0d0d" rx="1"/>
+  <text x="400" y="348" font-family="monospace" font-size="8" fill="#e0e0e0">THE ROSETTA RESPONSE</text>
+  <line x1="400" y1="353" x2="770" y2="353" stroke="#1e1e1e" stroke-width="1"/>
+
+  <rect x="400" y="359" width="3" height="22" fill="#22c55e" rx="1"/>
+  <text x="410" y="368" font-family="monospace" font-size="8" fill="#e0e0e0">Multi-language routing</text>
+  <text x="410" y="379" font-family="monospace" font-size="7" fill="#555">breaks the cluster by design</text>
+
+  <rect x="400" y="387" width="3" height="22" fill="#00c2ff" rx="1"/>
+  <text x="410" y="396" font-family="monospace" font-size="8" fill="#e0e0e0">Native language models</text>
+  <text x="410" y="407" font-family="monospace" font-size="7" fill="#555">access context English models miss</text>
+
+  <rect x="400" y="415" width="3" height="22" fill="#D82B2B" rx="1"/>
+  <text x="410" y="424" font-family="monospace" font-size="8" fill="#e0e0e0">On-chain reasoning trace</text>
+  <text x="410" y="435" font-family="monospace" font-size="7" fill="#555">verifiable differentiation · not just claims</text>
+
+  <!-- Footer -->
+  <line x1="20" y1="458" x2="780" y2="458" stroke="#1e1e1e" stroke-width="1"/>
+  <rect x="30" y="465" width="8" height="8" fill="#22c55e" rx="1"/>
+  <text x="43" y="473" font-family="monospace" font-size="8" fill="#555">Trading / Yield (36 agents)</text>
+  <rect x="220" y="465" width="8" height="8" fill="#D82B2B" rx="1"/>
+  <text x="233" y="473" font-family="monospace" font-size="8" fill="#555">Prediction Markets (2 agents)</text>
+  <rect x="420" y="465" width="8" height="8" fill="#00c2ff" rx="1"/>
+  <text x="433" y="473" font-family="monospace" font-size="8" fill="#555">DeepSeek ZH outlier</text>
+  <rect x="570" y="465" width="8" height="8" fill="#a855f7" rx="1"/>
+  <text x="583" y="473" font-family="monospace" font-size="8" fill="#555">Rosetta Alpha</text>
+</svg>
