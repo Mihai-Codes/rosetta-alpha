@@ -11,9 +11,6 @@ import { SEED_DATA, fetchDesks } from '@/lib/data'
 import type { DeskProps } from '@/lib/types'
 import { DEFAULT_STATS } from '@/components/StatsBar'
 
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
-
 export default function HomePage() {
   const { data: session } = useSession()
   const [data, setData] = React.useState<DeskProps[]>(SEED_DATA)
@@ -70,7 +67,7 @@ export default function HomePage() {
       
       <StatsBar stats={stats} />
 
-      <div id="desks-section" className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-16 pt-12 sm:pt-16" style={{ scrollMarginTop: '80px' }}>
+      <div id="desks-section" className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-8 pt-12 sm:pt-16" style={{ scrollMarginTop: '80px' }}>
         <DesksView desks={data} loading={loading} isAuthenticated={!!session?.user} />
       </div>
     </Layout>

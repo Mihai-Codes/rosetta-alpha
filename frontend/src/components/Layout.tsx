@@ -216,7 +216,7 @@ export function Layout({ children, activeTab }: LayoutProps) {
 
       <main className="flex-1 w-full z-10">{children}</main>
 
-      <footer className="border-t border-white/[0.05] py-12 sm:py-16 mt-16 sm:mt-24 bg-bg-primary z-10 relative">
+      <footer className="border-t border-white/[0.05] py-12 sm:py-16 mt-8 sm:mt-12 bg-bg-primary z-10 relative">
         <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-10 text-[11px] text-text-tertiary">
           <div>
             <p className="font-display text-text-primary text-base mb-2">
