@@ -238,7 +238,7 @@ uv run pytest tests/ -q
 ```bash
 cd frontend
 npm install
-cp .env.example .env.local   # set AUTH_SECRET, AUTH_RESEND_KEY, NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
+cp .env.example .env.local   # set AUTH_SECRET, NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
 npx prisma generate && npx prisma db push
 npm run dev
 
