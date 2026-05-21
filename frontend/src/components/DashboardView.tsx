@@ -161,9 +161,9 @@ const QUADRANTS: Quadrant[] = [
 
 function RingChart() {
   const total = QUADRANTS.reduce((s, q) => s + q.pct, 0)
-  const radius = 94
-  const cx = 100
-  const cy = 100
+  const radius = 90
+  const cx = 110
+  const cy = 110
   const circumference = 2 * Math.PI * radius
   let offset = 0
 
@@ -178,7 +178,7 @@ function RingChart() {
             r={radius}
             fill="none"
             stroke="#1A1A24"
-            strokeWidth="18"
+            strokeWidth="14"
           />
           {/* Segments */}
           {QUADRANTS.map((q, i) => {
@@ -191,7 +191,7 @@ function RingChart() {
                 r={radius}
                 fill="none"
                 stroke={q.color}
-                strokeWidth="18"
+                strokeWidth="14"
                 strokeDasharray={`${len} ${circumference}`}
                 strokeDashoffset={-offset}
                 strokeLinecap="butt"
@@ -595,36 +595,45 @@ export function DashboardView() {
 
   return (
     <div className="space-y-8 sm:space-y-10">
-      {/* ── High-End Terminal Stats Banner ── */}
-      <div className="border border-border/80 bg-[#0A0A0A] rounded-none mb-10 relative overflow-hidden shadow-2xl">
-        <div className="h-[2px] w-full bg-gradient-to-r from-brand-red/80 via-brand-red/20 to-transparent" />
-        <div className="flex items-center justify-between px-5 py-3 border-b border-border/40 bg-[#050505]">
-           <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-text-secondary flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-brand-red animate-pulse" /> Live Telemetry
-           </span>
-           <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-text-tertiary">Session Active</span>
+      {/* ── True Terminal Stats Banner ── */}
+      <div className="border border-border/80 bg-[#020202] rounded-none mb-10 relative shadow-2xl flex flex-col">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border/80 bg-[#0A0A0A]">
+          <div className="flex items-center gap-3">
+            <span className="w-2 h-2 bg-positive animate-pulse shadow-glow-green rounded-full" />
+            <span className="text-[9px] font-mono text-positive uppercase tracking-[0.2em]">Link Established : Active</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="text-[9px] font-mono text-text-tertiary uppercase tracking-[0.1em] hidden sm:inline-block">
+              SYS.TIME: {new Date().toISOString().split('T')[1].slice(0, 8)}Z
+            </span>
+            <span className="text-[9px] font-mono text-brand-red uppercase tracking-[0.15em] font-bold border border-brand-red/30 px-1.5 py-0.5 bg-brand-red/10">
+              ARC_TESTNET
+            </span>
+          </div>
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-y lg:divide-y-0 divide-border/40">
+        <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-y lg:divide-y-0 divide-border/60">
           {[
-            { label: 'USDC Balance', value: balance ? `${parseFloat(balance.formatted).toFixed(2)}` : '—', sub: 'Arc Testnet', accent: 'text-text-primary' },
-            { label: 'Total Earned', value: `+${totalEarned.toFixed(2)}`, sub: 'USDC Generated', accent: 'text-positive' },
-            { label: 'Accuracy', value: `${accuracy}%`, sub: `${PREDICTIONS.filter(p => p.status === 'RESOLVED_WIN').length}/${PREDICTIONS.length} Correct`, accent: 'text-accent-gold' },
-            { label: 'Active Stakes', value: String(PREDICTIONS.filter(p => p.status === 'OPEN').length), sub: 'Open positions', accent: 'text-brand-red' },
+            { label: 'USDC Balance', value: balance ? `${parseFloat(balance.formatted).toFixed(2)}` : '—', sub: 'AVAILABLE', color: 'text-text-primary' },
+            { label: 'Total Earned', value: `+${totalEarned.toFixed(2)}`, sub: 'USDC (PnL)', color: 'text-positive' },
+            { label: 'Win Rate', value: `${accuracy}%`, sub: `${PREDICTIONS.filter(p => p.status === 'RESOLVED_WIN').length}/${PREDICTIONS.length} TRADES`, color: 'text-accent-gold' },
+            { label: 'Active Stakes', value: String(PREDICTIONS.filter(p => p.status === 'OPEN').length), sub: 'OPEN POSITIONS', color: 'text-brand-red' },
           ].map((s, i) => (
             <motion.div
-              key={s.label}
+              key={i}
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="bg-[#050505] px-6 py-8 flex flex-col justify-between hover:bg-[#111111] transition-colors group relative"
+              className="p-5 sm:p-6 flex flex-col relative group overflow-hidden bg-[#050505] hover:bg-[#0A0A0A] transition-colors"
             >
-              <div className="absolute top-0 left-0 w-full h-[1px] bg-transparent group-hover:bg-brand-red/50 transition-colors" />
-              <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-text-tertiary mb-5 group-hover:text-text-secondary transition-colors">{s.label}</p>
-              <div>
-                <p className={`font-mono text-3xl font-bold tracking-tight ${s.accent || 'text-text-primary'}`}>
+              <div className="absolute top-0 left-0 w-full h-[1px] bg-transparent group-hover:bg-brand-red/40 transition-colors" />
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-2">
+                <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-text-tertiary group-hover:text-text-secondary transition-colors">{s.label}</span>
+                <span className="text-[8px] font-mono uppercase text-text-tertiary border border-border/50 px-1 py-0.5 bg-bg-primary">{s.sub}</span>
+              </div>
+              <div className="mt-auto">
+                <span className={`font-mono text-2xl sm:text-3xl font-normal tracking-tight ${s.color}`}>
                   {s.value}
-                </p>
-                {s.sub && <p className="text-[9px] text-text-tertiary font-mono tracking-widest mt-2">{s.sub}</p>}
+                </span>
               </div>
             </motion.div>
           ))}
