@@ -85,30 +85,31 @@ function CountUpNumber({ target, suffix, prefix, isDecimal = false, decimals = 2
 
 export function StatsBar({ stats }: StatsBarProps) {
   return (
-    <div className="w-full solid-panel bg-[#050505]/95 backdrop-blur-md border border-[#2A2A38] rounded-2xl shadow-2xl p-6 sm:p-8">
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-y-8 gap-x-4 md:divide-x md:divide-[#2A2A38]">
-        {stats.map((stat, i) => (
-          <div key={i} className="flex flex-col items-center text-center min-w-0 px-2">
-            <span
-              className="text-[clamp(1.25rem,2.5vw,1.75rem)] font-bold leading-none mb-2"
-              style={{ fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace", color: '#C9A84C' }}
-            >
-              <CountUpNumber
-                target={stat.target}
-                prefix={stat.prefix}
-                suffix={stat.suffix}
-                isDecimal={stat.target > 0 && stat.target < 1}
-                decimals={2}
-              />
-            </span>
-            <span
-              className="text-[10px] sm:text-[11px] uppercase tracking-[0.1em] text-text-tertiary"
-              style={{ fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" }}
-            >
-              {stat.label}
-            </span>
-          </div>
-        ))}
+    <div className="w-full border-y border-white/[0.05] bg-bg-secondary py-12 sm:py-16">
+      <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-8 lg:px-12">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-y-10 gap-x-4">
+          {stats.map((stat, i) => (
+            <div key={i} className="flex flex-col items-center text-center">
+              <span
+                className="text-2xl sm:text-3xl font-bold leading-none mb-3"
+                style={{ fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace", color: '#C9A84C' }}
+              >
+                <CountUpNumber
+                  target={stat.target}
+                  prefix={stat.prefix}
+                  suffix={stat.suffix}
+                  isDecimal={stat.target > 0 && stat.target < 1}
+                  decimals={2}
+                />
+              </span>
+              <span
+                className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-text-secondary opacity-80"
+              >
+                {stat.label}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )

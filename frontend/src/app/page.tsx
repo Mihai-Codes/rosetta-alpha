@@ -60,17 +60,21 @@ export default function HomePage() {
         isAuthenticated={!!session?.user}
         onScrollDown={() => {
           handleCtaClick('enter_terminal')
-          document.getElementById('desks-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          const el = document.getElementById('desks-section')
+          if (el) {
+            const y = el.getBoundingClientRect().top + window.scrollY - 100
+            window.scrollTo({ top: y, behavior: 'smooth' })
+          }
         }}
       />
       
-      {/* Floating Stats Dashboard */}
-      <div className="relative z-20 -mt-10 sm:-mt-14 mb-16 w-full max-w-[1000px] mx-auto px-4 sm:px-8">
-        <StatsBar stats={stats} />
+      <div id="desks-section" className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-16 pt-8">
+        <DesksView desks={data} loading={loading} isAuthenticated={!!session?.user} />
       </div>
 
-      <div id="desks-section" className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-16" style={{ scrollMarginTop: '100px' }}>
-        <DesksView desks={data} loading={loading} isAuthenticated={!!session?.user} />
+      {/* Network Stats - Moved to bottom before footer */}
+      <div className="mt-8">
+        <StatsBar stats={stats} />
       </div>
     </Layout>
   )
