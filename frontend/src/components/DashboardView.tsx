@@ -535,8 +535,8 @@ export function DashboardView() {
             </h2>
             <div className="w-full h-px bg-brand-red/20 mb-6" />
             <p className="text-text-secondary text-[11px] leading-relaxed mb-8 font-mono text-left w-full border-l-2 border-brand-red/50 pl-4 bg-[#111111] py-3">
-              > Connect Web3 Wallet to establish secure channel.<br/>
-              > Access proprietary allocation, verify trace accuracy, and sync USDC settlements on Arc Testnet.
+              {">"} Connect Web3 Wallet to establish secure channel.<br/>
+              {">"} Access proprietary allocation, verify trace accuracy, and sync USDC settlements on Arc Testnet.
             </p>
             <button
               onClick={handleConnectClick}
