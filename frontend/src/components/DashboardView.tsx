@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 import { useAccount, useBalance } from 'wagmi'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { arcTestnet } from '@/lib/chains'
-import { Lock } from 'lucide-react'
+import { Lock, Key } from 'lucide-react'
 
 // ─── Typed mock data interfaces ───────────────────────────────────────────────
 
