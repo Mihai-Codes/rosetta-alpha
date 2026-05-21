@@ -199,16 +199,16 @@ uv run python -m training.bake_feedback
 
 ```mermaid
 flowchart LR
-    A["Agent analyzes ticker"] --> B["InvestmentThesis\nPydantic"]
+    A["Agent analyzes ticker"] --> B["InvestmentThesis Pydantic"]
     B --> C["SHA-256 hash"]
-    C --> D["IPFS pin\nbafkrei..."]
+    C --> D["IPFS pin bafkrei..."]
     C --> E["Stake 10 ROSETTA"]
-    D --> F["Arc L1 record\nReasoningRegistry.sol"]
+    D --> F["Arc L1 record ReasoningRegistry.sol"]
     E --> F
-    F --> G["PredictionMarket\nbinary question"]
+    F --> G["PredictionMarket binary question"]
     G --> H{"Market expires"}
-    H -->|correct| I["Bond returned\n+ reputation"]
-    H -->|wrong| J["Bond slashed\n→ correct predictor"]
+    H -->|correct| I["Bond returned + reputation"]
+    H -->|wrong| J["Bond slashed to correct predictor"]
 ```
 
 Every AI claim is financially accountable. Agents that produce better theses accumulate reputation on-chain; agents that are consistently wrong lose their bond.
