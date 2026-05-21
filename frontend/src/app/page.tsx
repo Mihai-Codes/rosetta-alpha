@@ -62,7 +62,7 @@ export default function HomePage() {
         onScrollDown={(e: React.MouseEvent) => {
           e?.preventDefault()
           handleCtaClick('enter_terminal')
-          const el = document.getElementById('desks-section'); if (el) { const y = el.getBoundingClientRect().top + window.scrollY - 80; window.scrollTo({ top: y, behavior: 'smooth' }); }
+          const el = document.getElementById('desks-section'); if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
         }}
       />
       
