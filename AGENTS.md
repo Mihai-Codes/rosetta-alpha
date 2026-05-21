@@ -300,4 +300,26 @@ Export: export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizPr
 
 ---
 
-_Last updated: 2026-05-18 by Claude Sonnet 4.6 (ShareButton + AGENTS.md multi-model tracking)._
+## Market Context (Cambrian Network Insights)
+
+Key findings from Cambrian Network's financial agent landscape analysis (Sam, PhD RL, co-designer of Odos DEX aggregator):
+
+1. **LLM CLUSTERING PROBLEM**: All major LLMs give near-identical financial advice when prompted generically. Our multi-model multi-language routing is the architectural response.
+
+2. **UNDERSERVED CATEGORY**: Prediction/betting market agents are surprisingly few despite Polymarket/Kalshi growth (Q1 2026: 20 trading agents, 16 yield agents, only 2 prediction market agents). We operate in a gap.
+
+3. **YIELD AGENTS HAVE STRONGEST PMF**: Capital preservation > speculation in bear markets. Our All Weather backbone aligns with this — diversification, not speculation.
+
+4. **AI AGENT TRAPS (DeepMind)**: Agents vulnerable to data poisoning and adversarial manipulation. Our hash → IPFS → Arc → bond slash loop is a structural defense — evidence is permanent, penalty is automatic.
+
+5. **CHINESE MODELS LEAD OPEN SOURCE**: DeepSeek V4 Pro for native Mandarin reasoning is aligned with the strongest open-source model family trend. It weights PBOC signaling and cultural premiums that English models miss.
+
+6. **EVOLUTION LADDER**: spreadsheets → rule-based automation → AI copilots → autonomous agents. We are at the autonomous end — our settler agent auto-resolves and auto-slashes without human intervention.
+
+7. **STABLECOIN MARKET >$310B**: USDC-native settlement on Arc rides this macro trend directly. x402 payments hit $50M cumulative volume in Q1 2026; stablecoins are the native settlement layer for machine-to-machine trading.
+
+Use these points when crafting user-facing copy, pitch materials, or README updates. Visual asset: `docs/diagrams/cambrian_clustering.svg`.
+
+---
+
+_Last updated: 2026-05-21 by AdaL (Cambrian Network market context + SVG diagrams + demo script)._
