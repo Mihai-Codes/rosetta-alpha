@@ -62,7 +62,8 @@ export default function HomePage() {
           handleCtaClick('enter_terminal')
           const el = document.getElementById('desks-section')
           if (el) {
-            el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            const y = el.getBoundingClientRect().top + window.scrollY - 80
+            window.scrollTo({ top: y, behavior: 'smooth' })
           }
         }}
       />
