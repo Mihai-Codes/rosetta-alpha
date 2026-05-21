@@ -29,7 +29,7 @@ async function handleSignIn(provider: 'google' | 'github', setIsLoading: (v: str
   posthog.capture('sign_in_attempt', { provider })
   setIsLoading(provider)
   try {
-    await signIn(provider, { callbackUrl: window.location.pathname })
+    await signIn(provider, { callbackUrl: ["/", "/quiz"].includes(window.location.pathname) ? window.location.pathname : "/dashboard" })
   } catch {
     // signIn throws on hard errors only; redirect-based auth resolves via callback
     setIsLoading(null)

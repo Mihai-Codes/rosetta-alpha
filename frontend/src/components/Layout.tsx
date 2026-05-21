@@ -25,9 +25,10 @@ const PUBLIC_TABS: { id: Tab; label: string; href: string }[] = [
 
 const AUTH_TABS: { id: Tab; label: string; href: string }[] = [
   { id: 'desks', label: 'Desks', href: '/' },
+  { id: 'dashboard', label: 'Dashboard', href: '/dashboard' },
+  { id: 'leaderboard', label: 'Rankings', href: '/leaderboard' },
   { id: 'feed', label: 'Live Feed', href: '/feed' },
   { id: 'registry', label: 'Registry', href: '/registry' },
-  { id: 'dashboard', label: 'Dashboard', href: '/dashboard' },
   { id: 'quiz', label: 'Quiz', href: '/quiz' },
 ]
 
