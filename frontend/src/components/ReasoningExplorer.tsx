@@ -13,7 +13,7 @@ interface ExplorerProps {
 export function ReasoningExplorer({ desk, onClose }: ExplorerProps) {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-bg-primary/90 backdrop-blur-xl">
-      <div className="relative glass-panel border border-brand-red/30 w-full max-w-4xl max-h-[90vh] rounded-none-none shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300">
+      <div className="relative glass-panel border border-brand-red/30 w-full max-w-4xl max-h-[90vh] rounded-none shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300">
         
         {/* Top edge light highlight */}
         <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
@@ -65,7 +65,7 @@ export function ReasoningExplorer({ desk, onClose }: ExplorerProps) {
         <div className="p-4 bg-bg-secondary/60 border-t border-border/60 flex justify-end gap-3">
           <button 
             onClick={onClose}
-            className="px-6 py-2 border border-brand-red/50 text-brand-red text-[10px] font-medium uppercase tracking-[0.2em] rounded-none-none hover:bg-brand-red hover:text-bg-brand-red hover:shadow-glow-red transition-all duration-200"
+            className="px-6 py-2 border border-brand-red/50 text-brand-red text-[10px] font-medium uppercase tracking-[0.2em] rounded-none hover:bg-brand-red hover:text-bg-brand-red hover:shadow-glow-red transition-all duration-200"
           >
             Acknowledge
           </button>
@@ -77,7 +77,7 @@ export function ReasoningExplorer({ desk, onClose }: ExplorerProps) {
 
 function AnalystSummary({ block }: { block: ReasoningBlock }) {
   return (
-    <div className="bg-bg-tertiary/20 border border-border/50 rounded-none-none p-4 space-y-2 hover:border-brand-red/30 transition-colors">
+    <div className="bg-bg-tertiary/20 border border-border/50 rounded-none p-4 space-y-2 hover:border-brand-red/30 transition-colors">
       <div className="flex items-center justify-between">
         <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-text-tertiary">{block.agent_role.replace('_', ' ')}</span>
         <span className="text-xs font-mono text-brand-red">{(block.confidence * 100).toFixed(0)}%</span>
@@ -92,12 +92,12 @@ function ReasoningStep({ block }: { block: ReasoningBlock }) {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <span className="w-1.5 h-1.5 rounded-none-none bg-brand-red red-pulse" />
+        <span className="w-1.5 h-1.5 rounded-none bg-brand-red red-pulse" />
         <span className="text-[10px] font-medium uppercase tracking-[0.25em] text-brand-red">
           Step: {block.agent_role.replace('_', ' ')}
         </span>
       </div>
-      <div className="glass-panel border border-border/40 rounded-none-none p-6 space-y-5">
+      <div className="glass-panel border border-border/40 rounded-none p-6 space-y-5">
         <div className="space-y-1.5">
           <p className="text-[9px] font-medium text-text-tertiary uppercase tracking-[0.25em]">Data Input</p>
           <p className="text-sm font-light text-text-primary leading-relaxed">{block.input_data_summary}</p>

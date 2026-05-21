@@ -145,7 +145,7 @@ export function LeaderboardView() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.07 }}
-            className="solid-panel rounded-2xl px-5 py-5"
+            className="bg-[#050505] border border-border/60 rounded-none px-5 py-5 hover:border-brand-red/30 transition-colors"
           >
             <p className="text-[9px] uppercase tracking-[0.25em] text-text-tertiary mb-1">{s.label}</p>
             <p className="font-display text-xl sm:text-2xl text-text-primary font-light">{s.value}</p>
@@ -154,7 +154,7 @@ export function LeaderboardView() {
       </div>
 
       {/* ── Podium (top 3) ── */}
-      <div className="solid-panel rounded-2xl p-6 sm:p-10">
+      <div className="solid-panel rounded-none p-6 sm:p-10">
         <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary mb-8 sm:mb-10">
           Top Traders
         </p>
@@ -166,7 +166,7 @@ export function LeaderboardView() {
       </div>
 
       {/* ── Full rankings table ── */}
-      <div className="solid-panel rounded-2xl overflow-hidden">
+      <div className="solid-panel rounded-none overflow-hidden">
         <div className="px-5 sm:px-6 py-4 border-b border-border flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
           <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary">
             Full Rankings

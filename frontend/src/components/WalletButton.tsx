@@ -243,7 +243,7 @@ export function WalletButton() {
           />
           {/* Dropdown */}
           <div className="absolute right-0 top-full mt-2 z-50 w-52 solid-panel rounded-xl border border-border-strong overflow-hidden shadow-2xl">
-            <button onClick={copyAddress} className="w-full px-4 py-3 text-left text-xs text-text-primary hover:bg-bg-tertiary transition-colors flex justify-between items-center"><span>{copiedAddress ? "Copied!" : "Copy Address"}</span>{copiedAddress && <span className="text-positive text-[10px]">✓</span>}</button>
+            <button onClick={copyAddress} className="relative w-full px-4 py-3 text-left text-xs text-text-primary hover:bg-bg-tertiary transition-colors flex justify-between items-center"><span>Copy Address</span>{copiedAddress && <span className="absolute right-2 px-2 py-0.5 bg-positive/20 text-positive text-[9px] uppercase tracking-widest border border-positive/50 rounded-none animate-in fade-in zoom-in duration-200">Copied!</span>}</button>
             <button
               onClick={viewOnExplorer}
               className="w-full px-4 py-3 text-left text-xs text-text-primary hover:bg-bg-tertiary transition-colors border-t border-border"
