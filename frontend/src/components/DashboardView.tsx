@@ -162,8 +162,8 @@ const QUADRANTS: Quadrant[] = [
 function RingChart() {
   const total = QUADRANTS.reduce((s, q) => s + q.pct, 0)
   const radius = 94
-  const cx = 110
-  const cy = 110
+  const cx = 100
+  const cy = 100
   const circumference = 2 * Math.PI * radius
   let offset = 0
 
@@ -173,8 +173,8 @@ function RingChart() {
         <svg width="220" height="220" viewBox={`0 0 220 220`} className="transform -rotate-90">
           {/* Track */}
           <circle
-            cx={cx}
-            cy={cy}
+            cx={100}
+            cy={100}
             r={radius}
             fill="none"
             stroke="#1A1A24"
@@ -186,8 +186,8 @@ function RingChart() {
             const seg = (
               <circle
                 key={i}
-                cx={cx}
-                cy={cy}
+                cx={100}
+                cy={100}
                 r={radius}
                 fill="none"
                 stroke={q.color}
