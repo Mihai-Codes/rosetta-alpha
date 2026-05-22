@@ -195,7 +195,7 @@ export function CircleInfraPanel() {
                     <p className="text-sm text-text-tertiary">No webhook events ingested yet.</p>
                   </div>
                 ) : (
-                  <div className="relative pl-3 space-y-4 before:absolute before:inset-0 before:ml-3 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-blue-500/20 before:to-transparent">
+                  <div className="relative pl-3 space-y-4">
                     {(gateway?.events ?? []).map((e, idx) => (
                       <div key={`${e.notificationId ?? e.receivedAt}`} className="relative flex items-start gap-4">
                         <div className="absolute left-[-15px] mt-1.5 h-2 w-2 rounded-full ring-4 ring-[#0A0A0F] bg-blue-500"></div>
