@@ -193,8 +193,8 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                       <div className="flex justify-between items-end mb-1">
                         <span className="text-[10px] font-bold uppercase tracking-wider text-text-tertiary">Model Conviction</span>
                       </div>
-                      <div className="w-full bg-[#111111] h-1.5 rounded-full overflow-hidden border border-[#222222]">
-                        <div className="bg-[#9F4A4A] h-full transition-all duration-1000 ease-out" style={{ width: `${(e.confidence * 100).toFixed(0)}%` }} />
+                      <div className="w-full bg-[#111111] h-2 rounded-full overflow-hidden border border-[#333333] shadow-inner">
+                        <div className="bg-gradient-to-r from-[#7B2424] to-[#C0392B] h-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(192,57,43,0.8)]" style={{ width: `${(e.confidence * 100).toFixed(0)}%` }} />
                       </div>
                     </div>
                   </div>
