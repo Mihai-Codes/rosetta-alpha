@@ -12,6 +12,7 @@ import '../index.css'
 
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://rosetta-alpha.vercel.app'),
   title: 'Rosetta Alpha — AI-Powered Global Macro Intelligence',
   description:
     'Five AI agents, each reasoning in their native language, produce structured investment theses verified on-chain via Arc.',
