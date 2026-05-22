@@ -10,6 +10,8 @@
  * Addresses sourced from: https://developers.circle.com/tokenized/usyc/smart-contracts
  */
 
+import { formatUnits } from 'viem'
+
 // ─── Contract Addresses (Arc Testnet) ──────────────────────────────────────────
 
 export const USYC_CONTRACTS = {
@@ -139,14 +141,14 @@ export const ORACLE_DECIMALS = 18
  * e.g. 1116277611710661072 → 1.1163
  */
 export function oraclePriceToUSDC(rawAnswer: bigint): number {
-  return Number(rawAnswer) / 10 ** ORACLE_DECIMALS
+  return Number.parseFloat(formatUnits(rawAnswer, ORACLE_DECIMALS))
 }
 
 /**
  * Convert raw USYC balance (6 decimals) to human-readable amount.
  */
 export function formatUSYC(raw: bigint): number {
-  return Number(raw) / 10 ** USYC_DECIMALS
+  return Number.parseFloat(formatUnits(raw, USYC_DECIMALS))
 }
 
 /**
