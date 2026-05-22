@@ -134,26 +134,30 @@ export function RegistryTable({ desks }: RegistryTableProps) {
               </div>
               {/* Row 2: Hashes */}
               <div className="flex flex-wrap gap-x-4 gap-y-1 mb-2">
-                <a
-                  href={`https://dweb.link/ipfs/${e.ipfs_thesis_cid}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 font-mono text-[10px] text-text-secondary hover:text-brand-red transition-colors min-h-[44px]"
-                >
-                  <span className="text-text-tertiary uppercase tracking-wider">IPFS</span>
-                  {truncateHash(e.ipfs_thesis_cid, 6, 4)}
-                  <ExternalLink className="w-2.5 h-2.5" />
-                </a>
-                <a
-                  href={`https://testnet.arcscan.app/tx/${e.arc_tx}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 font-mono text-[10px] text-text-secondary hover:text-brand-red transition-colors min-h-[44px]"
-                >
-                  <span className="text-text-tertiary uppercase tracking-wider">Arc</span>
-                  {truncateHash(e.arc_tx, 6, 4)}
-                  <ExternalLink className="w-2.5 h-2.5" />
-                </a>
+                {e.ipfs_thesis_cid && e.ipfs_thesis_cid.length > 20 && (
+                  <a
+                    href={`https://dweb.link/ipfs/${e.ipfs_thesis_cid}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 font-mono text-[10px] text-text-secondary hover:text-brand-red transition-colors min-h-[44px]"
+                  >
+                    <span className="text-text-tertiary uppercase tracking-wider">IPFS</span>
+                    {truncateHash(e.ipfs_thesis_cid, 6, 4)}
+                    <ExternalLink className="w-2.5 h-2.5" />
+                  </a>
+                )}
+                {e.arc_tx && e.arc_tx.length > 20 && (
+                  <a
+                    href={`https://testnet.arcscan.app/tx/${e.arc_tx}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 font-mono text-[10px] text-text-secondary hover:text-brand-red transition-colors min-h-[44px]"
+                  >
+                    <span className="text-text-tertiary uppercase tracking-wider">Arc</span>
+                    {truncateHash(e.arc_tx, 6, 4)}
+                    <ExternalLink className="w-2.5 h-2.5" />
+                  </a>
+                )}
               </div>
               {/* Row 3: Time + Status */}
               <div className="flex items-center justify-between">
@@ -218,26 +222,30 @@ export function RegistryTable({ desks }: RegistryTableProps) {
                   </td>
                   <td className="px-4 sm:px-6 py-4">
                     <div className="flex flex-col gap-1">
-                      <a
-                        href={`https://dweb.link/ipfs/${e.ipfs_thesis_cid}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1 font-mono text-[10px] text-text-secondary hover:text-brand-red transition-colors"
-                      >
-                        <span className="text-text-tertiary uppercase tracking-wider">IPFS</span>
-                        {truncateHash(e.ipfs_thesis_cid, 6, 4)}
-                        <ExternalLink className="w-2.5 h-2.5" />
-                      </a>
-                      <a
-                        href={`https://testnet.arcscan.app/tx/${e.arc_tx}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1 font-mono text-[10px] text-text-secondary hover:text-brand-red transition-colors"
-                      >
-                        <span className="text-text-tertiary uppercase tracking-wider">Arc</span>
-                        {truncateHash(e.arc_tx, 6, 4)}
-                        <ExternalLink className="w-2.5 h-2.5" />
-                      </a>
+                      {e.ipfs_thesis_cid && e.ipfs_thesis_cid.length > 20 && (
+                        <a
+                          href={`https://dweb.link/ipfs/${e.ipfs_thesis_cid}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 font-mono text-[10px] text-text-secondary hover:text-brand-red transition-colors"
+                        >
+                          <span className="text-text-tertiary uppercase tracking-wider">IPFS</span>
+                          {truncateHash(e.ipfs_thesis_cid, 6, 4)}
+                          <ExternalLink className="w-2.5 h-2.5" />
+                        </a>
+                      )}
+                      {e.arc_tx && e.arc_tx.length > 20 && (
+                        <a
+                          href={`https://testnet.arcscan.app/tx/${e.arc_tx}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 font-mono text-[10px] text-text-secondary hover:text-brand-red transition-colors"
+                        >
+                          <span className="text-text-tertiary uppercase tracking-wider">Arc</span>
+                          {truncateHash(e.arc_tx, 6, 4)}
+                          <ExternalLink className="w-2.5 h-2.5" />
+                        </a>
+                      )}
                     </div>
                   </td>
                   <td className="px-4 sm:px-6 py-4">
