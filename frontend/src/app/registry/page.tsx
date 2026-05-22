@@ -4,6 +4,7 @@ import React from 'react'
 import posthog from 'posthog-js'
 import { RegistryTable } from '@/components/RegistryTable'
 import { Layout } from '@/components/Layout'
+import { CircleInfraPanel } from '@/components/CircleInfraPanel'
 import { SEED_DATA, fetchDesks } from '@/lib/data'
 import type { DeskProps } from '@/lib/types'
 
@@ -34,6 +35,7 @@ export default function RegistryPage() {
           </h1>
         </div>
         <RegistryTable desks={data} />
+        <CircleInfraPanel />
       </div>
     </Layout>
   )
