@@ -25,6 +25,20 @@ async function main() {
   console.log('Waiting for animations and data to load (5s)...');
   await page.waitForTimeout(5000);
   
+  // Scroll down to the Desks section so it fills the viewport
+  console.log('Scrolling to Desks section...');
+  await page.evaluate(() => {
+    const el = document.getElementById('desks-section');
+    if (el) {
+      // Try to center it or align it to top
+      const y = el.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo(0, y);
+    }
+  });
+  
+  // Wait a moment for any scroll-triggered animations to settle
+  await page.waitForTimeout(2000);
+
   const ogPath = path.join(__dirname, '../src/app/opengraph-image.png');
   const twPath = path.join(__dirname, '../src/app/twitter-image.png');
   
