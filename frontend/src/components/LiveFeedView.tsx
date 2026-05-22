@@ -2,7 +2,7 @@
 
 import React from 'react'
 import posthog from 'posthog-js'
-import { TrendingUp, TrendingDown, Minus, ChevronDown } from 'lucide-react'
+import { TrendingUp, TrendingDown, Minus, ChevronDown, ExternalLink, Database } from 'lucide-react'
 import { DeskProps } from './DeskCard'
 import { regionMeta, formatRelative, truncateHash } from '../lib/format'
 import { FeedItemSkeleton } from './SkeletonLoader'
@@ -133,7 +133,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
             return (
               <div
                 key={key}
-                className="border-b border-white/[0.02] last:border-b-0 transition-all duration-300"
+                className={`border-b border-white/[0.02] last:border-b-0 transition-all duration-300 ${i === 0 ? 'animate-[pulse_2s_ease-in-out_infinite] bg-white/[0.02]' : ''}`}
               >
                 <button
                   onClick={() => toggleExpand(key, e.desk, e.ticker)}
@@ -187,15 +187,48 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                     <p className="text-sm text-text-secondary font-light line-clamp-2 leading-relaxed">
                       {e.summary}
                     </p>
+
+                    {/* Conviction Meter */}
+                    <div className="mt-4 pt-2">
+                      <div className="flex justify-between items-end mb-1">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-text-tertiary">Model Conviction</span>
+                      </div>
+                      <div className="w-full bg-[#111111] h-1.5 rounded-full overflow-hidden border border-[#222222]">
+                        <div className="bg-[#9F4A4A] h-full transition-all duration-1000 ease-out" style={{ width: `${(e.confidence * 100).toFixed(0)}%` }} />
+                      </div>
+                    </div>
                   </div>
 
                   {/* Arc Tx — desktop only */}
-                  <div className="hidden lg:flex flex-col items-end gap-1 shrink-0">
-                    <p className="text-[9px] uppercase tracking-[0.25em] text-text-tertiary">Arc Tx</p>
-                    <p className="font-mono text-[10px] text-brand-red">
-                      {truncateHash(e.arc_tx, 6, 4)}
-                    </p>
-                  </div>
+                  {e.arc_tx && e.arc_tx.length > 20 && !e.arc_tx.startsWith("0xmock") && (
+                    <div className="hidden lg:flex flex-col items-end gap-1 shrink-0">
+                      <p className="text-[9px] uppercase tracking-[0.25em] text-text-tertiary">Arc L1 Tx</p>
+                      <a
+                        href={`https://arcscan.app/tx/${e.arc_tx}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium text-gray-300 bg-[#111111] border border-[#333333] rounded hover:bg-[#222222] transition-colors font-mono"
+                        onClick={(event) => event.stopPropagation()}
+                      >
+                        Arc L1 <ExternalLink size={10} />
+                      </a>
+                    </div>
+                  )}
+
+                  {e.ipfs_thesis_cid && e.ipfs_thesis_cid.length > 20 && (
+                    <div className="hidden lg:flex flex-col items-end gap-1 shrink-0 ml-4">
+                       <p className="text-[9px] uppercase tracking-[0.25em] text-text-tertiary">IPFS</p>
+                       <a
+                        href={`https://gateway.pinata.cloud/ipfs/${e.ipfs_thesis_cid}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium text-gray-300 bg-[#111111] border border-[#333333] rounded hover:bg-[#222222] transition-colors font-mono"
+                        onClick={(event) => event.stopPropagation()}
+                       >
+                         <Database size={10} /> IPFS
+                       </a>
+                    </div>
+                  )}
 
                   <ChevronDown
                     className={`w-4 h-4 text-text-tertiary shrink-0 mt-0.5 transition-transform duration-300 ${
