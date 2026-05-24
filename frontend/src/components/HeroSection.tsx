@@ -36,7 +36,7 @@ export function HeroSection({ latestHash, onScrollDown, isAuthenticated }: HeroS
   return (
     <section
       ref={heroRef}
-      className="relative w-full overflow-hidden flex flex-col items-center justify-center pt-28 sm:pt-40 pb-2"
+      className="relative w-full overflow-hidden flex flex-col items-center justify-center pt-28 sm:pt-40 pb-24 sm:pb-32"
       aria-label="Rosetta Alpha hero"
     >
       <div className="absolute inset-0 hero-vignette" aria-hidden />
@@ -105,7 +105,7 @@ export function HeroSection({ latestHash, onScrollDown, isAuthenticated }: HeroS
 
         <div
           data-reveal-id="actions"
-          className={`flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 transition-all duration-1000 delay-500 ${
+          className={`mt-24 sm:mt-32 mb-20 sm:mb-28 flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-10 transition-all duration-1000 delay-500 ${
             visible.actions ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >

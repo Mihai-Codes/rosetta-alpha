@@ -116,7 +116,6 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
             <a
               href={`https://gateway.pinata.cloud/ipfs/${desk.ipfs_thesis_cid}`}
               target="_blank" rel="noopener noreferrer"
-              rel="noreferrer"
               onClick={e => e.stopPropagation()}
               className="flex items-center gap-1.5 text-[9px] font-mono uppercase tracking-widest text-text-tertiary hover:text-brand-red transition-colors"
             >
@@ -129,7 +128,6 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
             <a
               href={`https://testnet.arcscan.app/tx/${desk.arc_tx}`}
               target="_blank" rel="noopener noreferrer"
-              rel="noreferrer"
               onClick={e => e.stopPropagation()}
               className="flex items-center gap-1.5 text-[9px] font-mono uppercase tracking-widest text-text-tertiary hover:text-brand-red transition-colors"
             >

@@ -359,7 +359,7 @@ export function createX402Client(config: X402Config) {
  * SessionKeyManager component to trigger the authorization modal.
  */
 export const x402 = createX402Client({
-  usdcAddress: process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS!,
+  usdcAddress: process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS || '0x3600000000000000000000000000000000000000',
   onSessionExpired: () => {
     // Dispatch a custom event that the SessionKeyManager component listens to.
     // This decouples the payment client from React component tree.

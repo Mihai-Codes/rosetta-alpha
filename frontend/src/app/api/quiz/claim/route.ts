@@ -46,7 +46,7 @@ export const POST = withX402(
     description: 'Quiz claim processing fee — earn 0.5 USDC on correct answer',
     treasuryAddress: process.env.ROSETTA_TREASURY_ADDRESS!,
     arcRpcUrl: process.env.NEXT_PUBLIC_ARC_RPC_URL!,
-    usdcAddress: process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS!,
+    usdcAddress: process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS || '0x3600000000000000000000000000000000000000',
     settlerPrivateKey: process.env.ARC_SETTLER_PRIVATE_KEY!,
   },
   async (req: Request) => {

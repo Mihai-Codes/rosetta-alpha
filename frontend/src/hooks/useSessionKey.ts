@@ -247,10 +247,8 @@ export function useSessionKey() {
         // EIP-3009 requires signer == from, so the session key's address must
         // hold the USDC. We transfer maxAmountUsdc from the user's wallet.
         // This is wallet popup #2 — the last popup until session is exhausted.
-        const usdcAddress = process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS
-        if (!usdcAddress) {
-          throw new Error('NEXT_PUBLIC_USDC_ARC_ADDRESS not configured')
-        }
+        // Defaulting to Arc Testnet USDC contract if env var is missing
+        const usdcAddress = process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS || '0x3600000000000000000000000000000000000000'
 
         const fundingAmount = parseUnits(String(config.maxAmountUsdc), 6) // USDC = 6 decimals
 

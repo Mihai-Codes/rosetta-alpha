@@ -316,7 +316,7 @@ function MyPredictions() {
               <a
                 href={`https://testnet.arcscan.app/tx/${row.arcTx}`}
                 target="_blank" rel="noopener noreferrer"
-                rel="noreferrer"
+
                 className="block font-mono text-[10px] text-accent-gold hover:underline truncate"
               >
                 Arc: {truncateHash(row.arcTx, 6, 4)}
@@ -700,7 +700,7 @@ export function DashboardView() {
           <a
             href={`https://testnet.arcscan.app/address/${address}`}
             target="_blank" rel="noopener noreferrer"
-            rel="noreferrer"
+
             className="group mt-auto pt-6 flex items-center gap-2 text-[9px] uppercase tracking-[0.2em] text-brand-red hover:text-white transition-colors relative z-10"
           >
             <span>View on ArcScan</span>

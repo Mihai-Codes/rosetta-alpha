@@ -43,34 +43,36 @@ export function AllWeatherChart() {
         <p className="font-display text-lg text-text-primary">All Weather Matrix</p>
       </div>
 
-      <div className="flex-1 flex flex-col justify-center mb-6 px-4 sm:px-6">
+      <div className="flex-1 flex flex-col justify-center mt-10 px-8 sm:px-14">
         {/* 2x2 Grid */}
-        <div className="grid grid-cols-2 gap-2 sm:gap-3 relative ml-4 sm:ml-6 mb-4 sm:mb-6">
+        <div className="grid grid-cols-2 gap-8 sm:gap-12 relative ml-10 sm:ml-12 mb-10 sm:mb-14">
           {/* Axis Labels */}
-          <div className="absolute -left-6 sm:-left-8 top-1/2 -translate-y-1/2 -rotate-90 text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-text-tertiary whitespace-nowrap">
+          <div className="absolute -left-10 sm:-left-12 top-1/2 -translate-y-1/2 -rotate-90 text-[11px] sm:text-[12px] uppercase tracking-[0.4em] text-text-tertiary whitespace-nowrap font-semibold">
             Growth
           </div>
-          <div className="absolute -bottom-6 sm:-bottom-8 left-1/2 -translate-x-1/2 text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-text-tertiary whitespace-nowrap">
+          <div className="absolute -bottom-10 sm:-bottom-12 left-1/2 -translate-x-1/2 text-[11px] sm:text-[12px] uppercase tracking-[0.4em] text-text-tertiary whitespace-nowrap font-semibold">
             Inflation
           </div>
 
           {QUADRANTS.map((q, i) => (
             <div 
               key={i} 
-              className="border border-white/5 bg-white/[0.015] p-3 sm:p-4 transition-all hover:bg-white/[0.03] group"
-              style={{ borderTopColor: q.color + '80', borderTopWidth: '2px' }}
+              className="border border-white/10 bg-[#0A0A0A] p-4 sm:p-6 transition-all hover:bg-[#111111] group rounded-lg min-h-[160px] flex flex-col justify-between shadow-lg"
+              style={{ borderTopColor: q.color, borderTopWidth: '3px' }}
             >
-              <div className="flex justify-between items-start mb-3 sm:mb-4">
-                <span className="text-[10px] sm:text-[11px] font-mono text-text-secondary">{q.pct}%</span>
-                <div className="w-1.5 h-1.5 rounded-full  opacity-80 group-hover:opacity-100 transition-opacity" style={{ backgroundColor: q.color }} />
+              <div className="flex justify-between items-start">
+                <span className="text-[12px] sm:text-[14px] font-mono text-text-primary font-bold opacity-100">{q.pct}%</span>
+                <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full shadow-none opacity-90 group-hover:opacity-100 transition-opacity" style={{ backgroundColor: q.color }} />
               </div>
-              <div className="space-y-0.5 mb-3 sm:mb-4">
-                <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wider text-text-primary leading-tight">{q.title}</p>
-                <p className="text-[8px] sm:text-[9px] uppercase tracking-wider text-text-tertiary leading-tight">{q.subtitle}</p>
+              
+              <div className="space-y-1 mt-4 mb-5">
+                <p className="text-[11px] sm:text-[12px] font-bold uppercase tracking-[0.1em] text-text-primary leading-tight">{q.title}</p>
+                <p className="text-[9px] sm:text-[10px] uppercase tracking-[0.15em] text-text-tertiary leading-tight">{q.subtitle}</p>
               </div>
-              <div className="space-y-1">
+
+              <div className="space-y-1 border-t border-white/10 pt-3 mt-auto">
                 {q.assets.map(a => (
-                  <p key={a} className="text-[9px] sm:text-[10px] text-text-secondary font-mono opacity-80">{a}</p>
+                  <p key={a} className="text-[10px] sm:text-[11px] text-text-secondary font-mono opacity-80">{a}</p>
                 ))}
               </div>
             </div>

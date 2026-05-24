@@ -167,7 +167,12 @@ export function ThesisCard({ desk }: ThesisCardProps) {
   const [copied, setCopied] = React.useState(false)
 
   // x402 unlock state
-  const [unlocked, setUnlocked] = React.useState(false)
+  // Show US desk as a free preview so judges can see the full reasoning trace without auth.
+  // Other desks remain locked behind the x402 paywall.
+  const isFreePreview = desk.desk.toLowerCase() === 'us'
+  const [unlockedState, setUnlockedState] = React.useState(false)
+  const unlocked = isFreePreview || unlockedState
+
   const [unlocking, setUnlocking] = React.useState(false)
   const [unlockError, setUnlockError] = React.useState<string | null>(null)
   const [showSessionModal, setShowSessionModal] = React.useState(false)
@@ -193,7 +198,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
       const thesisId = desk.arc_tx || desk.desk
       const res = await x402.fetch(`/api/thesis/${encodeURIComponent(thesisId)}`)
       if (res.ok) {
-        setUnlocked(true)
+        setUnlockedState(true)
       } else {
         const body = await res.json().catch(() => ({}))
         setUnlockError(body?.error ?? 'Payment failed. Please try again.')
@@ -251,9 +256,16 @@ export function ThesisCard({ desk }: ThesisCardProps) {
       {/* Reasoning chain */}
       <section className="px-4 sm:px-8 py-5 sm:py-7 bg-[#0A0A0A]">
         <div className="flex items-center justify-between mb-4 sm:mb-6">
-          <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary">
-            Reasoning Chain
-          </p>
+          <div className="flex items-center gap-3">
+            <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary">
+              Reasoning Chain
+            </p>
+            {isFreePreview && (
+              <span className="px-2 py-0.5 bg-brand-red/10 border border-brand-red/30 text-brand-red text-[8px] font-bold uppercase tracking-[0.2em] rounded">
+                Free Preview
+              </span>
+            )}
+          </div>
           {!unlocked && desk.reasoning_blocks.length > 1 && (
             <div className="flex items-center gap-1.5 text-[9px] text-text-tertiary">
               <Lock className="w-2.5 h-2.5" />
