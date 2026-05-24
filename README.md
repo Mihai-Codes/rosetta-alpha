@@ -184,6 +184,7 @@ The AI isn't a single model making a call. It's a **three-layer deliberation cha
 - On-chain evidence: 5 live Arc TX hashes + IPFS CIDs (see Smart Contracts above)
 - Leaderboard tracks accuracy, USDC earned, Arc settlement count per user
 - 32 automated visual QA screenshots (Playwright, 8 pages × 4 breakpoints)
+- x402 nanopayment integration — pay-per-read thesis access + session key UX
 
 ### 🔵 Circle Tool Usage (20%)
 
@@ -194,6 +195,7 @@ The AI isn't a single model making a call. It's a **three-layer deliberation cha
 | **RosettaToken (ERC-20)** | 10 ROSETTA staked per thesis via `RosettaToken.sol` |
 | **Circle Paymaster** | Architecture designed for gasless UX — USDC-only fees via `scripts/circle_paymaster_demo.js` |
 | **Gateway x402 Nanopayments** | Live pay-per-call endpoint at `frontend/src/app/api/x402/agent-insight/route.ts` returns HTTP `402 Payment Required` when unpaid and serves premium insight after payment authorization |
+| **x402 + Session Keys** | Client-side nanopayments for thesis unlock and quiz claims — users approve once, session key handles all subsequent micropayments without wallet popups |
 | **Gateway Webhooks (V2)** | Signature-aware webhook ingestion route at `frontend/src/app/api/gateway/webhooks/route.ts` handles `gateway.deposit.finalized`, `gateway.mint.finalized`, and `gateway.mint.forwarded` |
 | **ERC-8004 Agent Identity** | Arc Testnet identity/reputation/validation registries are integrated via `frontend/src/app/api/erc8004/status/route.ts` and surfaced in the Registry UI |
 | **Wagmi + RainbowKit** | Live USDC balance read from Arc Testnet via `useBalance` hook |
