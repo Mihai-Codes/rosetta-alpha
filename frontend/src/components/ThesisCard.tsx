@@ -7,7 +7,7 @@ import { regionMeta, copyToClipboard, truncateHash } from '../lib/format'
 import { ShareButton } from './ShareButton'
 import Link from 'next/link'
 import { x402, X402SessionRequired } from '@/lib/x402Client'
-import { GlobalSessionKeyModal } from '@/components/SessionKeyManager'
+import { SessionKeyManager } from '@/components/SessionKeyManager'
 
 interface ThesisCardProps {
   desk: DeskProps
@@ -319,7 +319,10 @@ export function ThesisCard({ desk }: ThesisCardProps) {
 
       {/* SessionKeyManager modal — opens when X402SessionRequired is thrown */}
       {showSessionModal && (
-        <GlobalSessionKeyModal />
+        <SessionKeyManager
+          variant="modal"
+          onClose={() => setShowSessionModal(false)}
+        />
       )}
 
       {/* Market question */}

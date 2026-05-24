@@ -33,11 +33,16 @@ import {
 
 // ─── State Shape ─────────────────────────────────────────────────────────────
 
+/** Lifecycle status of the session key */
+export type SessionKeyStatus = 'none' | 'active' | 'expired' | 'exhausted'
+
 export type SessionKeyState = {
   /** The active session key, or null if not yet created / revoked */
   sessionKey: SessionKey | null
   /** True if a session key exists and is within budget/time limits */
   isActive: boolean
+  /** Detailed lifecycle status — used by SessionKeyManager to show correct state */
+  status: SessionKeyStatus
   /** How much USDC budget remains (maxAmountUsdc - spentUsdc) */
   budgetRemaining: number
   /** When this session key expires (null if no active session) */
@@ -82,6 +87,7 @@ export function useSessionKey() {
   const [state, setState] = React.useState<SessionKeyState>({
     sessionKey: null,
     isActive: false,
+    status: 'none',
     budgetRemaining: 0,
     expiresAt: null,
     isApproving: false,
@@ -101,6 +107,7 @@ export function useSessionKey() {
       setState({
         sessionKey: key,
         isActive: true,
+        status: 'active',
         budgetRemaining: key.config.maxAmountUsdc - key.spentUsdc,
         expiresAt: new Date(key.createdAt + key.config.expirySeconds * 1000),
         isApproving: false,
@@ -116,11 +123,15 @@ export function useSessionKey() {
     const interval = setInterval(() => {
       const key = loadSessionKey()
       if (!key) {
-        // Key expired or budget exhausted — update state
+        // Determine WHY the key is gone: expired vs budget exhausted
+        // Check by re-reading raw sessionStorage before loadSessionKey cleaned it
+        // loadSessionKey already removed it, so we infer from previous state
+        const wasExpired = state.expiresAt && Date.now() >= state.expiresAt.getTime()
         setState(prev => ({
           ...prev,
           sessionKey: null,
           isActive: false,
+          status: wasExpired ? 'expired' : 'exhausted',
           budgetRemaining: 0,
           expiresAt: null,
         }))
@@ -135,7 +146,9 @@ export function useSessionKey() {
     }, 30_000)
 
     return () => clearInterval(interval)
-  }, [state.isActive])
+  // Include expiresAt so the expiry-vs-exhausted check uses current value
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.isActive, state.expiresAt])
 
   // ── Listen for x402 payment events dispatched by x402Client ──
   React.useEffect(() => {
@@ -156,18 +169,32 @@ export function useSessionKey() {
         ...prev,
         sessionKey: null,
         isActive: false,
+        status: 'expired' as const,
         budgetRemaining: 0,
         expiresAt: null,
         error: 'Session expired. Please create a new session.',
       }))
     }
 
+    const handleInsufficientBudget = () => {
+      // Budget exhausted mid-session — mark as exhausted
+      setState(prev => ({
+        ...prev,
+        sessionKey: null,
+        isActive: false,
+        status: 'exhausted' as const,
+        budgetRemaining: 0,
+      }))
+    }
+
     window.addEventListener('x402:payment-success', handlePaymentSuccess)
     window.addEventListener('x402:session-expired', handleSessionExpired)
+    window.addEventListener('x402:insufficient-budget', handleInsufficientBudget)
 
     return () => {
       window.removeEventListener('x402:payment-success', handlePaymentSuccess)
       window.removeEventListener('x402:session-expired', handleSessionExpired)
+      window.removeEventListener('x402:insufficient-budget', handleInsufficientBudget)
     }
   }, [])
 
@@ -253,6 +280,7 @@ export function useSessionKey() {
         setState({
           sessionKey,
           isActive: true,
+          status: 'active',
           budgetRemaining: config.maxAmountUsdc,
           expiresAt: new Date(Date.now() + config.expirySeconds * 1000),
           isApproving: false,
@@ -285,6 +313,7 @@ export function useSessionKey() {
     setState({
       sessionKey: null,
       isActive: false,
+      status: 'none',
       budgetRemaining: 0,
       expiresAt: null,
       isApproving: false,

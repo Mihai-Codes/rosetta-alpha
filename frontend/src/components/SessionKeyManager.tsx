@@ -376,6 +376,7 @@ export function SessionKeyManager({ variant = 'panel', onClose }: SessionKeyMana
   const {
     isActive,
     sessionKey,
+    status,
     budgetRemaining,
     expiresAt,
     isApproving,
@@ -398,9 +399,9 @@ export function SessionKeyManager({ variant = 'panel', onClose }: SessionKeyMana
     })
   }
 
-  // Determine which sub-state to show
-  const isExpired = !isActive && sessionKey === null && error?.includes('expired')
-  const isExhausted = !isActive && sessionKey === null && error?.includes('budget')
+  // Use explicit status field — no fragile error string matching
+  const isExpired = status === 'expired'
+  const isExhausted = status === 'exhausted'
 
   const content = (
     <div
