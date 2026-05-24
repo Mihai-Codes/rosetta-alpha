@@ -361,11 +361,19 @@ async function verifyPayment(
       signature: signedAuth.signature,
     })
 
-    // The recovered signer should be a valid session key.
-    // In production, we'd check this against a registry of authorized session keys.
-    // For now, we verify the signature is mathematically valid.
+    // EIP-3009 requires: ecrecover(sig) == from
+    // We replicate this check server-side to fail fast before sending the tx.
+    // If this doesn't match, the on-chain call would revert anyway.
     if (!recoveredAddress) {
       return { valid: false, reason: 'Could not recover signer from signature' }
+    }
+
+    if (recoveredAddress.toLowerCase() !== signedAuth.from.toLowerCase()) {
+      return {
+        valid: false,
+        reason: `Signer mismatch. Recovered: ${recoveredAddress}, expected (from): ${signedAuth.from}. ` +
+          `EIP-3009 requires the signer to be the 'from' address.`,
+      }
     }
 
     return { valid: true, signer: recoveredAddress }

@@ -258,9 +258,13 @@ export function createX402Client(config: X402Config) {
       }
 
       // ── Step 6: Build the transfer authorization ──
+      // CRITICAL: EIP-3009 requires ecrecover(sig) == from.
+      // Since the SESSION KEY signs, `from` MUST be the session key's address.
+      // This means the session key address must hold USDC (user funds it during setup).
+      // This is the standard session-key pattern: user pre-funds the ephemeral address.
       const transferAuth: TransferAuthorization = {
-        // from = the user's real wallet (holds the USDC)
-        from: sessionKey.userAddress,
+        // from = the session key address (which holds pre-funded USDC)
+        from: sessionKey.address,
         // to = the treasury address specified in the 402 response
         to: requirement.payTo as `0x${string}`,
         // value = amount in USDC atomic units (6 decimals)

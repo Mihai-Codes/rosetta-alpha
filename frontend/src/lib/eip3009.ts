@@ -130,20 +130,22 @@ export function buildTransferAuthorizationMessage(
 /**
  * Sign a TransferWithAuthorization using the SESSION KEY's private key.
  * 
- * THIS IS THE CORE MAGIC: The session key signs on behalf of the user.
+ * THIS IS THE CORE MAGIC of the session key pattern.
  * 
- * How this works:
- * 1. The user previously authorized the session key (via buildSessionAuthMessage)
- * 2. The server knows the session key is authorized for this user
- * 3. When the server receives this signed authorization, it verifies:
- *    a. The session key is authorized by the user (via the stored authorizationSig)
- *    b. The transfer parameters are within the session's limits
- * 4. The server then calls transferWithAuthorization on-chain
+ * EIP-3009 enforces: ecrecover(signature) == from
+ * Therefore `from` in the authorization MUST be the session key's address,
+ * NOT the user's main wallet. This means:
  * 
- * NOTE: On a standard USDC contract, transferWithAuthorization checks that
- * the signer === `from`. Since we're signing with the session key (not the user),
- * the server must handle the session→user mapping before executing.
- * In production, this would use a smart contract wallet or account abstraction.
+ * 1. During session setup, the user transfers a small USDC budget to the
+ *    session key address (one wallet popup — the only one needed)
+ * 2. The session key now holds USDC in its own address
+ * 3. For each micropayment, the session key signs a transferWithAuthorization
+ *    where from=sessionKeyAddress — passing the on-chain ecrecover check
+ * 4. The server calls transferWithAuthorization on-chain, moving USDC from
+ *    the session key address to the treasury
+ * 
+ * This is the standard "pre-funded ephemeral wallet" pattern used in
+ * production systems like Privy session keys, Biconomy, and ZeroDev.
  * 
  * @param auth - The transfer authorization to sign
  * @param sessionKey - The active session key (has the private key)

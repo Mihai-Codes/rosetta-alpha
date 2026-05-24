@@ -17,9 +17,12 @@
  * Flow:
  * 1. generateSessionKey() → ephemeral keypair
  * 2. User's wallet signs EIP-712 authorization (buildSessionAuthMessage)
- * 3. saveSessionKey() persists to sessionStorage
- * 4. x402Client uses loadSessionKey() for automatic micropayments
- * 5. Each payment calls recordSpend() to track budget
+ * 3. User sends a small USDC amount to the session key's address (pre-funding)
+ *    — this is the ONLY wallet popup needed for the entire session
+ * 4. saveSessionKey() persists to sessionStorage
+ * 5. x402Client uses loadSessionKey() for automatic micropayments
+ *    — session key signs EIP-3009 from its own address (passes ecrecover check)
+ * 6. Each payment calls recordSpend() to track budget
  */
 
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts'
