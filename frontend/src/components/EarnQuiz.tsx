@@ -606,8 +606,8 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
                 </p>
                 <a
                   href={ARCSCAN_TX(claimTxHash)}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  target="_blank" rel="noopener noreferrer"
+                  
                   className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-accent-gold hover:underline"
                 >
                   View on ArcScan →

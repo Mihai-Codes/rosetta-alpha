@@ -189,8 +189,8 @@ export function ShareButton(props: ShareButtonProps) {
           <div className="flex flex-col bg-[#111118]">
             <a
               href={tweetUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+              target="_blank" rel="noopener noreferrer"
+              
               onClick={() => { setOpen(false); posthog.capture('thesis_share_twitter_clicked', { region: props.region, ticker: props.ticker, direction: props.direction }) }}
               className="flex items-center gap-3 px-4 py-3.5 min-h-[48px] text-[11px] font-medium text-text-secondary hover:text-[#1D9BF0] hover:bg-[#1D9BF0]/10 transition-colors group"
             >

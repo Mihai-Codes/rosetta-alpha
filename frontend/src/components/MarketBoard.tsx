@@ -58,7 +58,7 @@ export function MarketBoard({ desks }: { desks: DeskProps[] }) {
                     {m.arc_tx && !m.arc_tx.endsWith('...') ? (
                       <a
                         href={`https://testnet.arcscan.app/tx/${m.arc_tx}`}
-                        target="_blank"
+                        target="_blank" rel="noopener noreferrer"
                         rel="noreferrer"
                         className="flex items-center gap-1.5 font-mono text-[10px] text-brand-red/60 hover:text-brand-red transition-colors"
                       >

@@ -140,8 +140,8 @@ export function RegistryTable({ desks }: RegistryTableProps) {
                 {e.ipfs_thesis_cid && e.ipfs_thesis_cid.length > 20 && (
                   <a
                     href={`https://dweb.link/ipfs/${e.ipfs_thesis_cid}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    target="_blank" rel="noopener noreferrer"
+                    
                     className="flex items-center gap-1 font-mono text-[10px] text-text-secondary hover:text-brand-red transition-colors min-h-[44px]"
                   >
                     <span className="text-text-tertiary uppercase tracking-wider">IPFS</span>
@@ -152,8 +152,8 @@ export function RegistryTable({ desks }: RegistryTableProps) {
                 {e.arc_tx && e.arc_tx.length > 20 && (
                   <a
                     href={`https://testnet.arcscan.app/tx/${e.arc_tx}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    target="_blank" rel="noopener noreferrer"
+                    
                     className="flex items-center gap-1 font-mono text-[10px] text-text-secondary hover:text-brand-red transition-colors min-h-[44px]"
                   >
                     <span className="text-text-tertiary uppercase tracking-wider">Arc</span>
@@ -228,8 +228,8 @@ export function RegistryTable({ desks }: RegistryTableProps) {
                       {e.ipfs_thesis_cid && e.ipfs_thesis_cid.length > 20 && (
                         <a
                           href={`https://dweb.link/ipfs/${e.ipfs_thesis_cid}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                          target="_blank" rel="noopener noreferrer"
+                          
                           className="flex items-center gap-1 font-mono text-[10px] text-text-secondary hover:text-brand-red transition-colors"
                         >
                           <span className="text-text-tertiary uppercase tracking-wider">IPFS</span>
@@ -240,8 +240,8 @@ export function RegistryTable({ desks }: RegistryTableProps) {
                       {e.arc_tx && e.arc_tx.length > 20 && (
                         <a
                           href={`https://testnet.arcscan.app/tx/${e.arc_tx}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                          target="_blank" rel="noopener noreferrer"
+                          
                           className="flex items-center gap-1 font-mono text-[10px] text-text-secondary hover:text-brand-red transition-colors"
                         >
                           <span className="text-text-tertiary uppercase tracking-wider">Arc</span>

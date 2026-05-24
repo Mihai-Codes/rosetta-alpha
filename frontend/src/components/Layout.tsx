@@ -256,8 +256,8 @@ export function Layout({ children, activeTab }: LayoutProps) {
             <div className="xl:mr-8 max-w-[320px] text-left lg:text-right">
               <p className="uppercase tracking-[0.25em] text-text-secondary mb-3 text-[10px]">Reference</p>
               <p className="font-light leading-relaxed">
-                <a href="https://agora.thecanteenapp.com/" target="_blank" rel="noopener noreferrer" className="text-brand-red hover:text-text-primary transition-colors font-medium underline underline-offset-4 decoration-white/10">Agora Agents Hackathon</a><br />
-                Engineered for <a href="https://www.principles.com/" target="_blank" rel="noopener noreferrer" className="text-brand-red hover:text-text-primary transition-colors font-medium drop-shadow-[0_0_8px_rgba(216,43,43,0.4)]">Radical Truth</a>.
+                <a href="https://agora.thecanteenapp.com/" target="_blank" rel="noopener noreferrer"  className="text-brand-red hover:text-text-primary transition-colors font-medium underline underline-offset-4 decoration-white/10">Agora Agents Hackathon</a><br />
+                Engineered for <a href="https://www.principles.com/" target="_blank" rel="noopener noreferrer"  className="text-brand-red hover:text-text-primary transition-colors font-medium drop-shadow-[0_0_8px_rgba(216,43,43,0.4)]">Radical Truth</a>.
               </p>
             </div>
           </div>

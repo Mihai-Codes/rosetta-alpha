@@ -340,14 +340,14 @@ export function ThesisCard({ desk }: ThesisCardProps) {
         {/* Top Row: IPFS & Arc */}
         <div className="flex flex-row items-center justify-between w-full">
           {desk.ipfs_thesis_cid && desk.ipfs_thesis_cid !== 'bafkrei...' && (
-            <a href={`https://dweb.link/ipfs/${desk.ipfs_thesis_cid}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-text-tertiary hover:text-brand-red transition-colors">
+            <a href={`https://dweb.link/ipfs/${desk.ipfs_thesis_cid}`} target="_blank" rel="noopener noreferrer"  className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-text-tertiary hover:text-brand-red transition-colors">
               <ExternalLink className="w-3 h-3" />
               <span>IPFS: <span className="font-mono text-text-secondary">{truncateHash(desk.ipfs_thesis_cid, 6, 4)}</span></span>
             </a>
           )}
           {desk.arc_tx && (
             <div className="flex items-center gap-1.5 shrink-0">
-              <a href={`https://testnet.arcscan.app/tx/${desk.arc_tx}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-text-tertiary hover:text-brand-red transition-colors">
+              <a href={`https://testnet.arcscan.app/tx/${desk.arc_tx}`} target="_blank" rel="noopener noreferrer"  className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-text-tertiary hover:text-brand-red transition-colors">
                 <ExternalLink className="w-3 h-3" />
                 <span>Arc L1: <span className="font-mono text-text-secondary">{truncateHash(desk.arc_tx, 6, 4)}</span></span>
               </a>

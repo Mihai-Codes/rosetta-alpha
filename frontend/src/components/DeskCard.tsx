@@ -115,7 +115,7 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
           {desk.ipfs_thesis_cid && desk.ipfs_thesis_cid.length > 20 ? (
             <a
               href={`https://gateway.pinata.cloud/ipfs/${desk.ipfs_thesis_cid}`}
-              target="_blank"
+              target="_blank" rel="noopener noreferrer"
               rel="noreferrer"
               onClick={e => e.stopPropagation()}
               className="flex items-center gap-1.5 text-[9px] font-mono uppercase tracking-widest text-text-tertiary hover:text-brand-red transition-colors"
@@ -128,7 +128,7 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
           {desk.arc_tx && desk.arc_tx.length > 20 && !desk.arc_tx.startsWith("0xmock") ? (
             <a
               href={`https://testnet.arcscan.app/tx/${desk.arc_tx}`}
-              target="_blank"
+              target="_blank" rel="noopener noreferrer"
               rel="noreferrer"
               onClick={e => e.stopPropagation()}
               className="flex items-center gap-1.5 text-[9px] font-mono uppercase tracking-widest text-text-tertiary hover:text-brand-red transition-colors"

@@ -208,8 +208,8 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                       <p className="text-[9px] uppercase tracking-[0.25em] text-text-tertiary">Arc L1 Tx</p>
                       <a
                         href={`https://arcscan.app/tx/${e.arc_tx}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        target="_blank" rel="noopener noreferrer"
+                        
                         className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium text-gray-300 bg-[#111111] border border-[#333333] rounded hover:bg-[#222222] transition-colors font-mono"
                         onClick={(event) => event.stopPropagation()}
                       >
@@ -223,8 +223,8 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                        <p className="text-[9px] uppercase tracking-[0.25em] text-text-tertiary">IPFS</p>
                        <a
                         href={`https://gateway.pinata.cloud/ipfs/${e.ipfs_thesis_cid}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        target="_blank" rel="noopener noreferrer"
+                        
                         className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium text-gray-300 bg-[#111111] border border-[#333333] rounded hover:bg-[#222222] transition-colors font-mono"
                         onClick={(event) => event.stopPropagation()}
                        >
