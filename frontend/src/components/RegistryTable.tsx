@@ -21,8 +21,11 @@ export function RegistryTable({ desks }: RegistryTableProps) {
   const [sortDesc, setSortDesc] = React.useState(true)
   const [search, setSearch] = React.useState('')
 
+  const [now, setNow] = React.useState<number | null>(null)
+  React.useEffect(() => { setNow(Date.now()) }, [])
+
   const entries: RegistryEntry[] = React.useMemo(() => {
-    const enriched = desks.map((d, i) => ({ ...d, timestamp: Date.now() - i * 90_000 }))
+    const enriched = desks.map((d, i) => ({ ...d, timestamp: (now ?? 1716508800000) - i * 90_000 }))
     const filtered = search
       ? enriched.filter(
           d =>

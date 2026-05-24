@@ -84,6 +84,23 @@ async function main() {
         await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 20000 })
         await waitForPageReady(page)
 
+        // Custom interactions for better screenshots
+        if (pg.name === 'feed') {
+          try {
+            await page.locator('text=AAPL').first().click({ timeout: 2000 });
+            await page.waitForTimeout(500);
+          } catch(e) {}
+        }
+        if (pg.name === 'desks') {
+          try {
+            await page.evaluate(() => {
+              const gate = document.querySelector('[data-testid="thesis-blur-gate"]');
+              if (gate) gate.style.display = 'none';
+            });
+            await page.waitForTimeout(500);
+          } catch(e) {}
+        }
+
         await page.screenshot({
           path: outFile,
           fullPage: true,

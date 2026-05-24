@@ -596,7 +596,10 @@ export function DashboardView() {
               <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-text-primary font-bold">Live Telemetry</span>
            </div>
            <div className="flex items-center gap-4">
-              <span className="text-[9px] font-mono text-text-tertiary uppercase tracking-[0.1em] hidden sm:inline-block">
+              <span 
+                className="text-[9px] font-mono text-text-tertiary uppercase tracking-[0.1em] hidden sm:inline-block"
+                suppressHydrationWarning
+              >
                 SYS.TIME: {new Date().toISOString().split('T')[1].slice(0, 8)}Z
               </span>
               <span className="text-[9px] font-mono text-brand-red uppercase tracking-[0.15em] font-bold border border-brand-red/30 px-2 py-1 bg-brand-red/10">

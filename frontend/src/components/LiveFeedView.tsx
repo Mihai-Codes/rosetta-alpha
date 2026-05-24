@@ -23,13 +23,16 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
   const [directionFilter, setDirectionFilter] = React.useState<Direction>('ALL')
   const [expanded, setExpanded] = React.useState<Set<string>>(new Set())
 
+  const [now, setNow] = React.useState<number | null>(null)
+  React.useEffect(() => { setNow(Date.now()) }, [])
+
   const entries: FeedEntry[] = React.useMemo(
     () =>
       desks
-        .map((d, i) => ({ ...d, timestamp: Date.now() - i * 90_000 }))
+        .map((d, i) => ({ ...d, timestamp: (now ?? 1716508800000) - i * 90_000 })) // fallback to static time for SSR
         .filter(e => regionFilter === 'ALL' || e.desk.toLowerCase() === regionFilter)
         .filter(e => directionFilter === 'ALL' || e.direction === directionFilter),
-    [desks, regionFilter, directionFilter]
+    [desks, regionFilter, directionFilter, now]
   )
 
   const regions = ['ALL', ...Array.from(new Set(desks.map(d => d.desk.toLowerCase())))]
