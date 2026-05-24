@@ -145,6 +145,7 @@ export function ShareButton(props: ShareButtonProps) {
           setOpen(next)
           if (next) posthog.capture('thesis_share_opened', { region: props.region, ticker: props.ticker, direction: props.direction })
         }}
+        data-testid="share-button"
         aria-label="Share thesis"
         aria-expanded={open}
         className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.25em] text-text-tertiary hover:text-brand-red transition-colors min-h-[44px] sm:min-h-0 px-1"
@@ -155,6 +156,7 @@ export function ShareButton(props: ShareButtonProps) {
 
       {open && (
         <div
+          data-testid="share-modal"
           className={`absolute z-50 w-72 rounded-lg overflow-hidden border border-[#C9A84C]/40 shadow-[0_0_20px_rgba(201,168,76,0.1),_0_8px_32px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-200 max-h-[85vh] overflow-y-auto ${
             modalPosition === 'above'
               ? 'bottom-full right-0 mb-2 origin-bottom-right slide-in-from-bottom-2'
@@ -178,7 +180,7 @@ export function ShareButton(props: ShareButtonProps) {
 
           {/* Tweet preview */}
           <div className="px-4 py-3 border-b border-[#C9A84C]/10 bg-black/20">
-            <p className="text-[11px] text-[#F0EDE8]/80 font-mono leading-normal tracking-tight line-clamp-5 whitespace-pre-wrap break-all">
+            <p data-testid="tweet-preview" className="text-[11px] text-[#F0EDE8]/80 font-mono leading-normal tracking-tight line-clamp-5 whitespace-pre-wrap break-all">
               {tweetText.length > 200 ? tweetText.slice(0, 197) + '…' : tweetText}
             </p>
           </div>

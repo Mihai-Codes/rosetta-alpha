@@ -41,6 +41,7 @@ function RegionPillBar({
             key={d.desk}
             role="tab"
             aria-selected={isActive}
+            data-testid={`region-tab-${d.desk.toUpperCase()}`}
             onClick={() => onSelect(d.desk)}
             className={`flex items-center gap-2 px-5 py-3 rounded-none shrink-0 snap-start min-h-[44px] border text-[11px] font-medium uppercase tracking-[0.15em] transition-all duration-300 ${
               isActive
@@ -63,7 +64,7 @@ function RegionPillBar({
 
 function PremiumPaywall() {
   return (
-    <div className="absolute inset-0 z-20 flex flex-col justify-end pt-32 bg-gradient-to-t from-bg-primary via-bg-primary/95 to-transparent">
+    <div data-testid="thesis-blur-gate" className="absolute inset-0 z-20 flex flex-col justify-end pt-32 bg-gradient-to-t from-bg-primary via-bg-primary/95 to-transparent">
       {/* Brutalist Redaction Overlay */}
       <div className="relative z-30 w-full max-w-md mx-auto mb-12 sm:mb-20 text-center border-t border-b sm:border border-white/10 bg-[#0A0A0A]/90 backdrop-blur-md p-8 sm:shadow-2xl">
         <div className="flex justify-center mb-5">
@@ -103,7 +104,7 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
   return (
     <div className="flex flex-col gap-8">
       {/* ── Mobile (< md): pill bar + stacked content ── */}
-      <div className="md:hidden">
+      <div className="md:hidden" data-testid="region-tabs-mobile">
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }} className="mb-6">
           <RegionPillBar desks={desks} activeDesk={activeDesk} onSelect={setActiveDesk} />
         </motion.div>

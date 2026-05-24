@@ -145,6 +145,7 @@ export function SignInModal() {
               {/* Auth Buttons */}
               <div className="space-y-4">
                 <button
+                  data-testid="signin-google"
                   onClick={() => handleSignIn('google', setIsLoading)}
                   disabled={isLoading !== null}
                   className="group relative w-full flex items-center justify-center gap-4 px-5 py-4 border border-border-strong bg-[#0A0A0A] hover:bg-[#111111] hover:border-brand-red/60 text-text-primary text-[11px] font-mono uppercase tracking-[0.15em] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -161,6 +162,7 @@ export function SignInModal() {
                 </button>
 
                 <button
+                  data-testid="signin-github"
                   onClick={() => handleSignIn('github', setIsLoading)}
                   disabled={isLoading !== null}
                   className="group relative w-full flex items-center justify-center gap-4 px-5 py-4 border border-border-strong bg-[#0A0A0A] hover:bg-[#111111] hover:border-brand-red/60 text-text-primary text-[11px] font-mono uppercase tracking-[0.15em] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"

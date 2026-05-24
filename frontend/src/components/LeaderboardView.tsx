@@ -221,6 +221,7 @@ export function LeaderboardView() {
                 return (
                   <motion.tr
                     key={t.rank}
+                    data-testid="leaderboard-row"
                     initial={{ opacity: 0, x: -8 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.04 }}

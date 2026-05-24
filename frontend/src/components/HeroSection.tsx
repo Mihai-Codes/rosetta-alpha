@@ -109,7 +109,20 @@ export function HeroSection({ latestHash, onScrollDown, isAuthenticated }: HeroS
             visible.actions ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
-          
+          <button
+            data-testid="enter-terminal-btn"
+            onClick={onScrollDown}
+            className="flex items-center gap-2 px-8 py-4 bg-brand-red text-bg-primary text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-white hover:text-bg-primary transition-colors duration-300 min-h-[52px] cursor-pointer"
+          >
+            Enter Terminal →
+          </button>
+          <Link
+            href="/quiz"
+            data-testid="try-quiz-cta"
+            className="flex items-center gap-2 px-8 py-4 border border-white/20 text-text-secondary text-[11px] font-medium uppercase tracking-[0.2em] hover:border-accent-gold/60 hover:text-accent-gold transition-all duration-300 min-h-[52px]"
+          >
+            Try Quiz
+          </Link>
         </div>
       </div>
     </section>

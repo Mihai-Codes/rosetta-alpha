@@ -119,6 +119,8 @@ function OptionButton({
 
   return (
     <button
+      data-testid="quiz-option"
+      data-selected={selected ? 'true' : undefined}
       onClick={onClick}
       disabled={disabled || revealed}
       className={`
@@ -127,6 +129,7 @@ function OptionButton({
         transition-all duration-200
         flex items-start gap-3
         ${borderClass} ${bgClass} ${textClass}
+        ${selected ? 'selected' : ''}
         ${disabled && !revealed ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:border-accent-gold/60'}
       `}
     >
@@ -184,6 +187,7 @@ function ResultsScreen({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
+      data-testid="quiz-result"
       className="solid-panel rounded-2xl p-8 sm:p-10 text-center space-y-6"
     >
       <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-brand-red">
@@ -745,6 +749,7 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
                 className="px-6 pb-6"
               >
                 <button
+                  data-testid="quiz-submit"
                   onClick={handleNext}
                   className="w-full py-3 rounded-xl border border-border-strong text-text-primary text-[10px] font-medium uppercase tracking-[0.2em] hover:border-accent-gold/50 hover:text-accent-gold transition-all duration-200"
                 >

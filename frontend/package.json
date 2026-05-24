@@ -47,6 +47,10 @@
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "screenshot": "node scripts/screenshot.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:report": "playwright show-report tests/playwright-report",
     "postinstall": "prisma generate"
   },
   "keywords": [],
