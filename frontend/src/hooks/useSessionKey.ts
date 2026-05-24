@@ -18,8 +18,9 @@
  */
 
 import React from 'react'
-import { useSignTypedData, useAccount, useSendTransaction } from 'wagmi'
-import { parseUnits, encodeFunctionData } from 'viem'
+import { useSignTypedData, useAccount, useWriteContract } from 'wagmi'
+import { parseUnits } from 'viem'
+import { arcTestnet } from '@/lib/chains'
 import {
   generateSessionKey,
   buildSessionAuthMessage,
@@ -97,8 +98,10 @@ export function useSessionKey() {
   // wagmi hook for EIP-712 typed data signing (Step 2 — authorize session key)
   const { signTypedDataAsync } = useSignTypedData()
 
-  // wagmi hook for sending USDC to fund the session key address (Step 3)
-  const { sendTransactionAsync } = useSendTransaction()
+  // wagmi hook for writing to USDC contract (ERC-20 transfer) to fund session key
+  // useWriteContract is the correct wagmi v2 API for contract calls —
+  // it also enforces chainId so the tx goes to Arc Testnet, not mainnet
+  const { writeContractAsync } = useWriteContract()
 
   // ── Load persisted session on mount ──
   React.useEffect(() => {
@@ -251,16 +254,14 @@ export function useSessionKey() {
 
         const fundingAmount = parseUnits(String(config.maxAmountUsdc), 6) // USDC = 6 decimals
 
-        // Encode ERC-20 transfer(sessionAddress, fundingAmount)
-        const transferData = encodeFunctionData({
+        // useWriteContract enforces chainId (Arc Testnet 5042002) via the chain param,
+        // preventing the tx from landing on mainnet if the wallet is on the wrong network.
+        await writeContractAsync({
+          address: usdcAddress as `0x${string}`,
           abi: ERC20_TRANSFER_ABI,
           functionName: 'transfer',
           args: [sessionAddress as `0x${string}`, fundingAmount],
-        })
-
-        await sendTransactionAsync({
-          to: usdcAddress as `0x${string}`,
-          data: transferData,
+          chainId: arcTestnet.id, // enforce Arc Testnet — prevents mainnet misfire
         })
 
         // ── Step 4: Build and persist the session key ──
@@ -299,7 +300,7 @@ export function useSessionKey() {
         throw err // Re-throw so callers can handle
       }
     },
-    [address, signTypedDataAsync, sendTransactionAsync]
+    [address, signTypedDataAsync, writeContractAsync]
   )
 
   // ── revokeSession ────────────────────────────────────────────────────────
