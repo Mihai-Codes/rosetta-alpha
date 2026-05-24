@@ -207,12 +207,11 @@ export function useSessionKey() {
         // ── Step 2: User signs EIP-712 authorization ──
         // This is wallet popup #1 — authorizes the session key's spending limits
         const typedData = buildSessionAuthMessage(address, sessionAddress, configWithNonce)
-        const authorizationSig = await signTypedDataAsync({
-          domain: typedData.domain as Parameters<typeof signTypedDataAsync>[0]['domain'],
-          types: typedData.types,
-          primaryType: typedData.primaryType,
-          message: typedData.message as Parameters<typeof signTypedDataAsync>[0]['message'],
-        })
+        // wagmi's signTypedDataAsync has strict generic inference on `message`.
+        // We cast the whole argument as `never` to bypass the inferred constraint —
+        // the runtime values are correct (built by buildSessionAuthMessage).
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const authorizationSig = await signTypedDataAsync(typedData as any)
 
         // ── Step 3: Fund the session key address with USDC ──
         // EIP-3009 requires signer == from, so the session key's address must
