@@ -271,7 +271,7 @@ export function createX402Client(config: X402Config) {
         // maxAmountRequired is already a string of atomic units (e.g. "1000" = $0.001)
         value: BigInt(requirement.maxAmountRequired),
         // validAfter = 0 (can be executed immediately)
-        validAfter: 0n,
+        validAfter: BigInt(0),
         // validBefore = now + server's timeout window
         validBefore: BigInt(
           Math.floor(Date.now() / 1000) + (requirement.maxTimeoutSeconds || 300)
