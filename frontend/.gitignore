@@ -8,3 +8,6 @@ out/
 /generated/prisma
 test-results/
 .cache-synpress
+tests/playwright-report/
+tests/test-results/
+tests/screenshots/
