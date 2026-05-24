@@ -38,10 +38,10 @@
  *     resource: '/api/premium',
  *     priceUsdc: 0.001,
  *     description: 'Premium data access',
- *     treasuryAddress: process.env.TREASURY_ADDRESS!,
+ *     treasuryAddress: process.env.ROSETTA_TREASURY_ADDRESS!,
  *     arcRpcUrl: process.env.ARC_RPC_URL!,
- *     usdcAddress: process.env.USDC_ARC_ADDRESS!,
- *     settlerPrivateKey: process.env.SETTLER_PRIVATE_KEY!,
+ *     usdcAddress: process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS!,
+ *     settlerPrivateKey: process.env.ARC_SETTLER_PRIVATE_KEY!,
  *   }, async (req) => {
  *     return Response.json({ data: 'premium content' })
  *   })
