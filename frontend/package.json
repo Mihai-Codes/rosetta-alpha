@@ -45,6 +45,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "screenshot": "node scripts/screenshot.mjs",
     "postinstall": "prisma generate"
   },
   "keywords": [],
