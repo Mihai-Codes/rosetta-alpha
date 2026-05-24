@@ -150,7 +150,7 @@ async function setupPage(page: Page, wallets = MOCK_WALLETS) {
     localStorage.setItem('rosetta_onboarded', 'true');
   });
   await page.goto('/');
-  await page.waitForTimeout(2000);
+  await page.waitForLoadState('domcontentloaded');
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -168,10 +168,10 @@ test.describe('Wallet UI (headless-safe)', () => {
     await setupPage(page);
     const connectBtn = page.locator('button:has-text("Connect Wallet"), button:has-text("Wallet")');
     await connectBtn.first().click();
-    await page.waitForTimeout(3000);
 
-    // RainbowKit renders wallet names — verify MetaMask appears
+    // RainbowKit renders wallet names — wait for modal content to appear
     const metamask = page.locator('text=MetaMask');
+    await expect(metamask.first()).toBeVisible({ timeout: 8000 });
     expect(await metamask.count()).toBeGreaterThanOrEqual(1);
   });
 
@@ -179,7 +179,8 @@ test.describe('Wallet UI (headless-safe)', () => {
     await setupPage(page);
     const connectBtn = page.locator('button:has-text("Connect Wallet"), button:has-text("Wallet")');
     await connectBtn.first().click();
-    await page.waitForTimeout(3000);
+    // Wait for RainbowKit modal to settle before counting entries
+    await page.waitForFunction(() => document.querySelectorAll('button').length > 2, { timeout: 8000 }).catch(() => {})
 
     // With EIP-6963 deduplication, MetaMask should appear at most once as a clickable wallet
     const metamaskButtons = page.locator('button:has-text("MetaMask")');
@@ -192,7 +193,7 @@ test.describe('Wallet UI (headless-safe)', () => {
     await setupPage(page);
     const connectBtn = page.locator('button:has-text("Connect Wallet"), button:has-text("Wallet")');
     await connectBtn.first().click();
-    await page.waitForTimeout(3000);
+    await page.waitForFunction(() => document.querySelectorAll('button').length > 2, { timeout: 8000 }).catch(() => {})
 
     const browserWallet = page.locator('button:has-text("Browser Wallet")');
     expect(await browserWallet.count()).toBe(0);
@@ -205,7 +206,7 @@ test.describe('Wallet UI (headless-safe)', () => {
       localStorage.setItem('rosetta_onboarded', 'true');
     });
     await page.goto('/');
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState('domcontentloaded');
 
     // Should show Sign In link/button instead of Connect Wallet
     const connectBtn = page.locator('button:has-text("Connect Wallet")');
@@ -217,7 +218,7 @@ test.describe('Wallet UI (headless-safe)', () => {
     await setupMockWallets(page);
     // Do NOT dismiss onboarding
     await page.goto('/');
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState('domcontentloaded');
 
     // Onboarding modal should be visible
     const modal = page.locator('text=What is Rosetta Alpha?');
@@ -228,7 +229,7 @@ test.describe('Wallet UI (headless-safe)', () => {
     await mockAuthSession(page);
     await setupMockWallets(page);
     await page.goto('/');
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState('domcontentloaded');
 
     // Click backdrop or navigate to last slide and click "Skip for now"
     const skipBtn = page.locator('text=Skip for now');
@@ -236,13 +237,10 @@ test.describe('Wallet UI (headless-safe)', () => {
 
     // Navigate to last slide
     if (await nextBtn.isVisible()) await nextBtn.click();
-    await page.waitForTimeout(500);
-    if (await nextBtn.isVisible()) await nextBtn.click();
-    await page.waitForTimeout(500);
+    if (await nextBtn.isVisible({ timeout: 1000 }).catch(() => false)) await nextBtn.click();
 
     // Skip
-    if (await skipBtn.isVisible()) await skipBtn.click();
-    await page.waitForTimeout(500);
+    if (await skipBtn.isVisible({ timeout: 2000 }).catch(() => false)) await skipBtn.click();
 
     // Modal should be gone, Connect Wallet button visible
     const connectBtn = page.locator('button:has-text("Connect Wallet"), button:has-text("Wallet")');
@@ -262,13 +260,15 @@ test.describe('MetaMask Connection Flow', () => {
     await setupPage(page);
     const connectBtn = page.locator('button:has-text("Connect Wallet"), button:has-text("Wallet")');
     await connectBtn.first().click();
-    await page.waitForTimeout(2000);
+    // Wait for modal to render before interacting
+    await page.waitForFunction(() => document.querySelectorAll('button').length > 2, { timeout: 8000 }).catch(() => {})
 
     // Find and click MetaMask option
     const metamask = page.locator('button:has-text("MetaMask"), div:has-text("MetaMask")').first();
     if (await metamask.isVisible()) {
       await metamask.click();
-      await page.waitForTimeout(3000);
+      // Wait for connection state to settle (address, prompt, or install link)
+      await page.waitForTimeout(1500);
 
       // Either connected (address visible) or shows connect prompt — both are valid
       const address = page.locator('text=0x742d');
@@ -320,7 +320,7 @@ test.describe('Disconnect Flow', () => {
 
     // Verify it survives navigation within same tab
     await page.goto('/dashboard');
-    await page.waitForTimeout(1000);
+    await page.waitForLoadState('domcontentloaded');
     const flagAfterNav = await page.evaluate(() =>
       sessionStorage.getItem('rosetta.wallet.manualDisconnect')
     );
@@ -358,7 +358,7 @@ test.describe('Page Navigation (no wallet crashes)', () => {
 
     for (const path of pages) {
       await page.goto(path);
-      await page.waitForTimeout(1500);
+      await page.waitForLoadState('domcontentloaded');
     }
 
     expect(errors).toEqual([]);
