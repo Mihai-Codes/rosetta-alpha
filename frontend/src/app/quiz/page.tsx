@@ -46,7 +46,7 @@ export default function QuizPage() {
   }, [])
 
   function handleComplete(score: number) {
-    console.log('Quiz complete:', score, '/', MOCK_QUESTIONS.length)
+    // Quiz completion state and telemetry are managed internally by the EarnQuiz component
   }
 
   return (
