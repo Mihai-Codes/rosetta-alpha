@@ -1,11 +1,13 @@
 'use client'
 
 import React from 'react'
-import { TrendingUp, TrendingDown, Minus, ExternalLink, Copy, Check, ChevronDown } from 'lucide-react'
+import { TrendingUp, TrendingDown, Minus, ExternalLink, Copy, Check, ChevronDown, Lock, Unlock, Loader2 } from 'lucide-react'
 import { DeskProps } from './DeskCard'
 import { regionMeta, copyToClipboard, truncateHash } from '../lib/format'
 import { ShareButton } from './ShareButton'
 import Link from 'next/link'
+import { x402, X402SessionRequired } from '@/lib/x402Client'
+import { GlobalSessionKeyModal } from '@/components/SessionKeyManager'
 
 interface ThesisCardProps {
   desk: DeskProps
@@ -164,6 +166,12 @@ export function ThesisCard({ desk }: ThesisCardProps) {
   const meta = regionMeta(desk.desk)
   const [copied, setCopied] = React.useState(false)
 
+  // x402 unlock state
+  const [unlocked, setUnlocked] = React.useState(false)
+  const [unlocking, setUnlocking] = React.useState(false)
+  const [unlockError, setUnlockError] = React.useState<string | null>(null)
+  const [showSessionModal, setShowSessionModal] = React.useState(false)
+
   const isLong = desk.direction === 'LONG'
   const isShort = desk.direction === 'SHORT'
   const directionColor = isLong ? '#4A9F6F' : isShort ? '#9F4A4A' : '#7B8FA6'
@@ -173,6 +181,32 @@ export function ThesisCard({ desk }: ThesisCardProps) {
     if (await copyToClipboard(desk.arc_tx)) {
       setCopied(true)
       setTimeout(() => setCopied(false), 1500)
+    }
+  }
+
+  // x402 pay-to-unlock: calls /api/thesis/[id] with automatic session key payment
+  const handleUnlock = async () => {
+    setUnlocking(true)
+    setUnlockError(null)
+    try {
+      // Use the desk slug as the thesis id (maps to Arc tx or IPFS CID prefix)
+      const thesisId = desk.arc_tx || desk.desk
+      const res = await x402.fetch(`/api/thesis/${encodeURIComponent(thesisId)}`)
+      if (res.ok) {
+        setUnlocked(true)
+      } else {
+        const body = await res.json().catch(() => ({}))
+        setUnlockError(body?.error ?? 'Payment failed. Please try again.')
+      }
+    } catch (err) {
+      if (err instanceof X402SessionRequired) {
+        // No session key — open the SessionKeyManager modal
+        setShowSessionModal(true)
+      } else {
+        setUnlockError(err instanceof Error ? err.message : 'Unlock failed.')
+      }
+    } finally {
+      setUnlocking(false)
     }
   }
 
@@ -216,20 +250,77 @@ export function ThesisCard({ desk }: ThesisCardProps) {
 
       {/* Reasoning chain */}
       <section className="px-4 sm:px-8 py-5 sm:py-7 bg-[#0A0A0A]">
-        <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary mb-4 sm:mb-6">
-          Reasoning Chain
-        </p>
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary">
+            Reasoning Chain
+          </p>
+          {!unlocked && desk.reasoning_blocks.length > 1 && (
+            <div className="flex items-center gap-1.5 text-[9px] text-text-tertiary">
+              <Lock className="w-2.5 h-2.5" />
+              <span>{desk.reasoning_blocks.length - 1} blocks locked</span>
+            </div>
+          )}
+          {unlocked && (
+            <div className="flex items-center gap-1.5 text-[9px] text-emerald-500">
+              <Unlock className="w-2.5 h-2.5" />
+              <span>Full chain unlocked</span>
+            </div>
+          )}
+        </div>
 
         {desk.reasoning_blocks.length === 0 ? (
           <p className="text-text-tertiary font-light italic text-sm">No reasoning blocks recorded for this thesis.</p>
         ) : (
-          <ol className="space-y-4 sm:space-y-6">
-            {desk.reasoning_blocks.map((block, i) => (
-              <ReasoningBlock key={i} block={block} index={i} meta={meta} />
-            ))}
-          </ol>
+          <>
+            <ol className="space-y-4 sm:space-y-6">
+              {/* Always show first block free */}
+              <ReasoningBlock key={0} block={desk.reasoning_blocks[0]} index={0} meta={meta} />
+              {/* Show rest only when unlocked */}
+              {unlocked && desk.reasoning_blocks.slice(1).map((block, i) => (
+                <ReasoningBlock key={i + 1} block={block} index={i + 1} meta={meta} />
+              ))}
+            </ol>
+
+            {/* Unlock gate — shown when locked and there are more blocks */}
+            {!unlocked && desk.reasoning_blocks.length > 1 && (
+              <div className="mt-6 border border-[#C9A84C]/20 bg-[#C9A84C]/5 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div>
+                  <p className="text-[10px] font-medium uppercase tracking-[0.15em] mb-0.5" style={{ color: '#C9A84C' }}>
+                    🔓 Unlock full reasoning — 0.001 USDC
+                  </p>
+                  <p className="text-[10px] text-text-tertiary">
+                    {desk.reasoning_blocks.length - 1} more agent{desk.reasoning_blocks.length > 2 ? 's' : ''} · Instant with session key
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleUnlock}
+                  disabled={unlocking}
+                  className="shrink-0 flex items-center gap-1.5 px-3 py-2 text-[9px] font-bold uppercase tracking-[0.2em] transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+                  style={{ background: '#C9A84C', color: '#0A0A0A' }}
+                >
+                  {unlocking
+                    ? <><Loader2 className="w-3 h-3 animate-spin" />Paying…</>
+                    : <><Unlock className="w-3 h-3" />Unlock</>
+                  }
+                </button>
+              </div>
+            )}
+
+            {/* Error state */}
+            {unlockError && (
+              <p className="mt-3 text-[10px] text-red-400 border border-red-500/20 bg-red-500/5 px-3 py-2">
+                {unlockError}
+              </p>
+            )}
+          </>
         )}
       </section>
+
+      {/* SessionKeyManager modal — opens when X402SessionRequired is thrown */}
+      {showSessionModal && (
+        <GlobalSessionKeyModal />
+      )}
 
       {/* Market question */}
       <section className="px-4 sm:px-8 py-5 sm:py-6 border-t border-border bg-[#141414]">
