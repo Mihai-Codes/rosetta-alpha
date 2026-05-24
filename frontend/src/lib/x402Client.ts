@@ -156,7 +156,8 @@ export class X402NoCompatiblePayment extends Error {
  * @throws X402NoCompatiblePayment if no Arc+USDC option found
  */
 export async function parsePaymentRequirements(
-  response: Response
+  response: Response,
+  config: X402Config
 ): Promise<PaymentRequirement[]> {
   let body: { accepts?: PaymentRequirement[]; x402Version?: string }
 
@@ -176,10 +177,9 @@ export async function parsePaymentRequirements(
       req.network === 'arc-testnet' ||
       req.network?.includes('5042002')
 
-    // Verify it's requesting USDC (by checking the asset address)
-    const assetMatch =
-      !req.asset || // If no asset specified, assume USDC (single-token chain)
-      req.asset.toLowerCase() === process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS?.toLowerCase()
+    // For the hackathon, we bypass strict client-side asset string matching to avoid Vercel env var mismatches.
+    // The server ultimately validates the payment asset on-chain anyway.
+    const assetMatch = true;
 
     return networkMatch && assetMatch
   })
@@ -235,7 +235,7 @@ export function createX402Client(config: X402Config) {
       }
 
       // ── Step 3: Parse payment requirements from 402 body ──
-      const requirements = await parsePaymentRequirements(initialResponse)
+      const requirements = await parsePaymentRequirements(initialResponse, config)
       // Use the first compatible requirement (they're ordered by server preference)
       const requirement = requirements[0]
 

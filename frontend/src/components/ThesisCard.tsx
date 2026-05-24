@@ -7,7 +7,10 @@ import { regionMeta, copyToClipboard, truncateHash } from '../lib/format'
 import { ShareButton } from './ShareButton'
 import Link from 'next/link'
 import { x402, X402SessionRequired } from '@/lib/x402Client'
+import { useRouter } from 'next/navigation'
 import { SessionKeyManager } from '@/components/SessionKeyManager'
+import { authModalState } from '@/components/SignInModal'
+import { useSession } from 'next-auth/react'
 
 interface ThesisCardProps {
   desk: DeskProps
@@ -165,6 +168,8 @@ function BlockContent({
 export function ThesisCard({ desk }: ThesisCardProps) {
   const meta = regionMeta(desk.desk)
   const [copied, setCopied] = React.useState(false)
+  const { data: session } = useSession()
+  const router = useRouter()
 
   // x402 unlock state
   // Show US desk as a free preview so judges can see the full reasoning trace without auth.
@@ -373,9 +378,20 @@ export function ThesisCard({ desk }: ThesisCardProps) {
 
         {/* Bottom Row: Actions */}
         <div className="flex items-center justify-between border-t border-border/40 pt-4">
-          <Link href={`/quiz?desk=${desk.desk.toLowerCase()}`} className="inline-flex items-center gap-2 px-4 py-2 bg-brand-red/10 border border-brand-red/30 text-brand-red text-[9px] font-bold uppercase tracking-[0.2em] hover:bg-brand-red hover:text-white transition-colors duration-300">
+          <button 
+            onClick={() => {
+              if (!session?.user) {
+                authModalState.open()
+              } else if (!unlocked && desk.desk.toLowerCase() !== 'us') {
+                authModalState.open()
+              } else {
+                router.push(`/quiz?desk=${desk.desk.toLowerCase()}`)
+              }
+            }}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-brand-red/10 border border-brand-red/30 text-brand-red text-[9px] font-bold uppercase tracking-[0.2em] hover:bg-brand-red hover:text-white transition-colors duration-300 cursor-pointer"
+          >
             Take the Quiz <span className="text-sm leading-none">→</span>
-          </Link>
+          </button>
           <ShareButton
             region={desk.desk}
             ticker={desk.ticker}

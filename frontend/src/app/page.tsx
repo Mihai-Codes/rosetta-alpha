@@ -10,6 +10,7 @@ import { Layout } from '@/components/Layout'
 import { SEED_DATA, fetchDesks } from '@/lib/data'
 import type { DeskProps } from '@/lib/types'
 import { DEFAULT_STATS } from '@/components/StatsBar'
+import { authModalState } from '@/components/SignInModal'
 
 export const dynamic = "force-dynamic"
 export default function HomePage() {

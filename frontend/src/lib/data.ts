@@ -15,7 +15,11 @@ function normalizeDesk(raw: Record<string, unknown>): DeskProps {
     question: String(raw.question ?? ''),
     price: raw.price ? String(raw.price) : undefined,
     ipfs_thesis_cid: String(metadata.ipfs_cid ?? raw.ipfs_thesis_cid ?? ''),
-    arc_tx: String(metadata.arc_tx ?? raw.arc_tx ?? ''),
+    arc_tx: (() => {
+      const tx = String(metadata.arc_tx ?? raw.arc_tx ?? '');
+      if (!tx) return '';
+      return tx.startsWith('0x') ? tx : `0x${tx}`;
+    })(),
     reasoning_blocks:
       (raw.reasoning_blocks as DeskProps['reasoning_blocks']) ??
       ((thesis.reasoning as unknown[]) ?? []).map((r: unknown) => {

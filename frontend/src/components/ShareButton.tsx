@@ -43,15 +43,14 @@ function buildTweetText({
       : summary
     : ''
 
-  // Hook: user just received a signal from an AI hedge fund
-  let tweet = `🤖 AI hedge fund just flagged this:\n\n`
+  // Hook: user just received a signal from Rosetta Alpha
+  let tweet = `🤖 Rosetta Alpha just flagged this:\n\n`
   tweet += `${flagEmoji} ${regionName} • ${direction} $${ticker} — ${pct}% confidence\n`
   if (excerpt) tweet += `"${excerpt}"\n`
   tweet += `\n`
   if (arcHash) {
-    tweet += `📊 Verified on Arc Testnet\n`
-    tweet += `🔗 https://testnet.arcscan.app/tx/${arcHash}\n`
-    tweet += `\n`
+    tweet += `📊 Verified on Arc Testnet\n\n`
+    tweet += `🔗 https://testnet.arcscan.app/tx/${arcHash}\n\n`
   }
   tweet += `Try it → rosetta-alpha.vercel.app`
 
