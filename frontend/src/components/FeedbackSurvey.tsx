@@ -64,7 +64,7 @@ export function FeedbackSurvey() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="fixed bottom-6 right-6 z-[9999] w-[420px] max-w-[calc(100vw-3rem)] bg-[#0A0A0A] border border-border-strong solid-panel overflow-hidden shadow-glow-red"
+          className="fixed bottom-6 right-6 z-[9999] w-[420px] max-w-[calc(100vw-3rem)] bg-[#0A0A0A] border border-border-strong solid-panel overflow-hidden shadow-none"
           role="dialog"
           aria-modal="false"
           aria-label="Feedback survey"
@@ -94,7 +94,7 @@ export function FeedbackSurvey() {
                 animate={{ opacity: 1 }}
                 className="flex items-center gap-2 text-[11px] font-mono text-positive py-4 uppercase tracking-wide"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-positive animate-pulse" />
+                <span className="w-1.5 h-1.5 rounded-full bg-positive " />
                 Feedback transmitted_
               </motion.div>
             ) : (

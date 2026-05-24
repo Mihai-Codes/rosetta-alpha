@@ -20,7 +20,7 @@ export function ReasoningExplorer({ desk, onClose }: ExplorerProps) {
 
         <div className="p-6 border-b border-border/60 flex items-center justify-between bg-bg-secondary/40">
           <div className="flex items-center gap-4">
-            <div className="p-2 border border-brand-red/20 bg-brand-red/5 rounded-none flex items-center justify-center shadow-glow-red">
+            <div className="p-2 border border-brand-red/20 bg-brand-red/5 rounded-none flex items-center justify-center shadow-none">
               <span className="font-display text-brand-red leading-none px-1 text-lg">R∆</span>
             </div>
             <div>
@@ -65,7 +65,7 @@ export function ReasoningExplorer({ desk, onClose }: ExplorerProps) {
         <div className="p-4 bg-bg-secondary/60 border-t border-border/60 flex justify-end gap-3">
           <button 
             onClick={onClose}
-            className="px-6 py-2 border border-brand-red/50 text-brand-red text-[10px] font-medium uppercase tracking-[0.2em] rounded-none hover:bg-brand-red hover:text-bg-brand-red hover:shadow-glow-red transition-all duration-200"
+            className="px-6 py-2 border border-brand-red/50 text-brand-red text-[10px] font-medium uppercase tracking-[0.2em] rounded-none hover:bg-brand-red hover:text-bg-brand-red hover:shadow-none transition-all duration-200"
           >
             Acknowledge
           </button>
@@ -92,7 +92,7 @@ function ReasoningStep({ block }: { block: ReasoningBlock }) {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <span className="w-1.5 h-1.5 rounded-none bg-brand-red red-pulse" />
+        <span className="w-1.5 h-1.5 rounded-none bg-brand-red " />
         <span className="text-[10px] font-medium uppercase tracking-[0.25em] text-brand-red">
           Step: {block.agent_role.replace('_', ' ')}
         </span>

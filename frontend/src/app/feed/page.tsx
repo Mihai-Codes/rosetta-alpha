@@ -30,7 +30,7 @@ export default function FeedPage() {
             Real-Time Stream
           </p>
           <h1 className="font-display text-[clamp(1.75rem,5vw,3rem)] text-text-primary leading-tight">
-            The reasoning, <em className="text-brand-red">as it happens.</em>
+            Live Deliberation <em className="text-brand-red">Feed.</em>
           </h1>
         </div>
         <LiveFeedView desks={data} loading={loading} />

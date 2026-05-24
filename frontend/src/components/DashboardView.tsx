@@ -507,12 +507,12 @@ export function DashboardView() {
         {/* Terminal Lock Screen */}
         <div className="lg:col-span-2 bg-[#050505] p-8 sm:p-16 flex flex-col items-center justify-center min-h-[450px] text-center relative overflow-hidden border-r border-border/60">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-brand-red/10 via-transparent to-transparent opacity-40 pointer-events-none" />
-          <div className="relative z-10 flex flex-col items-center w-full max-w-md border border-brand-red/20 bg-bg-primary/80 p-8 sm:p-10 shadow-glow-red">
-            <div className="w-16 h-16 border border-brand-red/50 bg-brand-red/10 flex items-center justify-center box-glow-pulse mb-6 rounded-none relative">
+          <div className="relative z-10 flex flex-col items-center w-full max-w-md border border-brand-red/20 bg-bg-primary/80 p-8 sm:p-10 shadow-none">
+            <div className="w-16 h-16 border border-brand-red/50 bg-brand-red/10 flex items-center justify-center  mb-6 rounded-none relative">
               <Lock className="w-6 h-6 text-brand-red" />
             </div>
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-brand-red/10 border border-brand-red/30 text-brand-red text-[9px] font-mono uppercase tracking-widest mb-6">
-              <span className="w-1.5 h-1.5 bg-brand-red animate-pulse rounded-none" />
+              <span className="w-1.5 h-1.5 bg-brand-red  rounded-none" />
               Access Restricted
             </div>
             <h2 className="font-display text-text-primary text-2xl sm:text-3xl mb-4 tracking-tight uppercase">
@@ -542,7 +542,7 @@ export function DashboardView() {
                 Target Allocation
               </p>
               <span className="flex items-center gap-1.5 px-2 py-1 bg-brand-red/5 border border-brand-red/20 text-brand-red text-[8px] uppercase tracking-[0.2em]">
-                <span className="w-1 h-1 bg-brand-red animate-pulse rounded-none" /> SECURE
+                <span className="w-1 h-1 bg-brand-red  rounded-none" /> SECURE
               </span>
             </div>
             
@@ -560,7 +560,7 @@ export function DashboardView() {
           {/* Overlay text */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30 bg-bg-primary/40 backdrop-blur-[2px]">
             <div className="flex flex-col items-center gap-3">
-               <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-brand-red bg-bg-primary/95 px-5 py-3 border border-brand-red/30 shadow-glow-red flex items-center gap-2">
+               <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-brand-red bg-bg-primary/95 px-5 py-3 border border-brand-red/30 shadow-none flex items-center gap-2">
                  <Key className="w-3.5 h-3.5" />
                  Awaiting Decryption
                </span>
@@ -592,7 +592,7 @@ export function DashboardView() {
         
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-white/5 pb-4 mb-6 gap-4">
            <div className="flex items-center gap-3">
-              <span className="w-1.5 h-3 bg-positive animate-pulse shadow-glow-green" />
+              <span className="w-1.5 h-3 bg-positive  shadow-none" />
               <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-text-primary font-bold">Live Telemetry</span>
            </div>
            <div className="flex items-center gap-4">
@@ -662,8 +662,8 @@ export function DashboardView() {
             <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary">
               Terminal Access
             </p>
-            <span className="flex items-center gap-1.5 px-2 py-1 bg-positive/10 border border-positive/30 text-positive text-[9px] uppercase tracking-[0.2em] shadow-glow-green">
-              <span className="w-1.5 h-3 bg-positive animate-pulse" /> Connected
+            <span className="flex items-center gap-1.5 px-2 py-1 bg-positive/10 border border-positive/30 text-positive text-[9px] uppercase tracking-[0.2em] shadow-none">
+              <span className="w-1.5 h-3 bg-positive " /> Connected
             </span>
           </div>
 

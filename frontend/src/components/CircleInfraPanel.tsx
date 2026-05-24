@@ -129,7 +129,7 @@ export function CircleInfraPanel() {
           </div>
           
           {loading ? (
-            <div className="animate-pulse space-y-3 flex-1">
+            <div className=" space-y-3 flex-1">
               <div className="h-4 bg-white/5 rounded w-1/2"></div>
               <div className="h-4 bg-white/5 rounded w-3/4"></div>
             </div>
@@ -138,7 +138,7 @@ export function CircleInfraPanel() {
               <div className="flex items-center justify-between">
                 <span className="text-xs text-text-secondary">Registry Status</span>
                 <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium tracking-wide uppercase ${erc?.contracts?.identityLive ? 'bg-positive/10 text-positive border border-positive/20' : 'bg-brand-red/10 text-brand-red border border-brand-red/20'}`}>
-                  {erc?.contracts?.identityLive ? <><Activity size={10} className="animate-pulse" /> Live</> : <><AlertCircle size={10} /> Offline</>}
+                  {erc?.contracts?.identityLive ? <><Activity size={10} className="" /> Live</> : <><AlertCircle size={10} /> Offline</>}
                 </span>
               </div>
               
@@ -183,7 +183,7 @@ export function CircleInfraPanel() {
           </div>
           
           {loading ? (
-            <div className="animate-pulse space-y-3 flex-1">
+            <div className=" space-y-3 flex-1">
               <div className="h-4 bg-white/5 rounded w-full"></div>
               <div className="h-4 bg-white/5 rounded w-2/3"></div>
             </div>
@@ -233,7 +233,7 @@ export function CircleInfraPanel() {
           </div>
           
           {loading ? (
-            <div className="animate-pulse space-y-3 flex-1">
+            <div className=" space-y-3 flex-1">
               <div className="h-4 bg-white/5 rounded w-3/4"></div>
               <div className="h-4 bg-white/5 rounded w-1/2"></div>
             </div>

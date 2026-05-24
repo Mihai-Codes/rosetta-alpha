@@ -8,9 +8,9 @@ export const arcTestnet = {
   iconUrl: 'https://rosetta-alpha.vercel.app/arc-logo.svg',
   iconBackground: '#0A0A0F',
   nativeCurrency: {
-    name: 'USDC',
+    name: 'USD Coin',
     symbol: 'USDC',
-    decimals: 18,
+    decimals: 6,
   },
   rpcUrls: {
     default: {

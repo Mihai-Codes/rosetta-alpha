@@ -96,7 +96,7 @@ export function SignInModal() {
             animate={{ opacity: 1, clipPath: 'inset(0% 0 0% 0)' }}
             exit={{ opacity: 0, clipPath: 'inset(50% 0 50% 0)', scale: 0.98 }}
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            className="relative w-full max-w-md bg-[#050505] border border-border-strong solid-panel overflow-hidden shadow-glow-red-strong rounded-none"
+            className="relative w-full max-w-md bg-[#050505] border border-border-strong solid-panel overflow-hidden shadow-none-strong rounded-none"
           >
             {/* Subtle CRT Scanline Overlay */}
             <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] z-20 opacity-20" />
@@ -121,7 +121,7 @@ export function SignInModal() {
               {/* Header / Brand */}
               <div className="mb-8 text-left border-b border-border pb-6">
                 <div className="flex items-center gap-3 mb-5">
-                  <div className="w-8 h-8 border border-brand-red/40 bg-brand-red/10 flex items-center justify-center box-glow-pulse">
+                  <div className="w-8 h-8 border border-brand-red/40 bg-brand-red/10 flex items-center justify-center ">
                     <Terminal className="w-4 h-4 text-brand-red" />
                   </div>
                   <p className="font-mono text-brand-red text-[10px] uppercase tracking-[0.3em]">

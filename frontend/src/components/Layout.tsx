@@ -99,7 +99,6 @@ export function Layout({ children, activeTab }: LayoutProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-bg-primary relative selection:bg-brand-red/20">
-      <div className="bg-grain" aria-hidden="true" />
       <div className="global-grid-wrapper" aria-hidden="true">
         <div className="global-grid-bg" />
       </div>
@@ -157,7 +156,7 @@ export function Layout({ children, activeTab }: LayoutProps) {
                 </button>
               </>
             ) : (
-              <button onClick={() => authModalState.open()} className="hidden md:flex items-center gap-2 px-5 py-2 solid-panel rounded-full text-text-primary text-[10px] font-medium uppercase tracking-[0.2em] transition-all duration-300 hover:border-brand-red hover:bg-brand-red/5 hover:!shadow-[0_0_12px_rgba(216,43,43,0.5)] hover:button-pulse cursor-pointer"><span className="w-1.5 h-1.5 rounded-full bg-accent-gold" />Sign In</button>
+              <button onClick={() => authModalState.open()} className="hidden md:flex items-center gap-2 px-5 py-2 solid-panel rounded-full text-text-primary text-[10px] font-medium uppercase tracking-[0.2em] transition-all duration-300 hover:border-brand-red hover:bg-brand-red/5  hover: cursor-pointer"><span className="w-1.5 h-1.5 rounded-full bg-accent-gold" />Sign In</button>
             )}
 
             {/* Hamburger — mobile only */}
@@ -206,7 +205,7 @@ export function Layout({ children, activeTab }: LayoutProps) {
                 Sign Out
               </button>
             ) : (
-              <button onClick={() => { authModalState.open(); setMobileOpen(false); }} className="mt-4 w-full flex items-center justify-center gap-2 px-5 py-4 min-h-[44px] solid-panel rounded-full text-text-primary text-[10px] font-medium uppercase tracking-[0.2em] transition-all duration-300 hover:border-brand-red hover:bg-brand-red/5 hover:!shadow-[0_0_12px_rgba(216,43,43,0.5)] hover:button-pulse cursor-pointer"><span className="w-1.5 h-1.5 rounded-full bg-accent-gold" />Sign In</button>
+              <button onClick={() => { authModalState.open(); setMobileOpen(false); }} className="mt-4 w-full flex items-center justify-center gap-2 px-5 py-4 min-h-[44px] solid-panel rounded-full text-text-primary text-[10px] font-medium uppercase tracking-[0.2em] transition-all duration-300 hover:border-brand-red hover:bg-brand-red/5  hover: cursor-pointer"><span className="w-1.5 h-1.5 rounded-full bg-accent-gold" />Sign In</button>
             )}
           </div>
         )}
@@ -217,7 +216,7 @@ export function Layout({ children, activeTab }: LayoutProps) {
 
       <main className="flex-1 w-full z-10">{children}</main>
 
-      <footer className="border-t border-brand-red/30 shadow-[0_-4px_30px_rgba(216,43,43,0.15)] py-8 sm:py-12 mt-0 bg-bg-primary z-10 relative">
+      <footer className="border-t border-white/10 py-8 sm:py-12 mt-0 bg-bg-primary z-10 relative">
         <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 flex flex-col lg:flex-row justify-between items-center gap-12 lg:gap-4 text-[11px] text-text-tertiary">
           
           {/* Left: Rosetta Alpha */}
@@ -234,7 +233,7 @@ export function Layout({ children, activeTab }: LayoutProps) {
           </div>
 
           {/* Separator 1 - Claw */}
-          <div className="hidden lg:block w-[1px] h-28 bg-gradient-to-b from-transparent via-brand-red to-transparent opacity-80 shadow-[0_0_15px_rgba(216,43,43,1)] red-pulse" />
+          <div className="hidden lg:block w-[1px] h-28 bg-gradient-to-b from-transparent via-white/20 to-transparent" />
 
           {/* Center: Stack */}
           <div className="shrink-0 flex flex-col items-center text-left w-full lg:w-[320px]">
@@ -250,7 +249,7 @@ export function Layout({ children, activeTab }: LayoutProps) {
           </div>
 
           {/* Separator 2 - Claw */}
-          <div className="hidden lg:block w-[1px] h-28 bg-gradient-to-b from-transparent via-brand-red to-transparent opacity-80 shadow-[0_0_15px_rgba(216,43,43,1)] red-pulse" />
+          <div className="hidden lg:block w-[1px] h-28 bg-gradient-to-b from-transparent via-white/20 to-transparent" />
 
           {/* Right: Reference */}
           <div className="flex-1 flex justify-end w-full lg:w-auto">

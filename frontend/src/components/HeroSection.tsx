@@ -86,7 +86,7 @@ export function HeroSection({ latestHash, onScrollDown, isAuthenticated }: HeroS
             return (
               <div
                 key={r}
-                className="group flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-3 solid-panel rounded-full hover:border-brand-red transition-all duration-300 cursor-default hover:shadow-[0_0_20px_rgba(216,43,43,0.4)] shrink-0 snap-start min-h-[44px]"
+                className="group flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-3 solid-panel rounded-full hover:border-border transition-all duration-300 cursor-default hover:bg-white/[0.02] shrink-0 snap-start min-h-[44px]"
               >
                 <div className="relative flex h-2 w-2 shrink-0">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: meta.color }} />
@@ -112,9 +112,9 @@ export function HeroSection({ latestHash, onScrollDown, isAuthenticated }: HeroS
           <button
             data-testid="enter-terminal-btn"
             onClick={onScrollDown}
-            className="flex items-center gap-2 px-8 py-4 bg-brand-red text-bg-primary text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-white hover:text-bg-primary transition-colors duration-300 min-h-[52px] cursor-pointer"
+            className="flex items-center gap-2 px-8 py-4 bg-white text-bg-primary text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-brand-red hover:text-white transition-colors duration-300 min-h-[52px] cursor-pointer"
           >
-            Enter Terminal →
+            Initialize Terminal
           </button>
           <Link
             href="/quiz"

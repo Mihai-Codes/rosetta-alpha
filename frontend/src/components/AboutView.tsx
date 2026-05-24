@@ -31,7 +31,7 @@ export function AboutView() {
           {/* Levitating Ray Dalio Portrait */}
           <div className="relative group w-64 h-64 sm:w-80 sm:h-80 animate-levitate">
             <div className="absolute inset-0 bg-gradient-to-tr from-brand-red to-[#C9A84C] opacity-30 blur-2xl group-hover:opacity-60 transition-opacity duration-700" />
-            <div className="absolute inset-0 border border-white/20 bg-[#0A0A0A] shadow-[0_0_40px_rgba(216,43,43,0.3)] z-10 overflow-hidden box-glow-pulse">
+            <div className="absolute inset-0 border border-white/20 bg-[#0A0A0A] shadow-[0_0_40px_rgba(216,43,43,0.3)] z-10 overflow-hidden ">
               <img 
                 src="/ray-dalio.webp" 
                 alt="Ray Dalio" 
@@ -78,7 +78,7 @@ export function AboutView() {
               </div>
               {/* Center crosshair */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full border border-brand-red/40 bg-[#0A0A0A] flex items-center justify-center">
-                <div className="w-1.5 h-1.5 rounded-full bg-brand-red animate-pulse" />
+                <div className="w-1.5 h-1.5 rounded-full bg-brand-red " />
               </div>
             </div>
           </div>

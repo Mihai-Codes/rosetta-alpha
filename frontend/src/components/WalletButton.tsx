@@ -167,7 +167,7 @@ export function WalletButton() {
     return (
       <div className="flex items-center gap-2">
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#E8A020]/50 bg-[#E8A020]/10 text-[10px] text-[#E8A020] font-medium uppercase tracking-[0.15em]">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#E8A020] animate-pulse shrink-0" />
+          <span className="w-1.5 h-1.5 rounded-full bg-[#E8A020]  shrink-0" />
           <span className="hidden sm:inline">Switch to Arc Testnet</span>
           <button
             onClick={async () => {
@@ -198,7 +198,7 @@ export function WalletButton() {
       <button
         data-testid="connect-wallet-btn"
         onClick={handleConnectClick}
-        className="flex items-center gap-2 px-5 py-2 solid-panel rounded-full text-text-primary text-[10px] font-medium uppercase tracking-[0.2em] transition-all duration-300 hover:border-brand-red hover:bg-brand-red/5 hover:!shadow-[0_0_12px_rgba(216,43,43,0.5)] hover:button-pulse cursor-pointer"
+        className="flex items-center gap-2 px-5 py-2 solid-panel rounded-full text-text-primary text-[10px] font-medium uppercase tracking-[0.2em] transition-all duration-300 hover:border-brand-red hover:bg-brand-red/5  hover: cursor-pointer"
       >
         <span className="w-1.5 h-1.5 rounded-full bg-accent-gold" />
         <span className="hidden sm:inline">Connect Wallet</span>
@@ -221,7 +221,7 @@ export function WalletButton() {
           hover:border-accent-gold/60
         "
       >
-        <span className="w-1.5 h-1.5 rounded-full bg-positive animate-pulse" />
+        <span className="w-1.5 h-1.5 rounded-full bg-positive " />
         <span className="font-mono">{truncateAddress(address!)}</span>
         {balance && (
           <span className="text-text-secondary ml-1">

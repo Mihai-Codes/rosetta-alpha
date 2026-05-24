@@ -62,7 +62,7 @@ function ProgressDots({
               isDone
                 ? 'w-8 bg-positive'
                 : isCurrent
-                ? 'w-8 bg-accent-gold/70 animate-pulse'
+                ? 'w-8 bg-accent-gold/70 '
                 : 'w-4 bg-border-strong'
             }`}
           />
@@ -208,7 +208,7 @@ function ResultsScreen({
         <div className="space-y-4">
           {/* Gold badge */}
           <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-[#C9A84C] bg-[#C9A84C]/10">
-            <span className="w-2 h-2 rounded-full bg-[#C9A84C] animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-[#C9A84C] " />
             <span
               className="text-[10px] font-bold uppercase tracking-[0.25em]"
               style={{ color: GOLD }}
@@ -574,14 +574,14 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
 
             {/* Switching chain */}
             {claimStatus === 'switching' && (
-              <p className="text-center text-[10px] uppercase tracking-[0.2em] text-accent-gold py-3 animate-pulse">
+              <p className="text-center text-[10px] uppercase tracking-[0.2em] text-accent-gold py-3 ">
                 Switching to Arc Testnet…
               </p>
             )}
 
             {/* Broadcasting */}
             {claimStatus === 'broadcasting' && (
-              <p className="text-center text-[10px] uppercase tracking-[0.2em] text-text-tertiary py-3 animate-pulse">
+              <p className="text-center text-[10px] uppercase tracking-[0.2em] text-text-tertiary py-3 ">
                 Broadcasting to Arc Testnet…
               </p>
             )}
@@ -597,7 +597,7 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
                   <span className="text-[9px] uppercase tracking-[0.25em] text-text-tertiary">
                     Arc Testnet
                   </span>
-                  <span className={`text-[9px] uppercase tracking-[0.2em] font-bold ${claimStatus === 'confirmed' ? 'text-positive' : 'text-accent-gold animate-pulse'}`}>
+                  <span className={`text-[9px] uppercase tracking-[0.2em] font-bold ${claimStatus === 'confirmed' ? 'text-positive' : 'text-accent-gold '}`}>
                     {claimStatus === 'confirmed' ? '✓ Confirmed' : '⏳ Confirming…'}
                   </span>
                 </div>

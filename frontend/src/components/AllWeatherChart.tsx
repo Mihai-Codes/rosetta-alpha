@@ -45,7 +45,7 @@ export function AllWeatherChart() {
 
       <div className="flex-1 flex flex-col justify-center mb-6 px-4 sm:px-6">
         {/* 2x2 Grid */}
-        <div className="grid grid-cols-2 gap-2 sm:gap-3 relative">
+        <div className="grid grid-cols-2 gap-2 sm:gap-3 relative ml-4 sm:ml-6 mb-4 sm:mb-6">
           {/* Axis Labels */}
           <div className="absolute -left-6 sm:-left-8 top-1/2 -translate-y-1/2 -rotate-90 text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-text-tertiary whitespace-nowrap">
             Growth
@@ -62,7 +62,7 @@ export function AllWeatherChart() {
             >
               <div className="flex justify-between items-start mb-3 sm:mb-4">
                 <span className="text-[10px] sm:text-[11px] font-mono text-text-secondary">{q.pct}%</span>
-                <div className="w-1.5 h-1.5 rounded-full shadow-glow-pulse opacity-80 group-hover:opacity-100 transition-opacity" style={{ backgroundColor: q.color }} />
+                <div className="w-1.5 h-1.5 rounded-full  opacity-80 group-hover:opacity-100 transition-opacity" style={{ backgroundColor: q.color }} />
               </div>
               <div className="space-y-0.5 mb-3 sm:mb-4">
                 <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wider text-text-primary leading-tight">{q.title}</p>
