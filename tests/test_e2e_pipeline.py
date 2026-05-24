@@ -58,29 +58,32 @@ class TestDataSources:
             pytest.skip("FinancialDatasetsClient not importable in this environment")
 
     @_requires_env("FINANCIAL_DATASETS_API_KEY")
-    def test_live_price_fetch(self):
-        """Live: fetch a price snapshot for AAPL and check shape."""
-        from agents.us_agent import FinancialDatasetsClient
+    async def test_live_price_fetch(self):
+        """Live: fetch a price snapshot for AAPL and check response is non-empty dict."""
+        from data.mcp_client import FinancialDatasetsClient
 
-        client = FinancialDatasetsClient()
-        price = client.get_current_price("AAPL")
-        assert price is not None, "Expected a price value"
-        assert isinstance(price, (int, float)), f"Unexpected type: {type(price)}"
-        assert price > 0, "Price must be positive"
+        async with FinancialDatasetsClient() as client:
+            snapshot = await client.get_price_snapshot("AAPL")
+        assert snapshot is not None
+        assert isinstance(snapshot, dict), f"Expected dict, got {type(snapshot)}"
+        assert len(snapshot) > 0, "Price snapshot must not be empty"
 
     @_requires_env("FINANCIAL_DATASETS_API_KEY")
-    def test_live_fundamentals_fetch(self):
-        """Live: fetch fundamentals and verify key fields exist."""
-        from agents.us_agent import FinancialDatasetsClient
+    async def test_live_fundamentals_fetch(self):
+        """Live: fetch company facts for AAPL and verify nested payload present."""
+        from data.mcp_client import FinancialDatasetsClient
 
-        client = FinancialDatasetsClient()
-        data = client.get_fundamentals("AAPL")
+        async with FinancialDatasetsClient() as client:
+            data = await client.get_company_facts("AAPL")
         assert data is not None
         assert isinstance(data, dict)
-        # At least one of the canonical keys must be present
-        canonical_keys = {"eps", "revenue", "pe_ratio", "market_cap", "earnings"}
-        assert canonical_keys & set(data.keys()), (
-            f"None of {canonical_keys} found in response keys: {list(data.keys())}"
+        assert len(data) > 0, "company_facts response must not be empty"
+        # API wraps payload under 'company_facts' key; unwrap if present
+        facts = data.get("company_facts", data)
+        assert isinstance(facts, dict), f"Expected nested dict, got: {type(facts)}"
+        canonical_keys = {"industry", "exchange", "cik", "category", "sector", "description"}
+        assert canonical_keys & set(facts.keys()), (
+            f"None of {canonical_keys} found in facts: {list(facts.keys())}"
         )
 
     def test_mock_data_source_shape(self):
