@@ -74,3 +74,5 @@ prompts/private/
 training/feedback_cache.json
 .vercel
 docs/outreach/
+docs/debug_live*.jpg
+docs/live_screenshot*.jpg
