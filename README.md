@@ -70,7 +70,7 @@ This problem is compounded by what Cambrian Network's financial agent landscape 
 ## What's Built
 
 <p align="center">
-  <img src="docs/whats_built.svg" alt="What's Built — Rosetta Alpha" width="800" />
+  <img src="docs/diagrams/whats_built.svg" alt="What's Built — Rosetta Alpha" width="800" />
 </p>
 
 ---
