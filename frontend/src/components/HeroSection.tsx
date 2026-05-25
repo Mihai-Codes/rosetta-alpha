@@ -74,7 +74,7 @@ export function HeroSection({ latestHash, onScrollDown, isAuthenticated }: HeroS
         </div>
 
         {/* Region pills — horizontal scroll on mobile */}
-        <div className="relative mb-4 sm:mb-5">
+        <div className="relative mb-6 sm:mb-8">
           <div
             data-reveal-id="regions"
             className={`flex items-center justify-start sm:justify-center gap-2 sm:gap-3 overflow-x-auto pb-2 sm:pb-0 scrollbar-hide snap-x snap-mandatory transition-all duration-1000 delay-300 ${
