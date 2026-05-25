@@ -20,6 +20,8 @@ import React from 'react'
 import { Zap, Shield, Clock, CheckCircle2, XCircle, AlertTriangle, Loader2, X } from 'lucide-react'
 import { useSessionKey } from '@/hooks/useSessionKey'
 import type { SessionKeyConfig } from '@/lib/sessionKey'
+import { useAccount } from 'wagmi'
+import { useConnectModal } from '@rainbow-me/rainbowkit'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -385,12 +387,27 @@ export function SessionKeyManager({ variant = 'panel', onClose }: SessionKeyMana
     revokeSession,
     clearError,
   } = useSessionKey()
+  const { isConnected } = useAccount()
+  const { openConnectModal } = useConnectModal()
 
   // Default config for renewal (when expired/exhausted)
   const [renewBudget] = React.useState(5)
   const [renewExpiry] = React.useState(86400)
 
+  function ensureWalletConnected() {
+    if (isConnected) return true
+    sessionStorage.removeItem('rosetta.wallet.manualDisconnect')
+    openConnectModal?.()
+    return false
+  }
+
+  const approveSessionWithWalletCheck = async (config: SessionKeyConfig) => {
+    if (!ensureWalletConnected()) return
+    await approveSession(config)
+  }
+
   const handleRenew = async () => {
+    if (!ensureWalletConnected()) return
     await approveSession({
       maxAmountUsdc: renewBudget,
       expirySeconds: renewExpiry,
@@ -452,7 +469,7 @@ export function SessionKeyManager({ variant = 'panel', onClose }: SessionKeyMana
           />
         ) : (
           <SetupPanel
-            onApprove={approveSession}
+            onApprove={approveSessionWithWalletCheck}
             isApproving={isApproving}
             error={error}
           />

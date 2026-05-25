@@ -11,6 +11,8 @@ import { useRouter } from 'next/navigation'
 import { SessionKeyManager } from '@/components/SessionKeyManager'
 import { authModalState } from '@/components/SignInModal'
 import { useSession } from 'next-auth/react'
+import { useAccount } from 'wagmi'
+import { useConnectModal } from '@rainbow-me/rainbowkit'
 
 interface ThesisCardProps {
   desk: DeskProps
@@ -170,6 +172,8 @@ export function ThesisCard({ desk }: ThesisCardProps) {
   const [copied, setCopied] = React.useState(false)
   const { data: session } = useSession()
   const router = useRouter()
+  const { isConnected } = useAccount()
+  const { openConnectModal } = useConnectModal()
 
   // x402 unlock state
   // Show US desk as a free preview so judges can see the full reasoning trace without auth.
@@ -198,6 +202,11 @@ export function ThesisCard({ desk }: ThesisCardProps) {
   const handleUnlock = async () => {
     if (!session?.user) {
       authModalState.open()
+      return
+    }
+    if (!isConnected) {
+      sessionStorage.removeItem('rosetta.wallet.manualDisconnect')
+      openConnectModal?.()
       return
     }
     setUnlocking(true)
