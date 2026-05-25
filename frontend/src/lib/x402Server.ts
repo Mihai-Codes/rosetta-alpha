@@ -40,7 +40,7 @@
  *     description: 'Premium data access',
  *     treasuryAddress: process.env.ROSETTA_TREASURY_ADDRESS!,
  *     arcRpcUrl: process.env.ARC_RPC_URL!,
- *     usdcAddress: process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS || '0x3600000000000000000000000000000000000000',
+ *     usdcAddress: (process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS && process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS !== 'undefined' ? process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS : '0x3600000000000000000000000000000000000000'),
  *     settlerPrivateKey: process.env.ARC_SETTLER_PRIVATE_KEY!,
  *   }, async (req) => {
  *     return Response.json({ data: 'premium content' })

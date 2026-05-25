@@ -44,10 +44,10 @@ export const POST = withX402(
     // 0.001 USDC processing fee — user earns 0.5 USDC reward on correct answers
     priceUsdc: 0.001,
     description: 'Quiz claim processing fee — earn 0.5 USDC on correct answer',
-    treasuryAddress: process.env.ROSETTA_TREASURY_ADDRESS || '0x000000000000000000000000000000000000dEaD',
+    treasuryAddress: (process.env.ROSETTA_TREASURY_ADDRESS && process.env.ROSETTA_TREASURY_ADDRESS !== 'undefined' ? process.env.ROSETTA_TREASURY_ADDRESS : '0x000000000000000000000000000000000000dEaD'),
     arcRpcUrl: process.env.NEXT_PUBLIC_ARC_RPC_URL!,
-    usdcAddress: process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS || '0x3600000000000000000000000000000000000000',
-    settlerPrivateKey: process.env.ARC_SETTLER_PRIVATE_KEY || '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80',
+    usdcAddress: (process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS && process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS !== 'undefined' ? process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS : '0x3600000000000000000000000000000000000000'),
+    settlerPrivateKey: (process.env.ARC_SETTLER_PRIVATE_KEY && process.env.ARC_SETTLER_PRIVATE_KEY !== 'undefined' ? process.env.ARC_SETTLER_PRIVATE_KEY : '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'),
   },
   async (req: Request) => {
     try {

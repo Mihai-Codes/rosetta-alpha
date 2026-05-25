@@ -248,7 +248,7 @@ export function useSessionKey() {
         // hold the USDC. We transfer maxAmountUsdc from the user's wallet.
         // This is wallet popup #2 — the last popup until session is exhausted.
         // Defaulting to Arc Testnet USDC contract if env var is missing
-        const usdcAddress = process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS || '0x3600000000000000000000000000000000000000'
+        const usdcAddress = (process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS && process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS !== 'undefined' ? process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS : '0x3600000000000000000000000000000000000000')
 
         const fundingAmount = parseUnits(String(config.maxAmountUsdc), 6) // USDC = 6 decimals
 

@@ -378,20 +378,9 @@ export function ThesisCard({ desk }: ThesisCardProps) {
 
         {/* Bottom Row: Actions */}
         <div className="flex items-center justify-between border-t border-border/40 pt-4">
-          <button 
-            onClick={() => {
-              if (!session?.user) {
-                authModalState.open()
-              } else if (!unlocked && desk.desk.toLowerCase() !== 'us') {
-                authModalState.open()
-              } else {
-                router.push(`/quiz?desk=${desk.desk.toLowerCase()}`)
-              }
-            }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-brand-red/10 border border-brand-red/30 text-brand-red text-[9px] font-bold uppercase tracking-[0.2em] hover:bg-brand-red hover:text-white transition-colors duration-300 cursor-pointer"
-          >
+          <Link href={`/quiz?desk=${desk.desk.toLowerCase()}`} className="inline-flex items-center gap-2 px-4 py-2 bg-brand-red/10 border border-brand-red/30 text-brand-red text-[9px] font-bold uppercase tracking-[0.2em] hover:bg-brand-red hover:text-white transition-colors duration-300">
             Take the Quiz <span className="text-sm leading-none">→</span>
-          </button>
+          </Link>
           <ShareButton
             region={desk.desk}
             ticker={desk.ticker}

@@ -49,8 +49,9 @@ function buildTweetText({
   if (excerpt) tweet += `"${excerpt}"\n`
   tweet += `\n`
   if (arcHash) {
+    const formattedHash = arcHash.startsWith('0x') ? arcHash : `0x${arcHash}`
     tweet += `📊 Verified on Arc Testnet\n\n`
-    tweet += `🔗 https://testnet.arcscan.app/tx/${arcHash}\n\n`
+    tweet += `🔗 https://testnet.arcscan.app/tx/${formattedHash}\n\n`
   }
   tweet += `Try it → rosetta-alpha.vercel.app`
 

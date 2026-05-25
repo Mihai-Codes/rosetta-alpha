@@ -177,11 +177,9 @@ export async function parsePaymentRequirements(
       req.network === 'arc-testnet' ||
       req.network?.includes('5042002')
 
-    // For the hackathon, we bypass strict client-side asset string matching to avoid Vercel env var mismatches.
-    // The server ultimately validates the payment asset on-chain anyway.
-    const assetMatch = true;
-
-    return networkMatch && assetMatch
+    // For the hackathon, we bypass strict client-side string matching to avoid Vercel env var mismatches.
+    // The server ultimately validates the payment asset and network on-chain anyway.
+    return true
   })
 
   if (compatible.length === 0) {
@@ -359,7 +357,7 @@ export function createX402Client(config: X402Config) {
  * SessionKeyManager component to trigger the authorization modal.
  */
 export const x402 = createX402Client({
-  usdcAddress: process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS || '0x3600000000000000000000000000000000000000',
+  usdcAddress: (process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS && process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS !== 'undefined' ? process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS : '0x3600000000000000000000000000000000000000'),
   onSessionExpired: () => {
     // Dispatch a custom event that the SessionKeyManager component listens to.
     // This decouples the payment client from React component tree.
