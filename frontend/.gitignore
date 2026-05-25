@@ -11,3 +11,6 @@ test-results/
 tests/playwright-report/
 tests/test-results/
 tests/screenshots/
+*.db
+tsconfig.tsbuildinfo
+revert_awc.py
