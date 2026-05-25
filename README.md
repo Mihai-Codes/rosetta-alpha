@@ -15,7 +15,9 @@
 
 > *"Dalio's All Weather — diversified across languages and regions, not just asset classes."*
 
-**Hackathon:** Canteen × Arc — Agora Agents · May 11–25, 2026 · **Builder:** Mihai Chindris
+**Hackathon:** Canteen × Arc — Agora Agents · May 11–25, 2026
+
+**Builder:** Mihai Chindris · Solo · Student, Romania · First crypto project · Built in 14 days with [AdaL CLI](https://github.com/SylphAI-Inc/AdalFlow) from SylphAI
 
 Multi-language AI financial research platform. Five regional agents each reason in their native language, then every thesis is hashed, pinned to IPFS, staked with a ROSETTA performance bond, and recorded immutably on **Arc L1** — closing the full accountability loop automatically.
 
@@ -48,6 +50,12 @@ The [Trading-R1 paper](https://arxiv.org/abs/2509.11420) from Tauric Research sh
 **Rosetta Alpha** is that primitive, deployed as a full-stack product — built on the [All Weather](https://www.bridgewater.com/research-and-insights/the-all-weather-story) risk-parity framework and applied across five language regions simultaneously.
 
 This problem is compounded by what Cambrian Network's financial agent landscape analysis identifies as the LLM clustering problem: all major models, when prompted generically, converge on near-identical financial advice. Generic prompts produce generic answers produce zero competitive advantage. Rosetta Alpha's multi-model, multi-language routing is a direct architectural response — DeepSeek V4 Pro reasoning in Mandarin about Chinese equities produces structurally different analysis than English-first models reasoning about the same assets.
+
+---
+
+## Demo Video
+
+**[Watch the 3-minute walkthrough](https://riverside.com/shared/exported-clip/96c9f0e720a20bcbaaa0)**
 
 ---
 
@@ -248,7 +256,7 @@ npx prisma generate && npx prisma db push
 npm run dev
 
 # Visual QA screenshots (optional)
-node scripts/screenshot.mjs
+node frontend/scripts/screenshot.mjs
 ```
 
 ### Minimum Viable Setup (one free key)
