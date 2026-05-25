@@ -256,7 +256,7 @@ npx prisma generate && npx prisma db push
 npm run dev
 
 # Visual QA screenshots (optional)
-node frontend/scripts/screenshot.mjs
+node scripts/screenshot.mjs
 ```
 
 ### Minimum Viable Setup (one free key)
