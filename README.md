@@ -17,7 +17,7 @@
 
 **Hackathon:** Canteen × Arc — Agora Agents · May 11–25, 2026
 
-**Builder:** Mihai Chindris · Solo · Student, Romania · First crypto project · Built in 14 days with [AdaL CLI](https://github.com/SylphAI-Inc/AdalFlow) from SylphAI
+**Built by** Mihai Chindris in 14 days, solo, using [AdaL CLI](https://github.com/SylphAI-Inc/AdalFlow) from SylphAI.
 
 Multi-language AI financial research platform. Five regional agents each reason in their native language, then every thesis is hashed, pinned to IPFS, staked with a ROSETTA performance bond, and recorded immutably on **Arc L1** — closing the full accountability loop automatically.
 
