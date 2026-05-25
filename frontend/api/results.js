@@ -12,7 +12,7 @@ const LIVE_DATA = [
     "question": "Will Apple Inc.'s stock price (AAPL) be above $296.99 at the close of trading on 2026-08-14?",
     "ipfs_thesis_cid": "bafkreiaeiduymgnqadldwpysnxrukvn6rlzkybvlxylvdblsxy4u2tbw6q",
     "ipfs_question_cid": "bafkreicsspvcmjwm5kel26d6eyi4wn2llt4pooq57a2qwfybdoh6e2q6qe",
-    "arc_tx": "6141a0161a64b84093c2655774cb73842a593bdbd5b8fe2e8272ae091052bab4",
+    "arc_tx": "0x6141a0161a64b84093c2655774cb73842a593bdbd5b8fe2e8272ae091052bab4",
     "market_tx": null,
     "error": null,
     "summary": "Apple Inc. is a well-established technology company with a strong market presence, neutral overall sentiment, and potential for growth.",
@@ -42,7 +42,7 @@ const LIVE_DATA = [
     "metadata": {
       "trace_hash": "0x6141a016...",
       "ipfs_cid": "bafkreiaeiduymgnqadldwpysnxrukvn6rlzkybvlxylvdblsxy4u2tbw6q",
-      "arc_tx": "6141a0161a64b84093c2655774cb73842a593bdbd5b8fe2e8272ae091052bab4",
+      "arc_tx": "0x6141a0161a64b84093c2655774cb73842a593bdbd5b8fe2e8272ae091052bab4",
       "arc_explorer": "https://testnet.arcscan.app/tx/6141a0161a64b84093c2655774cb73842a593bdbd5b8fe2e8272ae091052bab4"
     }
   },
@@ -55,7 +55,7 @@ const LIVE_DATA = [
     "question": "Will the price of Bitcoin be above $79,064.00 on 2026-08-01T00:00:00+00:00?",
     "ipfs_thesis_cid": "bafkreiengcwkadazdtp5i6iwfhwdlmburcxif5srfpsnqpbelfqmtyqege",
     "ipfs_question_cid": "bafkreiaecsxensijco3ywrg4yuasxmghl3gwsjcl2cctinuk7z6xqunxxq",
-    "arc_tx": "37dd5f73e82f7855addc9a5cd74d7a2e3aa190d6407fb8e23788ed1c81ab470e",
+    "arc_tx": "0x37dd5f73e82f7855addc9a5cd74d7a2e3aa190d6407fb8e23788ed1c81ab470e",
     "market_tx": null,
     "error": null,
     "summary": "Bitcoin has a significant market capitalization and trading volume, with a strong positive sentiment and active development community, but limited macroeconomic analysis due to lack of specific data.",
@@ -95,7 +95,7 @@ const LIVE_DATA = [
     "metadata": {
       "trace_hash": "0x37dd5f73...",
       "ipfs_cid": "bafkreiengcwkadazdtp5i6iwfhwdlmburcxif5srfpsnqpbelfqmtyqege",
-      "arc_tx": "37dd5f73e82f7855addc9a5cd74d7a2e3aa190d6407fb8e23788ed1c81ab470e",
+      "arc_tx": "0x37dd5f73e82f7855addc9a5cd74d7a2e3aa190d6407fb8e23788ed1c81ab470e",
       "arc_explorer": "https://testnet.arcscan.app/tx/37dd5f73e82f7855addc9a5cd74d7a2e3aa190d6407fb8e23788ed1c81ab470e"
     }
   },
@@ -108,7 +108,7 @@ const LIVE_DATA = [
     "question": "Will the closing price of Guizhou Moutai 600519.SH on 2026-08-15 be higher than 1,332.95?",
     "ipfs_thesis_cid": "bafkreifdai47e6gx3lmxsgftj3bftetgdfarmufafgvq6le2giw5ty45ha",
     "ipfs_question_cid": "bafkreicofrpi7qyunvifkwsdeauangrphdrvzjpv3ohkfgogpmnxwb5mdq",
-    "arc_tx": "9e70695759ca4293c2602c9680d4b9135c3f587a09ba82b59aefd6d3bbd96f32",
+    "arc_tx": "0x9e70695759ca4293c2602c9680d4b9135c3f587a09ba82b59aefd6d3bbd96f32",
     "market_tx": null,
     "error": null,
     "summary": "Based on the analysis of market data and company information, we conclude that the investment value of Guizhou Moutai 600519.SH is relatively high, but further analysis of the company's financial statements and market trends is needed to determine its investment value.",
@@ -138,7 +138,7 @@ const LIVE_DATA = [
     "metadata": {
       "trace_hash": "0x9e706957...",
       "ipfs_cid": "bafkreifdai47e6gx3lmxsgftj3bftetgdfarmufafgvq6le2giw5ty45ha",
-      "arc_tx": "9e70695759ca4293c2602c9680d4b9135c3f587a09ba82b59aefd6d3bbd96f32",
+      "arc_tx": "0x9e70695759ca4293c2602c9680d4b9135c3f587a09ba82b59aefd6d3bbd96f32",
       "arc_explorer": "https://testnet.arcscan.app/tx/9e70695759ca4293c2602c9680d4b9135c3f587a09ba82b59aefd6d3bbd96f32"
     }
   },
@@ -151,7 +151,7 @@ const LIVE_DATA = [
     "question": "Will the stock price of LVMH (MC.PA) be above 455.00 on 2026-08-14?",
     "ipfs_thesis_cid": "bafkreidioaehvkf37l7uizznouvylpoviow4hfa3agd3vo5pljj7eggisu",
     "ipfs_question_cid": "bafkreiejgrnn2ae534rxabtib5dceomdrwqzukyqpo6f5p64ealehup5um",
-    "arc_tx": "2e27a822c1e67c9bb48def0805e0586ca113e7dd2907b02a0441dd2f91995d4f",
+    "arc_tx": "0x2e27a822c1e67c9bb48def0805e0586ca113e7dd2907b02a0441dd2f91995d4f",
     "market_tx": null,
     "error": null,
     "summary": "LVMH maintains a strong defensive profile with resilient operating margins despite current revenue contraction. Strategic divestment of Marc Jacobs enhances capital allocation efficiency. The stock serves as a high-quality hedge against ECB policy volatility, though it remains sensitive to FX fluctuations and cyclical luxury demand.",
@@ -181,7 +181,7 @@ const LIVE_DATA = [
     "metadata": {
       "trace_hash": "0x2e27a822...",
       "ipfs_cid": "bafkreidioaehvkf37l7uizznouvylpoviow4hfa3agd3vo5pljj7eggisu",
-      "arc_tx": "2e27a822c1e67c9bb48def0805e0586ca113e7dd2907b02a0441dd2f91995d4f",
+      "arc_tx": "0x2e27a822c1e67c9bb48def0805e0586ca113e7dd2907b02a0441dd2f91995d4f",
       "arc_explorer": "https://testnet.arcscan.app/tx/2e27a822c1e67c9bb48def0805e0586ca113e7dd2907b02a0441dd2f91995d4f"
     }
   },
@@ -194,7 +194,7 @@ const LIVE_DATA = [
     "question": "Will the closing price of Toyota Motor (7203.T) on June 15, 2026 be above 3,085.00 JPY?",
     "ipfs_thesis_cid": "bafkreihxxl5xslt4bsjv4fimuvlenvbdt4kwxi4cjr32p42vi4gk7zecpq",
     "ipfs_question_cid": "bafkreibl7nlgwmr7tpqouojdqvxw2e6nu5noe36ndmoem7gbi3skzpwmoy",
-    "arc_tx": "3919bedc121c39542bdaa9b2196e0152cc9771c6ddd0a5f4be70f9d5d083ed7d",
+    "arc_tx": "0x3919bedc121c39542bdaa9b2196e0152cc9771c6ddd0a5f4be70f9d5d083ed7d",
     "market_tx": null,
     "error": null,
     "summary": "Toyota Motor exhibits strong fundamental value with a P/E of 9.5x and a 3.3% dividend yield. Strategic investments in North America and technical bottoming at the 2800 JPY level support a long-term bullish outlook, despite short-term cost pressures.",
@@ -224,7 +224,7 @@ const LIVE_DATA = [
     "metadata": {
       "trace_hash": "0x3919bedc...",
       "ipfs_cid": "bafkreihxxl5xslt4bsjv4fimuvlenvbdt4kwxi4cjr32p42vi4gk7zecpq",
-      "arc_tx": "3919bedc121c39542bdaa9b2196e0152cc9771c6ddd0a5f4be70f9d5d083ed7d",
+      "arc_tx": "0x3919bedc121c39542bdaa9b2196e0152cc9771c6ddd0a5f4be70f9d5d083ed7d",
       "arc_explorer": "https://testnet.arcscan.app/tx/3919bedc121c39542bdaa9b2196e0152cc9771c6ddd0a5f4be70f9d5d083ed7d"
     }
   }

@@ -43,17 +43,16 @@ export function AllWeatherChart() {
         <p className="font-display text-lg text-text-primary">All Weather Matrix</p>
       </div>
 
-      <div className="flex-1 flex flex-col justify-center px-1 sm:px-4">
-        {/* 2x2 Grid */}
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 relative">
+      <div className="flex-1 flex flex-col justify-center px-0 sm:px-2 w-full max-w-[320px] mx-auto">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 relative w-full">
           {QUADRANTS.map((q, i) => (
             <div 
               key={i} 
-              className="border border-white/5 bg-[#0A0A0A] p-4 sm:p-5 transition-colors hover:bg-white/[0.04] flex flex-col justify-between min-h-[130px] rounded-sm"
+              className="border border-white/5 bg-[#0A0A0A] p-4 sm:p-5 transition-colors hover:bg-white/[0.04] flex flex-col justify-between min-h-[140px] rounded-md shadow-lg"
               style={{ borderTop: `3px solid ${q.color}` }}
             >
               <div className="flex justify-between items-start mb-3">
-                <span className="text-sm sm:text-base font-mono text-text-primary font-bold">{q.pct}%</span>
+                <span className="text-[13px] sm:text-[15px] font-mono text-text-primary font-bold">{q.pct}%</span>
               </div>
               
               <div className="space-y-1 mb-3">

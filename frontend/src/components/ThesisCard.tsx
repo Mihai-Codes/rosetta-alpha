@@ -196,6 +196,10 @@ export function ThesisCard({ desk }: ThesisCardProps) {
 
   // x402 pay-to-unlock: calls /api/thesis/[id] with automatic session key payment
   const handleUnlock = async () => {
+    if (!session?.user) {
+      authModalState.open()
+      return
+    }
     setUnlocking(true)
     setUnlockError(null)
     try {

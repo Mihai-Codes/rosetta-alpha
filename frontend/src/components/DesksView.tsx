@@ -117,7 +117,7 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
           ) : active ? (
             <div key={active.desk} className="solid-panel rounded-none border-x-0 border-y overflow-hidden relative">
               <ThesisCard desk={active} />
-              {!isAuthenticated && active.desk.toLowerCase() !== 'us' && <PremiumPaywall />}
+              
             </div>
           ) : (
             <div className="solid-panel p-16 text-center border-x-0 border-y">
@@ -145,7 +145,7 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
           ) : active ? (
             <div key={active.desk} className="solid-panel rounded-none border overflow-hidden relative">
               <ThesisCard desk={active} />
-              {!isAuthenticated && active.desk.toLowerCase() !== 'us' && <PremiumPaywall />}
+              
             </div>
           ) : (
             <div className="solid-panel p-16 text-center border">

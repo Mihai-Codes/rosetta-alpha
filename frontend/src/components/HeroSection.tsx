@@ -74,7 +74,7 @@ export function HeroSection({ latestHash, onScrollDown, isAuthenticated }: HeroS
         </div>
 
         {/* Region pills — horizontal scroll on mobile */}
-        <div className="relative mb-12 sm:mb-16">
+        <div className="relative mb-6 sm:mb-8">
           <div
             data-reveal-id="regions"
             className={`flex items-center justify-start sm:justify-center gap-2 sm:gap-3 overflow-x-auto pb-2 sm:pb-0 scrollbar-hide snap-x snap-mandatory transition-all duration-1000 delay-300 ${
@@ -105,7 +105,7 @@ export function HeroSection({ latestHash, onScrollDown, isAuthenticated }: HeroS
 
         <div
           data-reveal-id="actions"
-          className={`mt-4 sm:mt-6 mb-4 sm:mb-6 flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-6 transition-all duration-1000 delay-500 ${
+          className={`mt-6 sm:mt-8 mb-10 sm:mb-12 flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-6 transition-all duration-1000 delay-500 ${
             visible.actions ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
