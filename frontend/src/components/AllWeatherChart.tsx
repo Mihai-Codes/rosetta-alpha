@@ -2,82 +2,76 @@
 
 import React from 'react'
 
-const ALLOCATIONS = [
-  { label: 'Equities',      pct: 30, color: '#F0EDE8', regime: 'Rising Growth' },
-  { label: 'Long Bonds',    pct: 40, color: '#C9A84C', regime: 'Falling Growth' },
-  { label: 'Commodities',   pct: 15, color: '#D82B2B', regime: 'Rising Inflation' },
-  { label: 'Crypto / Gold', pct: 15, color: '#FFFFFF', regime: 'Falling Inflation' },
+const QUADRANTS = [
+  { 
+    title: 'Rising Growth',
+    subtitle: 'Falling Inflation',
+    assets: ['Equities', 'Corporate Credit'],
+    pct: 30,
+    color: '#F0EDE8',
+  },
+  { 
+    title: 'Rising Growth',
+    subtitle: 'Rising Inflation',
+    assets: ['Commodities', 'EM Credit'],
+    pct: 15,
+    color: '#D82B2B',
+  },
+  { 
+    title: 'Falling Growth',
+    subtitle: 'Falling Inflation',
+    assets: ['Long Bonds', 'Nominal Bonds'],
+    pct: 40,
+    color: '#C9A84C',
+  },
+  { 
+    title: 'Falling Growth',
+    subtitle: 'Rising Inflation',
+    assets: ['Crypto / Gold', 'ILBs'],
+    pct: 15,
+    color: '#7B8FA6',
+  },
 ]
 
 export function AllWeatherChart() {
-  const total = ALLOCATIONS.reduce((s, a) => s + a.pct, 0)
-  const radius = 64
-  const circumference = 2 * Math.PI * radius
-  let offset = 0
-
   return (
-    <div className="glass-panel border border-border/20 rounded-none p-5 sm:p-8 shadow-none h-full">
-      <div className="mb-5 sm:mb-6">
+    <div className="glass-panel border border-border/20 rounded-none p-5 sm:p-8 shadow-none h-full flex flex-col">
+      <div className="mb-6 sm:mb-8 shrink-0">
         <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary mb-2">
-          All Weather Allocation
+          Bridgewater Framework
         </p>
-        <p className="font-display text-lg text-text-primary">Risk Parity Strategy</p>
+        <p className="font-display text-lg text-text-primary">All Weather Matrix</p>
       </div>
 
-      {/* Donut chart — needs relative parent for the center label */}
-      <div className="relative flex items-center justify-center mb-5 sm:mb-6">
-        <svg width="180" height="180" viewBox="0 0 180 180" className="transform -rotate-90">
-          <circle cx="90" cy="90" r={radius} fill="none" stroke="#2A2A38" strokeWidth="14" />
-          {ALLOCATIONS.map((a, i) => {
-            const length = (a.pct / total) * circumference
-            const segment = (
-              <circle
-                key={i}
-                cx="90" cy="90"
-                r={radius}
-                fill="none"
-                stroke={a.color}
-                strokeWidth="14"
-                strokeDasharray={`${length} ${circumference}`}
-                strokeDashoffset={-offset}
-                style={{ transition: 'stroke-dashoffset 1s ease-out' }}
-              />
-            )
-            offset += length
-            return segment
-          })}
-        </svg>
-        {/* Center label sits inside the donut — must be absolute */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <p className="font-display text-3xl text-text-primary leading-none">{total}%</p>
-          <p className="text-[9px] uppercase tracking-[0.25em] text-text-tertiary mt-1">Diversified</p>
+      <div className="flex-1 flex flex-col justify-center px-1 sm:px-4">
+        {/* 2x2 Grid */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 relative">
+          {QUADRANTS.map((q, i) => (
+            <div 
+              key={i} 
+              className="border border-white/5 bg-[#0A0A0A] p-4 sm:p-5 transition-colors hover:bg-white/[0.04] flex flex-col justify-between min-h-[130px] rounded-sm"
+              style={{ borderTop: `3px solid ${q.color}` }}
+            >
+              <div className="flex justify-between items-start mb-3">
+                <span className="text-sm sm:text-base font-mono text-text-primary font-bold">{q.pct}%</span>
+              </div>
+              
+              <div className="space-y-1 mb-3">
+                <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-text-primary leading-tight">{q.title}</p>
+                <p className="text-[9px] sm:text-[10px] uppercase tracking-wider text-text-tertiary leading-tight">{q.subtitle}</p>
+              </div>
+
+              <div className="border-t border-white/5 pt-3 mt-auto">
+                <p className="text-[9px] sm:text-[10px] text-text-secondary font-mono opacity-80">{q.assets.join(', ')}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Legend */}
-      <div className="space-y-2.5">
-        {ALLOCATIONS.map(a => (
-          <div key={a.label} className="flex items-center justify-between text-[11px]">
-            <div className="flex items-center gap-2.5">
-              <span className="w-1.5 h-3 rounded-none shrink-0 shadow-glow-red" style={{ background: a.color }} />
-              <span className="text-text-secondary font-medium">{a.label}</span>
-            </div>
-            <span className="font-mono text-text-primary">{a.pct}%</span>
-          </div>
-        ))}
-      </div>
-
-      <div className="text-center mt-5 sm:mt-6 pt-4 sm:pt-5 border-t border-border/50 px-2">
-        <p className="text-[9px] text-text-tertiary leading-relaxed max-w-[260px] mx-auto text-center">
-          Inspired by Bridgewater's{' '}
-          <a
-            href="https://www.bridgewater.com/research-and-insights/the-all-weather-story"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-brand-red hover:text-text-primary transition-colors font-medium drop-shadow-[0_0_8px_rgba(216,43,43,0.5)]"
-          >
-            All Weather strategy
-          </a>, balancing exposure across four economic regimes: rising/falling growth and inflation.
+      <div className="text-center pt-5 sm:pt-6 border-t border-border/50 shrink-0 mt-6 sm:mt-8">
+        <p className="text-[9px] text-text-tertiary leading-relaxed max-w-[280px] mx-auto text-center">
+          Risk parity balancing exposure across four economic regimes to neutralize environmental risk.
         </p>
       </div>
     </div>

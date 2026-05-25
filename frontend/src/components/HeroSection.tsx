@@ -105,7 +105,7 @@ export function HeroSection({ latestHash, onScrollDown, isAuthenticated }: HeroS
 
         <div
           data-reveal-id="actions"
-          className={`mt-10 sm:mt-12 mb-8 sm:mb-10 flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-6 transition-all duration-1000 delay-500 ${
+          className={`mt-6 sm:mt-8 mb-6 sm:mb-8 flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-6 transition-all duration-1000 delay-500 ${
             visible.actions ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >

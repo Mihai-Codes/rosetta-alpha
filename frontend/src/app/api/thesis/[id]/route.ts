@@ -40,10 +40,10 @@ export const GET = withX402(
     resource: '/api/thesis/[id]',
     priceUsdc: 0.001,
     description: 'Full thesis reasoning chain — 0.001 USDC',
-    treasuryAddress: process.env.ROSETTA_TREASURY_ADDRESS!,
+    treasuryAddress: process.env.ROSETTA_TREASURY_ADDRESS || '0x000000000000000000000000000000000000dEaD',
     arcRpcUrl: process.env.NEXT_PUBLIC_ARC_RPC_URL!,
     usdcAddress: process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS || '0x3600000000000000000000000000000000000000',
-    settlerPrivateKey: process.env.ARC_SETTLER_PRIVATE_KEY!,
+    settlerPrivateKey: process.env.ARC_SETTLER_PRIVATE_KEY || '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80',
   },
   async (req: Request) => {
     try {
