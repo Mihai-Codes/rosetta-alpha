@@ -36,7 +36,7 @@ export function HeroSection({ latestHash, onScrollDown, isAuthenticated }: HeroS
   return (
     <section
       ref={heroRef}
-      className="relative w-full overflow-hidden flex flex-col items-center justify-center pt-24 sm:pt-32 pb-8 sm:pb-12"
+      className="relative w-full overflow-hidden flex flex-col items-center justify-center pt-24 sm:pt-32 pb-6 sm:pb-8"
       aria-label="Rosetta Alpha hero"
     >
       <div className="absolute inset-0 hero-vignette" aria-hidden />
@@ -74,7 +74,7 @@ export function HeroSection({ latestHash, onScrollDown, isAuthenticated }: HeroS
         </div>
 
         {/* Region pills — horizontal scroll on mobile */}
-        <div className="relative mb-6 sm:mb-8">
+        <div className="relative mb-4 sm:mb-5">
           <div
             data-reveal-id="regions"
             className={`flex items-center justify-start sm:justify-center gap-2 sm:gap-3 overflow-x-auto pb-2 sm:pb-0 scrollbar-hide snap-x snap-mandatory transition-all duration-1000 delay-300 ${
@@ -105,7 +105,7 @@ export function HeroSection({ latestHash, onScrollDown, isAuthenticated }: HeroS
 
         <div
           data-reveal-id="actions"
-          className={`mt-6 sm:mt-8 mb-10 sm:mb-12 flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-6 transition-all duration-1000 delay-500 ${
+          className={`mt-0 mb-0 flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-6 transition-all duration-1000 delay-500 ${
             visible.actions ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >

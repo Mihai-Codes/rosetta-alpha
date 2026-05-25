@@ -138,6 +138,14 @@ export type X402ServerConfig = {
   usdcAddress: string
   /** Private key of the settler wallet (calls transferWithAuthorization) */
   settlerPrivateKey: string
+  /**
+   * Whether to submit the EIP-3009 authorization on-chain.
+   *
+   * For hackathon thesis unlocks we verify the x402 proof but skip settlement
+   * because the demo session-key balance may not be live on Arc during judging.
+   * Routes that must settle on-chain (e.g. quiz claims) leave this enabled.
+   */
+  settleOnChain?: boolean
 }
 
 // ─── Middleware ──────────────────────────────────────────────────────────────
@@ -208,26 +216,28 @@ export function withX402(
       )
     }
 
-    // ── Step 5: Settle the payment on-chain ──
-    let txHash: string
-    try {
-      txHash = await settlePayment(signedAuth, config)
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown settlement error'
-      return new Response(
-        JSON.stringify({
-          error: 'Payment settlement failed',
-          detail: message,
-          code: 'SETTLEMENT_FAILED',
-        }),
-        {
-          status: 402,
-          headers: { 'Content-Type': 'application/json' },
-        }
-      )
+    // ── Step 5: Settle the payment on-chain (optional for demo thesis unlocks) ──
+    let txHash = 'verified-offchain'
+    if (config.settleOnChain !== false) {
+      try {
+        txHash = await settlePayment(signedAuth, config)
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Unknown settlement error'
+        return new Response(
+          JSON.stringify({
+            error: 'Payment settlement failed',
+            detail: message,
+            code: 'SETTLEMENT_FAILED',
+          }),
+          {
+            status: 402,
+            headers: { 'Content-Type': 'application/json' },
+          }
+        )
+      }
     }
 
-    // ── Step 6: Payment settled! Call the actual handler ──
+    // ── Step 6: Payment verified/settled! Call the actual handler ──
     const response = await handler(req)
 
     // Clone the response to add payment confirmation headers

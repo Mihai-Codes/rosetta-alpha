@@ -50,6 +50,9 @@ export const GET = withX402(
     arcRpcUrl: process.env.NEXT_PUBLIC_ARC_RPC_URL!,
     usdcAddress: getEnv(process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS, '0x3600000000000000000000000000000000000000'),
     settlerPrivateKey: getEnv(process.env.ARC_SETTLER_PRIVATE_KEY, '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'),
+    // Thesis unlock is a demo read-gate: verify x402 proof, then unlock.
+    // Quiz claims still perform on-chain settlement.
+    settleOnChain: false,
   },
   async (req: Request) => {
     try {
