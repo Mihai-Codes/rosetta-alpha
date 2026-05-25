@@ -53,7 +53,7 @@ This problem is compounded by what Cambrian Network's financial agent landscape 
 
 ## Live Demo
 
-🔴 **[rosetta-alpha.vercel.app](https://rosetta-alpha.vercel.app)**
+**[rosetta-alpha.vercel.app](https://rosetta-alpha.vercel.app)**
 
 | Page | What to see |
 |---|---|
@@ -171,13 +171,13 @@ This loop also serves as a defense against the failure modes identified in DeepM
 
 ## Judging Criteria Mapping
 
-### 🤖 Agentic Sophistication (30%)
+### Agentic Sophistication (30%)
 
 The AI isn't a single model making a call. It's a **three-layer deliberation chain** (see Architecture above). Each agent emits structured JSON with `thought_process`, `content`, and `confidence_score`. The Portfolio Manager synthesizes sub-agents into a final directional call — matching the [TauricResearch/TradingAgents](https://github.com/TauricResearch/TradingAgents) v0.2.4 architecture cited in the hackathon research brief.
 
 **What the AI decides autonomously:** direction (LONG/SHORT/NEUTRAL), confidence score (0–1), thesis summary, reasoning chain surfaced to users.
 
-### 📈 Traction (30%)
+### Traction (30%)
 
 - All 7 pages live with no placeholders — quiz, dashboard, leaderboard fully functional
 - Full auth stack: email magic links + Google/GitHub OAuth + wallet connect
@@ -186,7 +186,7 @@ The AI isn't a single model making a call. It's a **three-layer deliberation cha
 - 32 automated visual QA screenshots (Playwright, 8 pages × 4 breakpoints)
 - x402 nanopayment integration — pay-per-read thesis access + session key UX
 
-### 🔵 Circle Tool Usage (20%)
+### Circle Tool Usage (20%)
 
 | Tool | Usage |
 |---|---|
@@ -200,7 +200,7 @@ The AI isn't a single model making a call. It's a **three-layer deliberation cha
 | **ERC-8004 Agent Identity** | Arc Testnet identity/reputation/validation registries are integrated via `frontend/src/app/api/erc8004/status/route.ts` and surfaced in the Registry UI |
 | **Wagmi + RainbowKit** | Live USDC balance read from Arc Testnet via `useBalance` hook |
 
-### 💡 Innovation (20%)
+### Innovation (20%)
 
 The insight from hackathon Research Brief 01: *"the trace is the product."* Rosetta Alpha operationalizes this — the reasoning trace is published, verified on-chain, and users bet on their ability to understand it. Learn-to-earn via machine reasoning comprehension is a new gamification primitive.
 
