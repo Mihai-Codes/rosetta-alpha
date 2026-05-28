@@ -27,9 +27,9 @@ load_dotenv(override=True)
 from agents.translator_agent import TranslatorAgent
 from reasoning.arc_recorder import record_trace
 from reasoning.hasher import canonical_hash
-from reasoning.ipfs_pinner import pin_json
 from reasoning.trace_schema import InvestmentThesis, PredictionMarketQuestion, TraceMetadata
 from training.adalflow_trace import log_thesis_run
+from backend.persistence.multi_pinner import build_multi_pinner
 
 logger = logging.getLogger(__name__)
 
@@ -116,15 +116,22 @@ async def run_desk(
         else:
             print("  ⚠️  Question:  [translation failed — skipping]")
 
-        # 3. Pin thesis + question to IPFS
+        # 3. Pin thesis + question to IPFS (multi-provider: Pinata + Storacha)
+        multi = build_multi_pinner()
         thesis_payload = thesis.model_dump(mode="json")
-        thesis_cid = await pin_json(thesis_payload, name=f"{desk}-{ticker}-thesis")
+        thesis_cid, thesis_receipts = await multi.pin(
+            thesis_payload, name=f"{desk}-{ticker}-thesis"
+        )
         result["ipfs_thesis_cid"] = thesis_cid
-        print(f"  📌 Thesis CID: {thesis_cid}")
+        result["pin_receipts"] = [r.to_dict() for r in thesis_receipts]
+        _ok = sum(1 for r in thesis_receipts if r.status == "ok")
+        print(f"  📌 Thesis CID: {thesis_cid} (pinned to {_ok}/{len(thesis_receipts)} providers)")
 
         if question:
             q_payload = question.model_dump(mode="json")
-            q_cid = await pin_json(q_payload, name=f"{desk}-{ticker}-question")
+            q_cid, q_receipts = await multi.pin(
+                q_payload, name=f"{desk}-{ticker}-question"
+            )
             result["ipfs_question_cid"] = q_cid
             print(f"  📌 Q-CID:      {q_cid}")
 

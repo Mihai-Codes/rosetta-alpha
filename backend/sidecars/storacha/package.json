@@ -1,0 +1,17 @@
+{
+  "name": "rosetta-storacha-sidecar",
+  "version": "1.0.0",
+  "description": "Storacha (web3.storage/Filecoin) pinning sidecar for Rosetta Alpha",
+  "type": "module",
+  "scripts": {
+    "start": "node index.mjs",
+    "dev": "node --watch index.mjs"
+  },
+  "dependencies": {
+    "@storacha/client": "^1.0.0",
+    "express": "^4.21.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

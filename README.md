@@ -9,7 +9,7 @@
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![AdalFlow](https://img.shields.io/badge/AdalFlow-SylphAI-purple)](https://github.com/SylphAI-Inc/AdalFlow)
 [![Arc Testnet](https://img.shields.io/badge/Arc-Testnet%20chain%205042002-00c2ff)](https://testnet.arcscan.app)
-[![IPFS](https://img.shields.io/badge/IPFS-Pinata-65c2cb)](https://app.pinata.cloud)
+[![IPFS](https://img.shields.io/badge/IPFS-Pinata%20%2B%20Storacha-65c2cb)](https://app.pinata.cloud)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Hackathon](https://img.shields.io/badge/Agora%20Hackathon-Canteen%20%C3%97%20Arc-ff6b35)](https://agora.thecanteenapp.com/)
 
@@ -19,7 +19,11 @@
 
 **Built by** Mihai Chindris in 14 days, solo, using [AdaL CLI](https://github.com/SylphAI-Inc/AdalFlow) from SylphAI.
 
-Multi-language AI financial research platform. Five regional agents each reason in their native language, then every thesis is hashed, pinned to IPFS, staked with a ROSETTA performance bond, and recorded immutably on **Arc L1** — closing the full accountability loop automatically.
+Multi-language AI financial research platform. Five regional agents each reason in their native language, then every thesis is hashed, pinned redundantly to IPFS, staked with a ROSETTA performance bond, and recorded on **Arc L1** — closing the full accountability loop automatically.
+
+### Persistence Model
+
+Reasoning traces are content-addressed (IPFS CIDs) and pinned redundantly to two independent providers: **Pinata** (commercial IPFS pinning) and **Storacha** (Filecoin-backed hot storage, the web3.storage successor). The CID is recorded immutably on Arc L1 via `ReasoningRegistry`. Because IPFS is content-addressed, the on-chain CID is provider-independent: any IPFS gateway can retrieve the trace as long as at least one pin remains live. A `MultiPinner` abstraction pins to both providers in parallel, asserts CID equality across providers (content-addressing invariant), and persists per-provider receipts for transparency. A daily health check re-pins any CID that drops below quorum.
 
 ---
 
@@ -272,7 +276,10 @@ node scripts/screenshot.mjs
 |----------|--------|-------------|
 | `FINANCIAL_DATASETS_API_KEY` | [financialdatasets.ai](https://financialdatasets.ai) | US desk high-fidelity SEC data |
 | `DEEPSEEK_API_KEY` | [platform.deepseek.com](https://platform.deepseek.com) | China desk native ZH reasoning |
-| `PINATA_JWT` | [app.pinata.cloud](https://app.pinata.cloud) | IPFS pinning |
+| `PINATA_JWT` | [app.pinata.cloud](https://app.pinata.cloud) | IPFS pinning (Pinata) |
+| `STORACHA_SIDECAR_URL` | Local/deployed sidecar | Storacha pinning (default: `http://localhost:3030`) |
+| `STORACHA_AGENT_KEY` | `w3 key create` | Storacha sidecar Ed25519 key |
+| `STORACHA_DELEGATION` | `w3 delegation create` (base64 CAR) | Storacha space access delegation |
 | `ARC_RPC_URL` | [arc.network](https://www.arc.network) → Community → Discord | On-chain recording |
 | `ARC_DEPLOYER_PRIVATE_KEY` | Your Arc wallet (`Settings → Export Key`) | On-chain recording |
 | `TUSHARE_TOKEN` | [tushare.pro](https://tushare.pro) | China desk alt data (optional) |
@@ -294,7 +301,15 @@ rosetta-alpha/
 ├── reasoning/
 │   ├── trace_schema.py      # Pydantic domain models
 │   ├── hasher.py            # SHA-256 canonical hash
-│   ├── ipfs_pinner.py       # Pinata IPFS pinning
+│   ├── ipfs_pinner.py       # Pinata IPFS pinning (legacy, kept for fallback)
+├── backend/
+│   └── persistence/
+│       ├── multi_pinner.py  # Multi-provider pinning (Pinata + Storacha)
+│       ├── migrations/
+│       │   └── add_pin_receipts.sql
+│       └── __init__.py
+│   └── sidecars/
+│       └── storacha/        # Node.js sidecar for Storacha/Filecoin uploads
 │   ├── arc_recorder.py      # Arc on-chain recording + market creation
 │   └── settler.py           # Autonomous settler: poll → resolve → settle
 ├── training/

@@ -26,7 +26,6 @@ from dotenv import load_dotenv
 
 load_dotenv(override=True)
 
-from reasoning import ipfs_pinner
 from reasoning.trace_schema import (
     Direction,
     InvestmentThesis,
@@ -34,6 +33,7 @@ from reasoning.trace_schema import (
     PortfolioView,
     Region,
 )
+from backend.persistence.multi_pinner import build_multi_pinner
 
 logger = logging.getLogger(__name__)
 
@@ -190,13 +190,15 @@ class PortfolioEngine:
             top_risk_factors=_top_risks(theses),
         )
 
-        # Optional IPFS pin
+        # Optional IPFS pin (multi-provider: Pinata + Storacha)
         if self.pin:
-            cid = await ipfs_pinner.pin_json(
+            multi = build_multi_pinner()
+            cid, receipts = await multi.pin(
                 view.model_dump(mode="json"),
                 name=f"portfolio-{view.snapshot_id[:8]}",
             )
-            logger.info("Portfolio snapshot pinned → %s", cid)
+            _ok = sum(1 for r in receipts if r.status == "ok")
+            logger.info("Portfolio snapshot pinned → %s (%d/%d providers)", cid, _ok, len(receipts))
 
         return view
 
