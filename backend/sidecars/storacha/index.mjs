@@ -4,25 +4,32 @@
  * A lightweight Express server that wraps the @storacha/client SDK,
  * providing a simple HTTP interface for the Python MultiPinner to call.
  *
- * Accepts pre-canonicalized bytes directly (application/octet-stream) so the
- * exact same content that Pinata receives is uploaded here — ensuring CID equality.
+ * CRITICAL FOR CID DETERMINISM:
+ * This sidecar pre-packs raw bytes into a CAR file using the same UnixFS
+ * parameters that Pinata uses (256KB chunks, CIDv1, raw-leaves, dag-pb).
+ * It then uploads via client.uploadCAR() which preserves the exact DAG
+ * structure, ensuring the CID matches what Pinata returns for the same bytes.
+ *
+ * Without this, Storacha's uploadFile() uses 1MB chunks internally, which
+ * produces different CIDs for files > 256KB.
  *
  * Required env vars:
- *   STORACHA_AGENT_KEY       — Ed25519 private key (base64, from `w3 key create`)
- *   STORACHA_DELEGATION      — Base64-encoded CAR file with space access delegation
+ *   STORACHA_AGENT_KEY       - Ed25519 private key (base64, from `w3 key create`)
+ *   STORACHA_DELEGATION      - Base64-encoded CAR file with space access delegation
  *
  * Optional:
- *   STORACHA_PORT            — Port to listen on (default: 3030)
+ *   STORACHA_PORT            - Port to listen on (default: 3030)
  *
  * Endpoints:
- *   POST /upload   — Accepts raw bytes (application/octet-stream), returns { cid, pinned_at }
+ *   POST /upload   - Accepts raw bytes (application/octet-stream), returns { cid, pinned_at }
  *                    Optional header: X-Pin-Name for labeling
- *   GET  /health   — Returns { status: "ok" }
+ *   GET  /health   - Returns { status: "ok" }
  */
 
 import { create } from '@storacha/client'
 import { Signer } from '@storacha/client/principal/ed25519'
 import * as Proof from '@storacha/client/proof'
+import { packToBlob } from 'ipfs-car/pack'
 import express from 'express'
 
 const PORT = parseInt(process.env.STORACHA_PORT || '3030', 10)
@@ -65,6 +72,33 @@ async function initClient() {
 }
 
 // ---------------------------------------------------------------------------
+// CAR packing with Pinata-compatible parameters
+// ---------------------------------------------------------------------------
+
+/**
+ * Pack raw bytes into a CAR file using the same UnixFS parameters as Pinata:
+ * - 256KB chunk size (262144 bytes) - IPFS default, same as Pinata
+ * - CIDv1
+ * - raw-leaves enabled
+ * - dag-pb codec
+ *
+ * This ensures the root CID matches what Pinata produces for the same bytes.
+ */
+async function packToCAR(contentBytes) {
+  const file = new File([contentBytes], 'trace.json', { type: 'application/json' })
+
+  const { car, root } = await packToBlob({
+    input: [file],
+    // Do NOT wrap in directory - matches Pinata's wrapWithDirectory=false
+    wrapWithDirectory: false,
+    // 256KB chunks - matches Pinata's default chunker
+    // (ipfs-car uses 262144 by default which is the IPFS standard)
+  })
+
+  return { carBlob: car, rootCID: root.toString() }
+}
+
+// ---------------------------------------------------------------------------
 // Express app
 // ---------------------------------------------------------------------------
 
@@ -83,7 +117,7 @@ app.get('/health', (_req, res) => {
   res.status(503).json({ status: 'unavailable', error: initError?.message })
 })
 
-// Upload endpoint — accepts raw pre-canonicalized bytes
+// Upload endpoint - accepts raw pre-canonicalized bytes
 app.post('/upload', async (req, res) => {
   if (!initialized) {
     return res.status(503).json({
@@ -97,7 +131,7 @@ app.post('/upload', async (req, res) => {
     const name = req.headers['x-pin-name'] || null
 
     if (Buffer.isBuffer(req.body)) {
-      // Raw bytes path (preferred — ensures CID determinism)
+      // Raw bytes path (preferred - ensures CID determinism)
       contentBytes = req.body
     } else if (req.body && typeof req.body === 'object') {
       // JSON fallback path (for manual testing / backward compat)
@@ -113,20 +147,19 @@ app.post('/upload', async (req, res) => {
       return res.status(400).json({ error: 'Empty content' })
     }
 
-    // Upload exact bytes to Storacha (pins to IPFS + negotiates Filecoin storage deal).
-    // IMPORTANT: We use a Blob (not File) to avoid directory wrapping. Storacha wraps
-    // uploads in an IPFS directory listing when a filename is present (File objects).
-    // Using a plain Blob ensures we get the raw content CID, matching Pinata's
-    // wrapWithDirectory=false behavior. If the CID assertion fires in MultiPinner,
-    // this is the first place to debug — check if wrapping behavior changed.
-    const blob = new Blob([contentBytes], { type: 'application/octet-stream' })
-    const cid = await client.uploadFile(blob)
+    // Pack into CAR with Pinata-compatible parameters (256KB chunks, no directory wrapping)
+    // Then upload via uploadCAR to preserve the exact DAG structure and CID
+    const { carBlob, rootCID } = await packToCAR(contentBytes)
+
+    // Upload the CAR - this preserves our locally-computed CID exactly
+    await client.uploadCAR(carBlob)
 
     const result = {
-      cid: cid.toString(),
+      cid: rootCID,
       pinned_at: Math.floor(Date.now() / 1000),
       provider: 'storacha',
       name: name,
+      size: contentBytes.length,
     }
 
     console.log(`[storacha] Pinned: ${result.cid} (name=${name || 'unnamed'}, size=${contentBytes.length}B)`)
@@ -145,5 +178,6 @@ await initClient()
 
 app.listen(PORT, () => {
   console.log(`[storacha] Sidecar listening on http://localhost:${PORT}`)
-  console.log(`[storacha] Endpoints: POST /upload (raw bytes), GET /health`)
+  console.log(`[storacha] Endpoints: POST /upload (raw bytes -> CAR -> uploadCAR), GET /health`)
+  console.log(`[storacha] CID strategy: ipfs-car pack (256KB chunks, no directory wrap) -> uploadCAR`)
 })
