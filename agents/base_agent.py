@@ -111,6 +111,13 @@ class PydanticJsonParser(adal.DataComponent):
             # Force it to [] here to prevent validation errors when LLM returns strings/nulls.
             if self.model_class.__name__ == "InvestmentThesis":
                 data["reasoning_blocks"] = []
+                # Clamp time_horizon_days to minimum 1 (schema requires gt=0)
+                if data.get("time_horizon_days") is not None and int(data.get("time_horizon_days", 1)) < 1:
+                    data["time_horizon_days"] = 1
+            # Strip unknown fields to prevent extra="forbid" crashes from LLM hallucinations.
+            # The schema is strict by design (no junk in IPFS), but we sanitize at parse time.
+            known_fields = set(self.model_class.model_fields.keys())
+            data = {k: v for k, v in data.items() if k in known_fields}
             # Normalize common LLM field-name variations for PredictionMarketQuestion.
             if self.model_class.__name__ == "PredictionMarketQuestion":
                 # LLMs sometimes return expiry_date instead of expiry
