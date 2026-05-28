@@ -20,11 +20,11 @@ export default function HomePage() {
   const [stats, setStats] = React.useState(DEFAULT_STATS)
 
   React.useEffect(() => {
-    fetchDesks().then((desks) => {
-      setData(desks)
+    fetchDesks().then(({ results }) => {
+      setData(results)
       setLoading(false)
     })
-    const interval = setInterval(() => fetchDesks().then(setData), 30000)
+    const interval = setInterval(() => fetchDesks().then(({ results }) => setData(results)), 30000)
     return () => clearInterval(interval)
   }, [])
 

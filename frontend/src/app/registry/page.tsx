@@ -13,8 +13,8 @@ export default function RegistryPage() {
   const [loading, setLoading] = React.useState(true)
 
   React.useEffect(() => {
-    fetchDesks().then((desks) => {
-      setData(desks)
+    fetchDesks().then(({ results }) => {
+      setData(results)
       setLoading(false)
     })
   }, [])

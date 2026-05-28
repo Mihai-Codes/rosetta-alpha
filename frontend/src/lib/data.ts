@@ -155,7 +155,7 @@ export async function fetchDesks(): Promise<{ results: DeskProps[]; manifest_cid
 
     if (rawResults.length > 0) {
       const merged = rawResults.map(normalizeDesk)
-      const fetchedDesks = new Set(merged.map((d) => d.desk))
+      const fetchedDesks = new Set(merged.map((d: DeskProps) => d.desk))
       const finalResults = [...merged, ...SEED_DATA.filter((s) => !fetchedDesks.has(s.desk))]
       return { results: finalResults, manifest_cid }
     }
