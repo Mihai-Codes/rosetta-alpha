@@ -124,8 +124,12 @@ async def run_desk(
         )
         result["ipfs_thesis_cid"] = thesis_cid
         result["pin_receipts"] = [r.to_dict() for r in thesis_receipts]
+        # Gateway URLs — publicly verifiable proof links for the thesis trace
+        result["storacha_url"] = f"https://w3s.link/ipfs/{thesis_cid}"
+        result["pinata_url"] = f"https://ipfs.io/ipfs/{thesis_cid}"
         _ok = sum(1 for r in thesis_receipts if r.status == "ok")
         print(f"  📌 Thesis CID: {thesis_cid} (pinned to {_ok}/{len(thesis_receipts)} providers)")
+        print(f"  🔗 Verify:     https://w3s.link/ipfs/{thesis_cid}")
 
         if question:
             q_payload = question.model_dump(mode="json")
@@ -213,6 +217,33 @@ async def main(args: argparse.Namespace) -> None:
             verbose=args.verbose,
         )
         results.append(r)
+
+    # Pin run manifest — single CID that cryptographically fingerprints the entire run.
+    # Anyone can fetch https://w3s.link/ipfs/{manifest_cid} to independently verify all desk outputs.
+    manifest_cid = None
+    try:
+        manifest = {
+            "run_id": start.strftime("%Y%m%dT%H%M%SZ"),
+            "timestamp": start.isoformat(),
+            "desks": [
+                {
+                    "desk": r["desk"],
+                    "ticker": r["ticker"],
+                    "thesis_cid": r.get("ipfs_thesis_cid"),
+                    "question_cid": r.get("ipfs_question_cid"),
+                    "direction": r.get("direction"),
+                    "confidence": r.get("confidence"),
+                    "status": r["status"],
+                }
+                for r in results
+            ],
+        }
+        multi = build_multi_pinner()
+        manifest_cid, _ = await multi.pin(manifest, name=f"rosetta-run-{start.strftime('%Y%m%dT%H%M%SZ')}")
+        print(f"\n  🗂️  Run Manifest CID: {manifest_cid}")
+        print(f"  🔗 Verify all desks: https://w3s.link/ipfs/{manifest_cid}")
+    except Exception as _manifest_exc:
+        logger.warning("Run manifest pinning failed (non-fatal): %s", _manifest_exc)
 
     # Final summary
     elapsed = (datetime.now(timezone.utc) - start).total_seconds()
