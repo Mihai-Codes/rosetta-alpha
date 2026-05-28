@@ -31,6 +31,8 @@ export interface DeskProps {
   question: string
   price?: string
   ipfs_thesis_cid: string
+  storacha_url?: string
+  pinata_url?: string
   arc_tx: string
   reasoning_blocks: ReasoningBlock[]
 }

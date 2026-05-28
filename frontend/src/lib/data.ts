@@ -15,6 +15,8 @@ function normalizeDesk(raw: Record<string, unknown>): DeskProps {
     question: String(raw.question ?? ''),
     price: raw.price ? String(raw.price) : undefined,
     ipfs_thesis_cid: String(metadata.ipfs_cid ?? raw.ipfs_thesis_cid ?? ''),
+    storacha_url: raw.storacha_url ? String(raw.storacha_url) : undefined,
+    pinata_url: raw.pinata_url ? String(raw.pinata_url) : undefined,
     arc_tx: (() => {
       const tx = String(metadata.arc_tx ?? raw.arc_tx ?? '');
       if (!tx) return '';

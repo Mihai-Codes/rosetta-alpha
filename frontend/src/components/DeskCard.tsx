@@ -114,10 +114,11 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
         <div className="px-6 py-3 border-t border-border/50 bg-[#0A0A0A] flex items-center justify-between">
           {desk.ipfs_thesis_cid && desk.ipfs_thesis_cid.length > 20 ? (
             <a
-              href={`https://gateway.pinata.cloud/ipfs/${desk.ipfs_thesis_cid}`}
+              href={desk.storacha_url || `https://w3s.link/ipfs/${desk.ipfs_thesis_cid}`}
               target="_blank" rel="noopener noreferrer"
               onClick={e => e.stopPropagation()}
               className="flex items-center gap-1.5 text-[9px] font-mono uppercase tracking-widest text-text-tertiary hover:text-brand-red transition-colors"
+              title="Verify reasoning trace on Filecoin/IPFS (Storacha)"
             >
               <ExternalLink className="w-3 h-3" />
               IPFS: {desk.ipfs_thesis_cid.slice(0,6)}...
