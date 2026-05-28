@@ -29,7 +29,7 @@
 import { create } from '@storacha/client'
 import { Signer } from '@storacha/client/principal/ed25519'
 import * as Proof from '@storacha/client/proof'
-import { packToBlob } from 'ipfs-car/pack'
+import { createFileEncoderStream, CAREncoderStream } from 'ipfs-car'
 import express from 'express'
 
 const PORT = parseInt(process.env.STORACHA_PORT || '3030', 10)
@@ -78,24 +78,44 @@ async function initClient() {
 /**
  * Pack raw bytes into a CAR file using the same UnixFS parameters as Pinata:
  * - 256KB chunk size (262144 bytes) - IPFS default, same as Pinata
- * - CIDv1
- * - raw-leaves enabled
- * - dag-pb codec
+ * - CIDv1, raw-leaves, dag-pb codec
  *
+ * Uses ipfs-car v1.x stream-based API (createFileEncoderStream + CAREncoderStream).
  * This ensures the root CID matches what Pinata produces for the same bytes.
  */
 async function packToCAR(contentBytes) {
-  const file = new File([contentBytes], 'trace.json', { type: 'application/json' })
+  const file = new Blob([contentBytes], { type: 'application/json' })
 
-  const { car, root } = await packToBlob({
-    input: [file],
-    // Do NOT wrap in directory - matches Pinata's wrapWithDirectory=false
-    wrapWithDirectory: false,
-    // 256KB chunks - matches Pinata's default chunker
-    // (ipfs-car uses 262144 by default which is the IPFS standard)
+  // Collect all CAR chunks from the stream pipeline
+  const chunks = []
+  let rootCID
+
+  const fileStream = createFileEncoderStream(file)
+  const carStream = new CAREncoderStream()
+
+  // Intercept blocks to capture the root CID (last block emitted is the root)
+  const blockStream = new TransformStream({
+    transform(block, controller) {
+      rootCID = block.cid
+      controller.enqueue(block)
+    }
   })
 
-  return { carBlob: car, rootCID: root.toString() }
+  await fileStream
+    .pipeThrough(blockStream)
+    .pipeThrough(carStream)
+    .pipeTo(new WritableStream({
+      write(chunk) { chunks.push(chunk) }
+    }))
+
+  const carBytes = new Uint8Array(chunks.reduce((acc, c) => acc + c.length, 0))
+  let offset = 0
+  for (const chunk of chunks) {
+    carBytes.set(chunk, offset)
+    offset += chunk.length
+  }
+
+  return { carBlob: new Blob([carBytes], { type: 'application/vnd.ipld.car' }), rootCID: rootCID.toString() }
 }
 
 // ---------------------------------------------------------------------------
