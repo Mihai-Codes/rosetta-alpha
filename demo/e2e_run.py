@@ -269,8 +269,15 @@ async def main(args: argparse.Namespace) -> None:
 
     # Optionally dump JSON summary
     if args.output:
+        output_data = {
+            "results": results,
+            "manifest_cid": manifest_cid,
+            "net_signal": net_signal,
+            "avg_confidence": avg_conf,
+            "timestamp": start.isoformat()
+        }
         with open(args.output, "w") as f:
-            json.dump(results, f, indent=2, default=str)
+            json.dump(output_data, f, indent=2, default=str)
         print(f"  💾 Results saved to {args.output}")
 
 

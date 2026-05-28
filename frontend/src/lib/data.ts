@@ -144,17 +144,23 @@ export const SEED_DATA: DeskProps[] = [
 ]
 
 /** Fetch desks from API, merge with seed data for missing regions */
-export async function fetchDesks(): Promise<DeskProps[]> {
+export async function fetchDesks(): Promise<{ results: DeskProps[]; manifest_cid?: string }> {
   try {
     const res = await fetch('/api/results')
     const json = await res.json()
-    if (Array.isArray(json) && json.length > 0) {
-      const merged = json.map(normalizeDesk)
+    
+    // Handle both new nested format and legacy array format
+    const rawResults = Array.isArray(json) ? json : (json.results || [])
+    const manifest_cid = !Array.isArray(json) ? json.manifest_cid : undefined
+
+    if (rawResults.length > 0) {
+      const merged = rawResults.map(normalizeDesk)
       const fetchedDesks = new Set(merged.map((d) => d.desk))
-      return [...merged, ...SEED_DATA.filter((s) => !fetchedDesks.has(s.desk))]
+      const finalResults = [...merged, ...SEED_DATA.filter((s) => !fetchedDesks.has(s.desk))]
+      return { results: finalResults, manifest_cid }
     }
   } catch {
-    // Silently keep seed data
+    // Silently fallback
   }
-  return SEED_DATA
+  return { results: SEED_DATA }
 }

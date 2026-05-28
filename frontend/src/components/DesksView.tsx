@@ -16,6 +16,7 @@ interface DesksViewProps {
   desks: DeskProps[]
   loading: boolean
   isAuthenticated?: boolean
+  manifestCid?: string
 }
 
 function RegionPillBar({
