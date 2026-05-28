@@ -11,7 +11,7 @@ Providers:
 Usage:
     multi = MultiPinner(
         pinners=[PinataPinner(jwt), StorachaPinner(sidecar_url)],
-        require=1,  # TODO: bump to 2 for production once Storacha is stable
+        require=2,  # Dual-provider quorum enforced
     )
     cid, receipts = await multi.pin(trace_payload, name="us-AAPL-thesis")
 """
@@ -297,5 +297,5 @@ def build_multi_pinner() -> MultiPinner:
     ]
     return MultiPinner(
         pinners=pinners,
-        require=1,  # TODO: bump to 2 for production once Storacha is stable
+        require=2,  # Dual-provider quorum: both Pinata and Storacha must succeed
     )
