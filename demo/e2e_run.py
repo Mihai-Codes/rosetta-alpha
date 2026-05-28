@@ -218,36 +218,41 @@ async def main(args: argparse.Namespace) -> None:
         )
         results.append(r)
 
-    # Pin run manifest — single CID that cryptographically fingerprints the entire run.
-    # Anyone can fetch https://w3s.link/ipfs/{manifest_cid} to independently verify all desk outputs.
+    ok = [r for r in results if r["status"] == "ok"]
+
+    # Pin run manifest only when at least one desk succeeded.
+    # Failure governance: if 0/N desks succeed, mark analysis_failed and skip publish/pin.
     manifest_cid = None
-    try:
-        manifest = {
-            "run_id": start.strftime("%Y%m%dT%H%M%SZ"),
-            "timestamp": start.isoformat(),
-            "desks": [
-                {
-                    "desk": r["desk"],
-                    "ticker": r["ticker"],
-                    "thesis_cid": r.get("ipfs_thesis_cid"),
-                    "question_cid": r.get("ipfs_question_cid"),
-                    "direction": r.get("direction"),
-                    "confidence": r.get("confidence"),
-                    "status": r["status"],
-                }
-                for r in results
-            ],
-        }
-        multi = build_multi_pinner()
-        manifest_cid, _ = await multi.pin(manifest, name=f"rosetta-run-{start.strftime('%Y%m%dT%H%M%SZ')}")
-        print(f"\n  🗂️  Run Manifest CID: {manifest_cid}")
-        print(f"  🔗 Verify all desks: https://w3s.link/ipfs/{manifest_cid}")
-    except Exception as _manifest_exc:
-        logger.warning("Run manifest pinning failed (non-fatal): %s", _manifest_exc)
+    run_status = "analysis_failed" if len(ok) == 0 else ("success" if len(ok) == len(results) else "partial_success")
+    if len(ok) > 0:
+        try:
+            manifest = {
+                "run_id": start.strftime("%Y%m%dT%H%M%SZ"),
+                "timestamp": start.isoformat(),
+                "desks": [
+                    {
+                        "desk": r["desk"],
+                        "ticker": r["ticker"],
+                        "thesis_cid": r.get("ipfs_thesis_cid"),
+                        "question_cid": r.get("ipfs_question_cid"),
+                        "direction": r.get("direction"),
+                        "confidence": r.get("confidence"),
+                        "status": r["status"],
+                    }
+                    for r in results
+                ],
+            }
+            multi = build_multi_pinner()
+            manifest_cid, _ = await multi.pin(manifest, name=f"rosetta-run-{start.strftime('%Y%m%dT%H%M%SZ')}")
+            print(f"\n  🗂️  Run Manifest CID: {manifest_cid}")
+            print(f"  🔗 Verify all desks: https://w3s.link/ipfs/{manifest_cid}")
+        except Exception as _manifest_exc:
+            logger.warning("Run manifest pinning failed (non-fatal): %s", _manifest_exc)
+    else:
+        logger.warning("Run status=analysis_failed (0/%d desks succeeded); skipping manifest pin", len(results))
 
     # Final summary
     elapsed = (datetime.now(timezone.utc) - start).total_seconds()
-    ok = [r for r in results if r["status"] == "ok"]
     signals = [
         r["confidence"] * (1 if r["direction"] == "LONG" else -1 if r["direction"] == "SHORT" else 0)
         for r in ok
@@ -265,11 +270,13 @@ async def main(args: argparse.Namespace) -> None:
         print(f"           ❓ {q_preview}")
 
     print(f"\n  📊 Portfolio: Net signal={net_signal:+.2f} | Avg confidence={avg_conf:.1%} | {len(ok)}/{len(results)} desks OK")
+    print(f"  🧭 Run status: {run_status}")
     print(f"{'═'*68}\n")
 
     # Optionally dump JSON summary
     if args.output:
         output_data = {
+            "status": run_status,
             "results": results,
             "manifest_cid": manifest_cid,
             "net_signal": net_signal,

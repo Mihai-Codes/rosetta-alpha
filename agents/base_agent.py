@@ -225,6 +225,26 @@ Respond with ONLY a valid JSON object (no markdown, no prose) with these exact f
 - model_routing: {}
 """
 
+JSON_REPAIR_TEMPLATE = """\
+You are a strict JSON repair function.
+Return ONLY valid JSON for the target schema and nothing else.
+
+Target schema name: {{ schema_name }}
+Schema (JSON Schema):
+{{ schema_json }}
+
+Original model output (possibly malformed):
+<RAW_OUTPUT>
+{{ raw_output }}
+</RAW_OUTPUT>
+
+Rules:
+1) Preserve meaning from the original output whenever possible.
+2) Return valid JSON only (no markdown, no comments, no prose).
+3) Do not add unknown fields.
+4) If a field is missing, use the safest neutral value consistent with the schema.
+"""
+
 
 # ---------------------------------------------------------------------------
 # Base agent
@@ -277,6 +297,37 @@ class RegionalAgent(adal.Component):
             model_kwargs=kwargs,
             template=SYNTHESIS_TEMPLATE,
         )
+
+        # One-shot deterministic repair generator for malformed JSON outputs.
+        repair_kwargs = dict(kwargs)
+        repair_kwargs.setdefault("temperature", 0)
+        self.json_repair = adal.Generator(
+            model_client=client,
+            model_kwargs=repair_kwargs,
+            template=JSON_REPAIR_TEMPLATE,
+        )
+
+    def _repair_and_parse_once(
+        self,
+        *,
+        parser: PydanticJsonParser,
+        output: Any,
+        extra_fields: dict[str, Any] | None = None,
+    ) -> BaseModel | None:
+        """Run exactly one JSON-repair pass, then parse again. Fail closed on error."""
+        raw = getattr(output, "raw_response", None) or getattr(output, "data", None) or str(output or "")
+        try:
+            repaired_output = self.json_repair(
+                prompt_kwargs={
+                    "schema_name": parser.model_class.__name__,
+                    "schema_json": json.dumps(parser.model_class.model_json_schema(), ensure_ascii=False),
+                    "raw_output": _sanitize_untrusted_text(raw, max_len=16000),
+                }
+            )
+            return parser.call(repaired_output, extra_fields=extra_fields)
+        except Exception as exc:
+            logger.warning("JSON repair pass failed for %s: %s", parser.model_class.__name__, exc)
+            return None
 
     # -- subclass contract --------------------------------------------------
 
@@ -341,8 +392,17 @@ class RegionalAgent(adal.Component):
             # The LLM doesn't echo agent_role back — inject it post-parse.
             block = self._block_parser.call(block_output, extra_fields={"agent_role": role.value})
             if not isinstance(block, ReasoningBlock):
+                block = self._repair_and_parse_once(
+                    parser=self._block_parser,
+                    output=block_output,
+                    extra_fields={"agent_role": role.value},
+                )
+            if not isinstance(block, ReasoningBlock):
                 raw_snippet = (getattr(block_output, 'raw_response', None) or '')[:300]
-                raise RuntimeError(f"{role} sub-agent failed to produce a ReasoningBlock. raw: {raw_snippet}")
+                raise RuntimeError(
+                    f"{role} sub-agent failed to produce a ReasoningBlock after one repair pass. "
+                    f"raw: {raw_snippet}"
+                )
             blocks.append(block)
 
         # 2. Portfolio-manager synthesis.
@@ -384,8 +444,14 @@ class RegionalAgent(adal.Component):
             extra_fields={"region": self.region.value, "ticker_or_asset": safe_ticker},
         )
         if not isinstance(thesis, InvestmentThesis):
+            thesis = self._repair_and_parse_once(
+                parser=self._thesis_parser,
+                output=thesis_output,
+                extra_fields={"region": self.region.value, "ticker_or_asset": safe_ticker},
+            )
+        if not isinstance(thesis, InvestmentThesis):
             raw_snippet = (getattr(thesis_output, 'raw_response', None) or '')[:300]
-            raise RuntimeError(f"Synthesizer failed. raw: {raw_snippet}")
+            raise RuntimeError(f"Synthesizer failed after one repair pass. raw: {raw_snippet}")
 
         # 3. Splice the sub-agent blocks back in (synthesizer may have summarized them).
         if not thesis.reasoning_blocks:
