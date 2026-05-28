@@ -1,0 +1,281 @@
+from __future__ import annotations
+
+import asyncio
+import json
+import logging
+import os
+import re
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any, Literal
+
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+from agents.translator_agent import TranslatorAgent
+from backend.persistence.multi_pinner import build_multi_pinner
+from demo.e2e_run import _build_desks, run_desk
+
+logger = logging.getLogger(__name__)
+
+app = FastAPI(title="Rosetta Alpha API")
+
+# Enable CORS for local development
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+RESULTS_PATH = Path(__file__).parent.parent / "results.json"
+DeskKey = Literal["us", "cn", "eu", "jp", "crypto"]
+_TICKER_RE = re.compile(r"^[A-Za-z0-9._/-]{1,24}$")
+
+
+class AnalyzeRequest(BaseModel):
+    """API request model for on-demand multi-desk analysis."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    desks: list[DeskKey] | None = Field(
+        default=None,
+        description="Subset of desks to run. Omit for all desks.",
+    )
+    tickers: dict[DeskKey, str] = Field(
+        default_factory=dict,
+        description="Optional per-desk ticker overrides, e.g. {'us':'MSFT','crypto':'ETH'}.",
+    )
+    on_chain: bool = Field(
+        default=False,
+        description="Whether to record traces on Arc L1 (slower, external dependency).",
+    )
+    timeout_seconds: float = Field(
+        default=180.0,
+        ge=15.0,
+        le=900.0,
+        description="Overall request timeout budget.",
+    )
+    desk_timeout_seconds: float = Field(
+        default=75.0,
+        ge=10.0,
+        le=300.0,
+        description="Per-desk timeout budget.",
+    )
+    circuit_breaker_failures: int = Field(
+        default=3,
+        ge=1,
+        le=5,
+        description="Open circuit after N consecutive desk failures; remaining desks are skipped.",
+    )
+    verbose: bool = Field(default=False)
+
+    @field_validator("desks")
+    @classmethod
+    def _validate_desks_unique(cls, v: list[DeskKey] | None) -> list[DeskKey] | None:
+        if v is None:
+            return v
+        if len(set(v)) != len(v):
+            raise ValueError("desks must be unique")
+        return v
+
+    @field_validator("tickers")
+    @classmethod
+    def _validate_tickers(cls, v: dict[DeskKey, str]) -> dict[DeskKey, str]:
+        cleaned: dict[DeskKey, str] = {}
+        for desk, ticker in v.items():
+            symbol = ticker.strip().upper()
+            if not _TICKER_RE.fullmatch(symbol):
+                raise ValueError(
+                    f"Invalid ticker for desk '{desk}': '{ticker}'. "
+                    "Allowed: letters, digits, ., _, /, -, max length 24."
+                )
+            cleaned[desk] = symbol
+        return cleaned
+
+
+@app.get("/api/results")
+async def get_results():
+    """Serve the latest E2E run results."""
+    if not RESULTS_PATH.exists():
+        # Fallback to empty list if no results yet
+        return []
+
+    try:
+        with open(RESULTS_PATH, "r") as f:
+            data = json.load(f)
+            return data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error reading results: {str(e)}")
+
+
+@app.post("/api/v1/analyze")
+async def analyze(payload: AnalyzeRequest) -> dict[str, Any]:
+    """Run selected desks and return structured per-desk outcomes + run manifest CID."""
+    deployer = os.getenv("ARC_DEPLOYER_ADDRESS", "0x0000000000000000000000000000000000000000")
+    translator = TranslatorAgent()
+    desks = _build_desks()
+    selected_keys: list[DeskKey] = payload.desks or list(desks.keys())  # type: ignore[assignment]
+    run_started = datetime.now(timezone.utc)
+    run_id = run_started.strftime("%Y%m%dT%H%M%SZ")
+
+    results: list[dict[str, Any]] = []
+    consecutive_failures = 0
+
+    async def _run_all() -> dict[str, Any]:
+        nonlocal consecutive_failures
+        for desk in selected_keys:
+            if consecutive_failures >= payload.circuit_breaker_failures:
+                default_ticker = desks[desk][1]
+                results.append(
+                    {
+                        "desk": desk,
+                        "ticker": payload.tickers.get(desk, default_ticker),
+                        "status": "skipped_circuit_open",
+                        "error": (
+                            f"Circuit opened after {payload.circuit_breaker_failures} "
+                            "consecutive failures"
+                        ),
+                        "direction": None,
+                        "confidence": None,
+                        "question": None,
+                        "ipfs_thesis_cid": None,
+                        "ipfs_question_cid": None,
+                        "arc_tx": None,
+                        "market_tx": None,
+                    }
+                )
+                continue
+
+            agent, default_ticker = desks[desk]
+            ticker = payload.tickers.get(desk, default_ticker)
+
+            try:
+                desk_result = await asyncio.wait_for(
+                    run_desk(
+                        desk=desk,
+                        agent=agent,
+                        ticker=ticker,
+                        translator=translator,
+                        deployer=deployer,
+                        on_chain=payload.on_chain,
+                        verbose=payload.verbose,
+                    ),
+                    timeout=payload.desk_timeout_seconds,
+                )
+            except asyncio.TimeoutError:
+                desk_result = {
+                    "desk": desk,
+                    "ticker": ticker,
+                    "status": "error",
+                    "error": f"Desk timeout after {payload.desk_timeout_seconds:.1f}s",
+                    "direction": None,
+                    "confidence": None,
+                    "question": None,
+                    "ipfs_thesis_cid": None,
+                    "ipfs_question_cid": None,
+                    "arc_tx": None,
+                    "market_tx": None,
+                }
+            except Exception as exc:
+                desk_result = {
+                    "desk": desk,
+                    "ticker": ticker,
+                    "status": "error",
+                    "error": str(exc),
+                    "direction": None,
+                    "confidence": None,
+                    "question": None,
+                    "ipfs_thesis_cid": None,
+                    "ipfs_question_cid": None,
+                    "arc_tx": None,
+                    "market_tx": None,
+                }
+
+            results.append(desk_result)
+
+            if desk_result.get("status") == "ok":
+                consecutive_failures = 0
+            else:
+                consecutive_failures += 1
+
+        ok = [r for r in results if r.get("status") == "ok"]
+        status = (
+            "success"
+            if len(ok) == len(results) and len(results) > 0
+            else "partial_success"
+            if len(ok) > 0
+            else "analysis_failed"
+        )
+
+        manifest_cid = None
+        manifest_url = None
+        if len(ok) > 0:
+            try:
+                manifest = {
+                    "run_id": run_id,
+                    "timestamp": run_started.isoformat(),
+                    "desks": [
+                        {
+                            "desk": r.get("desk"),
+                            "ticker": r.get("ticker"),
+                            "thesis_cid": r.get("ipfs_thesis_cid"),
+                            "question_cid": r.get("ipfs_question_cid"),
+                            "direction": r.get("direction"),
+                            "confidence": r.get("confidence"),
+                            "status": r.get("status"),
+                        }
+                        for r in results
+                    ],
+                }
+                multi = build_multi_pinner()
+                manifest_cid, _ = await multi.pin(manifest, name=f"rosetta-run-{run_id}")
+                manifest_url = f"https://w3s.link/ipfs/{manifest_cid}"
+            except Exception as manifest_exc:
+                logger.warning("Manifest pin failed (non-fatal): %s", manifest_exc)
+        else:
+            logger.warning("Skipping manifest pin: zero successful desks (analysis_failed)")
+
+        desks_map = {str(r.get("desk")): r for r in results}
+        return {
+            "run_id": run_id,
+            "timestamp": run_started.isoformat(),
+            "status": status,
+            "selected_desks": selected_keys,
+            "ok_count": len(ok),
+            "total_count": len(results),
+            "manifest_cid": manifest_cid,
+            "manifest_url": manifest_url,
+            "desks": desks_map,
+            "results": results,
+        }
+
+    try:
+        return await asyncio.wait_for(_run_all(), timeout=payload.timeout_seconds)
+    except asyncio.TimeoutError:
+        return {
+            "run_id": run_id,
+            "timestamp": run_started.isoformat(),
+            "status": "timeout",
+            "selected_desks": selected_keys,
+            "ok_count": sum(1 for r in results if r.get("status") == "ok"),
+            "total_count": len(results),
+            "manifest_cid": None,
+            "manifest_url": None,
+            "desks": {str(r.get("desk")): r for r in results},
+            "results": results,
+            "error": f"Overall timeout after {payload.timeout_seconds:.1f}s",
+        }
+
+
+@app.get("/api/health")
+async def health():
+    return {"status": "ok"}
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=8000)
