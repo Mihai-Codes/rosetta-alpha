@@ -239,10 +239,15 @@ export function ThesisCard({ desk }: ThesisCardProps) {
               return
             }
           } catch (addErr: any) {
+            const isUserRejected = addErr?.code === 4001
             setUnlockError(
-              addErr?.code === 4001
-                ? 'Network switch rejected. Please add Arc Testnet in your wallet settings and try again.'
-                : 'Please add Arc Testnet (chain 5042002, RPC: https://rpc.testnet.arc.network) to your wallet manually.'
+              isUserRejected
+                ? 'Network switch rejected. Please try again when ready.'
+                : 'Your wallet does not support auto-switching to Arc Testnet. ' +
+                  'Please add it manually: Settings → Networks → Add Network → ' +
+                  'Name: "Arc Testnet", RPC: https://rpc.testnet.arc.network, ' +
+                  'Chain ID: 5042002, Symbol: USDC, Explorer: https://testnet.arcscan.app. ' +
+                  'Then switch to Arc Testnet and try again. (Tip: MetaMask handles this automatically.)'
             )
             setUnlocking(false)
             return
