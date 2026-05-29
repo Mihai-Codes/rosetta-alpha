@@ -81,9 +81,11 @@ export default function HomePage() {
         onScrollDown={(e: React.MouseEvent) => {
           e?.preventDefault()
           handleCtaClick('enter_terminal')
+          // Scroll exactly to the desks content, bypassing the padding and stats bar
           const el = document.getElementById('desks-section');
           if (el) {
-            const target = el.getBoundingClientRect().top + window.scrollY - 80;
+            const paddingTop = parseInt(window.getComputedStyle(el).paddingTop, 10) || 0;
+            const target = el.getBoundingClientRect().top + window.scrollY - 64 + paddingTop;
             const start = window.scrollY;
             const diff = target - start;
             let startTimestamp: number | null = null;

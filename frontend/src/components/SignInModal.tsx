@@ -45,7 +45,8 @@ export function SignInModal() {
     if (typeof window !== 'undefined') {
       const url = new URL(window.location.href)
       if (url.searchParams.get('auth') === 'login') {
-        authModalState.open()
+        // Need a small timeout to let the page mount fully before triggering the modal overlay
+        setTimeout(() => authModalState.open(), 100)
         // Clean up the URL
         url.searchParams.delete('auth')
         window.history.replaceState({}, '', url.toString())

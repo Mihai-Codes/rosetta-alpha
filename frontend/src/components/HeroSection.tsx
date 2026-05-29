@@ -4,6 +4,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { REGION_META, truncateHash } from '../lib/format'
+import { authModalState } from './SignInModal'
 
 interface HeroSectionProps {
   latestHash?: string
@@ -118,6 +119,12 @@ export function HeroSection({ latestHash, onScrollDown, isAuthenticated }: HeroS
           </button>
           <Link
             href="/quiz"
+            onClick={(e) => {
+              if (!isAuthenticated) {
+                e.preventDefault()
+                authModalState.open()
+              }
+            }}
             data-testid="try-quiz-cta"
             className="flex items-center gap-2 px-8 py-4 border border-white/20 text-text-secondary text-[11px] font-medium uppercase tracking-[0.2em] hover:border-accent-gold/60 hover:text-accent-gold transition-all duration-300 min-h-[52px]"
           >
