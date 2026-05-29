@@ -16,6 +16,12 @@ export const metadata: Metadata = {
   title: 'Rosetta Alpha — AI-Powered Global Macro Intelligence',
   description:
     'Five AI agents, each reasoning in their native language, produce structured investment theses verified on-chain via Arc.',
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    apple: '/favicon.svg',
+  },
   openGraph: {
     title: 'Rosetta Alpha',
     description: 'AI-Powered Global Macro Intelligence from every language and market.',
