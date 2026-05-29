@@ -286,7 +286,6 @@ export function Layout({ children, activeTab }: LayoutProps) {
           <div className="shrink-0 flex items-center justify-center gap-4 sm:gap-6">
             <QuoteMatrix isGreek={isGreek} />
             <div className="hidden sm:flex items-center gap-3">
-              <span className="w-px h-4 bg-white/10" />
               <div className="flex items-center gap-2 group">
                 <span className="text-[18px] leading-none grayscale group-hover:grayscale-0 transition-all duration-500" title="Aristotle">🏛️</span>
                 <span className="text-text-secondary tracking-[0.4em] font-medium">Aristotle</span>
