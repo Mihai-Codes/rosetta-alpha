@@ -217,10 +217,36 @@ export function ThesisCard({ desk }: ThesisCardProps) {
       if (chainId !== arcTestnet.id) {
         try {
           await switchChainAsync({ chainId: arcTestnet.id })
-        } catch (switchErr) {
-          setUnlockError('Please switch your wallet to Arc Testnet (chain 5042002) and try again.')
-          setUnlocking(false)
-          return
+        } catch {
+          // Coinbase Wallet and some wallets don't support switchChain for custom chains.
+          // Fall back to wallet_addEthereumChain which adds AND switches in one prompt.
+          try {
+            const provider = (window as any).ethereum ?? (window as any).coinbaseWalletExtension
+            if (provider) {
+              await provider.request({
+                method: 'wallet_addEthereumChain',
+                params: [{
+                  chainId: `0x${arcTestnet.id.toString(16)}`,
+                  chainName: arcTestnet.name,
+                  nativeCurrency: arcTestnet.nativeCurrency,
+                  rpcUrls: arcTestnet.rpcUrls.default.http,
+                  blockExplorerUrls: [arcTestnet.blockExplorers.default.url],
+                }],
+              })
+            } else {
+              setUnlockError('Could not detect wallet provider. Please add Arc Testnet (chain 5042002) manually.')
+              setUnlocking(false)
+              return
+            }
+          } catch (addErr: any) {
+            setUnlockError(
+              addErr?.code === 4001
+                ? 'Network switch rejected. Please add Arc Testnet in your wallet settings and try again.'
+                : 'Please add Arc Testnet (chain 5042002, RPC: https://rpc.testnet.arc.network) to your wallet manually.'
+            )
+            setUnlocking(false)
+            return
+          }
         }
       }
       // Use the desk slug as the thesis id (maps to Arc tx or IPFS CID prefix)
