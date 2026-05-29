@@ -32,26 +32,16 @@ const AUTH_TABS: { id: Tab; label: string; href: string }[] = [
   { id: 'quiz', label: 'Quiz', href: '/quiz' },
 ]
 
-function GreekDelimiter() {
-  const [isGreek, setIsGreek] = React.useState(true)
-  React.useEffect(() => {
-    const i = setInterval(() => setIsGreek(g => !g), 4000 + Math.random() * 2000)
-    return () => clearInterval(i)
-  }, [])
+function GreekDelimiter({ isGreek }: { isGreek: boolean }) {
   return (
     <span className="relative inline-flex items-center justify-center w-3 h-3 text-[10px] text-white/20 select-none mx-1">
-      <span className={`absolute transition-all duration-1000 ease-in-out ${isGreek ? 'opacity-100 blur-0 scale-100' : 'opacity-0 blur-sm scale-75'}`}>|</span>
-      <span className={`absolute transition-all duration-1000 ease-in-out ${!isGreek ? 'opacity-80 blur-0 scale-100 text-brand-red drop-shadow-[0_0_4px_rgba(216,43,43,0.5)]' : 'opacity-0 blur-sm scale-125'}`}>Δ</span>
+      <span className={`absolute transition-opacity duration-1000 ease-in-out ${isGreek ? 'opacity-100' : 'opacity-0'}`}>|</span>
+      <span className={`absolute transition-opacity duration-1000 ease-in-out ${!isGreek ? 'opacity-80 text-brand-red drop-shadow-[0_0_4px_rgba(216,43,43,0.5)]' : 'opacity-0'}`}>Δ</span>
     </span>
   )
 }
 
-function QuoteMatrix() {
-  const [isGreek, setIsGreek] = React.useState(true)
-  React.useEffect(() => {
-    const i = setInterval(() => setIsGreek(g => !g), 5000)
-    return () => clearInterval(i)
-  }, [])
+function QuoteMatrix({ isGreek }: { isGreek: boolean }) {
   return (
     <span className="italic text-text-secondary text-[11px] font-display tracking-wide relative inline-flex items-center justify-center min-w-[280px] sm:min-w-[420px] h-[24px] whitespace-nowrap">
       <span className={`absolute transition-all duration-1000 ease-in-out ${isGreek ? 'opacity-100 blur-0 scale-100' : 'opacity-0 blur-md scale-95'}`}>
@@ -71,6 +61,13 @@ export function Layout({ children, activeTab }: LayoutProps) {
   const isSignedIn = !!session?.user
   const [mobileOpen, setMobileOpen] = React.useState(false)
   const [scrolled, setScrolled] = React.useState(false)
+  
+  // Shared animation state for Greek motifs
+  const [isGreek, setIsGreek] = React.useState(true)
+  React.useEffect(() => {
+    const i = setInterval(() => setIsGreek(g => !g), 5000)
+    return () => clearInterval(i)
+  }, [])
 
   React.useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20)
@@ -149,7 +146,7 @@ export function Layout({ children, activeTab }: LayoutProps) {
                   >
                     {tab.label}
                   </Link>
-                  {idx < tabs.length - 1 && <GreekDelimiter />}
+                  {idx < tabs.length - 1 && <GreekDelimiter isGreek={isGreek} />}
                 </React.Fragment>
               )
             })}
@@ -287,9 +284,9 @@ export function Layout({ children, activeTab }: LayoutProps) {
           </div>
           
           <div className="shrink-0 flex items-center justify-center gap-4 sm:gap-6">
-            <QuoteMatrix />
+            <QuoteMatrix isGreek={isGreek} />
             <div className="hidden sm:flex items-center gap-3">
-              <GreekDelimiter />
+              <span className="w-px h-4 bg-white/10" />
               <div className="flex items-center gap-2 group">
                 <span className="text-[18px] leading-none grayscale group-hover:grayscale-0 transition-all duration-500" title="Aristotle">🏛️</span>
                 <span className="text-text-secondary tracking-[0.4em] font-medium">Aristotle</span>
