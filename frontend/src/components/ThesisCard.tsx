@@ -10,8 +10,9 @@ import { useRouter } from 'next/navigation'
 import { SessionKeyManager } from '@/components/SessionKeyManager'
 import { authModalState } from '@/components/SignInModal'
 import { useSession } from 'next-auth/react'
-import { useAccount } from 'wagmi'
+import { useAccount, useSwitchChain } from 'wagmi'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
+import { arcTestnet } from '@/lib/chains'
 
 interface ThesisCardProps {
   desk: DeskProps
@@ -171,7 +172,8 @@ export function ThesisCard({ desk }: ThesisCardProps) {
   const [copied, setCopied] = React.useState(false)
   const { data: session } = useSession()
   const router = useRouter()
-  const { isConnected } = useAccount()
+  const { isConnected, chainId } = useAccount()
+  const { switchChainAsync } = useSwitchChain()
   const { openConnectModal } = useConnectModal()
 
   // x402 unlock state
@@ -211,6 +213,16 @@ export function ThesisCard({ desk }: ThesisCardProps) {
     setUnlocking(true)
     setUnlockError(null)
     try {
+      // Auto-switch to Arc L1 if wallet is on a different chain
+      if (chainId !== arcTestnet.id) {
+        try {
+          await switchChainAsync({ chainId: arcTestnet.id })
+        } catch (switchErr) {
+          setUnlockError('Please switch your wallet to Arc Testnet (chain 5042002) and try again.')
+          setUnlocking(false)
+          return
+        }
+      }
       // Use the desk slug as the thesis id (maps to Arc tx or IPFS CID prefix)
       const thesisId = desk.arc_tx || desk.desk
       const res = await x402.fetch(`/api/thesis/${encodeURIComponent(thesisId)}`)
