@@ -74,6 +74,34 @@ class RegimeDetectionResult:
 # ---------------------------------------------------------------------------
 
 
+def _normalize_ohlcv_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """Normalize OHLCV column names to title case (Open, High, Low, Close, Volume).
+
+    yfinance can return varied capitalization depending on version and ticker:
+    - Standard: Open, High, Low, Close, Volume
+    - Some versions: open, high, low, close, volume
+    - Multi-level index (multi-ticker download): flattened to lowercase
+
+    This ensures our feature engineering always finds the expected columns.
+    """
+    # Flatten MultiIndex columns (from multi-ticker yfinance downloads)
+    if isinstance(df.columns, pd.MultiIndex):
+        df = df.copy()
+        df.columns = [col[0] if isinstance(col, tuple) else col for col in df.columns]
+
+    # Normalize to title case
+    col_map = {col: col.title() for col in df.columns}
+    df = df.rename(columns=col_map)
+
+    # Verify required columns exist
+    required = {"Close", "High", "Low"}
+    missing = required - set(df.columns)
+    if missing:
+        raise ValueError(f"OHLCV DataFrame missing required columns: {missing}")
+
+    return df
+
+
 def _compute_features(df: pd.DataFrame) -> np.ndarray:
     """Extract regime-discriminative features from OHLCV data.
 
@@ -85,10 +113,12 @@ def _compute_features(df: pd.DataFrame) -> np.ndarray:
 
     Args:
         df: DataFrame with columns: Open, High, Low, Close, Volume (daily OHLCV)
+            Column names are normalized internally (case-insensitive).
 
     Returns:
         (n_samples, n_features) array with NaN rows dropped.
     """
+    df = _normalize_ohlcv_columns(df)
     close = df["Close"].astype(float)
     high = df["High"].astype(float)
     low = df["Low"].astype(float)
@@ -130,17 +160,16 @@ def _assign_regime_labels(model: Any) -> list[MarketRegime]:
     """Map HMM hidden states to semantic regime labels based on learned parameters.
 
     Strategy:
-    - State with highest mean realized_vol → CRISIS
-    - Of remaining, state with highest |trend_strength| mean → TRENDING
-    - Last state → MEAN_REVERTING
+    - CRISIS: highest realized_vol mean (idx 1) — the clearest volatility signal
+    - TRENDING: of remaining, highest |trend_strength| mean (idx 2)
+    - MEAN_REVERTING: remaining state
     """
     # model.means_ shape: (n_states, n_features)
     # Features: [log_return, realized_vol, trend_strength, norm_range]
     means = model.means_
     n_states = means.shape[0]
 
-    # Index 1 = realized_vol, Index 2 = trend_strength
-    vol_means = means[:, 1]  # realized volatility
+    vol_means = means[:, 1]  # realized volatility — primary crisis indicator
     trend_means = np.abs(means[:, 2])  # absolute trend strength
 
     labels: list[MarketRegime | None] = [None] * n_states
@@ -149,7 +178,7 @@ def _assign_regime_labels(model: Any) -> list[MarketRegime]:
     crisis_idx = int(np.argmax(vol_means))
     labels[crisis_idx] = MarketRegime.CRISIS
 
-    # Of remaining, highest trend → TRENDING
+    # Of remaining, highest |trend_strength| → TRENDING
     remaining = [i for i in range(n_states) if i != crisis_idx]
     trending_idx = remaining[int(np.argmax([trend_means[i] for i in remaining]))]
     labels[trending_idx] = MarketRegime.TRENDING
@@ -207,30 +236,39 @@ def detect_regime_hmm(df: pd.DataFrame) -> RegimeDetectionResult:
             "asset may have constant price (e.g. stablecoin)"
         )
 
+    # Standardize features for numerical stability (HMM covariance estimation
+    # is sensitive to feature scale differences — e.g. returns ~0.001 vs vol ~0.02)
+    feature_means = np.mean(features, axis=0)
+    features_scaled = (features - feature_means) / feature_stds
+
     # Fit GaussianHMM with 3 states; suppress ConvergenceWarning (common with
     # short financial data — partial convergence still yields usable posteriors)
     model = GaussianHMM(
         n_components=N_REGIMES,
         covariance_type="full",
-        n_iter=100,
+        n_iter=200,
         random_state=42,
-        tol=0.01,
+        tol=0.001,
     )
 
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", message=".*did not converge.*")
-        model.fit(features)
+        model.fit(features_scaled)
 
-    # Predict hidden states
-    states = model.predict(features)
-    posteriors = model.predict_proba(features)
+    # Predict hidden states (use scaled features — same transform as fit)
+    states = model.predict(features_scaled)
+    posteriors = model.predict_proba(features_scaled)
 
     # Guard against NaN posteriors (can occur with near-singular covariance)
     if np.any(np.isnan(posteriors[-1])):
         raise ValueError("HMM produced NaN posteriors — model fit is degenerate")
 
-    # Map states to semantic labels
-    state_labels = _assign_regime_labels(model)
+    # Map states to semantic labels — unscale means for interpretability
+    # model.means_ is in scaled space; transform back for label assignment
+    class _UnscaledModel:
+        means_ = model.means_ * feature_stds + feature_means
+
+    state_labels = _assign_regime_labels(_UnscaledModel())
 
     # Current regime (last observation)
     current_state = int(states[-1])
@@ -283,6 +321,7 @@ def detect_regime_garch_fallback(df: pd.DataFrame) -> RegimeDetectionResult:
     Raises:
         ValueError: If insufficient data (< MIN_GARCH_OBSERVATIONS).
     """
+    df = _normalize_ohlcv_columns(df)
     close = df["Close"].astype(float)
     log_rets = np.log(close / close.shift(1))
     returns = log_rets.replace([np.inf, -np.inf], np.nan).dropna().values
