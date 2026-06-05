@@ -9,7 +9,7 @@ import { useState } from 'react'
 interface NarrativeEvent {
   id: string
   title: string
-  type: 'fear' | 'greed' | 'regulatory' | 'innovation' | 'risk' | 'macro_shift' | 'geopolitical'
+  type: NarrativeType
   timestamp: string
   intensity: number
   region: string
@@ -20,29 +20,7 @@ interface NarrativeTimelineProps {
   ticker: string
 }
 
-// ---------------------------------------------------------------------------
-// Constants (DRY — shared color map for narrative types)
-// ---------------------------------------------------------------------------
-
-const NARRATIVE_COLORS: Record<string, string> = {
-  fear: '#9F4A4A',
-  greed: '#4A9F6F',
-  regulatory: '#7B8FA6',
-  innovation: '#C9A84C',
-  risk: '#D82B2B',
-  macro_shift: '#8B5CF6',
-  geopolitical: '#F59E0B',
-}
-
-const NARRATIVE_LABELS: Record<string, string> = {
-  fear: 'Fear',
-  greed: 'Greed',
-  regulatory: 'Regulatory',
-  innovation: 'Innovation',
-  risk: 'Risk',
-  macro_shift: 'Macro Shift',
-  geopolitical: 'Geopolitical',
-}
+import { NARRATIVE_COLORS, NARRATIVE_LABELS, type NarrativeType } from '../lib/narrative-constants'
 
 // ---------------------------------------------------------------------------
 // Component
@@ -78,7 +56,7 @@ export function NarrativeTimeline({ events, ticker }: NarrativeTimelineProps) {
           Narrative Timeline — {ticker}
         </h4>
         <div className="flex gap-2 flex-wrap">
-          {Object.entries(NARRATIVE_LABELS).map(([key, label]) => (
+          {(Object.entries(NARRATIVE_LABELS) as [NarrativeType, string][]).map(([key, label]) => (
             <span
               key={key}
               className="flex items-center gap-1 text-[10px] text-text-tertiary"

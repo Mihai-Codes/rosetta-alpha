@@ -213,11 +213,22 @@ class NarrativeStore:
                 ON narratives(last_seen DESC)
             """)
 
+    @staticmethod
+    def _sqlite_now() -> str:
+        """UTC timestamp in SQLite-compatible format (no timezone suffix).
+
+        SQLite's datetime() returns 'YYYY-MM-DD HH:MM:SS'. We must store in
+        the same format for reliable string comparisons in WHERE clauses.
+        Storing with '+00:00' suffix causes subtle comparison bugs since
+        SQLite datetime arithmetic strips timezone info.
+        """
+        return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+
     def upsert(self, ticker: str, narrative: Narrative) -> None:
         """Insert or update a narrative observation."""
         ticker = ticker.upper().strip()
         nhash = _narrative_hash(narrative.narrative_title, ticker)
-        now = datetime.now(timezone.utc).isoformat()
+        now = self._sqlite_now()
         entities_json = json.dumps(narrative.entities_mentioned, ensure_ascii=False)
 
         with self._conn() as conn:
@@ -255,8 +266,9 @@ class NarrativeStore:
 
     def get_active_narratives(self, *, hours: int = 72, limit: int = 50) -> list[dict[str, Any]]:
         """Get all narratives seen in the last N hours across all tickers."""
-        cutoff = datetime.now(timezone.utc).isoformat()
-        # SQLite datetime comparison works with ISO strings
+        if hours < 1:
+            hours = 1  # Floor to 1 hour minimum
+        cutoff = self._sqlite_now()
         with self._conn() as conn:
             rows = conn.execute(
                 """

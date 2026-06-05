@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { NARRATIVE_COLORS, type NarrativeType } from '../lib/narrative-constants'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -9,7 +10,7 @@ import { useState, useMemo } from 'react'
 interface NarrativeBubble {
   id: string
   title: string
-  type: 'fear' | 'greed' | 'regulatory' | 'innovation' | 'risk' | 'macro_shift' | 'geopolitical'
+  type: NarrativeType
   intensity: number
   mentionsPerDay: number
   acceleration: number
@@ -20,20 +21,6 @@ interface NarrativeBubble {
 interface NarrativeCloudProps {
   narratives: NarrativeBubble[]
   ticker: string
-}
-
-// ---------------------------------------------------------------------------
-// Shared constants (DRY — same color map as NarrativeTimeline)
-// ---------------------------------------------------------------------------
-
-const NARRATIVE_COLORS: Record<string, string> = {
-  fear: '#9F4A4A',
-  greed: '#4A9F6F',
-  regulatory: '#7B8FA6',
-  innovation: '#C9A84C',
-  risk: '#D82B2B',
-  macro_shift: '#8B5CF6',
-  geopolitical: '#F59E0B',
 }
 
 // ---------------------------------------------------------------------------
