@@ -378,6 +378,91 @@ async def get_divergence(ticker: str):
 
 
 # ---------------------------------------------------------------------------
+# Mob Meter endpoints
+# ---------------------------------------------------------------------------
+
+
+@app.get("/api/v1/mob-meter")
+async def get_mob_meter(ticker: str):
+    """Get the crowd extremity / mob index for a ticker."""
+    from reasoning.mob_meter import ConfidenceCalibrationStore, calculate_mob_extremity
+    import json
+
+    if not _TICKER_RE.match(ticker):
+        raise HTTPException(status_code=400, detail="Invalid ticker format")
+
+    ticker_upper = ticker.upper().strip()
+    matching_theses: list[dict[str, Any]] = []
+
+    if RESULTS_PATH.exists():
+        try:
+            with open(RESULTS_PATH, "r") as f:
+                data = json.load(f)
+
+            if isinstance(data, list):
+                for item in data:
+                    if isinstance(item, dict) and item.get("ticker", "").upper().strip() == ticker_upper:
+                        matching_theses.append(item)
+                    elif isinstance(item, dict) and "results" in item:
+                        matching_theses.extend(
+                            sub_item
+                            for sub_item in item["results"]
+                            if sub_item.get("ticker", "").upper().strip() == ticker_upper
+                        )
+            elif isinstance(data, dict) and "results" in data:
+                matching_theses.extend(
+                    sub_item
+                    for sub_item in data["results"]
+                    if sub_item.get("ticker", "").upper().strip() == ticker_upper
+                )
+        except Exception as e:
+            logger.error("Failed to load mob meter inputs: %s", e)
+
+    metrics = calculate_mob_extremity(
+        matching_theses,
+        ticker_upper,
+        calibration_store=ConfidenceCalibrationStore(),
+    )
+
+    if metrics:
+        return {
+            "ticker": metrics.ticker,
+            "timestamp": metrics.timestamp.isoformat(),
+            "mob_index": metrics.mob_index,
+            "consensus_level": metrics.consensus_level,
+            "confidence_extremity": metrics.confidence_extremity,
+            "narrative_intensity": metrics.narrative_intensity,
+            "dominant_direction": metrics.dominant_direction.value if metrics.dominant_direction else None,
+            "flags": [flag.value for flag in metrics.flags],
+            "label": metrics.label,
+            "cross_desk_consensus": metrics.cross_desk_consensus.model_dump(mode="json"),
+            "within_desk_consensus": {
+                desk: snapshot.model_dump(mode="json")
+                for desk, snapshot in metrics.within_desk_consensus.items()
+            },
+        }
+
+    return {
+        "ticker": ticker_upper,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "mob_index": 0.0,
+        "consensus_level": 0.0,
+        "confidence_extremity": 0.0,
+        "narrative_intensity": 0.0,
+        "dominant_direction": None,
+        "flags": [],
+        "label": "Normal disagreement",
+        "cross_desk_consensus": {
+            "agreement": 0.0,
+            "dominant_direction": None,
+            "participant_count": 0,
+            "flags": [],
+        },
+        "within_desk_consensus": {},
+    }
+
+
+# ---------------------------------------------------------------------------
 # Narrative Engine endpoints
 # ---------------------------------------------------------------------------
 

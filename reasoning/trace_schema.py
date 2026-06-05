@@ -189,6 +189,14 @@ class InvestmentThesis(BaseModel):
         ),
     )
 
+    # Crowd-extremity context (populated by reasoning.mob_meter)
+    mob_extremity: float | None = Field(
+        default=None,
+        ge=0.0,
+        le=100.0,
+        description="Composite crowd extremity / mob index for this thesis. None = mob meter not yet run.",
+    )
+
     # Hidden-variable context (options flow, dark-pool proxy, cross-desk anomalies)
     hidden_flow_signals: list[HiddenFlowSignal] = Field(default_factory=list)
     potential_dark_pool_activity: bool = Field(

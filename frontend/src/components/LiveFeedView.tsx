@@ -8,6 +8,7 @@ import { regionMeta, formatRelative, truncateHash } from '../lib/format'
 import { FeedItemSkeleton } from './SkeletonLoader'
 import { ProvenanceChain } from './ProvenanceChain'
 import { SidePanel } from './SidePanel'
+import { MobMeter } from './MobMeter'
 
 type Direction = 'ALL' | 'LONG' | 'SHORT' | 'NEUTRAL'
 
@@ -68,6 +69,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
   )
 
   const regions = ['ALL', ...Array.from(new Set(desks.map(d => d.desk.toLowerCase())))]
+  const primaryTicker = entries[0]?.ticker || desks[0]?.ticker
 
   const toggleExpand = (key: string, desk?: string, ticker?: string) => {
     setExpanded(prev => {
@@ -155,6 +157,10 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
           </div>
         </div>
       </div>
+
+      {primaryTicker && (
+        <MobMeter ticker={primaryTicker} compact />
+      )}
 
       {/* ── Feed ── */}
       <div className="solid-panel overflow-hidden">

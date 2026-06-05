@@ -58,4 +58,5 @@ export interface DeskProps {
   regime_context?: RegimeContext | null
   hidden_flow_signals?: HiddenFlowSignal[]
   potential_dark_pool_activity?: boolean
+  mob_extremity?: number | null
 }

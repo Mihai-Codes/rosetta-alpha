@@ -441,6 +441,18 @@ async def _try_settle(
         except Exception as _label_exc:
             logger.debug("dataset label update failed (non-fatal): %s", _label_exc)
 
+        if not dry_run:
+            try:
+                from reasoning.mob_meter import record_settlement_calibration
+
+                record_settlement_calibration(
+                    agent_id=snap.agent,
+                    confidence=snap.confidence_bp / 10_000,
+                    was_correct=snap.was_correct,
+                )
+            except Exception as _cal_exc:
+                logger.debug("confidence calibration update failed (non-fatal): %s", _cal_exc)
+
         return SettlementResult(
             trace_hash_hex=snap.trace_hash.hex(),
             action="settle",

@@ -13,6 +13,7 @@ import { NarrativeInsights } from './NarrativeInsights'
 import { ThesisSkeleton } from './SkeletonLoader'
 import { regionMeta } from '../lib/format'
 import { DivergenceGauge } from './DivergenceGauge'
+import { MobMeter } from './MobMeter'
 
 interface DesksViewProps {
   desks: DeskProps[]
@@ -129,7 +130,8 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
         </motion.div>
 
         {active && (
-          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }} className="mt-8">
+          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }} className="mt-8 grid grid-cols-1 gap-4">
+            <MobMeter ticker={active.ticker} />
             <DivergenceGauge ticker={active.ticker} desks={desks} />
           </motion.div>
         )}
@@ -163,7 +165,8 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
           </motion.div>
 
           {active && (
-            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }} className="w-full">
+            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }} className="w-full grid grid-cols-1 xl:grid-cols-2 gap-6">
+              <MobMeter ticker={active.ticker} />
               <DivergenceGauge ticker={active.ticker} desks={desks} />
             </motion.div>
           )}

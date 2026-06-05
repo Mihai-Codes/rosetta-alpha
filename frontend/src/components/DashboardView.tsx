@@ -7,6 +7,7 @@ import { useAccount, useBalance } from 'wagmi'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { arcTestnet } from '@/lib/chains'
 import { Lock, Key } from 'lucide-react'
+import { MobMeter } from './MobMeter'
 
 // ─── Typed mock data interfaces ───────────────────────────────────────────────
 
@@ -707,6 +708,24 @@ export function DashboardView() {
             <span className="transition-transform group-hover:translate-x-1 font-bold">→</span>
           </a>
         </motion.div>
+      </div>
+
+      {/* ── Crowd Extremity Backtest Preview ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-px bg-border/60 border border-border/60 rounded-none">
+        <div className="lg:col-span-2">
+          <MobMeter ticker="AAPL" />
+        </div>
+        <div className="bg-[#050505] p-6 sm:p-8 flex flex-col justify-center">
+          <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary mb-4">
+            Historical Signal
+          </p>
+          <p className="font-display text-2xl text-text-primary leading-tight">
+            Extreme agreement is treated as a reversal-risk warning, not confirmation.
+          </p>
+          <p className="text-[11px] text-text-tertiary leading-relaxed mt-4">
+            Backtest hooks are ready for rosetta_dataset.jsonl; live calibration updates after Arc settlements.
+          </p>
+        </div>
       </div>
 
       {/* ── My Predictions ── */}
