@@ -26,6 +26,7 @@ interface RegimeIndicatorProps {
 const REGIME_CONFIG: Record<MarketRegimeType, {
   label: string
   color: string
+  dotColor: string
   bgColor: string
   borderColor: string
   description: string
@@ -33,6 +34,7 @@ const REGIME_CONFIG: Record<MarketRegimeType, {
   TRENDING: {
     label: 'Trending',
     color: 'text-[#2D6A4F]',
+    dotColor: '#2D6A4F',
     bgColor: 'bg-[rgba(45,106,79,0.08)]',
     borderColor: 'border-[rgba(45,106,79,0.25)]',
     description: 'Sustained directional momentum',
@@ -40,6 +42,7 @@ const REGIME_CONFIG: Record<MarketRegimeType, {
   MEAN_REVERTING: {
     label: 'Mean Reverting',
     color: 'text-[#B8860B]',
+    dotColor: '#B8860B',
     bgColor: 'bg-[rgba(184,134,11,0.08)]',
     borderColor: 'border-[rgba(184,134,11,0.25)]',
     description: 'Range-bound oscillation',
@@ -47,6 +50,7 @@ const REGIME_CONFIG: Record<MarketRegimeType, {
   CRISIS: {
     label: 'Crisis',
     color: 'text-[#DC143C]',
+    dotColor: '#DC143C',
     bgColor: 'bg-[rgba(220,20,60,0.08)]',
     borderColor: 'border-[rgba(220,20,60,0.25)]',
     description: 'High volatility regime',
@@ -54,6 +58,7 @@ const REGIME_CONFIG: Record<MarketRegimeType, {
   UNCERTAIN: {
     label: 'Uncertain',
     color: 'text-[#7B8FA6]',
+    dotColor: '#7B8FA6',
     bgColor: 'bg-[rgba(123,143,166,0.06)]',
     borderColor: 'border-[rgba(123,143,166,0.20)]',
     description: 'Low confidence detection',
@@ -86,12 +91,7 @@ export function RegimeIndicator({ regime, compact = false }: RegimeIndicatorProp
       >
         <span
           className="w-1.5 h-1.5 rounded-full animate-pulse"
-          style={{
-            backgroundColor: config.color.includes('#2D6A4F') ? '#2D6A4F'
-              : config.color.includes('#B8860B') ? '#B8860B'
-              : config.color.includes('#DC143C') ? '#DC143C'
-              : '#7B8FA6',
-          }}
+          style={{ backgroundColor: config.dotColor }}
         />
         {config.label}
       </motion.span>
@@ -109,10 +109,7 @@ export function RegimeIndicator({ regime, compact = false }: RegimeIndicatorProp
       <span
         className="w-2 h-2 rounded-full shrink-0"
         style={{
-          backgroundColor: config.color.includes('#2D6A4F') ? '#2D6A4F'
-            : config.color.includes('#B8860B') ? '#B8860B'
-            : config.color.includes('#DC143C') ? '#DC143C'
-            : '#7B8FA6',
+          backgroundColor: config.dotColor,
           boxShadow: regime.current_regime === 'CRISIS'
             ? '0 0 6px rgba(220,20,60,0.4)'
             : 'none',
@@ -137,12 +134,7 @@ export function RegimeIndicator({ regime, compact = false }: RegimeIndicatorProp
             animate={{ width: `${confidencePct}%` }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
             className="h-full"
-            style={{
-              backgroundColor: config.color.includes('#2D6A4F') ? '#2D6A4F'
-                : config.color.includes('#B8860B') ? '#B8860B'
-                : config.color.includes('#DC143C') ? '#DC143C'
-                : '#7B8FA6',
-            }}
+            style={{ backgroundColor: config.dotColor }}
           />
         </div>
       </div>

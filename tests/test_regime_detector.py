@@ -229,6 +229,20 @@ class TestHMMRegimeDetection:
         with pytest.raises(ValueError, match="Insufficient data for HMM"):
             detect_regime_hmm(df)
 
+    def test_degenerate_constant_price_raises(self):
+        """Constant price data (e.g. stablecoin) should raise ValueError."""
+        n = 100
+        constant_price = np.full(n, 1.0)
+        df = pd.DataFrame({
+            "Open": constant_price,
+            "High": constant_price + 0.001,
+            "Low": constant_price - 0.001,
+            "Close": constant_price,
+            "Volume": np.full(n, 1_000_000),
+        }, index=pd.date_range("2024-01-01", periods=n, freq="B"))
+        with pytest.raises(ValueError, match="Degenerate features"):
+            detect_regime_hmm(df)
+
     def test_result_to_dict(self):
         df = _make_trending_data(200)
         result = detect_regime_hmm(df)

@@ -124,7 +124,6 @@ def _compute_features(df: pd.DataFrame) -> np.ndarray:
 # - Highest volatility state → CRISIS
 # - Highest |mean return| / vol ratio → TRENDING
 # - Remaining → MEAN_REVERTING
-_REGIME_ORDER = [MarketRegime.TRENDING, MarketRegime.MEAN_REVERTING, MarketRegime.CRISIS]
 
 
 def _assign_regime_labels(model: Any) -> list[MarketRegime]:
@@ -185,8 +184,11 @@ def detect_regime_hmm(df: pd.DataFrame) -> RegimeDetectionResult:
         RegimeDetectionResult with regime, confidence, duration, and transitions.
 
     Raises:
-        ValueError: If insufficient data (< MIN_HMM_OBSERVATIONS after feature computation).
+        ValueError: If insufficient data (< MIN_HMM_OBSERVATIONS after feature computation)
+            or if features are degenerate (e.g. constant price / stablecoin).
     """
+    import warnings
+
     from hmmlearn.hmm import GaussianHMM
 
     features = _compute_features(df)
@@ -197,7 +199,16 @@ def detect_regime_hmm(df: pd.DataFrame) -> RegimeDetectionResult:
             f"(need {_MIN_HMM_OBSERVATIONS})"
         )
 
-    # Fit GaussianHMM with 3 states
+    # Guard against degenerate features (e.g. stablecoins with ~zero variance)
+    feature_stds = np.std(features, axis=0)
+    if np.any(feature_stds < 1e-10):
+        raise ValueError(
+            "Degenerate features detected (near-zero variance) — "
+            "asset may have constant price (e.g. stablecoin)"
+        )
+
+    # Fit GaussianHMM with 3 states; suppress ConvergenceWarning (common with
+    # short financial data — partial convergence still yields usable posteriors)
     model = GaussianHMM(
         n_components=N_REGIMES,
         covariance_type="full",
@@ -206,7 +217,9 @@ def detect_regime_hmm(df: pd.DataFrame) -> RegimeDetectionResult:
         tol=0.01,
     )
 
-    model.fit(features)
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", message=".*did not converge.*")
+        model.fit(features)
 
     # Predict hidden states
     states = model.predict(features)
@@ -311,10 +324,11 @@ def detect_regime_garch_fallback(df: pd.DataFrame) -> RegimeDetectionResult:
         regime = MarketRegime.UNCERTAIN
 
     # Simple duration: count consecutive days in same vol quartile
+    sorted_vol = np.sort(vol_series)  # Sort once (avoid O(n²) re-sort per iteration)
     quartile_current = 2 if percentile >= 0.75 else (0 if percentile <= 0.25 else 1)
     duration = 1
     for i in range(len(vol_series) - 2, -1, -1):
-        p = np.searchsorted(np.sort(vol_series), vol_series[i]) / len(vol_series)
+        p = np.searchsorted(sorted_vol, vol_series[i]) / len(vol_series)
         q = 2 if p >= 0.75 else (0 if p <= 0.25 else 1)
         if q == quartile_current:
             duration += 1
@@ -340,6 +354,28 @@ def detect_regime_garch_fallback(df: pd.DataFrame) -> RegimeDetectionResult:
         regime_duration_days=duration,
         transition_probabilities=transition_probs,
         method="garch_fallback",
+    )
+
+
+# ---------------------------------------------------------------------------
+# Shared helpers
+# ---------------------------------------------------------------------------
+
+_UNIFORM_TRANSITION_PROBS: dict[str, float] = {
+    MarketRegime.TRENDING.value: 0.33,
+    MarketRegime.MEAN_REVERTING.value: 0.34,
+    MarketRegime.CRISIS.value: 0.33,
+}
+
+
+def _uncertain_result(method: str) -> RegimeDetectionResult:
+    """Construct a standard UNCERTAIN result (DRY helper)."""
+    return RegimeDetectionResult(
+        current_regime=MarketRegime.UNCERTAIN,
+        regime_confidence=0.0,
+        regime_duration_days=0,
+        transition_probabilities=_UNIFORM_TRANSITION_PROBS.copy(),
+        method=method,
     )
 
 
@@ -393,17 +429,7 @@ async def detect_regime(
 
     if ohlcv_df is None or ohlcv_df.empty:
         logger.warning("No OHLCV data available — returning UNCERTAIN regime")
-        return RegimeDetectionResult(
-            current_regime=MarketRegime.UNCERTAIN,
-            regime_confidence=0.0,
-            regime_duration_days=0,
-            transition_probabilities={
-                MarketRegime.TRENDING.value: 0.33,
-                MarketRegime.MEAN_REVERTING.value: 0.34,
-                MarketRegime.CRISIS.value: 0.33,
-            },
-            method="no_data",
-        )
+        return _uncertain_result("no_data")
 
     # Try HMM first, fall back to GARCH
     try:
@@ -414,17 +440,7 @@ async def detect_regime(
             return detect_regime_garch_fallback(ohlcv_df)
         except ValueError as e2:
             logger.warning("GARCH fallback also insufficient (%s) — returning UNCERTAIN", e2)
-            return RegimeDetectionResult(
-                current_regime=MarketRegime.UNCERTAIN,
-                regime_confidence=0.0,
-                regime_duration_days=0,
-                transition_probabilities={
-                    MarketRegime.TRENDING.value: 0.33,
-                    MarketRegime.MEAN_REVERTING.value: 0.34,
-                    MarketRegime.CRISIS.value: 0.33,
-                },
-                method="insufficient_data",
-            )
+            return _uncertain_result("insufficient_data")
 
 
 async def _fetch_ohlcv(ticker: str, lookback_days: int) -> pd.DataFrame | None:
@@ -446,5 +462,5 @@ async def _fetch_ohlcv(ticker: str, lookback_days: int) -> pd.DataFrame | None:
             logger.warning("yfinance fetch failed for %s: %s", ticker, exc)
         return None
 
-    loop = asyncio.get_event_loop()
+    loop = asyncio.get_running_loop()
     return await loop.run_in_executor(None, _sync_fetch)
