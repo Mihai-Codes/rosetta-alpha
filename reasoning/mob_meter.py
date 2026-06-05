@@ -141,11 +141,75 @@ def _infer_direction_from_text(text: str) -> Direction | None:
 def _as_dict(thesis: InvestmentThesis | dict[str, Any]) -> dict[str, Any]:
     if isinstance(thesis, InvestmentThesis):
         return thesis.model_dump()
-    return thesis
+    if hasattr(thesis, "model_dump"):
+        return thesis.model_dump()
+    return thesis if isinstance(thesis, dict) else {}
+
+
+def normalize_thesis_record(thesis: InvestmentThesis | dict[str, Any]) -> dict[str, Any]:
+    """Flatten common thesis/result shapes into one canonical dict.
+
+    Live payloads can arrive as flat E2E rows, nested Pydantic thesis objects,
+    or run wrappers. This keeps scoring code stable as producers evolve.
+    """
+
+    raw = _as_dict(thesis)
+    data = dict(raw)
+
+    for key in ("thesis", "investment_thesis", "source_thesis", "data"):
+        nested = raw.get(key)
+        if hasattr(nested, "model_dump"):
+            nested = nested.model_dump()
+        if isinstance(nested, dict):
+            for nested_key, nested_value in nested.items():
+                data.setdefault(nested_key, nested_value)
+
+    ticker = data.get("ticker") or data.get("ticker_or_asset") or data.get("asset")
+    if ticker is not None:
+        data["ticker"] = str(ticker).upper().strip()
+        data.setdefault("ticker_or_asset", data["ticker"])
+
+    confidence = data.get("confidence_score", data.get("confidence"))
+    if confidence is not None:
+        data["confidence"] = confidence
+        data.setdefault("confidence_score", confidence)
+
+    summary = data.get("thesis_summary_en") or data.get("summary") or data.get("thesis_summary_native")
+    if summary is not None:
+        data["summary"] = summary
+        data.setdefault("thesis_summary_en", summary)
+
+    return data
+
+
+def iter_thesis_records(payload: Any) -> PyGenerator[dict[str, Any], None, None]:
+    """Yield normalized thesis-like records from nested API/result payloads."""
+
+    if isinstance(payload, list):
+        for item in payload:
+            yield from iter_thesis_records(item)
+        return
+
+    if not isinstance(payload, dict):
+        return
+
+    for key in ("results", "desks"):
+        nested = payload.get(key)
+        if isinstance(nested, dict):
+            for item in nested.values():
+                yield from iter_thesis_records(item)
+        elif isinstance(nested, list):
+            for item in nested:
+                yield from iter_thesis_records(item)
+
+    normalized = normalize_thesis_record(payload)
+    if any(normalized.get(key) is not None for key in ("ticker", "ticker_or_asset", "direction", "confidence", "confidence_score")):
+        yield normalized
 
 
 def _ticker(thesis: dict[str, Any]) -> str:
-    return str(thesis.get("ticker_or_asset") or thesis.get("ticker") or "").upper().strip()
+    normalized = normalize_thesis_record(thesis)
+    return str(normalized.get("ticker_or_asset") or normalized.get("ticker") or "").upper().strip()
 
 
 def _desk_id(thesis: dict[str, Any], index: int) -> str:
@@ -231,7 +295,7 @@ def consensus_score(
     infers direction from each reasoning block's conclusion/analysis text.
     """
 
-    normalized = [_as_dict(t) for t in theses]
+    normalized = [normalize_thesis_record(t) for t in theses]
     if ticker:
         ticker_key = ticker.upper().strip()
         normalized = [t for t in normalized if not _ticker(t) or _ticker(t) == ticker_key]
@@ -448,7 +512,7 @@ def calculate_mob_extremity(
 ) -> MobMetrics | None:
     """Calculate the composite 0-100 mob index for a ticker."""
 
-    normalized = [_as_dict(t) for t in theses]
+    normalized = [normalize_thesis_record(t) for t in theses]
     ticker_key = ticker.upper().strip()
     matching = [t for t in normalized if not _ticker(t) or _ticker(t) == ticker_key]
     if not matching:

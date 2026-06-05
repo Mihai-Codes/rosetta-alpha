@@ -9,6 +9,7 @@ from reasoning.mob_meter import (
     backtest_consensus_dataset,
     calculate_mob_extremity,
     consensus_score,
+    iter_thesis_records,
     record_settlement_calibration,
 )
 
@@ -106,6 +107,40 @@ def test_low_confidence_agreement_does_not_create_confidence_extremity() -> None
     assert metrics is not None
     assert metrics.confidence_extremity == 0.0
     assert metrics.mob_index < 80
+
+
+def test_nested_results_shape_drift_is_normalized() -> None:
+    payload = {
+        "run_id": "demo",
+        "results": [
+            {
+                "desk": "us",
+                "thesis": {
+                    "ticker_or_asset": "AAPL",
+                    "direction": "LONG",
+                    "confidence_score": 0.95,
+                    "thesis_summary_en": "bubble mania parabolic",
+                },
+            },
+            {
+                "desk": "cn",
+                "investment_thesis": {
+                    "ticker_or_asset": "AAPL",
+                    "direction": "LONG",
+                    "confidence_score": 0.9,
+                    "thesis_summary_en": "bubble mania parabolic",
+                },
+            },
+        ],
+    }
+
+    records = list(iter_thesis_records(payload))
+    metrics = calculate_mob_extremity(records, "AAPL")
+
+    assert len(records) == 2
+    assert {r["ticker"] for r in records} == {"AAPL"}
+    assert metrics is not None
+    assert metrics.consensus_level == 1.0
 
 
 def test_confidence_calibration_records_accuracy(tmp_path: Path) -> None:

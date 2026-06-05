@@ -385,7 +385,7 @@ async def get_divergence(ticker: str):
 @app.get("/api/v1/mob-meter")
 async def get_mob_meter(ticker: str):
     """Get the crowd extremity / mob index for a ticker."""
-    from reasoning.mob_meter import ConfidenceCalibrationStore, calculate_mob_extremity
+    from reasoning.mob_meter import ConfidenceCalibrationStore, calculate_mob_extremity, iter_thesis_records
     import json
 
     if not _TICKER_RE.match(ticker):
@@ -399,22 +399,10 @@ async def get_mob_meter(ticker: str):
             with open(RESULTS_PATH, "r") as f:
                 data = json.load(f)
 
-            if isinstance(data, list):
-                for item in data:
-                    if isinstance(item, dict) and item.get("ticker", "").upper().strip() == ticker_upper:
-                        matching_theses.append(item)
-                    elif isinstance(item, dict) and "results" in item:
-                        matching_theses.extend(
-                            sub_item
-                            for sub_item in item["results"]
-                            if sub_item.get("ticker", "").upper().strip() == ticker_upper
-                        )
-            elif isinstance(data, dict) and "results" in data:
-                matching_theses.extend(
-                    sub_item
-                    for sub_item in data["results"]
-                    if sub_item.get("ticker", "").upper().strip() == ticker_upper
-                )
+            matching_theses.extend(
+                record for record in iter_thesis_records(data)
+                if record.get("ticker", "").upper().strip() == ticker_upper
+            )
         except Exception as e:
             logger.error("Failed to load mob meter inputs: %s", e)
 
