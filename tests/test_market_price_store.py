@@ -108,3 +108,15 @@ def test_empty_dataframe_input_is_safe(tmp_path: Path) -> None:
 
     assert inserted == 0
     assert store.get_ohlcv("AAPL", source="unit").empty
+
+
+def test_project_ticker_normalization_avoids_symbol_fragmentation(tmp_path: Path) -> None:
+    store = MarketPriceStore(tmp_path / "prices.db")
+
+    store.upsert_ohlcv("600519.SH", _prices([100, 101]), source="unit")
+    cn_df = store.get_ohlcv("600519.SS", source="unit")
+    assert len(cn_df) == 2
+
+    store.upsert_ohlcv("btc", _prices([50_000, 51_000]), source="unit")
+    crypto_df = store.get_ohlcv("BTC-USD", source="unit")
+    assert len(crypto_df) == 2

@@ -23,12 +23,16 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from data.yfinance_client import normalize_yf_ticker
+
 _DEFAULT_DB_PATH = Path(__file__).parent.parent / "data" / "market_prices.db"
 _REQUIRED_PRICE_COLUMNS = {"Close"}
 
 
 def _normalize_ticker(ticker: str) -> str:
-    return str(ticker or "").upper().strip()
+    """Normalize to the canonical Yahoo/project ticker used by market-data clients."""
+
+    return normalize_yf_ticker(str(ticker or "").upper().strip())
 
 
 def _utc_now_iso() -> str:
