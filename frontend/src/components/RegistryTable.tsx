@@ -8,6 +8,7 @@ import { regionMeta, truncateHash, formatRelative } from '../lib/format'
 
 interface RegistryTableProps {
   desks: DeskProps[]
+  onCidClick?: (cid: string) => void
 }
 
 type SortKey = 'desk' | 'ticker' | 'direction' | 'confidence' | 'time'
@@ -16,7 +17,7 @@ interface RegistryEntry extends DeskProps {
   timestamp: number
 }
 
-export function RegistryTable({ desks }: RegistryTableProps) {
+export function RegistryTable({ desks, onCidClick }: RegistryTableProps) {
   const [sortKey, setSortKey] = React.useState<SortKey>('time')
   const [sortDesc, setSortDesc] = React.useState(true)
   const [search, setSearch] = React.useState('')
@@ -138,16 +139,30 @@ export function RegistryTable({ desks }: RegistryTableProps) {
               {/* Row 2: Hashes */}
               <div className="flex flex-wrap gap-x-4 gap-y-1 mb-2">
                 {e.ipfs_thesis_cid && e.ipfs_thesis_cid.length > 20 && (
-                  <a
-                    href={`https://dweb.link/ipfs/${e.ipfs_thesis_cid}`}
-                    target="_blank" rel="noopener noreferrer"
-                    
-                    className="flex items-center gap-1 font-mono text-[10px] text-text-secondary hover:text-brand-red transition-colors min-h-[44px]"
-                  >
-                    <span className="text-text-tertiary uppercase tracking-wider">IPFS</span>
-                    {truncateHash(e.ipfs_thesis_cid, 6, 4)}
-                    <ExternalLink className="w-2.5 h-2.5" />
-                  </a>
+                  <div className="flex items-center gap-2">
+                    {onCidClick && (
+                      <button
+                        type="button"
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          onCidClick(e.ipfs_thesis_cid)
+                        }}
+                        className="inline-flex items-center gap-1 font-mono text-[10px] text-brand-red hover:text-white transition-colors min-h-[44px]"
+                      >
+                        Chain
+                      </button>
+                    )}
+                    <a
+                      href={`https://dweb.link/ipfs/${e.ipfs_thesis_cid}`}
+                      target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-1 font-mono text-[10px] text-text-secondary hover:text-brand-red transition-colors min-h-[44px]"
+                      onClick={(event) => event.stopPropagation()}
+                    >
+                      <span className="text-text-tertiary uppercase tracking-wider">IPFS</span>
+                      {truncateHash(e.ipfs_thesis_cid, 6, 4)}
+                      <ExternalLink className="w-2.5 h-2.5" />
+                    </a>
+                  </div>
                 )}
                 {e.arc_tx && e.arc_tx.length > 20 && (
                   <a
@@ -226,16 +241,26 @@ export function RegistryTable({ desks }: RegistryTableProps) {
                   <td className="px-4 sm:px-6 py-4">
                     <div className="flex flex-col gap-1">
                       {e.ipfs_thesis_cid && e.ipfs_thesis_cid.length > 20 && (
-                        <a
-                          href={`https://dweb.link/ipfs/${e.ipfs_thesis_cid}`}
-                          target="_blank" rel="noopener noreferrer"
-                          
-                          className="flex items-center gap-1 font-mono text-[10px] text-text-secondary hover:text-brand-red transition-colors"
-                        >
-                          <span className="text-text-tertiary uppercase tracking-wider">IPFS</span>
-                          {truncateHash(e.ipfs_thesis_cid, 6, 4)}
-                          <ExternalLink className="w-2.5 h-2.5" />
-                        </a>
+                        <div className="flex items-center gap-2">
+                          {onCidClick && (
+                            <button
+                              type="button"
+                              onClick={() => onCidClick(e.ipfs_thesis_cid)}
+                              className="inline-flex items-center gap-1 font-mono text-[10px] text-brand-red hover:text-white transition-colors"
+                            >
+                              Chain
+                            </button>
+                          )}
+                          <a
+                            href={`https://dweb.link/ipfs/${e.ipfs_thesis_cid}`}
+                            target="_blank" rel="noopener noreferrer"
+                            className="flex items-center gap-1 font-mono text-[10px] text-text-secondary hover:text-brand-red transition-colors"
+                          >
+                            <span className="text-text-tertiary uppercase tracking-wider">IPFS</span>
+                            {truncateHash(e.ipfs_thesis_cid, 6, 4)}
+                            <ExternalLink className="w-2.5 h-2.5" />
+                          </a>
+                        </div>
                       )}
                       {e.arc_tx && e.arc_tx.length > 20 && (
                         <a

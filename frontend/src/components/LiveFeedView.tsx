@@ -2,10 +2,11 @@
 
 import React from 'react'
 import posthog from 'posthog-js'
-import { TrendingUp, TrendingDown, Minus, ChevronDown, ExternalLink, Database } from 'lucide-react'
+import { TrendingUp, TrendingDown, Minus, ChevronDown, ExternalLink, Database, Link2, X } from 'lucide-react'
 import { DeskProps } from './DeskCard'
 import { regionMeta, formatRelative, truncateHash } from '../lib/format'
 import { FeedItemSkeleton } from './SkeletonLoader'
+import { ProvenanceChain } from './ProvenanceChain'
 
 type Direction = 'ALL' | 'LONG' | 'SHORT' | 'NEUTRAL'
 
@@ -24,6 +25,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
   const [highDivergenceOnly, setHighDivergenceOnly] = React.useState<boolean>(false)
   const [divergenceScores, setDivergenceScores] = React.useState<Record<string, number>>({})
   const [expanded, setExpanded] = React.useState<Set<string>>(new Set())
+  const [selectedProvenance, setSelectedProvenance] = React.useState<DeskProps | null>(null)
 
   const [now, setNow] = React.useState<number | null>(null)
   React.useEffect(() => { setNow(Date.now()) }, [])
@@ -284,6 +286,25 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                   />
                 </button>
 
+                <div className="px-4 sm:px-5 pb-3 sm:pb-4 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!e.ipfs_thesis_cid) return
+                      setSelectedProvenance(e)
+                      posthog.capture('feed_provenance_opened', {
+                        cid_prefix: e.ipfs_thesis_cid.slice(0, 12),
+                        desk: e.desk,
+                        ticker: e.ticker,
+                      })
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-brand-red/40 text-brand-red hover:text-white hover:border-brand-red transition-colors text-[10px] uppercase tracking-[0.2em]"
+                  >
+                    <Link2 className="w-3 h-3" />
+                    View Chain
+                  </button>
+                </div>
+
                 {/* Expanded reasoning — pl-4 on mobile, pl-[10rem] on sm+ */}
                 {isOpen && (
                   <div className="px-4 sm:px-5 pb-4 sm:pb-5 pl-4 sm:pl-[10rem] space-y-3">
@@ -311,6 +332,51 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
           })
         )}
       </div>
+
+      {selectedProvenance && (
+        <div className="fixed inset-0 z-[120]">
+          <button
+            type="button"
+            className="absolute inset-0 bg-black/70 backdrop-blur-[2px]"
+            onClick={() => setSelectedProvenance(null)}
+            aria-label="Close provenance panel"
+          />
+          <aside
+            role="dialog"
+            aria-modal="true"
+            className="absolute right-0 top-0 h-full w-full max-w-[900px] bg-black border-l border-white/10 p-5 sm:p-6 overflow-y-auto"
+          >
+            <div className="flex items-start justify-between gap-4 mb-5">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.24em] text-brand-red">Provenance Chain</p>
+                <h2 className="font-display text-2xl text-white mt-1">
+                  {selectedProvenance.ticker} · {selectedProvenance.desk.toUpperCase()}
+                </h2>
+                <p className="text-[11px] text-text-tertiary mt-2">
+                  Analyze → Hash → Pin → Stake → Record → Market
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedProvenance(null)}
+                className="p-2 border border-white/15 text-text-secondary hover:text-white hover:border-brand-red transition-colors"
+                aria-label="Close provenance panel"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <ProvenanceChain
+              cid={selectedProvenance.ipfs_thesis_cid}
+              desk={selectedProvenance.desk}
+              ticker={selectedProvenance.ticker}
+              model="multi-agent"
+              arcTx={selectedProvenance.arc_tx}
+              question={selectedProvenance.question}
+            />
+          </aside>
+        </div>
+      )}
     </div>
   )
 }
