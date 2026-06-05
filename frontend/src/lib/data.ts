@@ -37,6 +37,13 @@ function normalizeDesk(raw: Record<string, unknown>): DeskProps {
           language: String(rb.language ?? 'en'),
         }
       }),
+    hidden_flow_signals:
+      (raw.hidden_flow_signals as DeskProps['hidden_flow_signals']) ??
+      (thesis.hidden_flow_signals as DeskProps['hidden_flow_signals']) ??
+      [],
+    potential_dark_pool_activity: Boolean(
+      raw.potential_dark_pool_activity ?? thesis.potential_dark_pool_activity ?? false
+    ),
   }
 }
 

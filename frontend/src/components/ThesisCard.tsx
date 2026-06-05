@@ -27,6 +27,15 @@ const ROLE_LABEL: Record<string, string> = {
   Portfolio_Manager: 'Portfolio Manager',
 }
 
+const HIDDEN_FLOW_LABEL: Record<string, string> = {
+  CALL_WALL: 'Call Wall',
+  PUT_WALL: 'Put Wall',
+  UNUSUAL_SPREAD: 'Unusual Spread',
+  STRADDLE_BUILD: 'Straddle Build',
+  DARK_POOL_PROXY: 'Dark Pool Proxy',
+  CROSS_DESK_ALERT: 'Cross-Desk Alert',
+}
+
 function TypewriterText({ text }: { text: string }) {
   const [displayed, setDisplayed] = React.useState('')
 
@@ -396,6 +405,48 @@ export function ThesisCard({ desk }: ThesisCardProps) {
           onClose={() => setShowSessionModal(false)}
         />
       )}
+
+      {/* Hidden flow */}
+      {(desk.hidden_flow_signals?.length || desk.potential_dark_pool_activity) ? (
+        <section className="px-4 sm:px-8 py-5 sm:py-6 border-t border-amber-500/30 bg-amber-500/[0.04]">
+          <details className="group" open>
+            <summary className="list-none cursor-pointer flex items-center justify-between gap-3 min-h-[44px]">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-medium uppercase tracking-[0.25em] text-amber-300">
+                  Hidden Flow
+                </span>
+                <span className="text-[9px] uppercase tracking-[0.2em] text-amber-400/80 border border-amber-500/30 px-2 py-0.5">
+                  Warning
+                </span>
+              </div>
+              <ChevronDown className="w-4 h-4 text-amber-300/80 group-open:rotate-180 transition-transform" />
+            </summary>
+            {desk.potential_dark_pool_activity && (
+              <p className="mt-2 text-[12px] text-amber-200/90">
+                Potential dark pool activity detected from large block-trade proxy signals.
+              </p>
+            )}
+            {desk.hidden_flow_signals && desk.hidden_flow_signals.length > 0 && (
+              <ul className="mt-3 space-y-2">
+                {desk.hidden_flow_signals.map((signal, i) => (
+                  <li key={`${signal.type}-${signal.asset}-${i}`} className="border border-amber-500/20 bg-black/20 p-3">
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                      <span className="text-[10px] uppercase tracking-[0.2em] text-amber-300">
+                        {HIDDEN_FLOW_LABEL[signal.type] ?? signal.type}
+                      </span>
+                      <span className="text-[10px] font-mono text-amber-100/90">{signal.asset}</span>
+                      <span className="text-[10px] text-amber-200/80">{signal.direction}</span>
+                      <span className="text-[10px] text-amber-200/80">
+                        Conf {(signal.confidence * 100).toFixed(0)}%
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </details>
+        </section>
+      ) : null}
 
       {/* Market question */}
       <section className="px-4 sm:px-8 py-5 sm:py-6 border-t border-border bg-[#141414]">

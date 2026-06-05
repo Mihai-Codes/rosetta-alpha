@@ -56,9 +56,19 @@ class AgentRole(str, Enum):
     TECHNICAL_ANALYST = "technical_analyst"
     SENTIMENT_ANALYST = "sentiment_analyst"
     MACRO_ANALYST = "macro_analyst"
+    HIDDEN_FLOW_ANALYST = "hidden_flow_analyst"
     RESEARCH_MANAGER = "research_manager"
     PORTFOLIO_MANAGER = "portfolio_manager"
     TRANSLATOR = "translator"
+
+
+class HiddenFlowType(str, Enum):
+    CALL_WALL = "CALL_WALL"
+    PUT_WALL = "PUT_WALL"
+    UNUSUAL_SPREAD = "UNUSUAL_SPREAD"
+    STRADDLE_BUILD = "STRADDLE_BUILD"
+    DARK_POOL_PROXY = "DARK_POOL_PROXY"
+    CROSS_DESK_ALERT = "CROSS_DESK_ALERT"
 
 
 # ---------------------------------------------------------------------------
@@ -95,6 +105,20 @@ class ReasoningBlock(BaseModel):
     conclusion: str = Field(description="One-sentence bottom line.")
     confidence: float = Field(ge=0.0, le=1.0, description="Subjective confidence in this block.")
     language: LangCode = Field(default="en")
+
+
+class HiddenFlowSignal(BaseModel):
+    """Detected hidden-variable market signal attached to a thesis."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    type: HiddenFlowType
+    asset: str
+    direction: Direction
+    size_estimate: float = Field(ge=0.0, description="Estimated notional/size in USD terms when available.")
+    confidence: float = Field(ge=0.0, le=1.0)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    metadata: dict[str, Any] = Field(default_factory=dict)
 
 
 # ---------------------------------------------------------------------------
@@ -163,6 +187,13 @@ class InvestmentThesis(BaseModel):
             "narrative_type, mentions_per_day, acceleration, days_active, "
             "regions_present, is_dominant. None = narrative engine not yet run."
         ),
+    )
+
+    # Hidden-variable context (options flow, dark-pool proxy, cross-desk anomalies)
+    hidden_flow_signals: list[HiddenFlowSignal] = Field(default_factory=list)
+    potential_dark_pool_activity: bool = Field(
+        default=False,
+        description="US desk dark-pool proxy flag based on large block tape prints.",
     )
 
     # Risk

@@ -478,7 +478,22 @@ class RegionalAgent(adal.Component):
         if regime_context:
             thesis = thesis.model_copy(update={"regime_context": regime_context})
 
-        # 5. Fetch live price and inject entry_price_1e8 for on-chain market creation.
+        # 5. Hidden-variable detection (options flow, dark-pool proxy, cross-desk anomalies).
+        hidden_flow_signals = []
+        potential_dark_pool_activity = False
+        risk_factors = list(thesis.risk_factors)
+        try:
+            from data.hidden_flow import gather_hidden_flow_context
+
+            hidden_flow_signals, potential_dark_pool_activity = await gather_hidden_flow_context(
+                region=self.region,
+                ticker=safe_ticker,
+            )
+        except Exception as _hidden_flow_exc:
+            risk_factors.append(f"Hidden flow detection unavailable: {_hidden_flow_exc}")
+            logger.debug("Hidden flow detection skipped for %s: %s", safe_ticker, _hidden_flow_exc)
+
+        # 6. Fetch live price and inject entry_price_1e8 for on-chain market creation.
         # Normalize ticker for yfinance: Tushare uses .SH/.SZ suffixes but
         # Yahoo Finance expects .SS (Shanghai) — e.g. 600519.SH → 600519.SS.
         entry_price_1e8: int | None = None
@@ -497,13 +512,16 @@ class RegionalAgent(adal.Component):
         except Exception as _price_exc:
             logger.debug("Price fetch skipped for %s: %s", safe_ticker, _price_exc)
 
-        # 6. Defensive: ensure region/language match what we configured.
+        # 7. Defensive: ensure region/language match what we configured.
         return thesis.model_copy(
             update={
                 "region": self.region,
                 "working_language": self.working_language,
                 "asset_class": thesis.asset_class or self.asset_class_for,
                 "entry_price_1e8": entry_price_1e8,
+                "hidden_flow_signals": hidden_flow_signals,
+                "potential_dark_pool_activity": potential_dark_pool_activity,
+                "risk_factors": risk_factors,
             }
         )
 

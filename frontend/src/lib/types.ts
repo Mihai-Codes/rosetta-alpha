@@ -30,6 +30,17 @@ export interface RegimeContext {
   method: string
 }
 
+/** Hidden-variable market flow signal */
+export interface HiddenFlowSignal {
+  type: 'CALL_WALL' | 'PUT_WALL' | 'UNUSUAL_SPREAD' | 'STRADDLE_BUILD' | 'DARK_POOL_PROXY' | 'CROSS_DESK_ALERT'
+  asset: string
+  direction: 'LONG' | 'SHORT' | 'NEUTRAL'
+  size_estimate: number
+  confidence: number
+  timestamp: string
+  metadata?: Record<string, unknown>
+}
+
 /** Desk/thesis data shape from the API */
 export interface DeskProps {
   desk: string
@@ -45,4 +56,6 @@ export interface DeskProps {
   arc_tx: string
   reasoning_blocks: ReasoningBlock[]
   regime_context?: RegimeContext | null
+  hidden_flow_signals?: HiddenFlowSignal[]
+  potential_dark_pool_activity?: boolean
 }
