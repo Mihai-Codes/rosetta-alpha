@@ -24,6 +24,7 @@ from dotenv import load_dotenv
 
 load_dotenv(override=True)
 
+from agents.contagion_monitor import ContagionMonitor, DeskAnalysisComplete
 from agents.translator_agent import TranslatorAgent
 from reasoning.arc_recorder import record_trace
 from reasoning.hasher import canonical_hash
@@ -95,6 +96,9 @@ async def run_desk(
         result["confidence"] = thesis.confidence_score
         result["summary"] = thesis.thesis_summary_en
         result["reasoning_blocks"] = [b.model_dump() for b in thesis.reasoning_blocks]
+        result["regime_context"] = thesis.regime_context
+        result["narrative_velocity"] = thesis.narrative_velocity
+        result["mob_extremity"] = thesis.mob_extremity
         if thesis.entry_price_1e8:
             result["price"] = f"{thesis.entry_price_1e8 / 1e8:,.2f}"
             
@@ -210,6 +214,8 @@ async def main(args: argparse.Namespace) -> None:
     print(f"{'█'*68}")
 
     results = []
+    contagion_monitor = ContagionMonitor()
+    contagion_alerts: list[dict[str, Any]] = []
     for desk, (agent, ticker) in selected.items():
         r = await run_desk(
             desk, agent, ticker, translator, deployer,
@@ -217,6 +223,14 @@ async def main(args: argparse.Namespace) -> None:
             verbose=args.verbose,
         )
         results.append(r)
+        if r.get("status") == "ok":
+            try:
+                alerts = contagion_monitor.handle_desk_analysis_complete(
+                    DeskAnalysisComplete(desk=desk, ticker=ticker, thesis=r)
+                )
+                contagion_alerts.extend(alert.model_dump(mode="json") for alert in alerts)
+            except Exception as contagion_exc:
+                logger.warning("Contagion monitor failed for %s/%s: %s", desk, ticker, contagion_exc)
 
     ok = [r for r in results if r["status"] == "ok"]
 
@@ -270,6 +284,10 @@ async def main(args: argparse.Namespace) -> None:
         print(f"           ❓ {q_preview}")
 
     print(f"\n  📊 Portfolio: Net signal={net_signal:+.2f} | Avg confidence={avg_conf:.1%} | {len(ok)}/{len(results)} desks OK")
+    if contagion_alerts:
+        print(f"  ⚠️  Contagion alerts: {len(contagion_alerts)}")
+        for alert in contagion_alerts[:3]:
+            print(f"     • {alert['message']}")
     print(f"  🧭 Run status: {run_status}")
     print(f"{'═'*68}\n")
 
@@ -281,7 +299,8 @@ async def main(args: argparse.Namespace) -> None:
             "manifest_cid": manifest_cid,
             "net_signal": net_signal,
             "avg_confidence": avg_conf,
-            "timestamp": start.isoformat()
+            "timestamp": start.isoformat(),
+            "contagion_alerts": contagion_alerts,
         }
         with open(args.output, "w") as f:
             json.dump(output_data, f, indent=2, default=str)

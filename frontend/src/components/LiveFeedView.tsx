@@ -9,6 +9,7 @@ import { FeedItemSkeleton } from './SkeletonLoader'
 import { ProvenanceChain } from './ProvenanceChain'
 import { SidePanel } from './SidePanel'
 import { MobMeter } from './MobMeter'
+import { ContagionAlert } from './ContagionAlert'
 import { backendApiUrl } from '@/lib/api'
 
 type Direction = 'ALL' | 'LONG' | 'SHORT' | 'NEUTRAL'
@@ -86,6 +87,8 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
 
   return (
     <div className="space-y-4 sm:space-y-6 animate-rain">
+      <ContagionAlert />
+
       {/* ── Filters ── */}
       <div className="flex flex-col gap-3 pb-4 border-b border-border">
         {/* Region — horizontal scroll pill bar on mobile */}

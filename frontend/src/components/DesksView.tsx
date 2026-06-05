@@ -14,6 +14,7 @@ import { ThesisSkeleton } from './SkeletonLoader'
 import { regionMeta } from '../lib/format'
 import { DivergenceGauge } from './DivergenceGauge'
 import { MobMeter } from './MobMeter'
+import { ContagionAlert } from './ContagionAlert'
 
 interface DesksViewProps {
   desks: DeskProps[]
@@ -107,6 +108,8 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
 
   return (
     <div className="flex flex-col gap-8">
+      <ContagionAlert />
+
       {/* ── Mobile (< md): pill bar + stacked content ── */}
       <div className="md:hidden" data-testid="region-tabs-mobile">
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }} className="mb-6">

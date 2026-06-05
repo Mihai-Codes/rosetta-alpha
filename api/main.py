@@ -136,14 +136,18 @@ async def get_results():
 @app.post("/api/v1/analyze")
 async def analyze(payload: AnalyzeRequest) -> dict[str, Any]:
     """Run selected desks and return structured per-desk outcomes + run manifest CID."""
+    from agents.contagion_monitor import ContagionMonitor, DeskAnalysisComplete
+
     deployer = os.getenv("ARC_DEPLOYER_ADDRESS", "0x0000000000000000000000000000000000000000")
     translator = TranslatorAgent()
+    contagion_monitor = ContagionMonitor()
     desks = _build_desks()
     selected_keys: list[DeskKey] = payload.desks or list(desks.keys())  # type: ignore[assignment]
     run_started = datetime.now(timezone.utc)
     run_id = run_started.strftime("%Y%m%dT%H%M%SZ")
 
     results: list[dict[str, Any]] = []
+    contagion_alerts: list[dict[str, Any]] = []
     consecutive_failures = 0
 
     async def _run_all() -> dict[str, Any]:
@@ -220,6 +224,19 @@ async def analyze(payload: AnalyzeRequest) -> dict[str, Any]:
 
             if desk_result.get("status") == "ok":
                 consecutive_failures = 0
+                try:
+                    alerts = contagion_monitor.handle_desk_analysis_complete(
+                        DeskAnalysisComplete(
+                            desk=desk,
+                            ticker=ticker,
+                            thesis=desk_result,
+                        )
+                    )
+                    contagion_alerts.extend(
+                        alert.model_dump(mode="json") for alert in alerts
+                    )
+                except Exception as contagion_exc:
+                    logger.warning("Contagion monitor failed for %s/%s: %s", desk, ticker, contagion_exc)
             else:
                 consecutive_failures += 1
 
@@ -272,6 +289,7 @@ async def analyze(payload: AnalyzeRequest) -> dict[str, Any]:
             "manifest_url": manifest_url,
             "desks": desks_map,
             "results": results,
+            "contagion_alerts": contagion_alerts,
         }
 
     try:
@@ -288,6 +306,7 @@ async def analyze(payload: AnalyzeRequest) -> dict[str, Any]:
             "manifest_url": None,
             "desks": {str(r.get("desk")): r for r in results},
             "results": results,
+            "contagion_alerts": contagion_alerts,
             "error": f"Overall timeout after {payload.timeout_seconds:.1f}s",
         }
 
@@ -501,6 +520,26 @@ async def get_contagion(hours: int = 72):
     return {
         "hours": hours,
         "alerts": [a.model_dump() for a in alerts],
+        "count": len(alerts),
+    }
+
+
+@app.get("/api/v1/contagion-alerts")
+async def get_contagion_alerts(limit: int = 10, hours: int = 72):
+    """Get persisted cross-desk contagion alerts for frontend polling."""
+    from agents.contagion_monitor import ContagionMonitor
+
+    if limit < 1 or limit > 100:
+        raise HTTPException(status_code=400, detail="limit must be 1-100")
+    if hours < 1 or hours > 720:
+        raise HTTPException(status_code=400, detail="hours must be 1-720")
+
+    monitor = ContagionMonitor()
+    alerts = monitor.recent_alerts(limit=limit, hours=hours)
+    return {
+        "hours": hours,
+        "limit": limit,
+        "alerts": [alert.model_dump(mode="json") for alert in alerts],
         "count": len(alerts),
     }
 
