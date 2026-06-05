@@ -514,10 +514,10 @@ class NarrativeVelocityTracker:
                 return None
             # Use second-highest as "previous" for initial shift
             previous_title = velocities[1].narrative_title
-            previous_type = self._infer_type(velocities[1].narrative_hash, ticker)
+            previous_type = self._infer_type(velocities[1].narrative_hash)
 
         # Compute shift magnitude: type distance + intensity difference
-        current_type = self._infer_type(current_dominant.narrative_hash, ticker)
+        current_type = self._infer_type(current_dominant.narrative_hash)
         type_distance = 0.0 if current_type == previous_type else 0.5
         intensity_delta = abs(current_dominant.peak_intensity - 0.5)
         magnitude = min(1.0, type_distance + intensity_delta)
@@ -534,7 +534,7 @@ class NarrativeVelocityTracker:
         self._store.record_shift(shift)
         return shift
 
-    def _infer_type(self, nhash: str, ticker: str) -> NarrativeType:
+    def _infer_type(self, nhash: str) -> NarrativeType:
         """Look up the type for a narrative hash from the store."""
         rows = self._store.get_narrative_by_hash(nhash)
         if rows:
