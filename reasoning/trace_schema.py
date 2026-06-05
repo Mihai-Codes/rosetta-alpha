@@ -145,6 +145,16 @@ class InvestmentThesis(BaseModel):
         description="Map of agent_role → LLM model used. e.g. {'fundamental_analyst': 'claude-sonnet-4.6'}.",
     )
 
+    # Market regime context (populated by reasoning.regime_detector)
+    regime_context: dict[str, Any] | None = Field(
+        default=None,
+        description=(
+            "Current market regime detection result. Contains: current_regime "
+            "(TRENDING|MEAN_REVERTING|CRISIS|UNCERTAIN), regime_confidence (0-1), "
+            "regime_duration_days, transition_probabilities, method (hmm|garch_fallback)."
+        ),
+    )
+
     # Risk
     risk_factors: list[str] = Field(
         default_factory=list,

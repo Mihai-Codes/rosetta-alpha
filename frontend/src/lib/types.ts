@@ -21,6 +21,15 @@ export interface ReasoningBlock {
   language: string
 }
 
+/** Market regime context from the regime detector */
+export interface RegimeContext {
+  current_regime: 'TRENDING' | 'MEAN_REVERTING' | 'CRISIS' | 'UNCERTAIN'
+  regime_confidence: number
+  regime_duration_days: number
+  transition_probabilities: Record<string, number>
+  method: string
+}
+
 /** Desk/thesis data shape from the API */
 export interface DeskProps {
   desk: string
@@ -35,4 +44,5 @@ export interface DeskProps {
   pinata_url?: string
   arc_tx: string
   reasoning_blocks: ReasoningBlock[]
+  regime_context?: RegimeContext | null
 }

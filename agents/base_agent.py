@@ -457,7 +457,28 @@ class RegionalAgent(adal.Component):
         if not thesis.reasoning_blocks:
             thesis = thesis.model_copy(update={"reasoning_blocks": blocks})
 
-        # 4. Fetch live price and inject entry_price_1e8 for on-chain market creation.
+        # 4. Detect market regime and inject into thesis.
+        regime_context = None
+        try:
+            from reasoning.regime_detector import detect_regime
+            regime_result = await detect_regime(
+                ticker=safe_ticker, desk=self.region.value
+            )
+            regime_context = regime_result.to_dict()
+            logger.info(
+                "Regime for %s/%s: %s (conf=%.2f, duration=%dd)",
+                safe_ticker, self.region.value,
+                regime_result.current_regime.value,
+                regime_result.regime_confidence,
+                regime_result.regime_duration_days,
+            )
+        except Exception as _regime_exc:
+            logger.debug("Regime detection skipped for %s: %s", safe_ticker, _regime_exc)
+
+        if regime_context:
+            thesis = thesis.model_copy(update={"regime_context": regime_context})
+
+        # 5. Fetch live price and inject entry_price_1e8 for on-chain market creation.
         # Normalize ticker for yfinance: Tushare uses .SH/.SZ suffixes but
         # Yahoo Finance expects .SS (Shanghai) — e.g. 600519.SH → 600519.SS.
         entry_price_1e8: int | None = None
@@ -476,7 +497,7 @@ class RegionalAgent(adal.Component):
         except Exception as _price_exc:
             logger.debug("Price fetch skipped for %s: %s", safe_ticker, _price_exc)
 
-        # 5. Defensive: ensure region/language match what we configured.
+        # 6. Defensive: ensure region/language match what we configured.
         return thesis.model_copy(
             update={
                 "region": self.region,

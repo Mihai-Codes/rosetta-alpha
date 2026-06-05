@@ -4,6 +4,7 @@ import React from 'react'
 import { TrendingUp, TrendingDown, Minus, ExternalLink, ChevronRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ReasoningExplorer } from './ReasoningExplorer'
+import { RegimeIndicator } from './RegimeIndicator'
 
 export type { ReasoningBlock, DeskProps } from '@/lib/types'
 import type { DeskProps, ReasoningBlock } from '@/lib/types'
@@ -62,11 +63,14 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
             </h3>
           </div>
 
-          <div className={`flex items-center gap-1.5 px-3 py-1.5 border text-[10px] font-medium uppercase tracking-widest shrink-0 mt-1 ${directionColor} ${directionBg}`}>
-            {isLong && <TrendingUp className="w-3 h-3" />}
-            {isShort && <TrendingDown className="w-3 h-3" />}
-            {!isLong && !isShort && <Minus className="w-3 h-3" />}
-            {desk.direction}
+          <div className="flex items-center gap-2 shrink-0 mt-1">
+            <RegimeIndicator regime={desk.regime_context} compact />
+            <div className={`flex items-center gap-1.5 px-3 py-1.5 border text-[10px] font-medium uppercase tracking-widest ${directionColor} ${directionBg}`}>
+              {isLong && <TrendingUp className="w-3 h-3" />}
+              {isShort && <TrendingDown className="w-3 h-3" />}
+              {!isLong && !isShort && <Minus className="w-3 h-3" />}
+              {desk.direction}
+            </div>
           </div>
         </div>
 
