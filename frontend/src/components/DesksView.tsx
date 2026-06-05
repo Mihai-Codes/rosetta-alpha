@@ -12,6 +12,7 @@ import { AllWeatherChart } from './AllWeatherChart'
 import { NarrativeInsights } from './NarrativeInsights'
 import { ThesisSkeleton } from './SkeletonLoader'
 import { regionMeta } from '../lib/format'
+import { DivergenceGauge } from './DivergenceGauge'
 
 interface DesksViewProps {
   desks: DeskProps[]
@@ -119,7 +120,6 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
           ) : active ? (
             <div key={active.desk} className="solid-panel rounded-none border-x-0 border-y overflow-hidden relative">
               <ThesisCard desk={active} />
-              
             </div>
           ) : (
             <div className="solid-panel p-16 text-center border-x-0 border-y">
@@ -127,6 +127,12 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
             </div>
           )}
         </motion.div>
+
+        {active && (
+          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }} className="mt-8">
+            <DivergenceGauge ticker={active.ticker} desks={desks} />
+          </motion.div>
+        )}
 
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }} className="mt-8">
           <AllWeatherChart />
@@ -139,22 +145,29 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
           <RegionSidebar desks={desks} activeDesk={activeDesk} onSelect={setActiveDesk} />
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }} className="flex-1 min-w-0 ">
-          {loading ? (
-            <div className="solid-panel rounded-none border p-10">
-              <ThesisSkeleton />
-            </div>
-          ) : active ? (
-            <div key={active.desk} className="solid-panel rounded-none border overflow-hidden relative">
-              <ThesisCard desk={active} />
-              
-            </div>
-          ) : (
-            <div className="solid-panel p-16 text-center border">
-              <p className="font-display text-xl text-text-tertiary">No desks available</p>
-            </div>
+        <div className="flex-1 min-w-0 flex flex-col gap-6 lg:gap-8">
+          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }} className="w-full">
+            {loading ? (
+              <div className="solid-panel rounded-none border p-10">
+                <ThesisSkeleton />
+              </div>
+            ) : active ? (
+              <div key={active.desk} className="solid-panel rounded-none border overflow-hidden relative">
+                <ThesisCard desk={active} />
+              </div>
+            ) : (
+              <div className="solid-panel p-16 text-center border">
+                <p className="font-display text-xl text-text-tertiary">No desks available</p>
+              </div>
+            )}
+          </motion.div>
+
+          {active && (
+            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }} className="w-full">
+              <DivergenceGauge ticker={active.ticker} desks={desks} />
+            </motion.div>
           )}
-        </motion.div>
+        </div>
 
         {/* Hide chart on tablet to give thesis card room, show on desktop */}
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }} className="hidden lg:block w-[300px] xl:w-[320px] shrink-0  solid-panel rounded-none border overflow-hidden">

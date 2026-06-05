@@ -276,6 +276,86 @@ async def health():
 
 
 # ---------------------------------------------------------------------------
+# Divergence Index endpoints
+# ---------------------------------------------------------------------------
+
+
+@app.get("/api/v1/divergence")
+async def get_divergence(ticker: str):
+    """Get the cross-desk divergence index for a ticker."""
+    from reasoning.divergence_index import DivergenceStore, calculate_divergence
+    import json
+
+    if not _TICKER_RE.match(ticker):
+        raise HTTPException(status_code=400, detail="Invalid ticker format")
+
+    ticker_upper = ticker.upper().strip()
+    store = DivergenceStore()
+    metrics = store.get_latest_divergence(ticker_upper)
+
+    if metrics:
+        return {
+            "ticker": metrics.ticker,
+            "timestamp": metrics.timestamp.isoformat(),
+            "composite_divergence": metrics.composite_divergence,
+            "direction_divergence": metrics.direction_divergence,
+            "confidence_divergence": metrics.confidence_divergence,
+            "narrative_divergence": metrics.narrative_divergence,
+        }
+
+    # Dynamic fallback: check results.json to calculate on-the-fly
+    if RESULTS_PATH.exists():
+        try:
+            with open(RESULTS_PATH, "r") as f:
+                data = json.load(f)
+            # Filter results matching the requested ticker
+            matching_theses = []
+            if isinstance(data, list):
+                # E2E runs are list of runs or list of desk items
+                for item in data:
+                    # If it's a list of desk results
+                    if isinstance(item, dict) and item.get("ticker", "").upper().strip() == ticker_upper:
+                        matching_theses.append(item)
+                    elif isinstance(item, dict) and "results" in item:
+                        # Top level run dictionary containing results list
+                        for sub_item in item["results"]:
+                            if sub_item.get("ticker", "").upper().strip() == ticker_upper:
+                                matching_theses.append(sub_item)
+            elif isinstance(data, dict):
+                # Single run payload
+                if "results" in data:
+                    for sub_item in data["results"]:
+                        if sub_item.get("ticker", "").upper().strip() == ticker_upper:
+                            matching_theses.append(sub_item)
+
+            if matching_theses:
+                computed = calculate_divergence(matching_theses, ticker_upper)
+                if computed:
+                    # Save computed metrics to the history table for subsequent requests
+                    store.save_divergence(computed)
+                    return {
+                        "ticker": computed.ticker,
+                        "timestamp": computed.timestamp.isoformat(),
+                        "composite_divergence": computed.composite_divergence,
+                        "direction_divergence": computed.direction_divergence,
+                        "confidence_divergence": computed.confidence_divergence,
+                        "narrative_divergence": computed.narrative_divergence,
+                    }
+        except Exception as e:
+            logger.error("Failed to dynamically compute divergence: %s", e)
+
+    # Return fallback neutral defaults if no metrics exist
+    return {
+        "ticker": ticker_upper,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "composite_divergence": 0.0,
+        "direction_divergence": 0.0,
+        "confidence_divergence": 0.0,
+        "narrative_divergence": 0.0,
+    }
+
+
+# ---------------------------------------------------------------------------
 # Narrative Engine endpoints
 # ---------------------------------------------------------------------------
 

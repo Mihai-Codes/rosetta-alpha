@@ -21,18 +21,47 @@ interface LiveFeedViewProps {
 export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
   const [regionFilter, setRegionFilter] = React.useState<string>('ALL')
   const [directionFilter, setDirectionFilter] = React.useState<Direction>('ALL')
+  const [highDivergenceOnly, setHighDivergenceOnly] = React.useState<boolean>(false)
+  const [divergenceScores, setDivergenceScores] = React.useState<Record<string, number>>({})
   const [expanded, setExpanded] = React.useState<Set<string>>(new Set())
 
   const [now, setNow] = React.useState<number | null>(null)
   React.useEffect(() => { setNow(Date.now()) }, [])
+
+  React.useEffect(() => {
+    // Fetch divergence scores for all unique tickers in background
+    const tickers = Array.from(new Set(desks.map(d => d.ticker))).filter(Boolean)
+    tickers.forEach(async (ticker) => {
+      try {
+        const res = await fetch(`http://localhost:8000/api/v1/divergence?ticker=${encodeURIComponent(ticker)}`)
+        if (res.ok) {
+          const json = await res.json()
+          if (typeof json.composite_divergence === 'number') {
+            setDivergenceScores(prev => ({
+              ...prev,
+              [ticker.toUpperCase()]: json.composite_divergence
+            }))
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch divergence score for ticker:", ticker, err)
+      }
+    })
+  }, [desks])
 
   const entries: FeedEntry[] = React.useMemo(
     () =>
       desks
         .map((d, i) => ({ ...d, timestamp: (now ?? 1716508800000) - i * 90_000 })) // fallback to static time for SSR
         .filter(e => regionFilter === 'ALL' || e.desk.toLowerCase() === regionFilter)
-        .filter(e => directionFilter === 'ALL' || e.direction === directionFilter),
-    [desks, regionFilter, directionFilter, now]
+        .filter(e => directionFilter === 'ALL' || e.direction === directionFilter)
+        .filter(e => {
+          if (!highDivergenceOnly) return true
+          const tickerKey = (e.ticker || '').toUpperCase().trim()
+          const score = divergenceScores[tickerKey] ?? 0
+          return score >= 40
+        }),
+    [desks, regionFilter, directionFilter, highDivergenceOnly, divergenceScores, now]
   )
 
   const regions = ['ALL', ...Array.from(new Set(desks.map(d => d.desk.toLowerCase())))]
@@ -84,27 +113,42 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
         </div>
 
         {/* Direction — horizontal scroll pill bar on mobile */}
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] uppercase tracking-[0.25em] text-text-tertiary shrink-0">
-            Signal
-          </span>
-          <div className="relative flex-1">
-            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide snap-x pb-1">
-              {(['ALL', 'LONG', 'SHORT', 'NEUTRAL'] as Direction[]).map(d => (
-                <button
-                  key={d}
-                  onClick={() => setDirectionFilter(d)}
-                  className={`shrink-0 snap-start px-3 py-2 min-h-[44px] text-[10px] font-medium uppercase tracking-[0.18em] border transition-all ${
-                    directionFilter === d
-                      ? 'border-brand-red text-brand-red'
-                      : 'border-border text-text-secondary hover:text-text-primary'
-                  }`}
-                >
-                  {d === 'ALL' ? 'All' : d}
-                </button>
-              ))}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
+          <div className="flex items-center gap-2 flex-1">
+            <span className="text-[10px] uppercase tracking-[0.25em] text-text-tertiary shrink-0">
+              Signal
+            </span>
+            <div className="relative flex-1">
+              <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide snap-x pb-1">
+                {(['ALL', 'LONG', 'SHORT', 'NEUTRAL'] as Direction[]).map(d => (
+                  <button
+                    key={d}
+                    onClick={() => setDirectionFilter(d)}
+                    className={`shrink-0 snap-start px-3 py-2 min-h-[44px] text-[10px] font-medium uppercase tracking-[0.18em] border transition-all ${
+                      directionFilter === d
+                        ? 'border-brand-red text-brand-red'
+                        : 'border-border text-text-secondary hover:text-text-primary'
+                    }`}
+                  >
+                    {d === 'ALL' ? 'All' : d}
+                  </button>
+                ))}
+              </div>
+              <div className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-bg-primary to-transparent sm:hidden" />
             </div>
-            <div className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-bg-primary to-transparent sm:hidden" />
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={() => setHighDivergenceOnly(!highDivergenceOnly)}
+              className={`px-3 py-2 min-h-[44px] text-[10px] font-medium uppercase tracking-[0.18em] border transition-all ${
+                highDivergenceOnly
+                  ? 'bg-brand-red/10 border-brand-red text-brand-red'
+                  : 'border-border text-text-secondary hover:text-text-primary hover:border-border-strong'
+              }`}
+            >
+              ⚠️ High Divergence (≥40)
+            </button>
           </div>
         </div>
       </div>
