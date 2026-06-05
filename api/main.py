@@ -5,10 +5,11 @@ import json
 import logging
 import os
 import re
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, AsyncGenerator, Literal
+from typing import Any, Literal
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -126,11 +127,11 @@ async def get_results():
         return []
 
     try:
-        with open(RESULTS_PATH, "r") as f:
+        with open(RESULTS_PATH) as f:
             data = json.load(f)
             return data
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error reading results: {str(e)}")
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Error reading results: {exc}") from exc
 
 
 @app.post("/api/v1/analyze")
@@ -143,7 +144,7 @@ async def analyze(payload: AnalyzeRequest) -> dict[str, Any]:
     contagion_monitor = ContagionMonitor()
     desks = _build_desks()
     selected_keys: list[DeskKey] = payload.desks or list(desks.keys())  # type: ignore[assignment]
-    run_started = datetime.now(timezone.utc)
+    run_started = datetime.now(UTC)
     run_id = run_started.strftime("%Y%m%dT%H%M%SZ")
 
     results: list[dict[str, Any]] = []
@@ -191,7 +192,7 @@ async def analyze(payload: AnalyzeRequest) -> dict[str, Any]:
                     ),
                     timeout=payload.desk_timeout_seconds,
                 )
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 desk_result = {
                     "desk": desk,
                     "ticker": ticker,
@@ -294,7 +295,7 @@ async def analyze(payload: AnalyzeRequest) -> dict[str, Any]:
 
     try:
         return await asyncio.wait_for(_run_all(), timeout=payload.timeout_seconds)
-    except asyncio.TimeoutError:
+    except TimeoutError:
         return {
             "run_id": run_id,
             "timestamp": run_started.isoformat(),
@@ -325,7 +326,6 @@ async def health():
 async def get_divergence(ticker: str):
     """Get the cross-desk divergence index for a ticker."""
     from reasoning.divergence_index import DivergenceStore, calculate_divergence
-    import json
 
     if not _TICKER_RE.match(ticker):
         raise HTTPException(status_code=400, detail="Invalid ticker format")
@@ -347,7 +347,7 @@ async def get_divergence(ticker: str):
     # Dynamic fallback: check results.json to calculate on-the-fly
     if RESULTS_PATH.exists():
         try:
-            with open(RESULTS_PATH, "r") as f:
+            with open(RESULTS_PATH) as f:
                 data = json.load(f)
             # Filter results matching the requested ticker
             matching_theses = []
@@ -362,12 +362,11 @@ async def get_divergence(ticker: str):
                         for sub_item in item["results"]:
                             if sub_item.get("ticker", "").upper().strip() == ticker_upper:
                                 matching_theses.append(sub_item)
-            elif isinstance(data, dict):
+            elif isinstance(data, dict) and "results" in data:
                 # Single run payload
-                if "results" in data:
-                    for sub_item in data["results"]:
-                        if sub_item.get("ticker", "").upper().strip() == ticker_upper:
-                            matching_theses.append(sub_item)
+                for sub_item in data["results"]:
+                    if sub_item.get("ticker", "").upper().strip() == ticker_upper:
+                        matching_theses.append(sub_item)
 
             if matching_theses:
                 computed = calculate_divergence(matching_theses, ticker_upper)
@@ -388,7 +387,7 @@ async def get_divergence(ticker: str):
     # Return fallback neutral defaults if no metrics exist
     return {
         "ticker": ticker_upper,
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "composite_divergence": 0.0,
         "direction_divergence": 0.0,
         "confidence_divergence": 0.0,
@@ -404,8 +403,11 @@ async def get_divergence(ticker: str):
 @app.get("/api/v1/mob-meter")
 async def get_mob_meter(ticker: str):
     """Get the crowd extremity / mob index for a ticker."""
-    from reasoning.mob_meter import ConfidenceCalibrationStore, calculate_mob_extremity, iter_thesis_records
-    import json
+    from reasoning.mob_meter import (
+        ConfidenceCalibrationStore,
+        calculate_mob_extremity,
+        iter_thesis_records,
+    )
 
     if not _TICKER_RE.match(ticker):
         raise HTTPException(status_code=400, detail="Invalid ticker format")
@@ -415,7 +417,7 @@ async def get_mob_meter(ticker: str):
 
     if RESULTS_PATH.exists():
         try:
-            with open(RESULTS_PATH, "r") as f:
+            with open(RESULTS_PATH) as f:
                 data = json.load(f)
 
             matching_theses.extend(
@@ -451,7 +453,7 @@ async def get_mob_meter(ticker: str):
 
     return {
         "ticker": ticker_upper,
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "mob_index": 0.0,
         "consensus_level": 0.0,
         "confidence_extremity": 0.0,
@@ -493,8 +495,8 @@ async def get_narratives(ticker: str, region: str | None = None):
     if region:
         try:
             region_filter = Region(region.upper())
-        except ValueError:
-            raise HTTPException(status_code=400, detail=f"Invalid region: {region}")
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=f"Invalid region: {region}") from exc
 
     narratives = engine.get_ticker_narratives(ticker.upper(), region=region_filter)
     velocities = engine.get_velocity(ticker.upper(), region=region_filter)
@@ -601,8 +603,8 @@ async def get_best_agent(region: str):
 
     try:
         Region(region.upper())
-    except ValueError:
-        raise HTTPException(status_code=400, detail=f"Invalid region: {region}")
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=f"Invalid region: {region}") from exc
     kg = get_knowledge_graph(enable_embeddings=False)
     return kg.get_best_agent_by_region(region)
 
