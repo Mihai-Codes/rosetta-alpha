@@ -44,6 +44,15 @@ node_modules/
 frontend/dist/
 frontend/.vite/
 
+# Remotion
+remotion/node_modules/
+remotion/bun.lock
+
+# Assets — large binaries not for git (use Git LFS or external storage)
+assets/*.mp4
+assets/*.mov
+assets/*.webm
+
 # Hardhat / Foundry
 contracts/cache/
 contracts/artifacts/

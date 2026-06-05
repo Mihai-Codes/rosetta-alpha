@@ -1,0 +1,12 @@
+{
+  "name": "adal-remotion-workspace",
+  "private": true,
+  "dependencies": {
+    "remotion": "^4.0.438",
+    "@remotion/cli": "^4.0.438",
+    "@remotion/renderer": "^4.0.438",
+    "@remotion/captions": "^4.0.438",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}

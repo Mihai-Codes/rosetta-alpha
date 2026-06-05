@@ -1,0 +1,84 @@
+{
+  "assets": {
+    "796a212f": {
+      "id": "796a212f",
+      "type": "image",
+      "src": "../rosetta-research-agent/docs/agent_avatar.png",
+      "duration_s": null,
+      "resolution": null,
+      "provider": "nano-banana-2",
+      "generation": {
+        "prompt": "A minimalist professional avatar icon for an AI financial research agent. Centered design: a glowing rosetta compass rose shape constructed from golden circuit-board traces and geometric data lines, on a deep navy blue background (#0a1628). The 8 compass arms radiate outward with subtle candlestick chart patterns embedded in them, representing global financial markets. Outer ring has faint world map longitude lines. Color palette: deep navy background, gold (#f0c040) primary lines, electric blue (#4fc3f7) accent glows. Clean flat design, geometric precision, subtle soft glow on the central rosette, no text, no letters, professional logo-style icon suitable as a square avatar.",
+        "model": "nano-banana-2",
+        "n": 1,
+        "google_search_grounding": false
+      },
+      "created_at": "2026-05-29T12:08:09Z",
+      "tags": null
+    },
+    "c9c1f178": {
+      "id": "c9c1f178",
+      "type": "image",
+      "src": "../rosetta-research-agent/docs/portfolio_thesis_card.png",
+      "duration_s": null,
+      "resolution": null,
+      "provider": "nano-banana-pro",
+      "generation": {
+        "prompt": "Professional product showcase card for an AI financial research agent. Dark navy background (#0d1b2a). Top left: small gold compass rose icon. Title in white: 'Investment Thesis: AAPL'. Subtitle: 'US Equities Desk \u00b7 Groq Llama-3.3-70B'. Large bold green badge: 'LONG'. Below: confidence bar showing 87% filled in gold, labeled 'Confidence: 0.87'. Time horizon: '90 days'. Three analyst cards in a row: 'Fundamental Analyst', 'Technical Analyst', 'Sentiment Analyst' each with a short 1-line summary text in light grey. Bottom: IPFS CID in monospace font in electric blue. Clean fintech UI style, no gradients, sharp edges, professional.",
+        "model": "nano-banana-pro",
+        "n": 1,
+        "google_search_grounding": false
+      },
+      "created_at": "2026-05-29T12:18:22Z",
+      "tags": null
+    },
+    "526e35ae": {
+      "id": "526e35ae",
+      "type": "image",
+      "src": "../rosetta-research-agent/docs/portfolio_desks.png",
+      "duration_s": null,
+      "resolution": null,
+      "provider": "nano-banana-pro",
+      "generation": {
+        "prompt": "Professional infographic showing 5 regional trading desks for an AI financial research agent. Dark navy background. Title at top: 'Five Regional Desks. Five Languages.' in white. Five horizontal cards stacked, each with flag emoji, region name, model name, and language badge: 1) US Equities - Groq Llama-3.3-70B - English 2) China A-Shares - DeepSeek V4 Pro - Chinese 3) EU Equities - Gemini 2.5 Flash - English 4) Japan Equities - Gemini 2.5 Flash - Japanese 5) Crypto - Groq Llama-3.3-70B - English. Each card has a subtle candlestick chart sparkline on the right. Gold accent colors, clean sans-serif typography, professional fintech style.",
+        "model": "nano-banana-pro",
+        "n": 1,
+        "google_search_grounding": false
+      },
+      "created_at": "2026-05-29T12:18:45Z",
+      "tags": null
+    },
+    "35f2a018": {
+      "id": "35f2a018",
+      "type": "image",
+      "src": "../rosetta-research-agent/docs/portfolio_architecture.png",
+      "duration_s": null,
+      "resolution": null,
+      "provider": "nano-banana-pro",
+      "generation": {
+        "prompt": "Professional architecture diagram for an AI agent pipeline. Dark navy background (#0d1b2a). Title: 'How It Works' in white. Clean left-to-right flow diagram with 5 steps connected by arrows: Step 1 box 'API Request' with ticker icon, Step 2 'Data Pull' with database icon, Step 3 'Three Analyst Agents' with three small parallel boxes labeled Fundamental / Technical / Sentiment, Step 4 'Portfolio Synthesis' with merge arrow, Step 5 'IPFS Pin + Response' with chain link icon. Arrows in electric blue, boxes in dark slate with gold borders. Clean flat design, no shadows, professional fintech infographic style.",
+        "model": "nano-banana-pro",
+        "n": 1,
+        "google_search_grounding": false
+      },
+      "created_at": "2026-05-29T12:19:10Z",
+      "tags": null
+    },
+    "b655d115": {
+      "id": "b655d115",
+      "type": "image",
+      "src": "../rosetta-research-agent/docs/portfolio_ipfs_trust.png",
+      "duration_s": null,
+      "resolution": null,
+      "provider": "nano-banana-pro",
+      "generation": {
+        "prompt": "Professional trust and provenance showcase card for a financial AI agent. Dark navy background. Title: 'Every thesis. Permanently verified.' in white bold. Center: two provider logos side by side labeled 'Pinata' and 'Storacha / Filecoin' connected by an equals sign showing matching CIDs. Below: a monospace CID hash string in electric blue. Bottom section: 'Dual-provider IPFS quorum. Identical CID across both providers. Tamper-evident audit trail for every research output.' in light grey small text. Green checkmark badge: 'Cryptographically Verified'. Clean fintech security/trust visual, gold and blue accents on navy.",
+        "model": "nano-banana-pro",
+        "n": 1,
+        "google_search_grounding": false
+      },
+      "created_at": "2026-05-29T12:19:32Z",
+      "tags": null
+    }
+  }
+}
