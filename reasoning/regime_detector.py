@@ -284,7 +284,8 @@ def detect_regime_garch_fallback(df: pd.DataFrame) -> RegimeDetectionResult:
         ValueError: If insufficient data (< MIN_GARCH_OBSERVATIONS).
     """
     close = df["Close"].astype(float)
-    returns = np.log(close / close.shift(1)).dropna().values
+    log_rets = np.log(close / close.shift(1))
+    returns = log_rets.replace([np.inf, -np.inf], np.nan).dropna().values
 
     if len(returns) < _MIN_GARCH_OBSERVATIONS:
         raise ValueError(
