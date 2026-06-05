@@ -90,3 +90,4 @@ docs/DEPLOY.md
 coverage.xml
 workflows/
 api/
+narratives.db

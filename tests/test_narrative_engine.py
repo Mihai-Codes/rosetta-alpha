@@ -256,6 +256,55 @@ class TestNarrativeHash:
 # ---------------------------------------------------------------------------
 
 
+class TestEdgeCases:
+    """Edge cases that could cause silent failures."""
+
+    def test_empty_text_returns_none(self, store: NarrativeStore) -> None:
+        """Empty/whitespace text should not crash or call LLM."""
+        from reasoning.narrative_engine import NarrativeExtractor
+        import adalflow as adal
+
+        mock_client = MagicMock(spec=adal.ModelClient)
+        extractor = NarrativeExtractor(model_client=mock_client)
+        assert extractor.extract("", "AAPL", Region.US) is None
+        assert extractor.extract("   \n  ", "AAPL", Region.US) is None
+
+    def test_ticker_case_normalization(self, store: NarrativeStore, sample_narrative: Narrative) -> None:
+        """Tickers stored and queried in consistent case."""
+        store.upsert("aapl", sample_narrative)  # lowercase input
+        rows = store.get_narratives_for_ticker("AAPL")  # uppercase query
+        assert len(rows) == 1
+
+    def test_upsert_with_special_chars_in_title(self, store: NarrativeStore) -> None:
+        """Narrative titles with unicode/special chars don't crash."""
+        n = Narrative(
+            narrative_title="中国AI泡沫 — fears & 'concerns'",
+            narrative_type=NarrativeType.FEAR,
+            sentiment_intensity=0.7,
+            source_region=Region.CN,
+        )
+        store.upsert("BABA", n)
+        rows = store.get_narratives_for_ticker("BABA")
+        assert len(rows) == 1
+        assert rows[0]["title"] == "中国AI泡沫 — fears & 'concerns'"
+
+    def test_velocity_same_day_multiple_mentions(self, store: NarrativeStore) -> None:
+        """Multiple mentions on same day → days_active=1, velocity=mention_count."""
+        n = Narrative(
+            narrative_title="Flash Crash",
+            narrative_type=NarrativeType.RISK,
+            sentiment_intensity=0.95,
+            source_region=Region.US,
+        )
+        for _ in range(10):
+            store.upsert("SPY", n)
+        tracker = NarrativeVelocityTracker(store)
+        velocities = tracker.compute_velocity("SPY")
+        assert len(velocities) == 1
+        assert velocities[0].mentions_per_day == 10.0
+        assert velocities[0].days_active == 1
+
+
 class TestNarrativeEngine:
     @staticmethod
     def _make_mock_client():

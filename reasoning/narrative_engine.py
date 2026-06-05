@@ -28,7 +28,6 @@ import hashlib
 import json
 import logging
 import sqlite3
-import time
 from contextlib import contextmanager
 from datetime import datetime, timezone
 from enum import Enum
@@ -216,6 +215,7 @@ class NarrativeStore:
 
     def upsert(self, ticker: str, narrative: Narrative) -> None:
         """Insert or update a narrative observation."""
+        ticker = ticker.upper().strip()
         nhash = _narrative_hash(narrative.narrative_title, ticker)
         now = datetime.now(timezone.utc).isoformat()
         entities_json = json.dumps(narrative.entities_mentioned, ensure_ascii=False)
@@ -288,7 +288,7 @@ class NarrativeStore:
                      previous_type, new_type, shift_magnitude)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """,
-                (shift.ticker, shift.region.value, shift.timestamp.isoformat(),
+                (shift.ticker.upper().strip(), shift.region.value, shift.timestamp.isoformat(),
                  shift.previous_narrative, shift.new_narrative,
                  shift.previous_type.value, shift.new_type.value, shift.shift_magnitude),
             )
@@ -356,8 +356,24 @@ class NarrativeExtractor(adal.Component):
             template=_EXTRACTION_TEMPLATE,
         )
 
+    @staticmethod
+    def _strip_fences(raw: str) -> str:
+        """Strip markdown code fences from LLM output (DRY — shared utility)."""
+        cleaned = raw.strip()
+        if cleaned.startswith("```"):
+            cleaned = cleaned.split("\n", 1)[-1]
+            if cleaned.rstrip().endswith("```"):
+                cleaned = cleaned.rstrip()[:-3]
+            cleaned = cleaned.strip()
+        return cleaned
+
     def extract(self, text: str, ticker: str, region: Region) -> Narrative | None:
         """Extract a single narrative from text. Returns None on parse failure."""
+        # Guard: empty/whitespace-only text is not extractable
+        if not text or not text.strip():
+            logger.debug("Skipping empty text for %s/%s", ticker, region.value)
+            return None
+
         # Truncate to avoid token overflow (Groq 32K context)
         truncated = text[:8000] if len(text) > 8000 else text
 
@@ -368,19 +384,11 @@ class NarrativeExtractor(adal.Component):
         })
 
         raw = getattr(output, "raw_response", None) or getattr(output, "data", None) or str(output)
-        if not raw:
+        if not raw or not raw.strip():
             return None
 
         try:
-            # Strip markdown fences if present
-            cleaned = raw.strip()
-            if cleaned.startswith("```"):
-                cleaned = cleaned.split("\n", 1)[-1]
-                if cleaned.rstrip().endswith("```"):
-                    cleaned = cleaned.rstrip()[:-3]
-                cleaned = cleaned.strip()
-
-            data = json.loads(cleaned)
+            data = json.loads(self._strip_fences(raw))
             data["source_region"] = region.value
             data["source_text_snippet"] = text[:200]
             return Narrative.model_validate(data)
