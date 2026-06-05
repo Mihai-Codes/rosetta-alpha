@@ -2,11 +2,12 @@
 
 import React from 'react'
 import posthog from 'posthog-js'
-import { TrendingUp, TrendingDown, Minus, ChevronDown, ExternalLink, Database, Link2, X } from 'lucide-react'
+import { TrendingUp, TrendingDown, Minus, ChevronDown, ExternalLink, Database, Link2 } from 'lucide-react'
 import { DeskProps } from './DeskCard'
 import { regionMeta, formatRelative, truncateHash } from '../lib/format'
 import { FeedItemSkeleton } from './SkeletonLoader'
 import { ProvenanceChain } from './ProvenanceChain'
+import { SidePanel } from './SidePanel'
 
 type Direction = 'ALL' | 'LONG' | 'SHORT' | 'NEUTRAL'
 
@@ -334,48 +335,21 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
       </div>
 
       {selectedProvenance && (
-        <div className="fixed inset-0 z-[120]">
-          <button
-            type="button"
-            className="absolute inset-0 bg-black/70 backdrop-blur-[2px]"
-            onClick={() => setSelectedProvenance(null)}
-            aria-label="Close provenance panel"
+        <SidePanel
+          isOpen={Boolean(selectedProvenance)}
+          onClose={() => setSelectedProvenance(null)}
+          title={`${selectedProvenance.ticker} · ${selectedProvenance.desk.toUpperCase()}`}
+          subtitle="Analyze → Hash → Pin → Stake → Record → Market"
+        >
+          <ProvenanceChain
+            cid={selectedProvenance.ipfs_thesis_cid}
+            desk={selectedProvenance.desk}
+            ticker={selectedProvenance.ticker}
+            model="multi-agent"
+            arcTx={selectedProvenance.arc_tx}
+            question={selectedProvenance.question}
           />
-          <aside
-            role="dialog"
-            aria-modal="true"
-            className="absolute right-0 top-0 h-full w-full max-w-[900px] bg-black border-l border-white/10 p-5 sm:p-6 overflow-y-auto"
-          >
-            <div className="flex items-start justify-between gap-4 mb-5">
-              <div>
-                <p className="text-[10px] uppercase tracking-[0.24em] text-brand-red">Provenance Chain</p>
-                <h2 className="font-display text-2xl text-white mt-1">
-                  {selectedProvenance.ticker} · {selectedProvenance.desk.toUpperCase()}
-                </h2>
-                <p className="text-[11px] text-text-tertiary mt-2">
-                  Analyze → Hash → Pin → Stake → Record → Market
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setSelectedProvenance(null)}
-                className="p-2 border border-white/15 text-text-secondary hover:text-white hover:border-brand-red transition-colors"
-                aria-label="Close provenance panel"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <ProvenanceChain
-              cid={selectedProvenance.ipfs_thesis_cid}
-              desk={selectedProvenance.desk}
-              ticker={selectedProvenance.ticker}
-              model="multi-agent"
-              arcTx={selectedProvenance.arc_tx}
-              question={selectedProvenance.question}
-            />
-          </aside>
-        </div>
+        </SidePanel>
       )}
     </div>
   )

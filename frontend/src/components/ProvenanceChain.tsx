@@ -206,8 +206,8 @@ export function ProvenanceChain({
         </a>
       </div>
 
-      <div className="overflow-x-auto pb-2">
-        <div className="flex items-stretch min-w-[1200px]">
+      <div className="overflow-x-auto md:pb-2">
+        <div className="flex flex-col md:flex-row md:items-stretch min-w-0 md:min-w-[1200px]">
           {data.steps.map((step, idx) => {
             const Icon = STEP_ICON[step.icon] ?? Link2
             const status = statusView(step.status)
@@ -215,7 +215,7 @@ export function ProvenanceChain({
 
             return (
               <React.Fragment key={step.id}>
-                <article className="w-[190px] shrink-0 solid-panel border border-white/10 p-3 bg-black">
+                <article className="w-full md:w-[190px] md:shrink-0 solid-panel border border-white/10 p-3 bg-black">
                   <div className="flex items-center justify-between mb-2">
                     <span className="inline-flex items-center justify-center w-7 h-7 border border-white/20 bg-white/[0.02]">
                       <Icon className="w-4 h-4 text-white" />
@@ -251,8 +251,8 @@ export function ProvenanceChain({
                 </article>
 
                 {idx < data.steps.length - 1 && (
-                  <div className="w-12 shrink-0 flex items-center justify-center">
-                    <div className="h-px w-full bg-white/20" />
+                  <div className="w-full h-6 md:h-auto md:w-12 md:shrink-0 flex items-center justify-center">
+                    <div className="w-px h-full md:h-px md:w-full bg-white/20" />
                   </div>
                 )}
               </React.Fragment>

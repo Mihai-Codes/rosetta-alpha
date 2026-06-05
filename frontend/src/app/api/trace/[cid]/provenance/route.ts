@@ -96,7 +96,9 @@ export async function GET(
       .map((r) => firstValidDate([r.pinned_at, r.last_verified_at, r.created_at]))
       .filter(Boolean) as string[]
 
-    const pinTimestamp = receiptTimes.length > 0 ? receiptTimes.sort()[0] : null
+    const pinTimestamp = receiptTimes.length > 0
+      ? receiptTimes.sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0]
+      : null
     const baseTimestamp = pinTimestamp
 
     const steps = [
