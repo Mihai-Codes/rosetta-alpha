@@ -13,6 +13,7 @@ import logging
 from datetime import datetime, timezone
 from typing import Any
 
+from data.yfinance_client import normalize_yf_ticker
 from reasoning.trace_schema import Direction, HiddenFlowSignal, HiddenFlowType, Region
 
 logger = logging.getLogger(__name__)
@@ -20,12 +21,6 @@ logger = logging.getLogger(__name__)
 
 def _now_utc() -> datetime:
     return datetime.now(timezone.utc)
-
-
-def _to_yf_ticker(ticker: str) -> str:
-    if ticker in {"BTC", "ETH", "SOL", "BNB", "XRP", "ADA", "AVAX", "DOGE"}:
-        return f"{ticker}-USD"
-    return ticker.replace(".SH", ".SS")
 
 
 def _safe_float(value: Any, default: float = 0.0) -> float:
@@ -63,7 +58,7 @@ async def scan_options_flow(ticker: str, max_expiries: int = 3) -> list[HiddenFl
         logger.warning("hidden flow: yfinance/pandas unavailable: %s", exc)
         return []
 
-    yf_ticker = _to_yf_ticker(ticker)
+    yf_ticker = normalize_yf_ticker(ticker)
 
     def _fetch() -> list[HiddenFlowSignal]:
         t = yf.Ticker(yf_ticker)

@@ -16,6 +16,16 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
+_YF_CRYPTO_USD = {"BTC", "ETH", "SOL", "BNB", "XRP", "ADA", "AVAX", "DOGE"}
+
+
+def normalize_yf_ticker(ticker: str) -> str:
+    """Normalize project tickers to Yahoo Finance format."""
+    yf_ticker = ticker.replace(".SH", ".SS")
+    if yf_ticker in _YF_CRYPTO_USD:
+        return f"{yf_ticker}-USD"
+    return yf_ticker
+
 
 class YFinanceClient:
     """Thin async wrapper around yfinance for international equities.

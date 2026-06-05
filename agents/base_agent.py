@@ -498,13 +498,8 @@ class RegionalAgent(adal.Component):
         # Yahoo Finance expects .SS (Shanghai) — e.g. 600519.SH → 600519.SS.
         entry_price_1e8: int | None = None
         try:
-            from data.yfinance_client import YFinanceClient as _YFC
-            # Normalize ticker for yfinance:
-            # - Tushare .SH → Yahoo .SS  (Shanghai A-shares)
-            # - Bare crypto symbols (BTC, ETH) → BTC-USD, ETH-USD
-            _yf_ticker = safe_ticker.replace(".SH", ".SS")
-            if _yf_ticker in ("BTC", "ETH", "SOL", "BNB", "XRP", "ADA", "AVAX", "DOGE"):
-                _yf_ticker = f"{_yf_ticker}-USD"
+            from data.yfinance_client import YFinanceClient as _YFC, normalize_yf_ticker
+            _yf_ticker = normalize_yf_ticker(safe_ticker)
             price = await _YFC().get_current_price(_yf_ticker)
             if price and price > 0:
                 entry_price_1e8 = int(price * 1e8)
