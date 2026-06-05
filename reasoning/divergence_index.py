@@ -123,19 +123,21 @@ def calculate_divergence(theses: list[InvestmentThesis] | list[dict[str, Any]], 
         return None
 
     # a) Direction Divergence: % of desks that disagree on LONG/SHORT/NEUTRAL
-    if N > 1 and directions:
+    N_dir = len(directions)
+    if N_dir > 1:
         counts: dict[str, int] = {}
         for d in directions:
             counts[d] = counts.get(d, 0) + 1
         max_count = max(counts.values())
-        direction_divergence = (N - max_count) / N
+        direction_divergence = (N_dir - max_count) / N_dir
     else:
         direction_divergence = 0.0
 
     # b) Confidence Divergence: normalized standard deviation
-    if N > 1 and confidences:
-        mean_c = sum(confidences) / len(confidences)
-        variance = sum((c - mean_c) ** 2 for c in confidences) / len(confidences)
+    N_conf = len(confidences)
+    if N_conf > 1:
+        mean_c = sum(confidences) / N_conf
+        variance = sum((c - mean_c) ** 2 for c in confidences) / N_conf
         std_dev = math.sqrt(variance)
         # Max standard deviation of numbers in [0, 1] is 0.5 (e.g. half 0s and half 1s)
         confidence_divergence = min(1.0, std_dev * 2.0)
@@ -143,11 +145,12 @@ def calculate_divergence(theses: list[InvestmentThesis] | list[dict[str, Any]], 
         confidence_divergence = 0.0
 
     # c) Narrative Divergence: pairwise average cosine distance
-    if N > 1 and len(summaries) > 1:
+    N_sum = len(summaries)
+    if N_sum > 1:
         total_dist = 0.0
         pairs_count = 0
-        for i in range(len(summaries)):
-            for j in range(i + 1, len(summaries)):
+        for i in range(N_sum):
+            for j in range(i + 1, N_sum):
                 total_dist += _cosine_distance(summaries[i], summaries[j])
                 pairs_count += 1
         narrative_divergence = total_dist / pairs_count if pairs_count > 0 else 0.0

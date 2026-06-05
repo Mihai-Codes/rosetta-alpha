@@ -103,6 +103,36 @@ def test_calculate_divergence_single_or_empty():
     assert metrics.composite_divergence == 0.0
 
 
+def test_calculate_divergence_partial_data():
+    # 3 desks, but some data is missing or incomplete
+    theses = [
+        {
+            "direction": "LONG",
+            "confidence_score": 0.8,
+            # missing summary
+        },
+        {
+            # missing direction
+            "confidence_score": 0.4,
+            "thesis_summary_en": "bullish stock setup on technology",
+        },
+        {
+            "direction": "SHORT",
+            # missing confidence
+            "thesis_summary_en": "bearish stance on technology stock",
+        },
+    ]
+
+    metrics = calculate_divergence(theses, "AAPL")
+    assert metrics is not None
+    # 2 directions present (LONG, SHORT) -> max count = 1. (2 - 1)/2 = 0.5 direction divergence
+    assert math.isclose(metrics.direction_divergence, 0.5)
+    # 2 confidences present (0.8, 0.4) -> mean = 0.6, variance = 0.04, std_dev = 0.2. scaled = 0.4
+    assert math.isclose(metrics.confidence_divergence, 0.4)
+    # 2 summaries present -> cosine distance
+    assert 0.0 < metrics.narrative_divergence < 1.0
+
+
 def test_divergence_store(tmp_path):
     db_file = tmp_path / "test_divergence.db"
     store = DivergenceStore(db_path=db_file)
