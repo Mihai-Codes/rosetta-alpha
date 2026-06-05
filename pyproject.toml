@@ -46,9 +46,14 @@ dependencies = [
     "playwright>=1.59.0",
     # Regime detection (HMM)
     "hmmlearn>=0.3.0",
+    # Knowledge graph
+    "networkx>=3.2",
 ]
 
 [project.optional-dependencies]
+embeddings = [
+    "sentence-transformers>=2.6",
+]
 dev = [
     "pytest>=8.0",
     "pytest-asyncio>=0.23",

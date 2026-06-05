@@ -10,7 +10,7 @@ import { WalletButton } from './WalletButton'
 import { OnboardingModal } from './OnboardingModal'
 import { SignInModal, authModalState } from './SignInModal'
 
-export type Tab = 'desks' | 'feed' | 'registry' | 'about' | 'leaderboard' | 'dashboard' | 'quiz'
+export type Tab = 'desks' | 'feed' | 'registry' | 'about' | 'leaderboard' | 'dashboard' | 'quiz' | 'knowledge-graph'
 
 interface LayoutProps {
   children: React.ReactNode
