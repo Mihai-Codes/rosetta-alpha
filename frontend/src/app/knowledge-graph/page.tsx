@@ -67,18 +67,32 @@ function initPositions(nodes: GraphNode[], width: number, height: number) {
   }
 }
 
+/** Resolve edge string IDs to node references (call once after fetch, not per frame) */
+function resolveEdges(nodes: GraphNode[], edges: GraphEdge[]) {
+  const nodeMap = new Map(nodes.map(n => [n.id, n]))
+  for (const edge of edges) {
+    if (typeof edge.source === 'string') edge.source = nodeMap.get(edge.source) || edge.source
+    if (typeof edge.target === 'string') edge.target = nodeMap.get(edge.target) || edge.target
+  }
+}
+
+// Cooling state for convergence detection
+let alpha = 0.3
+
 function simulate(nodes: GraphNode[], edges: GraphEdge[], width: number, height: number) {
-  const alpha = 0.3
+  // Cool down over time — simulation converges and stops wasting CPU
+  alpha *= 0.998
+  if (alpha < 0.001) return // Converged — skip physics
+
   const repulsion = 800
   const attraction = 0.005
   const centerForce = 0.01
   const damping = 0.85
 
-  // Build edge lookup with resolved references
-  const edgePairs = edges.map(e => ({
-    source: typeof e.source === 'string' ? nodes.find(n => n.id === e.source)! : e.source,
-    target: typeof e.target === 'string' ? nodes.find(n => n.id === e.target)! : e.target,
-  })).filter(e => e.source && e.target)
+  // Edges should already be resolved to node references via resolveEdges()
+  const edgePairs = edges.filter(e =>
+    typeof e.source !== 'string' && typeof e.target !== 'string'
+  ) as { source: GraphNode; target: GraphNode; type: string }[]
 
   // Repulsion (Coulomb's law)
   for (let i = 0; i < nodes.length; i++) {
@@ -159,6 +173,8 @@ export default function KnowledgeGraphPage() {
       edgesRef.current = data.edges.map(e => ({ ...e }))
       const { width, height } = dimensionsRef.current
       initPositions(nodesRef.current, width, height)
+      resolveEdges(nodesRef.current, edgesRef.current)
+      alpha = 0.3 // Reset cooling on new data
     } catch {
       setGraphData(null)
     } finally {

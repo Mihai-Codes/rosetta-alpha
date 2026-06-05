@@ -76,14 +76,18 @@ function generateMockGraph(ticker: string, region: string) {
     ? nodes.filter(n => !n.region || n.region === region || n.type !== 'thesis')
     : nodes
 
+  // Filter edges to only include those between filtered nodes
+  const nodeIds = new Set(filteredNodes.map(n => n.id))
+  const filteredEdges = edges.filter(e => nodeIds.has(e.source) && nodeIds.has(e.target))
+
   return {
     nodes: filteredNodes,
-    edges,
+    edges: filteredEdges,
     meta: {
       total_nodes: filteredNodes.length,
-      total_edges: edges.length,
+      total_edges: filteredEdges.length,
       filtered_nodes: filteredNodes.length,
-      filtered_edges: edges.length,
+      filtered_edges: filteredEdges.length,
     },
   }
 }
