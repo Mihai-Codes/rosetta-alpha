@@ -14,13 +14,32 @@ from reasoning.trace_schema import InvestmentThesis, Direction, AssetClass, Regi
 def test_tokenize():
     text = "Hello, World! This is AAPL stock's 10-Q report."
     tokens = _tokenize(text)
+    # Stopwords like "is", "this" should be removed
     assert "hello" in tokens
     assert "world" in tokens
     assert "aapl" in tokens
     assert "stock" in tokens
-    # One letter words/punctuation should be ignored
-    assert "s" not in tokens
-    assert "is" in tokens
+    assert "this" not in tokens
+    assert "is" not in tokens
+
+
+def test_stem():
+    from reasoning.divergence_index import _stem
+    assert _stem("bullish") == "bullish"
+    assert _stem("rallies") == "ralli"
+    assert _stem("rallying") == "rally"
+    assert _stem("declined") == "declin"
+
+
+def test_cosine_distance_sentiment_polarity():
+    # Opposing sentiments should trigger the polarity penalty pushing distance closer to 1.0
+    text_bull = "extremely bullish stance on technology stock"
+    text_bear = "extremely bearish stance on technology stock"
+    
+    # Simple similarity might see these as very close because of "stance on technology stock"
+    # But because of "bullish" and "bearish" opposites, the distance should have the polarity penalty applied.
+    dist = _cosine_distance(text_bull, text_bear)
+    assert dist > 0.5
 
 
 def test_cosine_distance():

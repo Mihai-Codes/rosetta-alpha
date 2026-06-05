@@ -40,16 +40,55 @@ class DivergenceMetrics(BaseModel):
 # Core TF-IDF / Cosine Similarity (Pure Python)
 # ---------------------------------------------------------------------------
 
+COMMON_STOPWORDS = {
+    "the", "a", "an", "and", "or", "but", "if", "because", "as", "until", "while",
+    "of", "at", "by", "for", "with", "about", "against", "between", "into", "through",
+    "during", "before", "after", "above", "below", "to", "from", "up", "down", "in",
+    "out", "on", "off", "over", "under", "again", "further", "then", "once", "here",
+    "there", "when", "where", "why", "how", "all", "any", "both", "each", "few",
+    "more", "most", "other", "some", "such", "no", "nor", "not", "only", "own", "same",
+    "so", "than", "too", "very", "s", "t", "can", "will", "just", "should", "now",
+    "this", "that", "these", "those", "is", "am", "are", "was", "were", "be", "been", "being"
+}
+
+BULLISH_WORDS = {"bullish", "long", "upside", "growth", "buy", "outperform", "rally", "positive"}
+BEARISH_WORDS = {"bearish", "short", "downside", "decline", "sell", "underperform", "drop", "negative"}
+
+def _stem(word: str) -> str:
+    """A basic stemmer to normalize plurals and common suffixes."""
+    if word.endswith("sses"):
+        word = word[:-2]
+    elif word.endswith("ies"):
+        word = word[:-3] + "i"
+    elif word.endswith("ss"):
+        pass
+    elif word.endswith("s") and not word.endswith("us") and not word.endswith("is") and not word.endswith("as"):
+        word = word[:-1]
+    
+    if word.endswith("ingly"):
+        word = word[:-5]
+    elif word.endswith("ly"):
+        word = word[:-2]
+    elif word.endswith("ing"):
+        word = word[:-3]
+    elif word.endswith("ed"):
+        word = word[:-2]
+        
+    return word
+
+
 def _tokenize(text: str) -> list[str]:
-    """Tokenize and normalize text."""
+    """Tokenize, normalize, remove stopwords, and stem tokens."""
     text = text.lower()
     # Replace non-alphanumeric characters with spaces
     text = re.sub(r"[^a-z0-9\s]", " ", text)
-    return [w for w in text.split() if len(w) > 1]
+    tokens = [w for w in text.split() if len(w) > 1]
+    # Filter stopwords and stem remaining words
+    return [_stem(w) for w in tokens if w not in COMMON_STOPWORDS]
 
 
 def _cosine_distance(text_a: str, text_b: str) -> float:
-    """Calculate cosine distance (1.0 - similarity) between two text blocks."""
+    """Calculate polarity-aware cosine distance (1.0 - similarity) between text blocks."""
     tokens_a = _tokenize(text_a)
     tokens_b = _tokenize(text_b)
     
@@ -70,7 +109,24 @@ def _cosine_distance(text_a: str, text_b: str) -> float:
         return 1.0
         
     similarity = dot_product / (magnitude_a * magnitude_b)
-    return max(0.0, min(1.0, 1.0 - similarity))
+    distance = max(0.0, min(1.0, 1.0 - similarity))
+
+    # Sentiment Polarity Adjustment:
+    # If one text is highly bullish and the other bearish, push distance closer to 1.0.
+    set_a = set(tokens_a)
+    set_b = set(tokens_b)
+    
+    has_bull_a = any(w in BULLISH_WORDS for w in set_a) or "bull" in text_a.lower()
+    has_bear_a = any(w in BEARISH_WORDS for w in set_a) or "bear" in text_a.lower()
+    
+    has_bull_b = any(w in BULLISH_WORDS for w in set_b) or "bull" in text_b.lower()
+    has_bear_b = any(w in BEARISH_WORDS for w in set_b) or "bear" in text_b.lower()
+    
+    # Opposite sentiments -> apply a distance penalty (maxing out at 1.0)
+    if (has_bull_a and has_bear_b) or (has_bear_a and has_bull_b):
+        distance = min(1.0, distance + 0.3)
+        
+    return distance
 
 
 # ---------------------------------------------------------------------------
