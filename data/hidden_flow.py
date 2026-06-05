@@ -18,6 +18,10 @@ from reasoning.trace_schema import Direction, HiddenFlowSignal, HiddenFlowType, 
 
 logger = logging.getLogger(__name__)
 
+UNUSUAL_RATIO_THRESHOLD = 3.0
+STRADDLE_STRIKE_GAP_PCT = 0.02
+SPREAD_WIDTH_PCT = 0.03
+
 
 def _now_utc() -> datetime:
     return datetime.now(timezone.utc)
@@ -32,16 +36,22 @@ def _safe_float(value: Any, default: float = 0.0) -> float:
         return default
 
 
-def _estimate_notional(volume: float, last_price: float, bid: float, ask: float) -> float:
-    mid = last_price if last_price > 0 else (bid + ask) / 2 if (bid > 0 and ask > 0) else 0.0
-    return max(0.0, volume * mid * 100.0)
+def _estimate_notional_and_quality(
+    volume: float, last_price: float, bid: float, ask: float
+) -> tuple[float, float, str]:
+    if last_price > 0:
+        return max(0.0, volume * last_price * 100.0), 1.0, "last_price"
+    if bid > 0 and ask > 0:
+        mid = (bid + ask) / 2
+        return max(0.0, volume * mid * 100.0), 0.9, "mid_quote"
+    return 0.0, 0.7, "missing_price"
 
 
 def _confidence_from_ratio(ratio: float) -> float:
     # 3x threshold = minimum unusual. Saturates toward 1.0 as ratio grows.
-    if ratio <= 3.0:
+    if ratio <= UNUSUAL_RATIO_THRESHOLD:
         return 0.5
-    return min(0.95, 0.5 + (ratio - 3.0) * 0.08)
+    return min(0.95, 0.5 + (ratio - UNUSUAL_RATIO_THRESHOLD) * 0.08)
 
 
 async def scan_options_flow(ticker: str, max_expiries: int = 3) -> list[HiddenFlowSignal]:
@@ -63,6 +73,9 @@ async def scan_options_flow(ticker: str, max_expiries: int = 3) -> list[HiddenFl
     def _fetch() -> list[HiddenFlowSignal]:
         t = yf.Ticker(yf_ticker)
         expiries = list(t.options or [])[:max_expiries]
+        if not expiries:
+            logger.info("hidden flow: no option expiries returned for %s", yf_ticker)
+            return []
         signals: list[HiddenFlowSignal] = []
 
         unusual_calls: list[dict[str, Any]] = []
@@ -88,15 +101,17 @@ async def scan_options_flow(ticker: str, max_expiries: int = 3) -> list[HiddenFl
                     volume = _safe_float(row.get("volume"))
                     open_interest = max(1.0, _safe_float(row.get("openInterest"), 1.0))
                     ratio = volume / open_interest if open_interest > 0 else 0.0
-                    if ratio <= 3.0:
+                    if ratio <= UNUSUAL_RATIO_THRESHOLD:
                         continue
 
                     strike = _safe_float(row.get("strike"))
                     last_price = _safe_float(row.get("lastPrice"))
                     bid = _safe_float(row.get("bid"))
                     ask = _safe_float(row.get("ask"))
-                    notional = _estimate_notional(volume, last_price, bid, ask)
-                    confidence = _confidence_from_ratio(ratio)
+                    notional, price_quality, notional_method = _estimate_notional_and_quality(
+                        volume, last_price, bid, ask
+                    )
+                    confidence = _confidence_from_ratio(ratio) * price_quality
 
                     details = {
                         "expiry": expiry,
@@ -104,6 +119,8 @@ async def scan_options_flow(ticker: str, max_expiries: int = 3) -> list[HiddenFl
                         "ratio": ratio,
                         "volume": volume,
                         "open_interest_proxy": open_interest,
+                        "method": "snapshot_heuristic",
+                        "notional_method": notional_method,
                     }
                     bucket.append(details)
 
@@ -126,16 +143,21 @@ async def scan_options_flow(ticker: str, max_expiries: int = 3) -> list[HiddenFl
                 same_expiry = c["expiry"] == p["expiry"]
                 strike_gap = abs(c["strike"] - p["strike"])
                 strike_ref = max(1.0, c["strike"])
-                if same_expiry and strike_gap / strike_ref <= 0.02:
+                if same_expiry and strike_gap / strike_ref <= STRADDLE_STRIKE_GAP_PCT:
                     signals.append(
                         HiddenFlowSignal(
                             type=HiddenFlowType.STRADDLE_BUILD,
                             asset=ticker,
                             direction=Direction.NEUTRAL,
                             size_estimate=max(c["volume"], p["volume"]) * 100.0,
-                            confidence=0.65,
+                            confidence=0.62,
                             timestamp=_now_utc(),
-                            metadata={"expiry": c["expiry"], "call_strike": c["strike"], "put_strike": p["strike"]},
+                            metadata={
+                                "expiry": c["expiry"],
+                                "call_strike": c["strike"],
+                                "put_strike": p["strike"],
+                                "method": "snapshot_heuristic",
+                            },
                         )
                     )
                     break
@@ -148,16 +170,21 @@ async def scan_options_flow(ticker: str, max_expiries: int = 3) -> list[HiddenFl
                 keyed.setdefault(k, []).append(item)
             for (expiry, side), rows in keyed.items():
                 strikes = sorted({float(r["strike"]) for r in rows})
-                if len(strikes) >= 2 and (strikes[-1] - strikes[0]) / max(1.0, strikes[0]) >= 0.03:
+                if len(strikes) >= 2 and (strikes[-1] - strikes[0]) / max(1.0, strikes[0]) >= SPREAD_WIDTH_PCT:
                     signals.append(
                         HiddenFlowSignal(
                             type=HiddenFlowType.UNUSUAL_SPREAD,
                             asset=ticker,
                             direction=Direction.NEUTRAL,
                             size_estimate=float(sum(r["volume"] for r in rows)) * 100.0,
-                            confidence=0.6,
+                            confidence=0.58,
                             timestamp=_now_utc(),
-                            metadata={"expiry": expiry, "side": side, "strikes": strikes},
+                            metadata={
+                                "expiry": expiry,
+                                "side": side,
+                                "strikes": strikes,
+                                "method": "snapshot_heuristic",
+                            },
                         )
                     )
 

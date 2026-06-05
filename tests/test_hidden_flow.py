@@ -114,3 +114,65 @@ def test_gather_hidden_flow_context_non_us_skips_options(monkeypatch):
 
     assert dark_pool is False
     assert all(s.type == HiddenFlowType.CROSS_DESK_ALERT for s in signals)
+
+
+class _NoExpiryTicker:
+    def __init__(self, ticker: str):
+        self.ticker = ticker
+        self.options = []
+
+
+class _MissingPriceTicker:
+    def __init__(self, ticker: str):
+        self.ticker = ticker
+        self.options = ["2026-06-19"]
+
+    def option_chain(self, expiry: str):
+        calls = pd.DataFrame(
+            [
+                {"strike": 100.0, "volume": 1000, "openInterest": 100, "lastPrice": 0.0, "bid": 0.0, "ask": 0.0},
+            ]
+        )
+        puts = pd.DataFrame(
+            [
+                {"strike": 101.0, "volume": 700, "openInterest": 100, "lastPrice": 0.0, "bid": 0.0, "ask": 0.0},
+            ]
+        )
+        return types.SimpleNamespace(calls=calls, puts=puts)
+
+
+def test_scan_options_flow_no_expiries_returns_empty(monkeypatch):
+    fake_yf = types.ModuleType("yfinance")
+    fake_yf.Ticker = _NoExpiryTicker
+    monkeypatch.setitem(__import__("sys").modules, "yfinance", fake_yf)
+
+    signals = asyncio.run(scan_options_flow("AAPL"))
+    assert signals == []
+
+
+def test_scan_options_flow_missing_price_marks_quality_and_lower_confidence(monkeypatch):
+    fake_yf = types.ModuleType("yfinance")
+    fake_yf.Ticker = _MissingPriceTicker
+    monkeypatch.setitem(__import__("sys").modules, "yfinance", fake_yf)
+
+    signals = asyncio.run(scan_options_flow("AAPL"))
+    call_signals = [s for s in signals if s.type == HiddenFlowType.CALL_WALL]
+    assert call_signals, "Expected at least one CALL_WALL signal"
+
+    first = call_signals[0]
+    assert first.size_estimate == 0.0
+    assert first.metadata.get("notional_method") == "missing_price"
+    assert first.metadata.get("method") == "snapshot_heuristic"
+    assert first.confidence < 0.7
+
+
+def test_snapshot_heuristic_metadata_present_for_pattern_signals(monkeypatch):
+    _install_fake_yfinance(monkeypatch)
+
+    signals = asyncio.run(scan_options_flow("AAPL"))
+    spread = [s for s in signals if s.type == HiddenFlowType.UNUSUAL_SPREAD]
+    straddle = [s for s in signals if s.type == HiddenFlowType.STRADDLE_BUILD]
+
+    assert spread and straddle
+    assert all(s.metadata.get("method") == "snapshot_heuristic" for s in spread)
+    assert all(s.metadata.get("method") == "snapshot_heuristic" for s in straddle)
