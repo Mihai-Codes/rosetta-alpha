@@ -329,11 +329,16 @@ class KnowledgeGraph:
 
         Same direction + overlapping time horizon → SUPPORTS
         Opposite direction → CONTRADICTS
+
+        Note: snapshot node list to avoid RuntimeError if graph is modified
+        during iteration (defensive — edges don't mutate _node dict, but
+        future refactors could add node creation here).
         """
         ticker = thesis.ticker_or_asset.upper()
         new_direction = thesis.direction
 
-        for node_id, attrs in self._graph.nodes(data=True):
+        # Snapshot to avoid iteration-during-mutation edge cases
+        for node_id, attrs in list(self._graph.nodes(data=True)):
             if not node_id.startswith("thesis:") or node_id == new_thesis_id:
                 continue
             if attrs.get("ticker") != ticker:

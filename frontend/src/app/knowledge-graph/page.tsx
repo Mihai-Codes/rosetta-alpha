@@ -144,6 +144,9 @@ export default function KnowledgeGraphPage() {
   const edgesRef = useRef<GraphEdge[]>([])
   const animRef = useRef<number>(0)
   const dimensionsRef = useRef({ width: 900, height: 600 })
+  // Refs for render-loop state (avoids recreating draw callback on every hover)
+  const hoveredRef = useRef<GraphNode | null>(null)
+  const selectedRef = useRef<GraphNode | null>(null)
 
   // Fetch graph data
   const fetchGraph = useCallback(async (t: string) => {
@@ -224,8 +227,8 @@ export default function KnowledgeGraphPage() {
       ctx.fillStyle = color
       ctx.fill()
 
-      // Highlight on hover
-      if (hoveredNode?.id === node.id || selectedNode?.id === node.id) {
+      // Highlight on hover/selection (read from refs, not state)
+      if (hoveredRef.current?.id === node.id || selectedRef.current?.id === node.id) {
         ctx.strokeStyle = '#fff'
         ctx.lineWidth = 2
         ctx.stroke()
@@ -239,12 +242,13 @@ export default function KnowledgeGraphPage() {
     }
 
     animRef.current = requestAnimationFrame(draw)
-  }, [hoveredNode, selectedNode])
+  }, [])
 
   useEffect(() => {
     animRef.current = requestAnimationFrame(draw)
     return () => cancelAnimationFrame(animRef.current)
-  }, [draw])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // Resize handler
   useEffect(() => {
@@ -275,7 +279,9 @@ export default function KnowledgeGraphPage() {
       const dy = n.y! - y
       return Math.sqrt(dx * dx + dy * dy) < 16
     })
-    setHoveredNode(found || null)
+    const node = found || null
+    hoveredRef.current = node
+    setHoveredNode(node)
     canvas.style.cursor = found ? 'pointer' : 'default'
   }
 
@@ -291,7 +297,9 @@ export default function KnowledgeGraphPage() {
       const dy = n.y! - y
       return Math.sqrt(dx * dx + dy * dy) < 16
     })
-    setSelectedNode(found || null)
+    const node = found || null
+    selectedRef.current = node
+    setSelectedNode(node)
   }
 
   const handleSearch = (e: React.FormEvent) => {
@@ -376,7 +384,7 @@ export default function KnowledgeGraphPage() {
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-display text-lg text-text-primary">{selectedNode.label}</h3>
               <button
-                onClick={() => setSelectedNode(null)}
+                onClick={() => { selectedRef.current = null; setSelectedNode(null) }}
                 className="text-text-tertiary hover:text-text-primary text-sm"
               >
                 ✕
