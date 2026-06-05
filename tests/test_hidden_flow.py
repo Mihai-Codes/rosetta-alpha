@@ -176,3 +176,72 @@ def test_snapshot_heuristic_metadata_present_for_pattern_signals(monkeypatch):
     assert spread and straddle
     assert all(s.metadata.get("method") == "snapshot_heuristic" for s in spread)
     assert all(s.metadata.get("method") == "snapshot_heuristic" for s in straddle)
+
+
+class _UnsortedTicker:
+    def __init__(self, ticker: str):
+        self.ticker = ticker
+        self.options = ["2026-06-19"]
+
+    def option_chain(self, expiry: str):
+        calls = pd.DataFrame(
+            [
+                {"strike": 120.0, "volume": 900, "openInterest": 100, "lastPrice": 1.2, "bid": 1.1, "ask": 1.3},
+                {"strike": 100.0, "volume": 1000, "openInterest": 100, "lastPrice": 2.0, "bid": 1.9, "ask": 2.1},
+            ]
+        )
+        puts = pd.DataFrame(
+            [
+                {"strike": 90.0, "volume": 850, "openInterest": 100, "lastPrice": 1.0, "bid": 0.9, "ask": 1.1},
+                {"strike": 101.0, "volume": 700, "openInterest": 100, "lastPrice": 2.2, "bid": 2.1, "ask": 2.3},
+            ]
+        )
+        return types.SimpleNamespace(calls=calls, puts=puts)
+
+
+class _NonFiniteTicker:
+    def __init__(self, ticker: str):
+        self.ticker = ticker
+        self.options = ["2026-06-19"]
+
+    def option_chain(self, expiry: str):
+        calls = pd.DataFrame(
+            [
+                {"strike": 100.0, "volume": float("nan"), "openInterest": 100, "lastPrice": 2.0, "bid": 1.9, "ask": 2.1},
+                {"strike": 101.0, "volume": float("inf"), "openInterest": 100, "lastPrice": 2.0, "bid": 1.9, "ask": 2.1},
+            ]
+        )
+        puts = pd.DataFrame(
+            [
+                {"strike": 99.0, "volume": 900, "openInterest": float("nan"), "lastPrice": 1.8, "bid": 1.7, "ask": 1.9},
+                {"strike": 98.0, "volume": 900, "openInterest": 0, "lastPrice": 1.8, "bid": 1.7, "ask": 1.9},
+            ]
+        )
+        return types.SimpleNamespace(calls=calls, puts=puts)
+
+
+def test_scan_options_flow_returns_deterministic_order(monkeypatch):
+    fake_yf = types.ModuleType("yfinance")
+    fake_yf.Ticker = _UnsortedTicker
+    monkeypatch.setitem(__import__("sys").modules, "yfinance", fake_yf)
+
+    run1 = asyncio.run(scan_options_flow("AAPL"))
+    run2 = asyncio.run(scan_options_flow("AAPL"))
+
+    sig1 = [(s.type.value, s.asset, s.direction.value, s.metadata.get("expiry"), s.metadata.get("strike")) for s in run1]
+    sig2 = [(s.type.value, s.asset, s.direction.value, s.metadata.get("expiry"), s.metadata.get("strike")) for s in run2]
+    assert sig1 == sig2
+
+
+def test_scan_options_flow_handles_non_finite_inputs(monkeypatch):
+    fake_yf = types.ModuleType("yfinance")
+    fake_yf.Ticker = _NonFiniteTicker
+    monkeypatch.setitem(__import__("sys").modules, "yfinance", fake_yf)
+
+    signals = asyncio.run(scan_options_flow("AAPL"))
+
+    # Should never emit NaN/Inf confidence or size and should soft-handle malformed rows.
+    for s in signals:
+        assert 0.0 <= s.confidence <= 1.0
+        assert s.size_estimate >= 0.0
+

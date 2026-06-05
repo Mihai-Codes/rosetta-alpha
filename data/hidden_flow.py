@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import math
 from datetime import datetime, timezone
 from typing import Any
 
@@ -31,9 +32,17 @@ def _safe_float(value: Any, default: float = 0.0) -> float:
     try:
         if value is None:
             return default
-        return float(value)
+        number = float(value)
+        return number if math.isfinite(number) else default
     except Exception:
         return default
+
+
+def _safe_ratio(numerator: float, denominator: float) -> float:
+    if denominator <= 0:
+        return 0.0
+    ratio = numerator / denominator
+    return ratio if math.isfinite(ratio) else 0.0
 
 
 def _estimate_notional_and_quality(
@@ -52,6 +61,19 @@ def _confidence_from_ratio(ratio: float) -> float:
     if ratio <= UNUSUAL_RATIO_THRESHOLD:
         return 0.5
     return min(0.95, 0.5 + (ratio - UNUSUAL_RATIO_THRESHOLD) * 0.08)
+
+
+def _signal_sort_key(signal: HiddenFlowSignal) -> tuple[str, str, str, str, float, float]:
+    expiry = str(signal.metadata.get("expiry", ""))
+    strike = _safe_float(signal.metadata.get("strike"), default=0.0)
+    return (
+        signal.type.value,
+        signal.asset,
+        signal.direction.value,
+        expiry,
+        strike,
+        signal.size_estimate,
+    )
 
 
 async def scan_options_flow(ticker: str, max_expiries: int = 3) -> list[HiddenFlowSignal]:
@@ -98,9 +120,9 @@ async def scan_options_flow(ticker: str, max_expiries: int = 3) -> list[HiddenFl
                     continue
 
                 for row in frame.to_dict("records"):
-                    volume = _safe_float(row.get("volume"))
+                    volume = max(0.0, _safe_float(row.get("volume")))
                     open_interest = max(1.0, _safe_float(row.get("openInterest"), 1.0))
-                    ratio = volume / open_interest if open_interest > 0 else 0.0
+                    ratio = _safe_ratio(volume, open_interest)
                     if ratio <= UNUSUAL_RATIO_THRESHOLD:
                         continue
 
@@ -111,7 +133,7 @@ async def scan_options_flow(ticker: str, max_expiries: int = 3) -> list[HiddenFl
                     notional, price_quality, notional_method = _estimate_notional_and_quality(
                         volume, last_price, bid, ask
                     )
-                    confidence = _confidence_from_ratio(ratio) * price_quality
+                    confidence = max(0.0, min(1.0, _confidence_from_ratio(ratio) * price_quality))
 
                     details = {
                         "expiry": expiry,
@@ -188,6 +210,7 @@ async def scan_options_flow(ticker: str, max_expiries: int = 3) -> list[HiddenFl
                         )
                     )
 
+        signals.sort(key=_signal_sort_key)
         return signals
 
     return await asyncio.to_thread(_fetch)
@@ -258,6 +281,7 @@ def cross_desk_flow_anomalies(
                 )
             )
 
+    signals.sort(key=_signal_sort_key)
     return signals
 
 
@@ -299,4 +323,5 @@ async def gather_hidden_flow_context(
         )
     )
 
+    signals.sort(key=_signal_sort_key)
     return signals, potential_dark_pool_activity
