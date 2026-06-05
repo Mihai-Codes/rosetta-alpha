@@ -25,11 +25,14 @@ Design decisions:
 from __future__ import annotations
 
 import hashlib
+import json
 import logging
+import sqlite3
 import threading
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from enum import Enum
+from pathlib import Path
 from typing import Any
 
 import networkx as nx
@@ -77,8 +80,12 @@ class EmbeddingManager:
     """Lazy-loaded sentence-transformers for semantic similarity.
 
     Falls back gracefully if sentence-transformers is not installed.
-    Embeddings are cached per thesis_id to avoid recomputation.
+    Embeddings are cached per thesis_id with LRU eviction to prevent
+    unbounded memory growth.
     """
+
+    # Max cached embeddings (~384 floats × 8 bytes × 2000 ≈ 6MB cap)
+    _MAX_CACHE_SIZE = 2000
 
     def __init__(self, model_name: str = "all-MiniLM-L6-v2") -> None:
         self._model_name = model_name
@@ -109,7 +116,11 @@ class EmbeddingManager:
         return self._model
 
     def embed(self, text: str, cache_key: str | None = None) -> list[float] | None:
-        """Compute embedding for text. Returns None if unavailable."""
+        """Compute embedding for text. Returns None if unavailable.
+
+        Uses LRU eviction: when cache exceeds _MAX_CACHE_SIZE, the oldest
+        25% of entries are dropped (batch eviction avoids per-call overhead).
+        """
         if not self.available:
             return None
         if cache_key and cache_key in self._cache:
@@ -119,6 +130,11 @@ class EmbeddingManager:
         embedding = model.encode(text, normalize_embeddings=True).tolist()
 
         if cache_key:
+            # LRU eviction: drop oldest 25% when at capacity
+            if len(self._cache) >= self._MAX_CACHE_SIZE:
+                keys_to_remove = list(self._cache.keys())[: self._MAX_CACHE_SIZE // 4]
+                for k in keys_to_remove:
+                    del self._cache[k]
             self._cache[cache_key] = embedding
         return embedding
 
@@ -733,6 +749,98 @@ class KnowledgeGraph:
 
 
 # ---------------------------------------------------------------------------
+# SQLite persistence — survive server restarts
+# ---------------------------------------------------------------------------
+
+_DEFAULT_KG_DB = Path(__file__).parent.parent / "data" / "knowledge_graph.db"
+
+
+class GraphPersistence:
+    """SQLite-backed persistence for the knowledge graph.
+
+    Schema: two tables (nodes, edges) storing the graph as an edge list.
+    Designed for periodic snapshots, not per-mutation writes (MVP performance).
+    """
+
+    def __init__(self, db_path: Path | str = _DEFAULT_KG_DB) -> None:
+        self._db_path = Path(db_path)
+        self._db_path.parent.mkdir(parents=True, exist_ok=True)
+        self._init_schema()
+
+    def _conn(self) -> sqlite3.Connection:
+        conn = sqlite3.connect(str(self._db_path), timeout=10.0)
+        conn.execute("PRAGMA journal_mode=WAL")
+        conn.execute("PRAGMA busy_timeout=5000")
+        return conn
+
+    def _init_schema(self) -> None:
+        conn = self._conn()
+        try:
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS kg_nodes (
+                    node_id TEXT PRIMARY KEY,
+                    attrs TEXT NOT NULL
+                )
+            """)
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS kg_edges (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    source TEXT NOT NULL,
+                    target TEXT NOT NULL,
+                    attrs TEXT NOT NULL
+                )
+            """)
+            conn.commit()
+        finally:
+            conn.close()
+
+    def save(self, graph: nx.MultiDiGraph) -> None:
+        """Persist entire graph to SQLite (atomic replace)."""
+        conn = self._conn()
+        try:
+            conn.execute("DELETE FROM kg_nodes")
+            conn.execute("DELETE FROM kg_edges")
+            conn.executemany(
+                "INSERT INTO kg_nodes (node_id, attrs) VALUES (?, ?)",
+                [(nid, json.dumps(attrs, default=str)) for nid, attrs in graph.nodes(data=True)],
+            )
+            conn.executemany(
+                "INSERT INTO kg_edges (source, target, attrs) VALUES (?, ?, ?)",
+                [(u, v, json.dumps(d, default=str)) for u, v, d in graph.edges(data=True)],
+            )
+            conn.commit()
+            logger.info("Knowledge graph persisted: %d nodes, %d edges", graph.number_of_nodes(), graph.number_of_edges())
+        finally:
+            conn.close()
+
+    def load(self) -> nx.MultiDiGraph | None:
+        """Load graph from SQLite. Returns None if no data."""
+        if not self._db_path.exists():
+            return None
+        conn = self._conn()
+        try:
+            rows = conn.execute("SELECT COUNT(*) FROM kg_nodes").fetchone()
+            if not rows or rows[0] == 0:
+                return None
+
+            graph = nx.MultiDiGraph()
+            for row in conn.execute("SELECT node_id, attrs FROM kg_nodes"):
+                attrs = json.loads(row[1])
+                graph.add_node(row[0], **attrs)
+            for row in conn.execute("SELECT source, target, attrs FROM kg_edges"):
+                attrs = json.loads(row[2])
+                graph.add_edge(row[0], row[1], **attrs)
+
+            logger.info("Knowledge graph loaded: %d nodes, %d edges", graph.number_of_nodes(), graph.number_of_edges())
+            return graph
+        except Exception as exc:
+            logger.warning("Failed to load knowledge graph from SQLite: %s", exc)
+            return None
+        finally:
+            conn.close()
+
+
+# ---------------------------------------------------------------------------
 # Module-level singleton (for FastAPI dependency injection)
 # ---------------------------------------------------------------------------
 
@@ -741,10 +849,27 @@ _graph_lock = threading.Lock()
 
 
 def get_knowledge_graph(*, enable_embeddings: bool = True) -> KnowledgeGraph:
-    """Get or create the singleton KnowledgeGraph instance."""
+    """Get or create the singleton KnowledgeGraph instance.
+
+    On first creation, attempts to load persisted state from SQLite.
+    """
     global _graph_instance
     if _graph_instance is None:
         with _graph_lock:
             if _graph_instance is None:
-                _graph_instance = KnowledgeGraph(enable_embeddings=enable_embeddings)
+                kg = KnowledgeGraph(enable_embeddings=enable_embeddings)
+                # Attempt to restore from persistence
+                persistence = GraphPersistence()
+                saved_graph = persistence.load()
+                if saved_graph is not None:
+                    kg._graph = saved_graph
+                _graph_instance = kg
     return _graph_instance
+
+
+def persist_knowledge_graph() -> None:
+    """Save current graph state to SQLite. Call periodically or on shutdown."""
+    if _graph_instance is not None:
+        persistence = GraphPersistence()
+        with _graph_instance._lock:
+            persistence.save(_graph_instance._graph)

@@ -21,6 +21,16 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Rosetta Alpha API")
 
+
+@app.on_event("shutdown")
+async def _persist_knowledge_graph_on_shutdown():
+    """Auto-save knowledge graph to SQLite on server shutdown."""
+    try:
+        from reasoning.knowledge_graph import persist_knowledge_graph
+        persist_knowledge_graph()
+    except Exception:
+        pass  # Best-effort — don't crash shutdown
+
 # Enable CORS for local development
 app.add_middleware(
     CORSMiddleware,
@@ -408,6 +418,89 @@ async def get_contagion(hours: int = 72):
         "alerts": [a.model_dump() for a in alerts],
         "count": len(alerts),
     }
+
+
+# ---------------------------------------------------------------------------
+# Knowledge Graph endpoints
+# ---------------------------------------------------------------------------
+
+
+@app.get("/api/v1/knowledge-graph")
+async def get_knowledge_graph_data(ticker: str | None = None, region: str | None = None, max_nodes: int = 200):
+    """Export knowledge graph subgraph for frontend visualization."""
+    from reasoning.knowledge_graph import get_knowledge_graph
+
+    kg = get_knowledge_graph(enable_embeddings=True)
+    return kg.export_subgraph(ticker=ticker, region=region, max_nodes=max_nodes)
+
+
+@app.get("/api/v1/knowledge-graph/contradictions")
+async def get_contradictions(ticker: str):
+    """Get contradicting thesis pairs for a ticker."""
+    from reasoning.knowledge_graph import get_knowledge_graph
+
+    if not ticker or not _TICKER_RE.fullmatch(ticker.strip().upper()):
+        raise HTTPException(status_code=400, detail="Invalid ticker")
+    kg = get_knowledge_graph(enable_embeddings=False)
+    return {"ticker": ticker.upper(), "contradictions": kg.get_contradicting_theses(ticker)}
+
+
+@app.get("/api/v1/knowledge-graph/consensus")
+async def get_consensus(ticker: str, window_days: int = 30):
+    """Get consensus theses for a ticker within a time window."""
+    from reasoning.knowledge_graph import get_knowledge_graph
+
+    if not ticker or not _TICKER_RE.fullmatch(ticker.strip().upper()):
+        raise HTTPException(status_code=400, detail="Invalid ticker")
+    if window_days < 1 or window_days > 365:
+        raise HTTPException(status_code=400, detail="window_days must be 1-365")
+    kg = get_knowledge_graph(enable_embeddings=False)
+    return {"ticker": ticker.upper(), "window_days": window_days, "consensus": kg.get_consensus_theses(ticker, window_days)}
+
+
+@app.get("/api/v1/knowledge-graph/narrative-chain")
+async def get_narrative_chain(ticker: str):
+    """Get narrative evolution chain for a ticker."""
+    from reasoning.knowledge_graph import get_knowledge_graph
+
+    if not ticker or not _TICKER_RE.fullmatch(ticker.strip().upper()):
+        raise HTTPException(status_code=400, detail="Invalid ticker")
+    kg = get_knowledge_graph(enable_embeddings=False)
+    return {"ticker": ticker.upper(), "chain": kg.get_narrative_chain(ticker)}
+
+
+@app.get("/api/v1/knowledge-graph/best-agent")
+async def get_best_agent(region: str):
+    """Get best-performing agent role for a region."""
+    from reasoning.knowledge_graph import get_knowledge_graph
+    from reasoning.trace_schema import Region
+
+    try:
+        Region(region.upper())
+    except ValueError:
+        raise HTTPException(status_code=400, detail=f"Invalid region: {region}")
+    kg = get_knowledge_graph(enable_embeddings=False)
+    return kg.get_best_agent_by_region(region)
+
+
+@app.get("/api/v1/knowledge-graph/similar")
+async def get_similar_theses(thesis_id: str, top_k: int = 5):
+    """Find semantically similar theses."""
+    from reasoning.knowledge_graph import get_knowledge_graph
+
+    if top_k < 1 or top_k > 50:
+        raise HTTPException(status_code=400, detail="top_k must be 1-50")
+    kg = get_knowledge_graph(enable_embeddings=True)
+    return {"thesis_id": thesis_id, "similar": kg.find_similar_theses(thesis_id, top_k=top_k)}
+
+
+@app.get("/api/v1/knowledge-graph/stats")
+async def get_kg_stats():
+    """Get knowledge graph statistics."""
+    from reasoning.knowledge_graph import get_knowledge_graph
+
+    kg = get_knowledge_graph(enable_embeddings=False)
+    return kg.stats()
 
 
 if __name__ == "__main__":

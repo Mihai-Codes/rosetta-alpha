@@ -76,13 +76,13 @@ function resolveEdges(nodes: GraphNode[], edges: GraphEdge[]) {
   }
 }
 
-// Cooling state for convergence detection
-let alpha = 0.3
+// Note: alpha is stored per-component instance via alphaRef (see component)
 
-function simulate(nodes: GraphNode[], edges: GraphEdge[], width: number, height: number) {
+function simulate(nodes: GraphNode[], edges: GraphEdge[], width: number, height: number, alphaRef: { current: number }) {
   // Cool down over time — simulation converges and stops wasting CPU
-  alpha *= 0.998
-  if (alpha < 0.001) return // Converged — skip physics
+  alphaRef.current *= 0.998
+  if (alphaRef.current < 0.001) return // Converged — skip physics
+  const alpha = alphaRef.current
 
   const repulsion = 800
   const attraction = 0.005
@@ -161,6 +161,7 @@ export default function KnowledgeGraphPage() {
   // Refs for render-loop state (avoids recreating draw callback on every hover)
   const hoveredRef = useRef<GraphNode | null>(null)
   const selectedRef = useRef<GraphNode | null>(null)
+  const alphaRef = useRef(0.3)
 
   // Fetch graph data
   const fetchGraph = useCallback(async (t: string) => {
@@ -174,7 +175,7 @@ export default function KnowledgeGraphPage() {
       const { width, height } = dimensionsRef.current
       initPositions(nodesRef.current, width, height)
       resolveEdges(nodesRef.current, edgesRef.current)
-      alpha = 0.3 // Reset cooling on new data
+      alphaRef.current = 0.3 // Reset cooling on new data
     } catch {
       setGraphData(null)
     } finally {
@@ -197,7 +198,7 @@ export default function KnowledgeGraphPage() {
     ctx.scale(window.devicePixelRatio, window.devicePixelRatio)
 
     // Simulate one step
-    simulate(nodesRef.current, edgesRef.current, width, height)
+    simulate(nodesRef.current, edgesRef.current, width, height, alphaRef)
 
     // Clear
     ctx.fillStyle = '#000000'

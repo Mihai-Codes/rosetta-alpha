@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     if (ticker) params.set('ticker', ticker)
     if (region) params.set('region', region)
 
-    const res = await fetch(`${API_BASE}/api/knowledge-graph?${params.toString()}`, {
+    const res = await fetch(`${API_BASE}/api/v1/knowledge-graph?${params.toString()}`, {
       headers: { 'Content-Type': 'application/json' },
       next: { revalidate: 30 }, // Cache for 30s
     })
