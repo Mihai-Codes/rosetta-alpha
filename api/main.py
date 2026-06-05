@@ -5,9 +5,10 @@ import json
 import logging
 import os
 import re
+from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, AsyncGenerator, Literal
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,17 +20,28 @@ from demo.e2e_run import _build_desks, run_desk
 
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Rosetta Alpha API")
 
-
-@app.on_event("shutdown")
-async def _persist_knowledge_graph_on_shutdown():
-    """Auto-save knowledge graph to SQLite on server shutdown."""
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+    """Application lifespan: startup (load) and shutdown (persist) knowledge graph."""
+    # Startup: eagerly load the knowledge graph from SQLite
+    try:
+        from reasoning.knowledge_graph import get_knowledge_graph
+        get_knowledge_graph(enable_embeddings=True)
+        logger.info("Knowledge graph loaded on startup")
+    except Exception as exc:
+        logger.warning("Knowledge graph startup load failed (non-fatal): %s", exc)
+    yield
+    # Shutdown: persist knowledge graph to SQLite
     try:
         from reasoning.knowledge_graph import persist_knowledge_graph
         persist_knowledge_graph()
-    except Exception:
-        pass  # Best-effort — don't crash shutdown
+        logger.info("Knowledge graph persisted on shutdown")
+    except Exception as exc:
+        logger.warning("Knowledge graph shutdown persist failed: %s", exc)
+
+
+app = FastAPI(title="Rosetta Alpha API", lifespan=lifespan)
 
 # Enable CORS for local development
 app.add_middleware(

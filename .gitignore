@@ -91,3 +91,4 @@ coverage.xml
 workflows/
 api/
 narratives.db
+data/knowledge_graph.db

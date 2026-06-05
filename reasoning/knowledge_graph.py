@@ -80,17 +80,20 @@ class EmbeddingManager:
     """Lazy-loaded sentence-transformers for semantic similarity.
 
     Falls back gracefully if sentence-transformers is not installed.
-    Embeddings are cached per thesis_id with LRU eviction to prevent
-    unbounded memory growth.
+    True LRU cache: tracks access recency via OrderedDict.move_to_end().
+    Evicts least-recently-used entries when capacity is reached.
     """
 
     # Max cached embeddings (~384 floats × 8 bytes × 2000 ≈ 6MB cap)
     _MAX_CACHE_SIZE = 2000
 
     def __init__(self, model_name: str = "all-MiniLM-L6-v2") -> None:
+        from collections import OrderedDict
+
         self._model_name = model_name
         self._model = None
-        self._cache: dict[str, list[float]] = {}
+        self._cache: OrderedDict[str, list[float]] = OrderedDict()
+        self._cache_lock = threading.Lock()
         self._available: bool | None = None
 
     @property
@@ -115,27 +118,38 @@ class EmbeddingManager:
             self._model = SentenceTransformer(self._model_name)
         return self._model
 
+    def get(self, cache_key: str) -> list[float] | None:
+        """Retrieve embedding from cache, marking as recently used. Thread-safe."""
+        with self._cache_lock:
+            if cache_key in self._cache:
+                self._cache.move_to_end(cache_key)  # Mark as most recently used
+                return self._cache[cache_key]
+        return None
+
     def embed(self, text: str, cache_key: str | None = None) -> list[float] | None:
         """Compute embedding for text. Returns None if unavailable.
 
-        Uses LRU eviction: when cache exceeds _MAX_CACHE_SIZE, the oldest
-        25% of entries are dropped (batch eviction avoids per-call overhead).
+        True LRU: accessed entries are moved to end (most recent).
+        When capacity is reached, evicts from the front (least recently used).
         """
         if not self.available:
             return None
-        if cache_key and cache_key in self._cache:
-            return self._cache[cache_key]
+
+        # Check cache with LRU access tracking
+        if cache_key:
+            cached = self.get(cache_key)
+            if cached is not None:
+                return cached
 
         model = self._load_model()
         embedding = model.encode(text, normalize_embeddings=True).tolist()
 
         if cache_key:
-            # LRU eviction: drop oldest 25% when at capacity
-            if len(self._cache) >= self._MAX_CACHE_SIZE:
-                keys_to_remove = list(self._cache.keys())[: self._MAX_CACHE_SIZE // 4]
-                for k in keys_to_remove:
-                    del self._cache[k]
-            self._cache[cache_key] = embedding
+            with self._cache_lock:
+                # Evict LRU entries from front until under capacity
+                while len(self._cache) >= self._MAX_CACHE_SIZE:
+                    self._cache.popitem(last=False)  # Remove least recently used
+                self._cache[cache_key] = embedding
         return embedding
 
     def cosine_similarity(self, vec_a: list[float], vec_b: list[float]) -> float:
@@ -144,7 +158,8 @@ class EmbeddingManager:
         return sum(a * b for a, b in zip(vec_a, vec_b))
 
     def clear_cache(self) -> None:
-        self._cache.clear()
+        with self._cache_lock:
+            self._cache.clear()
 
 
 # ---------------------------------------------------------------------------
@@ -588,7 +603,7 @@ class KnowledgeGraph:
         full_id = f"thesis:{thesis_id}"
 
         # Phase 1: get query embedding (may involve model inference outside lock)
-        query_embedding = self._embeddings._cache.get(full_id)
+        query_embedding = self._embeddings.get(full_id)
         if query_embedding is None:
             with self._lock:
                 if full_id not in self._graph:
@@ -602,9 +617,11 @@ class KnowledgeGraph:
         if query_embedding is None:
             return []
 
-        # Phase 2: compare against cached embeddings (fast, no lock needed for read-only cache)
+        # Phase 2: compare against cached embeddings (thread-safe snapshot)
+        with self._embeddings._cache_lock:
+            cache_snapshot = list(self._embeddings._cache.items())
         similarities: list[tuple[str, float]] = []
-        for cached_id, cached_vec in list(self._embeddings._cache.items()):
+        for cached_id, cached_vec in cache_snapshot:
             if cached_id == full_id or not cached_id.startswith("thesis:"):
                 continue
             sim = self._embeddings.cosine_similarity(query_embedding, cached_vec)
@@ -744,7 +761,9 @@ class KnowledgeGraph:
                 "total_edges": self._graph.number_of_edges(),
                 "nodes_by_type": dict(node_counts),
                 "edges_by_type": dict(edge_counts),
-                "embeddings_cached": len(self._embeddings._cache) if self._embeddings else 0,
+                "embeddings_cached": (
+                    len(self._embeddings._cache) if self._embeddings else 0
+                ),
             }
 
 
