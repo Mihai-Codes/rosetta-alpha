@@ -26,6 +26,7 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from reasoning.market_price_store import MarketPriceStore
 from reasoning.mob_meter import normalize_thesis_record
 
 _DEFAULT_DB_PATH = Path(__file__).parent.parent / "data" / "contagion_alerts.db"
@@ -348,10 +349,12 @@ class ContagionMonitor:
         db_path: Path | str = _DEFAULT_DB_PATH,
         correlation_threshold: float = _CORRELATION_THRESHOLD,
         correlation_map: dict[str, list[CorrelationLink]] | None = None,
+        price_store: MarketPriceStore | None = None,
     ) -> None:
         self._store = ContagionAlertStore(db_path=db_path)
         self._correlation_threshold = max(0.0, min(1.0, correlation_threshold))
         self._correlation_map = correlation_map or self._default_correlation_map()
+        self._price_store = price_store or MarketPriceStore()
 
     @property
     def store(self) -> ContagionAlertStore:
@@ -464,10 +467,7 @@ class ContagionMonitor:
         if not signal_types:
             return []
 
-        links = [
-            link for link in self._correlation_map.get(origin_ticker, [])
-            if link.correlation_score >= self._correlation_threshold
-        ]
+        links = self._correlated_links(origin_ticker)
         if not links:
             return []
 
@@ -481,6 +481,34 @@ class ContagionMonitor:
 
     def recent_alerts(self, *, limit: int = 10, hours: int = 72) -> list[CrossDeskContagionAlert]:
         return self._store.recent_alerts(limit=limit, hours=hours)
+
+    def _correlated_links(self, origin_ticker: str) -> list[CorrelationLink]:
+        """Resolve affected assets using live stored correlations when available.
+
+        If the price-history store has enough overlap for a pair, that rolling
+        correlation replaces the static prior. If not, the static prior remains
+        the deterministic fallback for demo reliability.
+        """
+
+        resolved: list[CorrelationLink] = []
+        for link in self._correlation_map.get(origin_ticker, []):
+            try:
+                score = self._price_store.rolling_correlation(origin_ticker, link.affected_ticker)
+            except Exception:
+                score = None
+            correlation_score = link.correlation_score if score is None else score
+            if correlation_score < self._correlation_threshold:
+                continue
+            resolved.append(
+                CorrelationLink(
+                    origin_ticker=link.origin_ticker,
+                    affected_ticker=link.affected_ticker,
+                    affected_desk=link.affected_desk,
+                    correlation_score=correlation_score,
+                    rationale=link.rationale if score is None else "Rolling log-return correlation from market_prices.db.",
+                )
+            )
+        return resolved
 
     def _detect_signal_types(self, thesis: dict[str, Any], state: _DeskState) -> list[SignalType]:
         signals: list[SignalType] = []

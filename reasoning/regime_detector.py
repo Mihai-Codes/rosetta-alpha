@@ -19,7 +19,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 import numpy as np
@@ -37,7 +37,7 @@ CONFIDENCE_THRESHOLD = 0.6
 N_REGIMES = 3
 
 
-class MarketRegime(str, Enum):
+class MarketRegime(StrEnum):
     """Three canonical market regimes (Bridgewater-inspired)."""
 
     TRENDING = "TRENDING"
@@ -495,9 +495,11 @@ async def detect_regime(
 
 
 async def _fetch_ohlcv(ticker: str, lookback_days: int) -> pd.DataFrame | None:
-    """Fetch OHLCV data via yfinance (async-compatible wrapper).
+    """Fetch OHLCV data via yfinance and persist it for shared history.
 
     Uses the existing YFinanceClient pattern from data/yfinance_client.py.
+    Persistence is best-effort: regime detection must still work if SQLite is
+    unavailable or a frame contains unexpected columns.
     """
     import asyncio
 
@@ -508,6 +510,12 @@ async def _fetch_ohlcv(ticker: str, lookback_days: int) -> pd.DataFrame | None:
             period = "1y" if lookback_days <= 252 else "2y"
             data = yf.Ticker(ticker).history(period=period)
             if data is not None and not data.empty:
+                try:
+                    from reasoning.market_price_store import MarketPriceStore
+
+                    MarketPriceStore().upsert_ohlcv(ticker, data, source="yfinance")
+                except Exception as store_exc:
+                    logger.warning("market price persistence failed for %s: %s", ticker, store_exc)
                 return data
         except Exception as exc:
             logger.warning("yfinance fetch failed for %s: %s", ticker, exc)
