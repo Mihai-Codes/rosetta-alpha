@@ -228,6 +228,58 @@ class TestContagionDetector:
         assert alerts[0].narrative_title == "AI Bubble Fears"
         assert len(alerts[0].spread_to) >= 1
 
+    def test_entity_overlap_contagion_cross_language(self, store: NarrativeStore) -> None:
+        """Cross-language contagion via shared entities (different titles, same companies)."""
+        # US narrative about NVDA and MSFT
+        n_us = Narrative(
+            narrative_title="AI Spending Unsustainable",
+            narrative_type=NarrativeType.FEAR,
+            entities_mentioned=["NVDA", "MSFT", "GOOG"],
+            sentiment_intensity=0.8,
+            source_region=Region.US,
+        )
+        # China narrative with different title but overlapping entities
+        n_cn = Narrative(
+            narrative_title="AI泡沫担忧加剧",
+            narrative_type=NarrativeType.FEAR,
+            entities_mentioned=["NVDA", "MSFT", "BABA"],
+            sentiment_intensity=0.7,
+            source_region=Region.CN,
+        )
+        store.upsert("NVDA", n_us)
+        store.upsert("NVDA", n_cn)
+        detector = CrossDeskContagionDetector(store)
+        alerts = detector.detect_contagion()
+        # Should find contagion via entity overlap (NVDA + MSFT shared)
+        assert len(alerts) >= 1
+        # At least one alert should mention entity overlap
+        entity_alerts = [a for a in alerts if "↔" in a.narrative_title]
+        assert len(entity_alerts) == 1, f"Expected entity-overlap alert, got: {[a.narrative_title for a in alerts]}"
+
+    def test_no_entity_contagion_below_threshold(self, store: NarrativeStore) -> None:
+        """Single shared entity is below threshold — no contagion alert."""
+        n_us = Narrative(
+            narrative_title="Tech Rally",
+            narrative_type=NarrativeType.GREED,
+            entities_mentioned=["AAPL"],
+            sentiment_intensity=0.6,
+            source_region=Region.US,
+        )
+        n_eu = Narrative(
+            narrative_title="European Tech Momentum",
+            narrative_type=NarrativeType.GREED,
+            entities_mentioned=["AAPL", "SAP"],
+            sentiment_intensity=0.5,
+            source_region=Region.EU,
+        )
+        store.upsert("AAPL", n_us)
+        store.upsert("AAPL", n_eu)
+        detector = CrossDeskContagionDetector(store)
+        alerts = detector.detect_contagion()
+        # Only 1 shared entity (AAPL) — below threshold of 2
+        entity_alerts = [a for a in alerts if "↔" in a.narrative_title]
+        assert len(entity_alerts) == 0
+
 
 # ---------------------------------------------------------------------------
 # Unit Tests: Hash function

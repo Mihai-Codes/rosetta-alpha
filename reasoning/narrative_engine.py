@@ -408,21 +408,47 @@ class NarrativeExtractor(adal.Component):
             logger.warning("Narrative extraction parse failed: %s | raw: %.200s", exc, raw)
             return None
 
-    def extract_batch(self, items: list[dict[str, Any]]) -> list[Narrative]:
-        """Extract narratives from multiple text items.
+    def extract_batch(
+        self, items: list[dict[str, Any]], *, max_workers: int = 4
+    ) -> list[Narrative]:
+        """Extract narratives from multiple text items in parallel.
+
+        Uses ThreadPoolExecutor since Groq API calls are I/O-bound sync operations.
+        Parallel extraction reduces wall-clock time from N*latency to ~latency
+        (bounded by Groq rate limits, typically 30 RPM on free tier).
 
         Args:
             items: list of {"text": str, "ticker": str, "region": Region}
+            max_workers: concurrent extraction threads (default 4, stay under rate limits)
         """
-        results: list[Narrative] = []
-        for item in items:
+        if not items:
+            return []
+
+        # Single item — skip thread pool overhead
+        if len(items) == 1:
             narrative = self.extract(
-                text=item["text"],
-                ticker=item["ticker"],
-                region=item["region"],
+                text=items[0]["text"],
+                ticker=items[0]["ticker"],
+                region=items[0]["region"],
             )
-            if narrative:
-                results.append(narrative)
+            return [narrative] if narrative else []
+
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+
+        results: list[Narrative] = []
+        with ThreadPoolExecutor(max_workers=min(max_workers, len(items))) as pool:
+            futures = {
+                pool.submit(self.extract, item["text"], item["ticker"], item["region"]): i
+                for i, item in enumerate(items)
+            }
+            for future in as_completed(futures):
+                try:
+                    narrative = future.result()
+                    if narrative:
+                        results.append(narrative)
+                except Exception as exc:
+                    logger.warning("Parallel extraction failed for item %d: %s", futures[future], exc)
+
         return results
 
 
@@ -553,32 +579,53 @@ class NarrativeVelocityTracker:
 class CrossDeskContagionDetector:
     """Detects when narratives spread across regional desks.
 
-    Strategy: normalized title matching via hash. Two narratives in different
-    regions with the same hash = contagion. Future: upgrade to embedding
-    cosine similarity for semantic near-matches (e.g. "AI bubble" ≈ "AI泡沫").
+    Two-layer matching strategy (zero external deps):
+    1. EXACT: normalized title hash — same narrative label in different regions.
+    2. ENTITY OVERLAP: narratives sharing ≥2 entities across regions are
+       considered contagion even if titles differ (solves cross-language gap:
+       "AI bubble" in US mentioning [NVDA, MSFT] ≈ "AI泡沫" in CN mentioning [NVDA, 9988.HK]).
+
+    This avoids embedding models while catching multi-lingual narrative spread
+    through the shared entity fingerprint. Upgrade path: cosine similarity later.
     """
+
+    # Minimum shared entities to consider two narratives as contagious
+    _ENTITY_OVERLAP_THRESHOLD = 2
 
     def __init__(self, store: NarrativeStore) -> None:
         self._store = store
 
+    def _parse_entities(self, row: dict[str, Any]) -> set[str]:
+        """Parse entities JSON from a store row, normalized to uppercase."""
+        try:
+            entities = json.loads(row.get("entities", "[]"))
+            return {e.upper().strip() for e in entities if e}
+        except (json.JSONDecodeError, TypeError):
+            return set()
+
     def detect_contagion(self, *, hours: int = 72) -> list[ContagionAlert]:
-        """Scan active narratives for cross-region spread."""
+        """Scan active narratives for cross-region spread.
+
+        Uses both exact hash matching AND entity-overlap matching to catch
+        cross-language narrative contagion.
+        """
         active = self._store.get_active_narratives(hours=hours)
         if not active:
             return []
 
-        # Group by narrative_hash
+        # Layer 1: Group by narrative_hash (exact title match)
         by_hash: dict[str, list[dict[str, Any]]] = {}
         for row in active:
             by_hash.setdefault(row["narrative_hash"], []).append(row)
 
         alerts: list[ContagionAlert] = []
+        seen_alert_keys: set[str] = set()  # Prevent duplicate alerts
+
         for nhash, rows in by_hash.items():
             regions = {row["region"] for row in rows}
             if len(regions) < 2:
-                continue  # Single-region — no contagion
+                continue
 
-            # Origin = earliest first_seen
             sorted_rows = sorted(rows, key=lambda r: r["first_seen"])
             origin_region = Region(sorted_rows[0]["region"])
             spread_to = [Region(r) for r in regions if r != origin_region.value]
@@ -596,6 +643,52 @@ class CrossDeskContagionDetector:
                 intensity_by_region=intensity_by_region,
             )
             alerts.append(alert)
+            seen_alert_keys.add(nhash)
+
+        # Layer 2: Entity-overlap matching (cross-language contagion)
+        # Compare narratives across different regions for shared entities
+        by_region: dict[str, list[dict[str, Any]]] = {}
+        for row in active:
+            by_region.setdefault(row["region"], []).append(row)
+
+        regions_list = list(by_region.keys())
+        for i, region_a in enumerate(regions_list):
+            for region_b in regions_list[i + 1:]:
+                for row_a in by_region[region_a]:
+                    entities_a = self._parse_entities(row_a)
+                    if len(entities_a) < self._ENTITY_OVERLAP_THRESHOLD:
+                        continue
+                    for row_b in by_region[region_b]:
+                        # Skip if already caught by exact hash match
+                        if row_a["narrative_hash"] == row_b["narrative_hash"]:
+                            continue
+                        entities_b = self._parse_entities(row_b)
+                        overlap = entities_a & entities_b
+                        if len(overlap) >= self._ENTITY_OVERLAP_THRESHOLD:
+                            # Create contagion alert for entity-overlap match
+                            alert_key = f"{row_a['narrative_hash']}::{row_b['narrative_hash']}"
+                            if alert_key in seen_alert_keys:
+                                continue
+                            seen_alert_keys.add(alert_key)
+
+                            # Origin = earlier first_seen
+                            if row_a["first_seen"] <= row_b["first_seen"]:
+                                origin, spread = row_a, row_b
+                            else:
+                                origin, spread = row_b, row_a
+
+                            alert = ContagionAlert(
+                                narrative_title=f"{origin['title']} ↔ {spread['title']}",
+                                narrative_hash=f"entity:{alert_key[:16]}",
+                                origin_region=Region(origin["region"]),
+                                spread_to=[Region(spread["region"])],
+                                first_seen=datetime.fromisoformat(origin["first_seen"]),
+                                intensity_by_region={
+                                    origin["region"]: origin["intensity"],
+                                    spread["region"]: spread["intensity"],
+                                },
+                            )
+                            alerts.append(alert)
 
         return sorted(alerts, key=lambda a: len(a.spread_to), reverse=True)
 

@@ -275,6 +275,61 @@ async def health():
     return {"status": "ok"}
 
 
+# ---------------------------------------------------------------------------
+# Narrative Engine endpoints
+# ---------------------------------------------------------------------------
+
+
+@app.get("/api/v1/narratives/{ticker}")
+async def get_narratives(ticker: str, region: str | None = None):
+    """Get stored narratives + velocity for a ticker.
+
+    Query params:
+        region: optional filter (US, CN, EU, JP, CRYPTO)
+    """
+    from reasoning.narrative_engine import NarrativeEngine
+    from reasoning.trace_schema import Region
+
+    if not _TICKER_RE.match(ticker):
+        raise HTTPException(status_code=400, detail="Invalid ticker format")
+
+    engine = NarrativeEngine()
+
+    region_filter = None
+    if region:
+        try:
+            region_filter = Region(region.upper())
+        except ValueError:
+            raise HTTPException(status_code=400, detail=f"Invalid region: {region}")
+
+    narratives = engine.get_ticker_narratives(ticker.upper(), region=region_filter)
+    velocities = engine.get_velocity(ticker.upper(), region=region_filter)
+
+    return {
+        "ticker": ticker.upper(),
+        "region": region,
+        "narratives": narratives,
+        "velocities": [v.model_dump() for v in velocities],
+    }
+
+
+@app.get("/api/v1/narratives-contagion")
+async def get_contagion(hours: int = 72):
+    """Get cross-desk narrative contagion alerts."""
+    from reasoning.narrative_engine import NarrativeEngine
+
+    if hours < 1 or hours > 720:
+        raise HTTPException(status_code=400, detail="hours must be 1-720")
+
+    engine = NarrativeEngine()
+    alerts = engine.check_contagion(hours=hours)
+    return {
+        "hours": hours,
+        "alerts": [a.model_dump() for a in alerts],
+        "count": len(alerts),
+    }
+
+
 if __name__ == "__main__":
     import uvicorn
 
