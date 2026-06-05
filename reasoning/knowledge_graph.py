@@ -24,10 +24,11 @@ Design decisions:
 
 from __future__ import annotations
 
+import hashlib
 import logging
 import threading
 from collections import defaultdict
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from enum import Enum
 from typing import Any
 
@@ -203,6 +204,9 @@ class KnowledgeGraph:
     def ingest_thesis(self, thesis: InvestmentThesis) -> None:
         """Extract entities from a thesis and add to the graph.
 
+        Idempotent: re-ingesting an existing thesis updates its node attributes
+        but does not create duplicate edges.
+
         Creates nodes for the thesis, its ticker, and edges for:
         - ABOUT_TICKER, BELONGS_TO_REGION, GENERATED_BY (per reasoning block)
         - SUPPORTS/CONTRADICTS (vs existing theses on same ticker)
@@ -210,6 +214,9 @@ class KnowledgeGraph:
         """
         with self._lock:
             thesis_id = f"thesis:{thesis.thesis_id}"
+
+            # Idempotency: skip edge creation if thesis already ingested
+            already_exists = thesis_id in self._graph
             ticker_id = f"ticker:{thesis.ticker_or_asset.upper()}"
             region_id = f"region:{thesis.region.value}"
 
@@ -235,38 +242,39 @@ class KnowledgeGraph:
                 asset_class=thesis.asset_class.value,
             )
 
-            # Core edges
-            self._add_edge(thesis_id, ticker_id, EdgeType.ABOUT_TICKER)
-            self._add_edge(thesis_id, region_id, EdgeType.BELONGS_TO_REGION)
+            # Skip edge creation on re-ingestion (node attrs already updated above)
+            if not already_exists:
+                # Core edges
+                self._add_edge(thesis_id, ticker_id, EdgeType.ABOUT_TICKER)
+                self._add_edge(thesis_id, region_id, EdgeType.BELONGS_TO_REGION)
 
-            # Agent edges (one per reasoning block)
-            for block in thesis.reasoning_blocks:
-                agent_id = f"agent:{block.agent_role.value}"
-                self._add_edge(
-                    thesis_id,
-                    agent_id,
-                    EdgeType.GENERATED_BY,
-                    confidence=block.confidence,
-                    language=block.language,
-                )
-
-            # Narrative edge (if narrative context available)
-            if thesis.narrative_velocity:
-                title = thesis.narrative_velocity.get("narrative_title", "")
-                if title:
-                    import hashlib
-                    nhash = hashlib.sha256(title.lower().encode()).hexdigest()[:12]
-                    narrative_id = f"narrative:{nhash}"
-                    self._add_node(
-                        narrative_id,
-                        NodeType.NARRATIVE,
-                        label=title,
-                        narrative_type=thesis.narrative_velocity.get("narrative_type", ""),
+                # Agent edges (one per reasoning block)
+                for block in thesis.reasoning_blocks:
+                    agent_id = f"agent:{block.agent_role.value}"
+                    self._add_edge(
+                        thesis_id,
+                        agent_id,
+                        EdgeType.GENERATED_BY,
+                        confidence=block.confidence,
+                        language=block.language,
                     )
-                    self._add_edge(thesis_id, narrative_id, EdgeType.HAS_NARRATIVE)
 
-            # Detect SUPPORTS/CONTRADICTS vs existing theses on same ticker
-            self._detect_agreement_edges(thesis_id, thesis)
+                # Narrative edge (if narrative context available)
+                if thesis.narrative_velocity:
+                    title = thesis.narrative_velocity.get("narrative_title", "")
+                    if title:
+                        nhash = hashlib.sha256(title.lower().encode()).hexdigest()[:12]
+                        narrative_id = f"narrative:{nhash}"
+                        self._add_node(
+                            narrative_id,
+                            NodeType.NARRATIVE,
+                            label=title,
+                            narrative_type=thesis.narrative_velocity.get("narrative_type", ""),
+                        )
+                        self._add_edge(thesis_id, narrative_id, EdgeType.HAS_NARRATIVE)
+
+                # Detect SUPPORTS/CONTRADICTS vs existing theses on same ticker
+                self._detect_agreement_edges(thesis_id, thesis)
 
             # Compute and cache embedding
             if self._embeddings and self._embeddings.available:
@@ -399,8 +407,6 @@ class KnowledgeGraph:
         from other theses within the window.
         """
         ticker = ticker.upper()
-        from datetime import timedelta
-
         cutoff = datetime.now(timezone.utc) - timedelta(days=window_days)
         consensus: list[dict[str, Any]] = []
 
@@ -552,40 +558,43 @@ class KnowledgeGraph:
         """Find semantically similar past theses via embedding cosine similarity.
 
         Requires sentence-transformers. Returns empty list if unavailable.
+        Embedding computation happens outside the lock to avoid blocking.
         """
         if not self._embeddings or not self._embeddings.available:
             logger.info("Embeddings unavailable — cannot compute similarity")
             return []
 
         full_id = f"thesis:{thesis_id}"
-        with self._lock:
-            if full_id not in self._graph:
-                return []
 
-            query_embedding = self._embeddings._cache.get(full_id)
-            if query_embedding is None:
-                # Try to compute from node attributes
-                attrs = self._graph.nodes[full_id]
-                text = attrs.get("full_summary", "")
-                if not text:
+        # Phase 1: get query embedding (may involve model inference outside lock)
+        query_embedding = self._embeddings._cache.get(full_id)
+        if query_embedding is None:
+            with self._lock:
+                if full_id not in self._graph:
                     return []
-                query_embedding = self._embeddings.embed(text, cache_key=full_id)
-
-            if query_embedding is None:
+                text = self._graph.nodes[full_id].get("full_summary", "")
+            if not text:
                 return []
+            # Embedding computation outside lock (slow, I/O-bound)
+            query_embedding = self._embeddings.embed(text, cache_key=full_id)
 
-            # Compare against all other thesis embeddings
-            similarities: list[tuple[str, float]] = []
-            for cached_id, cached_vec in self._embeddings._cache.items():
-                if cached_id == full_id or not cached_id.startswith("thesis:"):
-                    continue
-                sim = self._embeddings.cosine_similarity(query_embedding, cached_vec)
-                similarities.append((cached_id, sim))
+        if query_embedding is None:
+            return []
 
-            # Sort by similarity descending
-            similarities.sort(key=lambda x: x[1], reverse=True)
+        # Phase 2: compare against cached embeddings (fast, no lock needed for read-only cache)
+        similarities: list[tuple[str, float]] = []
+        for cached_id, cached_vec in list(self._embeddings._cache.items()):
+            if cached_id == full_id or not cached_id.startswith("thesis:"):
+                continue
+            sim = self._embeddings.cosine_similarity(query_embedding, cached_vec)
+            similarities.append((cached_id, sim))
 
-            results: list[dict[str, Any]] = []
+        # Sort by similarity descending
+        similarities.sort(key=lambda x: x[1], reverse=True)
+
+        # Phase 3: enrich with node attributes (brief lock)
+        results: list[dict[str, Any]] = []
+        with self._lock:
             for node_id, score in similarities[:top_k]:
                 attrs = self._graph.nodes.get(node_id, {})
                 results.append({
@@ -642,13 +651,14 @@ class KnowledgeGraph:
                 })
 
             edges: list[dict[str, Any]] = []
-            for u, v, data in self._graph.edges(data=True):
-                if u in relevant_nodes and v in relevant_nodes:
+            for src, tgt, data in self._graph.edges(data=True):
+                if src in relevant_nodes and tgt in relevant_nodes:
+                    edge_attrs = {k: val for k, val in data.items() if k != "edge_type"}
                     edges.append({
-                        "source": u,
-                        "target": v,
+                        "source": src,
+                        "target": tgt,
                         "type": data.get("edge_type", "unknown"),
-                        **{k: v for k, v in data.items() if k != "edge_type"},
+                        **edge_attrs,
                     })
 
             return {
