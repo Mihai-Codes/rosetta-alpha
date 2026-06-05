@@ -36,6 +36,41 @@ function firstValidDate(values: Array<string | Date | null | undefined>): string
   return null
 }
 
+function normalizeTxHash(input?: string | null): string | null {
+  const value = (input ?? '').trim()
+  if (!value) return null
+  if (/^https?:\/\//i.test(value)) return null
+
+  const hash = value.startsWith('0x') ? value : `0x${value}`
+  return /^0x[a-fA-F0-9]{64}$/.test(hash) ? hash : null
+}
+
+function toArcscanLink(input?: string | null): string | null {
+  const value = (input ?? '').trim()
+  if (!value) return null
+  if (/^https?:\/\//i.test(value)) return value
+
+  const txHash = normalizeTxHash(value)
+  return txHash ? `https://testnet.arcscan.app/tx/${txHash}` : null
+}
+
+function toPolymarketLink(
+  marketUrl: string | null,
+  question: string,
+  ticker: string
+): string | null {
+  const provided = (marketUrl ?? '').trim()
+  if (provided) {
+    if (/^https?:\/\//i.test(provided)) return provided
+    return `https://polymarket.com/search?q=${encodeURIComponent(provided)}`
+  }
+
+  const fallbackQuery = question.trim() || ticker.trim()
+  return fallbackQuery
+    ? `https://polymarket.com/search?q=${encodeURIComponent(fallbackQuery)}`
+    : null
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ cid: string }> }
@@ -57,7 +92,8 @@ export async function GET(
   const stakeTx = qp.get('stakeTx') ?? arcTx
   const recordTx = qp.get('recordTx') ?? arcTx
   const question = qp.get('question') ?? ''
-  const marketUrl = qp.get('marketUrl') ?? (question ? `https://polymarket.com/search?q=${encodeURIComponent(question)}` : '')
+  const marketUrl = qp.get('marketUrl')
+  const marketLink = toPolymarketLink(marketUrl, question, ticker)
 
   try {
     const receipts = (await prisma.$queryRaw`
@@ -100,6 +136,9 @@ export async function GET(
       ? receiptTimes.sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0]
       : null
     const baseTimestamp = pinTimestamp
+
+    const stakeTxHash = normalizeTxHash(stakeTx)
+    const recordTxHash = normalizeTxHash(recordTx)
 
     const steps = [
       {
@@ -145,13 +184,13 @@ export async function GET(
         id: 'stake',
         label: 'Stake (10 ROSETTA)',
         icon: 'coins',
-        status: stakeTx ? 'completed' : 'in_progress',
+        status: stakeTxHash || toArcscanLink(stakeTx) ? 'completed' : 'in_progress',
         timestamp: baseTimestamp,
-        link: stakeTx ? `https://testnet.arcscan.app/tx/${stakeTx}` : null,
+        link: toArcscanLink(stakeTx),
         details: {
           token: 'ROSETTA',
           amount: '10',
-          tx: stakeTx || null,
+          tx: stakeTxHash ?? null,
           chain: 'Arc L1 Testnet',
         },
       },
@@ -159,12 +198,12 @@ export async function GET(
         id: 'record',
         label: 'Record (ReasoningRegistry)',
         icon: 'link',
-        status: recordTx ? 'completed' : 'in_progress',
+        status: recordTxHash || toArcscanLink(recordTx) ? 'completed' : 'in_progress',
         timestamp: baseTimestamp,
-        link: recordTx ? `https://testnet.arcscan.app/tx/${recordTx}` : null,
+        link: toArcscanLink(recordTx),
         details: {
           contract: 'ReasoningRegistry',
-          tx: recordTx || null,
+          tx: recordTxHash ?? null,
           traceCid: cid,
         },
       },
@@ -172,9 +211,9 @@ export async function GET(
         id: 'market',
         label: 'Market (Polymarket)',
         icon: 'bar-chart-3',
-        status: marketUrl ? 'completed' : 'in_progress',
+        status: marketLink ? 'completed' : 'in_progress',
         timestamp: null,
-        link: marketUrl || null,
+        link: marketLink,
         details: {
           question: question || null,
           platform: 'Polymarket',
