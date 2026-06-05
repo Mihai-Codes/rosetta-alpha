@@ -9,6 +9,7 @@ import { FeedItemSkeleton } from './SkeletonLoader'
 import { ProvenanceChain } from './ProvenanceChain'
 import { SidePanel } from './SidePanel'
 import { MobMeter } from './MobMeter'
+import { backendApiUrl } from '@/lib/api'
 
 type Direction = 'ALL' | 'LONG' | 'SHORT' | 'NEUTRAL'
 
@@ -37,7 +38,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
     const tickers = Array.from(new Set(desks.map(d => d.ticker))).filter(Boolean)
     tickers.forEach(async (ticker) => {
       try {
-        const res = await fetch(`http://localhost:8000/api/v1/divergence?ticker=${encodeURIComponent(ticker)}`)
+        const res = await fetch(backendApiUrl('/api/v1/divergence', { ticker }))
         if (res.ok) {
           const json = await res.json()
           if (typeof json.composite_divergence === 'number') {

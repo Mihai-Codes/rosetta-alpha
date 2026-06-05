@@ -268,7 +268,8 @@ def _confidence_extremity(theses: list[dict[str, Any]]) -> float:
     confidences = [c for c in (_confidence(t) for t in theses) if c is not None]
     if not confidences:
         return 0.0
-    extremities = [abs(c - 0.5) * 2.0 for c in confidences]
+    # Mob risk comes from high conviction, not low-confidence uncertainty.
+    extremities = [max(0.0, (c - 0.5) * 2.0) for c in confidences]
     return round(sum(extremities) / len(extremities), 4)
 
 
@@ -357,7 +358,7 @@ class ConfidenceCalibrationStore:
 
     @staticmethod
     def _sqlite_now() -> str:
-        return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+        return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
     def record_outcome(self, agent_id: str, confidence: float, was_correct: bool) -> CalibrationRecord:
         """Update historical accuracy for one confidence bucket."""
@@ -380,7 +381,7 @@ class ConfidenceCalibrationStore:
             correct_count = int(row["correct_count"]) if row else 0
             sample_count += 1
             correct_count += 1 if was_correct else 0
-            accuracy = correct_count / sample_count
+            accuracy = correct_count / sample_count if sample_count else 0.0
 
             conn.execute(
                 """

@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useMemo, useState } from 'react'
+import { backendApiUrl } from '@/lib/api'
 
 interface MobMeterProps {
   ticker: string
@@ -43,7 +44,7 @@ export function MobMeter({ ticker, compact = false }: MobMeterProps) {
     async function fetchMobMeter() {
       try {
         setLoading(true)
-        const res = await fetch(`http://localhost:8000/api/v1/mob-meter?ticker=${encodeURIComponent(ticker)}`)
+        const res = await fetch(backendApiUrl('/api/v1/mob-meter', { ticker }))
         if (!res.ok) throw new Error('Failed to fetch mob meter')
         const json = await res.json()
         if (active) setData(json)

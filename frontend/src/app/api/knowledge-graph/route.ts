@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+import { backendApiUrl } from '@/lib/api'
 
 /**
  * GET /api/knowledge-graph?ticker=AAPL&region=US
@@ -17,7 +16,7 @@ export async function GET(request: NextRequest) {
     if (ticker) params.set('ticker', ticker)
     if (region) params.set('region', region)
 
-    const res = await fetch(`${API_BASE}/api/v1/knowledge-graph?${params.toString()}`, {
+    const res = await fetch(backendApiUrl('/api/v1/knowledge-graph', Object.fromEntries(params)), {
       headers: { 'Content-Type': 'application/json' },
       next: { revalidate: 30 }, // Cache for 30s
     })

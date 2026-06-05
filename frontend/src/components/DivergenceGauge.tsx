@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { HelpCircle } from 'lucide-react'
+import { backendApiUrl } from '@/lib/api'
 
 interface DivergenceGaugeProps {
   ticker: string
@@ -30,7 +31,7 @@ export function DivergenceGauge({ ticker, desks }: DivergenceGaugeProps) {
     async function fetchDivergence() {
       try {
         setLoading(true)
-        const res = await fetch(`http://localhost:8000/api/v1/divergence?ticker=${encodeURIComponent(ticker)}`)
+        const res = await fetch(backendApiUrl('/api/v1/divergence', { ticker }))
         if (!res.ok) throw new Error('Failed to fetch divergence data')
         const json = await res.json()
         if (active) {

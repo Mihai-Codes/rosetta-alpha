@@ -94,6 +94,20 @@ def test_mob_index_weighting_and_bounds() -> None:
     assert MobFlag.EXTREME_CONSENSUS in metrics.flags
 
 
+def test_low_confidence_agreement_does_not_create_confidence_extremity() -> None:
+    theses = [
+        _thesis("LONG", 0.0, desk="us", summary="ordinary bullish setup"),
+        _thesis("LONG", 0.0, desk="cn", summary="ordinary bullish setup"),
+        _thesis("LONG", 0.0, desk="eu", summary="ordinary bullish setup"),
+    ]
+
+    metrics = calculate_mob_extremity(theses, "AAPL")
+
+    assert metrics is not None
+    assert metrics.confidence_extremity == 0.0
+    assert metrics.mob_index < 80
+
+
 def test_confidence_calibration_records_accuracy(tmp_path: Path) -> None:
     store = ConfidenceCalibrationStore(tmp_path / "performance.db")
 
