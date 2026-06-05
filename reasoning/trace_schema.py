@@ -155,6 +155,16 @@ class InvestmentThesis(BaseModel):
         ),
     )
 
+    # Narrative context (populated by reasoning.narrative_engine)
+    narrative_velocity: dict[str, Any] | None = Field(
+        default=None,
+        description=(
+            "Dominant narrative velocity for this asset. Contains: narrative_title, "
+            "narrative_type, mentions_per_day, acceleration, days_active, "
+            "regions_present, is_dominant. None = narrative engine not yet run."
+        ),
+    )
+
     # Risk
     risk_factors: list[str] = Field(
         default_factory=list,

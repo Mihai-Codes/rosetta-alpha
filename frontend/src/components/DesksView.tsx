@@ -9,6 +9,7 @@ import { DeskProps } from './DeskCard'
 import { RegionSidebar } from './RegionSidebar'
 import { ThesisCard } from './ThesisCard'
 import { AllWeatherChart } from './AllWeatherChart'
+import { NarrativeInsights } from './NarrativeInsights'
 import { ThesisSkeleton } from './SkeletonLoader'
 import { regionMeta } from '../lib/format'
 
@@ -164,6 +165,11 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
       {/* Chart below on tablet (md to lg) */}
       <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }} className="hidden md:block lg:hidden w-full solid-panel rounded-none border overflow-hidden mt-2">
         <AllWeatherChart />
+      </motion.div>
+
+      {/* Narrative Engine — collapsible insights panel */}
+      <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.7, ease: [0.16, 1, 0.3, 1] }} className="w-full">
+        <NarrativeInsights ticker={active?.desk ?? 'Portfolio'} />
       </motion.div>
 
     </div>
