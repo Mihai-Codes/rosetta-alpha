@@ -111,7 +111,7 @@ def _compute_features(df: pd.DataFrame) -> np.ndarray:
         "realized_vol": realized_vol,
         "trend_strength": trend_strength,
         "norm_range": norm_range,
-    }).dropna()
+    }).replace([np.inf, -np.inf], np.nan).dropna()
 
     return features.values
 
@@ -225,6 +225,10 @@ def detect_regime_hmm(df: pd.DataFrame) -> RegimeDetectionResult:
     states = model.predict(features)
     posteriors = model.predict_proba(features)
 
+    # Guard against NaN posteriors (can occur with near-singular covariance)
+    if np.any(np.isnan(posteriors[-1])):
+        raise ValueError("HMM produced NaN posteriors — model fit is degenerate")
+
     # Map states to semantic labels
     state_labels = _assign_regime_labels(model)
 
@@ -307,7 +311,8 @@ def detect_regime_garch_fallback(df: pd.DataFrame) -> RegimeDetectionResult:
     vol_series = np.sqrt(sigma2)
 
     # Percentile-based classification
-    percentile = np.searchsorted(np.sort(vol_series), current_vol) / len(vol_series)
+    sorted_vol = np.sort(vol_series)
+    percentile = np.searchsorted(sorted_vol, current_vol) / len(vol_series)
 
     if percentile >= 0.75:
         regime = MarketRegime.CRISIS
@@ -319,34 +324,31 @@ def detect_regime_garch_fallback(df: pd.DataFrame) -> RegimeDetectionResult:
         regime = MarketRegime.MEAN_REVERTING
         confidence = 0.5 + (0.5 - abs(percentile - 0.5)) * 0.6  # Highest at center
 
+    # Classify regime before confidence thresholding (needed for transition probs)
+    classified_regime = regime
+
     # Flag uncertain if below threshold
     if confidence < CONFIDENCE_THRESHOLD:
         regime = MarketRegime.UNCERTAIN
 
     # Simple duration: count consecutive days in same vol quartile
-    sorted_vol = np.sort(vol_series)  # Sort once (avoid O(n²) re-sort per iteration)
-    quartile_current = 2 if percentile >= 0.75 else (0 if percentile <= 0.25 else 1)
+    quartile_current = _vol_percentile_to_quartile(percentile)
     duration = 1
     for i in range(len(vol_series) - 2, -1, -1):
         p = np.searchsorted(sorted_vol, vol_series[i]) / len(vol_series)
-        q = 2 if p >= 0.75 else (0 if p <= 0.25 else 1)
-        if q == quartile_current:
+        if _vol_percentile_to_quartile(p) == quartile_current:
             duration += 1
         else:
             break
 
-    # Approximate transition probabilities based on mean-reversion of vol
-    transition_probs = {
-        MarketRegime.TRENDING.value: 0.33,
-        MarketRegime.MEAN_REVERTING.value: 0.34,
-        MarketRegime.CRISIS.value: 0.33,
-    }
-    # Bias toward mean-reverting (vol clusters then reverts)
-    transition_probs[regime.value] = 0.6
-    remaining = 0.4 / 2
+    # Approximate transition probabilities (bias toward self-persistence)
+    # Use classified_regime (not UNCERTAIN) for transition bias
+    transition_probs = _UNIFORM_TRANSITION_PROBS.copy()
+    transition_probs[classified_regime.value] = 0.6
+    remaining_prob = 0.4 / 2
     for k in transition_probs:
-        if k != regime.value:
-            transition_probs[k] = remaining
+        if k != classified_regime.value:
+            transition_probs[k] = remaining_prob
 
     return RegimeDetectionResult(
         current_regime=regime,
@@ -366,6 +368,15 @@ _UNIFORM_TRANSITION_PROBS: dict[str, float] = {
     MarketRegime.MEAN_REVERTING.value: 0.34,
     MarketRegime.CRISIS.value: 0.33,
 }
+
+
+def _vol_percentile_to_quartile(percentile: float) -> int:
+    """Map a volatility percentile to quartile bucket (0=low, 1=mid, 2=high)."""
+    if percentile >= 0.75:
+        return 2
+    elif percentile <= 0.25:
+        return 0
+    return 1
 
 
 def _uncertain_result(method: str) -> RegimeDetectionResult:

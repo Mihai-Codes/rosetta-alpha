@@ -243,6 +243,15 @@ class TestHMMRegimeDetection:
         with pytest.raises(ValueError, match="Degenerate features"):
             detect_regime_hmm(df)
 
+    def test_inf_in_prices_handled(self):
+        """Prices with zeros (causing -inf log returns) should not crash."""
+        df = _make_trending_data(200)
+        # Inject a zero price (would cause -inf in log returns)
+        df.iloc[50, df.columns.get_loc("Close")] = 0.0
+        # Should still work (inf filtered in _compute_features)
+        result = detect_regime_hmm(df)
+        assert isinstance(result, RegimeDetectionResult)
+
     def test_result_to_dict(self):
         df = _make_trending_data(200)
         result = detect_regime_hmm(df)

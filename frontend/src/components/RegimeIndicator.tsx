@@ -2,19 +2,9 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
+import type { RegimeContext } from '@/lib/types'
 
-/**
- * Market regime types matching the backend's MarketRegime enum.
- */
-export type MarketRegimeType = 'TRENDING' | 'MEAN_REVERTING' | 'CRISIS' | 'UNCERTAIN'
-
-export interface RegimeContext {
-  current_regime: MarketRegimeType
-  regime_confidence: number
-  regime_duration_days: number
-  transition_probabilities: Record<string, number>
-  method: string
-}
+export type { RegimeContext } from '@/lib/types'
 
 interface RegimeIndicatorProps {
   regime: RegimeContext | null | undefined
@@ -23,7 +13,7 @@ interface RegimeIndicatorProps {
 }
 
 // Bridgewater palette: green=trending, amber=mean_reverting, crimson=crisis
-const REGIME_CONFIG: Record<MarketRegimeType, {
+const REGIME_CONFIG: Record<string, {
   label: string
   color: string
   dotColor: string
