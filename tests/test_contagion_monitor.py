@@ -21,12 +21,13 @@ def _event(
     desk: str = "us",
     ticker: str = "AAPL",
     thesis: dict | None = None,
+    timestamp: datetime | None = None,
 ) -> DeskAnalysisComplete:
     return DeskAnalysisComplete(
         desk=desk,
         ticker=ticker,
         thesis=thesis or {},
-        timestamp=datetime(2026, 6, 6, 12, tzinfo=UTC),
+        timestamp=timestamp or datetime(2026, 6, 6, 12, tzinfo=UTC),
     )
 
 
@@ -143,7 +144,9 @@ def test_malformed_partial_payload_does_not_crash(tmp_path: Path) -> None:
 def test_json_recent_alerts_limit_and_hours(tmp_path: Path) -> None:
     monitor = _monitor(tmp_path)
 
-    monitor.handle_desk_analysis_complete(_event(thesis={"mob_extremity": 95}))
+    monitor.handle_desk_analysis_complete(
+        _event(thesis={"mob_extremity": 95}, timestamp=datetime.now(UTC))
+    )
 
     alerts = monitor.recent_alerts(limit=1, hours=1)
     assert len(alerts) == 1
