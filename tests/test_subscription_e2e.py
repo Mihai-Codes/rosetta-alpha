@@ -106,14 +106,21 @@ def web3_setup():
     }
 
 
+def build_tx_params(setup):
+    """DRY: common transaction parameters for all E2E calls."""
+    w3 = setup["w3"]
+    return {
+        "from": setup["deployer"],
+        "chainId": 5042002,
+        "nonce": w3.eth.get_transaction_count(setup["deployer"]),
+        "gas": 200_000,
+        "gasPrice": w3.eth.gas_price,
+    }
+
+
 def send_tx(setup, tx):
     """Sign and send a transaction, wait for receipt."""
     w3 = setup["w3"]
-    tx["from"] = setup["deployer"]
-    tx["nonce"] = w3.eth.get_transaction_count(setup["deployer"])
-    tx["gas"] = 200_000
-    tx["gasPrice"] = w3.eth.gas_price
-
     signed = w3.eth.account.sign_transaction(tx, setup["private_key"])
     tx_hash = w3.eth.send_raw_transaction(signed.raw_transaction)
     receipt = w3.eth.wait_for_transaction_receipt(tx_hash, timeout=60)
@@ -160,9 +167,7 @@ class TestSubscriptionE2E:
         tx = usdc.functions.approve(
             web3_setup["subscription"].address,
             99_000_000  # Approve max tier price
-        ).build_transaction({
-            "chainId": 5042002,
-        })
+        ).build_transaction(build_tx_params(web3_setup))
         receipt = send_tx(web3_setup, tx)
         assert receipt["status"] == 1, f"Approve TX failed: {receipt}"
 
@@ -183,11 +188,11 @@ class TestSubscriptionE2E:
         # If already subscribed, unsubscribe first
         current_tier = sub.functions.getTier(web3_setup["deployer"]).call()
         if current_tier > 0:
-            unsub_tx = sub.functions.unsubscribe().build_transaction({"chainId": 5042002})
+            unsub_tx = sub.functions.unsubscribe().build_transaction(build_tx_params(web3_setup))
             send_tx(web3_setup, unsub_tx)
             time.sleep(2)
 
-        tx = sub.functions.subscribe(1).build_transaction({"chainId": 5042002})
+        tx = sub.functions.subscribe(1).build_transaction(build_tx_params(web3_setup))
         receipt = send_tx(web3_setup, tx)
         assert receipt["status"] == 1, f"Subscribe TX failed: {receipt}"
 
@@ -214,7 +219,7 @@ class TestSubscriptionE2E:
             pytest.skip("Insufficient USDC — subscribe not executed")
 
         sub = web3_setup["subscription"]
-        tx = sub.functions.unsubscribe().build_transaction({"chainId": 5042002})
+        tx = sub.functions.unsubscribe().build_transaction(build_tx_params(web3_setup))
         receipt = send_tx(web3_setup, tx)
         assert receipt["status"] == 1, f"Unsubscribe TX failed: {receipt}"
 
