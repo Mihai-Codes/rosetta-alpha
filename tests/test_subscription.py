@@ -6,7 +6,7 @@ Validates the Python-side logic that would gate API access based on subscription
 """
 
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import MagicMock
 from dataclasses import dataclass
 from enum import IntEnum
 from typing import Tuple
