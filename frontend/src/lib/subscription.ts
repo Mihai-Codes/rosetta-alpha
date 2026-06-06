@@ -28,7 +28,7 @@ export const arcTestnet = defineChain({
 /** RosettaSubscription contract address on Arc testnet. */
 export const SUBSCRIPTION_CONTRACT: Address =
   (process.env.NEXT_PUBLIC_SUBSCRIPTION_CONTRACT as Address) ||
-  '0x0000000000000000000000000000000000000000' // Deploy and update
+  '0x136eBC6430267C29917B917d283FC8fa2E372C7D' // Deployed on Arc testnet 2026-06-07
 
 /** USDC on Arc testnet (6 decimals ERC-20 interface). */
 export const ARC_USDC: Address = '0x3600000000000000000000000000000000000000'
