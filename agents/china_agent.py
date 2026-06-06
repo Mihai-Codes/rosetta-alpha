@@ -55,8 +55,8 @@ _CN_SUB_AGENT_TEMPLATE = """\
 请根据以下市场数据对股票进行深入分析，重点关注盈利能力、估值水平、市场情绪及政策影响。
 你需要展示深度思考的过程（类似R1的思维链），然后给出最终的分析和英文翻译。
 
-输出必须是严格的JSON格式，不要有任何额外文字，字段名必须完全匹配：
-{"agent_role": "{{role}}", "input_data_summary": "<50字以内：输入数据摘要>", "thought_process": "<详细的深度思考过程，至少200字，展示逻辑推演、正反面论证和数据支持>", "analysis": "<最终的分析结论，100-200字>", "analysis_en": "<English translation of the final analysis>", "conclusion": "<one sentence>", "confidence": <0.0-1.0>, "language": "zh"}
+输出必须是严格的JSON格式，不要有任何额外文字，字段名必须完全匹配。direction 必须替换为 "LONG"、"SHORT" 或 "NEUTRAL" 之一：
+{"agent_role": "{{role}}", "input_data_summary": "<50字以内：输入数据摘要>", "thought_process": "<详细的深度思考过程，至少200字，展示逻辑推演、正反面论证和数据支持>", "analysis": "<最终的分析结论，100-200字>", "analysis_en": "<English translation of the final analysis>", "conclusion": "<one sentence>", "direction": "LONG", "confidence": <0.0-1.0>, "language": "zh"}
 </SYS>
 
 【股票】{{ticker}} | 【市场】{{region}} | 【类别】{{asset_class}}
@@ -80,7 +80,12 @@ _CN_SYNTHESIS_TEMPLATE = """\
 {% endif %}
 分析师报告汇总：
 {{analyst_reports}}
+{% if debate_context %}
+对抗性辩论上下文（仅在方向性矛盾触发时提供）：
+{{debate_context}}
+{% endif %}
 
+如果存在辩论上下文，请据此下调未解决分歧下的置信度，并在 debate_summary 中总结争议点。
 只输出一个合法的JSON对象，不要有任何前缀或解释。字段要求如下：
 - asset_class: "equity"
 - ticker_or_asset: 股票代码字符串
@@ -90,6 +95,7 @@ _CN_SYNTHESIS_TEMPLATE = """\
 - confidence_score: 0.0到1.0的浮点数
 - time_horizon_days: 正整数（建议持有天数）
 - reasoning_blocks: []
+- debate_summary: 字符串或 null（没有辩论上下文则为 null）
 - data_sources_used: 数据来源列表
 - risk_factors: 风险因素列表
 - model_routing: {}

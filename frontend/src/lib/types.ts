@@ -17,6 +17,7 @@ export interface ReasoningBlock {
   analysis: string
   analysis_en?: string
   conclusion: string
+  direction?: 'LONG' | 'SHORT' | 'NEUTRAL' | null
   confidence: number
   language: string
 }
@@ -55,6 +56,7 @@ export interface DeskProps {
   pinata_url?: string
   arc_tx: string
   reasoning_blocks: ReasoningBlock[]
+  debate_summary?: string | null
   regime_context?: RegimeContext | null
   hidden_flow_signals?: HiddenFlowSignal[]
   potential_dark_pool_activity?: boolean

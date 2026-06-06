@@ -53,8 +53,8 @@ _JP_SUB_AGENT_TEMPLATE = """\
 以下の市場データを基に、収益性、バリュエーション、テクニカル、マクロ政策の観点から深く分析してください。
 深い思考プロセス（R1スタイルのChain-of-Thought）を示した上で、最終的な分析と英語の翻訳を提供してください。
 
-出力は必ず厳密なJSONのみ（余分なテキスト不可）：
-{"agent_role": "{{role}}", "input_data_summary": "<50文字以内のデータ概要>", "thought_process": "<論理的推論、賛否両論の検討、データによる裏付けなど、少なくとも200文字の詳細な思考プロセス>", "analysis": "<最終的な分析結果、100〜200文字>", "analysis_en": "<English translation of the final analysis>", "conclusion": "<one sentence>", "confidence": <0.0-1.0>, "language": "ja"}
+出力は必ず厳密なJSONのみ（余分なテキスト不可）。direction は必ず "LONG"、"SHORT"、"NEUTRAL" のいずれかに置き換えてください：
+{"agent_role": "{{role}}", "input_data_summary": "<50文字以内のデータ概要>", "thought_process": "<論理的推論、賛否両論の検討、データによる裏付けなど、少なくとも200文字の詳細な思考プロセス>", "analysis": "<最終的な分析結果、100〜200文字>", "analysis_en": "<English translation of the final analysis>", "conclusion": "<one sentence>", "direction": "LONG", "confidence": <0.0-1.0>, "language": "ja"}
 </SYS>
 
 【銘柄】{{ticker}} | 【市場】{{region}} | 【資産クラス】{{asset_class}}
@@ -76,6 +76,7 @@ _JP_SYNTHESIS_TEMPLATE = """\
 - asset_class: equity
 - working_language: ja
 - ticker_or_asset: 銘柄コードを記入
+- debate_summary: ディベート文脈がある場合は争点を要約し、ない場合は null
 JSONのみ出力すること。
 </SYS>
 
@@ -91,7 +92,12 @@ JSONのみ出力すること。
 === フィードバック終了 ===
 {% endif %}
 アナリストレポート集約：
-{{analyst_reports}}\
+{{analyst_reports}}
+{% if debate_context %}
+対抗的ディベート文脈：
+{{debate_context}}
+{% endif %}
+ディベート文脈がある場合、未解決の反論に応じて confidence_score を下げ、debate_summary を設定してください。ない場合は null にしてください。\
 """
 
 
@@ -153,6 +159,7 @@ class JapanAgent(RegionalAgent):
       "analysis": "<日本語分析>",
       "analysis_en": "<English translation>",
       "conclusion": "<one sentence conclusion>",
+      "direction": "LONG",
       "confidence": 0.8,
       "language": "ja"
     }

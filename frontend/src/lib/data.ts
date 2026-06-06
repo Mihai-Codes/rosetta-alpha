@@ -7,8 +7,8 @@ function normalizeDesk(raw: Record<string, unknown>): DeskProps {
   return {
     desk: String(raw.desk ?? '').toLowerCase(),
     ticker: String(raw.ticker ?? ''),
-    direction: (raw.direction ?? 'NEUTRAL') as DeskProps['direction'],
-    confidence: Number(raw.confidence ?? 0),
+    direction: (raw.direction ?? thesis.direction ?? 'NEUTRAL') as DeskProps['direction'],
+    confidence: Number(raw.confidence ?? thesis.confidence_score ?? 0),
     summary: String(
       raw.summary ?? thesis.thesis_summary_en ?? thesis.thesis_summary ?? ''
     ),
@@ -24,7 +24,7 @@ function normalizeDesk(raw: Record<string, unknown>): DeskProps {
     })(),
     reasoning_blocks:
       (raw.reasoning_blocks as DeskProps['reasoning_blocks']) ??
-      ((thesis.reasoning as unknown[]) ?? []).map((r: unknown) => {
+      ((thesis.reasoning_blocks as unknown[]) ?? (thesis.reasoning as unknown[]) ?? []).map((r: unknown) => {
         const rb = r as Record<string, unknown>
         return {
           agent_role: String(rb.role ?? rb.agent_role ?? 'Analyst'),
@@ -33,10 +33,14 @@ function normalizeDesk(raw: Record<string, unknown>): DeskProps {
           analysis: String(rb.content ?? rb.analysis ?? ''),
           analysis_en: String(rb.analysis_en ?? (rb.language === 'en' ? (rb.content ?? rb.analysis) : '') ?? ''),
           conclusion: String(rb.conclusion ?? ''),
+          direction: (rb.direction ?? null) as DeskProps['reasoning_blocks'][number]['direction'],
           confidence: Number(rb.confidence ?? 0),
           language: String(rb.language ?? 'en'),
         }
       }),
+    debate_summary: raw.debate_summary || thesis.debate_summary
+      ? String(raw.debate_summary ?? thesis.debate_summary)
+      : null,
     hidden_flow_signals:
       (raw.hidden_flow_signals as DeskProps['hidden_flow_signals']) ??
       (thesis.hidden_flow_signals as DeskProps['hidden_flow_signals']) ??
@@ -52,6 +56,7 @@ export const SEED_DATA: DeskProps[] = [
   {
     desk: 'us', ticker: 'AAPL', direction: 'NEUTRAL', confidence: 0.70,
     summary: 'Apple Inc maintains exceptional balance sheet strength with $160B in cash, but Services growth is decelerating and EU regulatory headwinds cap upside in the near term.',
+    debate_summary: 'Fundamental strength was contested by sentiment concerns around EU antitrust pressure; neither side fully conceded, so PM confidence stayed neutral.',
     question: "Will Apple's stock price stay between $268.59 and $327.83 at the close of trading on August 12, 2026?",
     price: '$298.21',
     ipfs_thesis_cid: 'bafkreiczizrctmcsktor7lpojdkvgjgiqz6py7cyvsewefvi2vvojdhsxy',

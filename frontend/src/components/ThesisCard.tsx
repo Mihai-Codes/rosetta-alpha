@@ -290,9 +290,19 @@ export function ThesisCard({ desk }: ThesisCardProps) {
       <header className="px-4 sm:px-8 py-5 sm:py-7 border-b border-border" style={{ borderLeft: `3px solid ${meta.color}` }}>
         <div className="flex items-start justify-between gap-4 sm:gap-6 flex-wrap">
           <div>
-            <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary mb-2">
-              {meta.name} · {desk.desk.toUpperCase()} Desk
-            </p>
+            <div className="flex items-center gap-2 flex-wrap mb-2">
+              <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary">
+                {meta.name} · {desk.desk.toUpperCase()} Desk
+              </p>
+              {desk.debate_summary && (
+                <span
+                  className="px-2 py-0.5 border border-[#C9A84C]/40 bg-[#C9A84C]/10 text-[#C9A84C] text-[8px] font-bold uppercase tracking-[0.2em] rounded cursor-help"
+                  title={desk.debate_summary}
+                >
+                  ⚔️ Debated
+                </span>
+              )}
+            </div>
             <h2 className="font-display text-[clamp(1.75rem,5vw,2.25rem)] text-text-primary leading-tight">
               {desk.ticker}
             </h2>
@@ -348,6 +358,17 @@ export function ThesisCard({ desk }: ThesisCardProps) {
             </div>
           )}
         </div>
+
+        {desk.debate_summary && (
+          <div className="mb-5 border border-[#C9A84C]/20 bg-[#C9A84C]/5 px-4 py-3">
+            <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-[#C9A84C] mb-1">
+              ⚔️ Debate Summary
+            </p>
+            <p className="text-xs sm:text-sm text-text-secondary font-light leading-relaxed">
+              {desk.debate_summary}
+            </p>
+          </div>
+        )}
 
         {desk.reasoning_blocks.length === 0 ? (
           <p className="text-text-tertiary font-light italic text-sm">No reasoning blocks recorded for this thesis.</p>

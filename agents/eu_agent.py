@@ -54,8 +54,8 @@ Your role is: {{role}}.
 Analyse the data below focusing on earnings quality, ECB policy sensitivity,
 FX exposure (EUR/local), regulatory risk, and ESG positioning.
 
-Output MUST be strictly JSON only (no extra text):
-{"agent_role": "{{role}}", "input_data_summary": "<50 chars: data consumed>", "analysis": "<150 chars max analysis>", "analysis_en": "<analysis in English>", "conclusion": "<one sentence>", "confidence": <0.0-1.0>, "language": "en"}
+Output MUST be strictly JSON only (no extra text). Replace direction with exactly one of "LONG", "SHORT", or "NEUTRAL":
+{"agent_role": "{{role}}", "input_data_summary": "<50 chars: data consumed>", "analysis": "<150 chars max analysis>", "analysis_en": "<analysis in English>", "conclusion": "<one sentence>", "direction": "LONG", "confidence": <0.0-1.0>, "language": "en"}
 </SYS>
 
 [Ticker] {{ticker}} | [Market] {{region}} | [Asset Class] {{asset_class}}
@@ -76,6 +76,7 @@ Rules:
 - asset_class: equity
 - working_language: en
 - ticker_or_asset: the ticker symbol
+- debate_summary: summarize adversarial debate if debate context is present; otherwise null
 Output JSON only — no markdown, no prose.
 </SYS>
 
@@ -91,7 +92,12 @@ Output JSON only — no markdown, no prose.
 === END FEEDBACK ===
 {% endif %}
 Analyst reports:
-{{analyst_reports}}\
+{{analyst_reports}}
+{% if debate_context %}
+Adversarial debate context:
+{{debate_context}}
+{% endif %}
+If debate context is present, revise confidence downward when objections remain unresolved and set debate_summary. Otherwise set debate_summary to null.\
 """
 
 

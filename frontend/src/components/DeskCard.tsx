@@ -63,7 +63,15 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
             </h3>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0 mt-1">
+          <div className="flex items-center gap-2 shrink-0 mt-1 flex-wrap justify-end">
+            {desk.debate_summary && (
+              <span
+                className="px-2 py-1 border border-[#C9A84C]/30 bg-[#C9A84C]/10 text-[#C9A84C] text-[9px] font-bold uppercase tracking-widest cursor-help"
+                title={desk.debate_summary}
+              >
+                ⚔️ Debated
+              </span>
+            )}
             <RegimeIndicator regime={desk.regime_context} compact />
             <div className={`flex items-center gap-1.5 px-3 py-1.5 border text-[10px] font-medium uppercase tracking-widest ${directionColor} ${directionBg}`}>
               {isLong && <TrendingUp className="w-3 h-3" />}

@@ -103,6 +103,10 @@ class ReasoningBlock(BaseModel):
         description="English translation if `language` != 'en'. Required for non-English agents.",
     )
     conclusion: str = Field(description="One-sentence bottom line.")
+    direction: Direction | None = Field(
+        default=None,
+        description="Directional recommendation from this block when available.",
+    )
     confidence: float = Field(ge=0.0, le=1.0, description="Subjective confidence in this block.")
     language: LangCode = Field(default="en")
 
@@ -159,6 +163,10 @@ class InvestmentThesis(BaseModel):
 
     # Reasoning chain
     reasoning_blocks: list[ReasoningBlock] = Field(default_factory=list)
+    debate_summary: str | None = Field(
+        default=None,
+        description="Summary of adversarial debate points when analyst contradictions triggered critique.",
+    )
 
     # Provenance
     data_sources_used: list[str] = Field(

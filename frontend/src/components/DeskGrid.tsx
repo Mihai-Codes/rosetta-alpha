@@ -10,6 +10,7 @@ const MOCK_DATA: DeskProps[] = [
     direction: 'NEUTRAL',
     confidence: 0.70,
     summary: 'Apple Inc is a prominent player in the technology sector with a strong market presence, but faces mixed sentiment and regulatory headwind.',
+    debate_summary: 'Fundamental strength was challenged by sentiment concerns around regulatory overhang; PM treated the conflict as unresolved.',
     question: "Will Apple Inc's stock price be between $268.59 and $327.83 at the close of trading on 2026-08-12?",
     price: '$298.21',
     ipfs_thesis_cid: 'bafkreiczizrctmcsktor7lpojdkvgjgiqz6py7cyvsewefvi2vvojdhsxy',
