@@ -35,7 +35,9 @@ function generateData(): DataPoint[] {
 // --- Math Utils ---
 
 /** Fits an ellipse using PCA bounding (Covariance Matrix) */
-function fitEllipsePCA(points: Point2D[]) {
+function fitEllipsePCA(rawPoints: Point2D[]) {
+  // Sanitize data: prevent NaN or Infinity values from breaking the covariance matrix
+  const points = rawPoints.filter(p => Number.isFinite(p.x) && Number.isFinite(p.y))
   if (points.length < 5) return null
 
   let meanX = 0, meanY = 0
@@ -84,7 +86,8 @@ function fitEllipsePCA(points: Point2D[]) {
 }
 
 /** Dynamically calculates orbital period based on angular velocity of recent trajectory */
-function calculateOrbitalPeriod(points: Point2D[], cx: number, cy: number): number {
+function calculateOrbitalPeriod(rawPoints: Point2D[], cx: number, cy: number): number {
+  const points = rawPoints.filter(p => Number.isFinite(p.x) && Number.isFinite(p.y))
   if (points.length < 2) return 0
   let totalPhaseChange = 0
   for (let i = 1; i < points.length; i++) {
@@ -224,7 +227,12 @@ export function EllipseView() {
       <div className="w-full overflow-x-auto flex-1 min-h-[200px] flex items-center justify-center">
         {/* Aspect ratio wrapper ensures tooltip % positions perfectly match SVG scaling */}
         <div className="relative w-full max-w-[800px] aspect-[2/1] min-w-[600px]">
-          <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full absolute inset-0" onMouseLeave={() => setHoveredPoint(null)}>
+          <svg 
+            viewBox={`0 0 ${width} ${height}`} 
+            className="w-full h-full absolute inset-0" 
+            onMouseLeave={() => setHoveredPoint(null)}
+            onClick={() => setHoveredPoint(null)} // Allows mobile users to tap empty space to dismiss tooltip
+          >
             {/* Grid */}
             {renderGridLine(0, "Fair Value (0%)")}
             {renderGridLine(yMax/2, `+${(yMax/2).toFixed(1)}%`)}
@@ -255,8 +263,8 @@ export function EllipseView() {
                   stroke={isHovered ? "#D82B2B" : "transparent"} strokeWidth={2}
                   className="cursor-crosshair transition-all duration-200"
                   onMouseEnter={() => setHoveredPoint({ x, y, data: d })}
-                  onClick={() => setHoveredPoint({ x, y, data: d })}
-                  onTouchStart={() => setHoveredPoint({ x, y, data: d })}
+                  onClick={(e) => { e.stopPropagation(); setHoveredPoint({ x, y, data: d }) }}
+                  onTouchStart={(e) => { e.stopPropagation(); setHoveredPoint({ x, y, data: d }) }}
                 />
               )
             })}
