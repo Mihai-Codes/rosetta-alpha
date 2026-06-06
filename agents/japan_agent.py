@@ -164,6 +164,7 @@ class JapanAgent(RegionalAgent):
       "language": "ja"
     }
   ],
+  "debate_summary": "<ディベート文脈がある場合は争点を要約、ない場合はnull>",
   "data_sources_used": ["yfinance:daily", "yfinance:info"],
   "risk_factors": ["<リスク要因>"],
   "model_routing": {},

@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import inspect
+
 from agents.base_agent import RegionalAgent
+from agents.japan_agent import JapanAgent, _JP_SYNTHESIS_TEMPLATE
 from reasoning.trace_schema import AgentRole, Direction, ReasoningBlock
 
 
@@ -32,3 +35,10 @@ def test_debate_pairs_ignore_neutral_and_missing_direction() -> None:
     technical = _block(AgentRole.TECHNICAL_ANALYST, None, 0.95)
 
     assert RegionalAgent._debate_pairs([fundamental, technical]) == []
+
+
+def test_japan_compact_synthesis_schema_mentions_debate_summary() -> None:
+    init_source = inspect.getsource(JapanAgent.__init__)
+
+    assert "debate_summary" in _JP_SYNTHESIS_TEMPLATE
+    assert '"debate_summary"' in init_source

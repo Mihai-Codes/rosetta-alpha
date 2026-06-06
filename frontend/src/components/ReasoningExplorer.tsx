@@ -51,6 +51,17 @@ export function ReasoningExplorer({ desk, onClose }: ExplorerProps) {
             </div>
           </div>
 
+          {desk.debate_summary && (
+            <div className="border border-[#C9A84C]/20 bg-[#C9A84C]/5 p-4">
+              <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#C9A84C] mb-2">
+                ⚔️ Debate Summary
+              </p>
+              <p className="text-sm text-text-secondary font-light leading-relaxed">
+                {desk.debate_summary}
+              </p>
+            </div>
+          )}
+
           <div className="space-y-6">
             <h3 className="text-sm font-bold text-brand-red uppercase tracking-widest flex items-center gap-2 border-t pt-6">
               <MessageSquare className="w-4 h-4" />
