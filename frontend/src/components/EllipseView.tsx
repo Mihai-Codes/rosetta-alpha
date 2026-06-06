@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 
 // --- Types & Data ---
 type DataPoint = { day: number, date: string, price: number, ma: number, dev: number }
@@ -124,6 +124,8 @@ function DynamicTooltip({ xPct, yPct, data }: { xPct: number, yPct: number, data
 
   return (
     <div 
+      role="tooltip"
+      aria-hidden="false"
       className="absolute pointer-events-none border border-white/20 bg-black/90 backdrop-blur-md p-3 rounded-md shadow-2xl z-20 w-32 transition-transform duration-75"
       style={{ 
         left: `${xPct}%`, 
@@ -145,9 +147,34 @@ function DynamicTooltip({ xPct, yPct, data }: { xPct: number, yPct: number, data
 // --- Main Component ---
 
 export function EllipseView() {
-  const data = useMemo(() => generateData(), [])
+  const [mounted, setMounted] = useState(false)
+  const [data, setData] = useState<DataPoint[]>([])
   const [hoveredPoint, setHoveredPoint] = useState<{ x: number, y: number, data: DataPoint } | null>(null)
   
+  // Fix Next.js Hydration Mismatch: Generate random data only after mount
+  useEffect(() => {
+    setData(generateData())
+    setMounted(true)
+  }, [])
+
+  if (!mounted || data.length === 0) {
+    return (
+      <div className="w-full bg-[#000000] font-sans h-full flex flex-col justify-center relative min-h-[400px]">
+        <div className="flex items-start justify-between mb-4 px-4 pt-4 sm:px-6 shrink-0">
+          <div>
+            <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary mb-2">Orbit Framework</p>
+            <p className="font-display text-lg text-text-primary">The Ellipse View</p>
+          </div>
+        </div>
+        <div className="flex-1 w-full flex items-center justify-center p-6">
+          <div className="w-full max-w-[800px] aspect-[2/1] border border-white/5 bg-white/[0.02] animate-pulse flex items-center justify-center">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-text-tertiary">Plotting Trajectories...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   const width = 800
   const height = 400
   const padding = { top: 40, right: 40, bottom: 40, left: 60 }
@@ -210,7 +237,7 @@ export function EllipseView() {
     return (
       <g key={label}>
         <line x1={padding.left} y1={y} x2={width - padding.right} y2={y} stroke="white" strokeWidth="1" strokeDasharray={val === 0 ? "5,5" : "none"} strokeOpacity={val === 0 ? 0.5 : 0.1} />
-        <text x={padding.left - 10} y={y} fill="white" fillOpacity={val === 0 ? 0.5 : 0.3} fontSize="10" textAnchor="end" alignmentBaseline="middle">{label}</text>
+        <text x={padding.left - 10} y={y} fill="white" fillOpacity={val === 0 ? 0.5 : 0.3} fontSize="12" textAnchor="end" alignmentBaseline="middle">{label}</text>
       </g>
     )
   }
@@ -228,6 +255,8 @@ export function EllipseView() {
         {/* Aspect ratio wrapper ensures tooltip % positions perfectly match SVG scaling */}
         <div className="relative w-full max-w-[800px] aspect-[2/1] min-w-[600px]">
           <svg 
+            role="img"
+            aria-label="Market trajectory ellipse fitting visualization"
             viewBox={`0 0 ${width} ${height}`} 
             className="w-full h-full absolute inset-0" 
             onMouseLeave={() => setHoveredPoint(null)}
