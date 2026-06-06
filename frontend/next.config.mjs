@@ -90,6 +90,11 @@ const nextConfig = {
     ]
   },
   // Tailwind CSS v4 uses postcss plugin
+  // Include Prisma query engine binaries in deployment bundle.
+  // Next.js 16 file tracing excludes them by default, causing runtime errors on Vercel.
+  outputFileTracingIncludes: {
+    '/**/*': ['./node_modules/.prisma/client/**/*'],
+  },
   experimental: {
     optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts'],
   },
