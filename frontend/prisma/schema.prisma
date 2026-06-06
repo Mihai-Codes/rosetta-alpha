@@ -2,9 +2,10 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider      = "prisma-client-js"
-  // rhel-openssl-3.0.x is Vercel's serverless Linux runtime (Next.js 16+)
-  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+  provider    = "prisma-client-js"
+  // "library" engine ships as a JS/Node file inside @prisma/engines — no binary download.
+  // Eliminates the ~50MB rhel-openssl-3.0.x binary fetch that was stalling Vercel cold builds.
+  engineType  = "library"
 }
 
 datasource db {
