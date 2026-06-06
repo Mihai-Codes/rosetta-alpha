@@ -38,6 +38,7 @@ import {
   signTransferAuthorization,
   encodePaymentHeader,
 } from './eip3009'
+import type { SubscriberAuthHeaders } from '@/hooks/useSubscriberAuth'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -52,6 +53,12 @@ export type X402Config = {
   onPaymentSuccess?: (txHash: string, amount: number) => void
   /** Called when payment would exceed session budget */
   onInsufficientBudget?: (required: number, available: number) => void
+  /**
+   * Subscriber auth header provider.
+   * If set and returns headers, they're included in every request.
+   * Server validates signature + on-chain tier → returns 200 (bypasses 402).
+   */
+  getSubscriberHeaders?: () => Promise<SubscriberAuthHeaders | null>
 }
 
 /**
@@ -204,7 +211,7 @@ export async function parsePaymentRequirements(
  * @returns Object with an x402-aware fetch method
  */
 export function createX402Client(config: X402Config) {
-  const { usdcAddress, maxRetries = 1, onSessionExpired, onPaymentSuccess, onInsufficientBudget } = config
+  const { usdcAddress, maxRetries = 1, onSessionExpired, onPaymentSuccess, onInsufficientBudget, getSubscriberHeaders } = config
 
   // Capture reference to the global fetch to avoid shadowing issues
   // (our returned object also has a method named 'fetch')
@@ -224,8 +231,23 @@ export function createX402Client(config: X402Config) {
      * @returns The final Response (either original non-402, or post-payment response)
      */
     async fetch(url: string, options?: RequestInit): Promise<Response> {
+      // ── Step 0: Attach subscriber headers if available (bypass x402) ──
+      let mergedOptions = options
+      if (getSubscriberHeaders) {
+        const subHeaders = await getSubscriberHeaders()
+        if (subHeaders) {
+          mergedOptions = {
+            ...options,
+            headers: {
+              ...options?.headers,
+              ...subHeaders,
+            },
+          }
+        }
+      }
+
       // ── Step 1: Make the initial request ──
-      const initialResponse = await httpFetch(url, options)
+      const initialResponse = await httpFetch(url, mergedOptions)
 
       // ── Step 2: If not 402, return as-is (no payment needed) ──
       if (initialResponse.status !== 402) {
