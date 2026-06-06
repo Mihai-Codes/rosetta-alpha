@@ -20,6 +20,7 @@ interface LayoutProps {
 const PUBLIC_TABS: { id: Tab; label: string; href: string }[] = [
   { id: 'desks', label: 'Desks', href: '/' },
   { id: 'leaderboard', label: 'Leaderboard', href: '/leaderboard' },
+  { id: 'pricing', label: 'Pricing', href: '/pricing' },
   { id: 'about', label: 'About', href: '/about' },
 ]
 
@@ -29,6 +30,7 @@ const AUTH_TABS: { id: Tab; label: string; href: string }[] = [
   { id: 'leaderboard', label: 'Rankings', href: '/leaderboard' },
   { id: 'feed', label: 'Live Feed', href: '/feed' },
   { id: 'registry', label: 'Registry', href: '/registry' },
+  { id: 'pricing', label: 'Pricing', href: '/pricing' },
   { id: 'quiz', label: 'Quiz', href: '/quiz' },
 ]
 
