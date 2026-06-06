@@ -53,6 +53,26 @@ LEARNED_GUIDELINES: dict[str, list[str]] = _load_guidelines()
 
 _TICKER_ALLOWED = re.compile(r"[^A-Za-z0-9._/-]+")
 _CONTROL_CHARS = re.compile(r"[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]")
+_PROMPT_DELIMITERS = (
+    "UNTRUSTED_MARKET_DATA",
+    "UNTRUSTED_ANALYST_REPORTS",
+    "ADVERSARIAL_DEBATE_CONTEXT",
+    "RAW_OUTPUT",
+)
+_DIRECTION_ALIASES = {
+    "BUY": "LONG",
+    "BULLISH": "LONG",
+    "OVERWEIGHT": "LONG",
+    "ACCUMULATE": "LONG",
+    "SELL": "SHORT",
+    "BEARISH": "SHORT",
+    "UNDERWEIGHT": "SHORT",
+    "REDUCE": "SHORT",
+    "HOLD": "NEUTRAL",
+    "FLAT": "NEUTRAL",
+    "RANGE_BOUND": "NEUTRAL",
+    "RANGE-BOUND": "NEUTRAL",
+}
 
 
 def _sanitize_ticker(raw: str, *, max_len: int = 24) -> str:
@@ -62,10 +82,19 @@ def _sanitize_ticker(raw: str, *, max_len: int = 24) -> str:
     return cleaned or "UNKNOWN"
 
 
+def _normalize_direction_value(raw: str) -> str | None:
+    """Normalize common LLM direction variants into the canonical enum names."""
+    direction = str(raw or "").strip().upper()
+    return direction if direction in Direction.__members__ else _DIRECTION_ALIASES.get(direction)
+
+
 def _sanitize_untrusted_text(raw: str, *, max_len: int = 12000) -> str:
     """Sanitize untrusted external text before interpolation into prompts."""
     text = _CONTROL_CHARS.sub(" ", str(raw or ""))
     # Neutralize common delimiter-break / instruction-handoff tokens.
+    for delimiter in _PROMPT_DELIMITERS:
+        text = text.replace(f"<{delimiter}>", f"‹{delimiter}›")
+        text = text.replace(f"</{delimiter}>", f"‹/{delimiter}›")
     text = text.replace("```", "` ` `")
     text = text.replace("</", "<\\/")
     text = text.replace("<|", "‹|")
@@ -144,8 +173,8 @@ class PydanticJsonParser(adal.DataComponent):
             data = {k: v for k, v in data.items() if k in known_fields}
             # Normalize LLM direction strings before strict Pydantic validation.
             if "direction" in data and isinstance(data["direction"], str):
-                direction = data["direction"].strip().upper()
-                if direction in Direction.__members__:
+                direction = _normalize_direction_value(data["direction"])
+                if direction is not None:
                     data["direction"] = direction
                 elif self.model_class.__name__ == "ReasoningBlock":
                     data["direction"] = None

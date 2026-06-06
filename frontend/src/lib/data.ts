@@ -1,5 +1,29 @@
 import type { DeskProps } from './types'
 
+const DIRECTION_ALIASES: Record<string, DeskProps['direction']> = {
+  BUY: 'LONG',
+  BULLISH: 'LONG',
+  OVERWEIGHT: 'LONG',
+  SELL: 'SHORT',
+  BEARISH: 'SHORT',
+  UNDERWEIGHT: 'SHORT',
+  HOLD: 'NEUTRAL',
+  FLAT: 'NEUTRAL',
+}
+
+function normalizeDirection(value: unknown): DeskProps['direction'] {
+  const direction = String(value ?? '').trim().toUpperCase()
+  if (direction === 'LONG' || direction === 'SHORT' || direction === 'NEUTRAL') {
+    return direction
+  }
+  return DIRECTION_ALIASES[direction] ?? 'NEUTRAL'
+}
+
+function normalizeBlockDirection(value: unknown): DeskProps['reasoning_blocks'][number]['direction'] {
+  if (value === null || value === undefined || value === '') return null
+  return normalizeDirection(value)
+}
+
 /** Normalize raw API payload → DeskProps */
 function normalizeDesk(raw: Record<string, unknown>): DeskProps {
   const thesis = (raw.thesis as Record<string, unknown>) ?? {}
@@ -7,7 +31,7 @@ function normalizeDesk(raw: Record<string, unknown>): DeskProps {
   return {
     desk: String(raw.desk ?? '').toLowerCase(),
     ticker: String(raw.ticker ?? ''),
-    direction: (raw.direction ?? thesis.direction ?? 'NEUTRAL') as DeskProps['direction'],
+    direction: normalizeDirection(raw.direction ?? thesis.direction),
     confidence: Number(raw.confidence ?? thesis.confidence_score ?? 0),
     summary: String(
       raw.summary ?? thesis.thesis_summary_en ?? thesis.thesis_summary ?? ''
@@ -33,7 +57,7 @@ function normalizeDesk(raw: Record<string, unknown>): DeskProps {
           analysis: String(rb.content ?? rb.analysis ?? ''),
           analysis_en: String(rb.analysis_en ?? (rb.language === 'en' ? (rb.content ?? rb.analysis) : '') ?? ''),
           conclusion: String(rb.conclusion ?? ''),
-          direction: (rb.direction ?? null) as DeskProps['reasoning_blocks'][number]['direction'],
+          direction: normalizeBlockDirection(rb.direction),
           confidence: Number(rb.confidence ?? 0),
           language: String(rb.language ?? 'en'),
         }
