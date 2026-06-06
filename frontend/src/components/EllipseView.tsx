@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useMemo, useState, useEffect } from 'react'
+import { Matrix, EigenvalueDecomposition, inverse } from 'ml-matrix'
 
 // --- Types & Data ---
 type DataPoint = { day: number, date: string, price: number, ma: number, dev: number }
@@ -34,10 +35,8 @@ function generateData(): DataPoint[] {
 
 // --- Math Utils ---
 
-/** Fits an ellipse using PCA bounding (Covariance Matrix) */
-function fitEllipsePCA(rawPoints: Point2D[]) {
-  // Sanitize data: prevent NaN or Infinity values from breaking the covariance matrix
-  const points = rawPoints.filter(p => Number.isFinite(p.x) && Number.isFinite(p.y))
+/** Fallback: Fits an ellipse using PCA bounding for highly linear market action */
+function fitEllipsePCA(points: Point2D[]) {
   if (points.length < 5) return null
 
   let meanX = 0, meanY = 0
@@ -60,7 +59,6 @@ function fitEllipsePCA(rawPoints: Point2D[]) {
   const trace = covXX + covYY
   const det = covXX * covYY - covXY * covXY
   
-  // Safeguard for perfectly straight lines or singular matrices (float precision edge cases)
   if (det <= 1e-10 || trace <= 0) return null
 
   const diffSq = (trace * trace) / 4 - det
@@ -72,17 +70,107 @@ function fitEllipsePCA(rawPoints: Point2D[]) {
   const a = Math.sqrt(Math.max(0, lambda1)) * 2
   const b = Math.sqrt(Math.max(0, lambda2)) * 2
   
-  // Avoid division by zero in arctan
   const angle = (lambda1 - covXX === 0 && covXY === 0) ? 0 : Math.atan2(lambda1 - covXX, covXY)
 
   const majorAxis = Math.max(a, b)
   const minorAxis = Math.min(a, b)
-  
-  // Prevent NaN for eccentricity
   const eccentricity = majorAxis > 0 ? Math.sqrt(Math.max(0, 1 - (minorAxis * minorAxis) / (majorAxis * majorAxis))) : 0
   const c = Math.sqrt(Math.max(0, majorAxis * majorAxis - minorAxis * minorAxis))
   
   return { cx: meanX, cy: meanY, rx: a, ry: b, rotation: angle * (180 / Math.PI), eccentricity, c }
+}
+
+/** 
+ * TRUE FITZGIBBON METHOD: Numerically Stable Direct Least Squares Fitting of Ellipses (Halir & Flusser 1998)
+ * Solves the generalized eigenvalue problem D^T D a = \lambda C a
+ */
+function fitEllipseFitzgibbon(rawPoints: Point2D[]) {
+  const points = rawPoints.filter(p => Number.isFinite(p.x) && Number.isFinite(p.y))
+  if (points.length < 6) return fitEllipsePCA(points);
+
+  const meanX = points.reduce((sum, p) => sum + p.x, 0) / points.length;
+  const meanY = points.reduce((sum, p) => sum + p.y, 0) / points.length;
+
+  const D1_data = [], D2_data = [];
+  for (const p of points) {
+    const x = p.x - meanX;
+    const y = p.y - meanY;
+    D1_data.push([x * x, x * y, y * y]);
+    D2_data.push([x, y, 1]);
+  }
+
+  try {
+    const D1 = new Matrix(D1_data);
+    const D2 = new Matrix(D2_data);
+
+    const S1 = D1.transpose().mmul(D1);
+    const S2 = D1.transpose().mmul(D2);
+    const S3 = D2.transpose().mmul(D2);
+
+    const S3_inv = inverse(S3);
+    const T = S3_inv.mmul(S2.transpose()).mul(-1);
+    const M = S1.add(S2.mmul(T));
+
+    // C1 inverse matrix definition for Halir/Flusser
+    const C1_inv = new Matrix([
+      [0,   0, 0.5],
+      [0,  -1,   0],
+      [0.5, 0,   0]
+    ]);
+
+    const M_reduced = C1_inv.mmul(M);
+    const eig = new EigenvalueDecomposition(M_reduced);
+    const realEigenvalues = eig.realEigenvalues;
+    const eigenvectors = eig.eigenvectorMatrix;
+
+    let condPos = -1;
+    for (let i = 0; i < 3; i++) {
+      // Find the unique positive eigenvalue matching the ellipse constraint
+      if (realEigenvalues[i] > 0 && Math.abs(eig.imaginaryEigenvalues[i]) < 1e-10) {
+        const a1 = eigenvectors.getColumn(i);
+        if (4 * a1[0] * a1[2] - a1[1] * a1[1] > 0) {
+          condPos = i; break;
+        }
+      }
+    }
+
+    // Fallback to PCA if algebraic fit fails due to extreme linearity
+    if (condPos === -1) return fitEllipsePCA(points);
+
+    const a1 = Matrix.columnVector(eigenvectors.getColumn(condPos));
+    const a2 = T.mmul(a1);
+
+    const A = a1.get(0, 0), B = a1.get(1, 0), C = a1.get(2, 0);
+    const D = a2.get(0, 0), E = a2.get(1, 0), F = a2.get(2, 0);
+
+    const b2_4ac = B * B - 4 * A * C;
+    if (b2_4ac >= 0) return fitEllipsePCA(points);
+
+    const cx = (2 * C * D - B * E) / b2_4ac + meanX;
+    const cy = (2 * A * E - B * D) / b2_4ac + meanY;
+
+    const num = 2 * (A * E * E + C * D * D - B * D * E + b2_4ac * F);
+    const den1 = b2_4ac * (Math.sqrt((A - C) * (A - C) + B * B) - (A + C));
+    const den2 = b2_4ac * (-Math.sqrt((A - C) * (A - C) + B * B) - (A + C));
+
+    if (num / den1 <= 0 || num / den2 <= 0) return fitEllipsePCA(points);
+
+    const rx = Math.sqrt(num / den1);
+    const ry = Math.sqrt(num / den2);
+
+    let rotation = 0;
+    if (B === 0) rotation = A < C ? 0 : 90;
+    else rotation = Math.atan2(B, A - C) / 2 * (180 / Math.PI);
+
+    const major = Math.max(rx, ry), minor = Math.min(rx, ry);
+    const eccentricity = Math.sqrt(1 - (minor * minor) / (major * major));
+    const c_foci = Math.sqrt(major * major - minor * minor);
+
+    return { cx, cy, rx, ry, rotation, eccentricity, c: c_foci };
+  } catch (e) {
+    // Graceful fallback for singular matrices
+    return fitEllipsePCA(points);
+  }
 }
 
 /** Dynamically calculates orbital period based on angular velocity of recent trajectory */
@@ -185,7 +273,9 @@ export function EllipseView() {
 
     const recentData = data.slice(-30)
     const ellipsePoints = recentData.map(d => ({ x: getX(d.day), y: getY(d.dev) }))
-    const ellipseParams = fitEllipsePCA(ellipsePoints)
+    
+    // Use the mathematically pure Fitzgibbon with PCA fallback
+    const ellipseParams = fitEllipseFitzgibbon(ellipsePoints)
 
     const latestPoint = data[data.length - 1]
 
