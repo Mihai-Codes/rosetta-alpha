@@ -83,21 +83,68 @@ function unpaid402Response(desk: Desk): NextResponse {
 }
 
 /**
- * Check if request includes a valid subscriber address header.
- * Subscribers (Premium+) bypass x402 payment — their on-chain subscription covers access.
- * DRY: uses the same Tier enum/contract address from lib/subscription.
+ * Verify subscriber bypass via signed timestamp + on-chain tier check.
+ *
+ * Protocol:
+ *   1. Frontend signs message: "rosetta-subscribe:{address}:{timestamp}" with wallet
+ *   2. API receives: x-subscriber-address, x-subscriber-sig, x-subscriber-ts
+ *   3. Verify signature recovers to claimed address
+ *   4. Verify timestamp is within 5 minutes (replay protection)
+ *   5. Verify address has active subscription on-chain (via RosettaSubscription.getTier)
+ *
+ * Fallback: If signature headers missing, check address-only mode for hackathon demos.
  */
-function hasSubscriberBypass(req: Request): boolean {
+async function hasSubscriberBypass(req: Request): Promise<boolean> {
   const subscriberAddr = req.headers.get('x-subscriber-address')
-  // In production: verify signature + read contract on-chain.
-  // For hackathon: trust header if present (frontend sets it from connected wallet).
-  // Real verification happens via middleware reading RosettaSubscription.getTier().
-  return !!subscriberAddr && subscriberAddr.startsWith('0x') && subscriberAddr.length === 42
+  if (!subscriberAddr || !subscriberAddr.startsWith('0x') || subscriberAddr.length !== 42) {
+    return false
+  }
+
+  const signature = req.headers.get('x-subscriber-sig')
+  const timestamp = req.headers.get('x-subscriber-ts')
+
+  if (signature && timestamp) {
+    // Production path: verify signature + freshness + on-chain tier
+    const ts = parseInt(timestamp, 10)
+    const now = Math.floor(Date.now() / 1000)
+    const MAX_AGE = 300 // 5 minutes replay window
+
+    if (isNaN(ts) || Math.abs(now - ts) > MAX_AGE) return false
+
+    try {
+      const { verifyMessage } = await import('viem')
+      const message = `rosetta-subscribe:${subscriberAddr.toLowerCase()}:${timestamp}`
+      const valid = await verifyMessage({
+        address: subscriberAddr as `0x${string}`,
+        message,
+        signature: signature as `0x${string}`,
+      })
+      if (!valid) return false
+    } catch {
+      return false
+    }
+
+    // On-chain tier verification (async, reads contract)
+    try {
+      const { getSubscriptionStatus, Tier } = await import('@/lib/subscription')
+      const status = await getSubscriptionStatus(subscriberAddr as `0x${string}`)
+      return status.active && status.tier >= Tier.Premium
+    } catch {
+      return false
+    }
+  }
+
+  // Hackathon fallback: trust address header if no sig provided
+  // (allows demo walkthrough without full signing UX)
+  const devBypass = process.env.X402_DEV_BYPASS_TOKEN
+  if (devBypass) return true // Only enabled when dev token is set
+
+  return false
 }
 
-function hasValidPayment(req: Request): boolean {
+async function hasValidPayment(req: Request): Promise<boolean> {
   // Subscriber bypass — Premium/Pro users don't need per-request payment.
-  if (hasSubscriberBypass(req)) return true
+  if (await hasSubscriberBypass(req)) return true
 
   const auth = req.headers.get('x-payment')
     || req.headers.get('x-402-payment')
@@ -120,7 +167,7 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
   const desk = getDesk(searchParams.get('desk'))
 
-  if (!hasValidPayment(req)) {
+  if (!(await hasValidPayment(req))) {
     return unpaid402Response(desk)
   }
 
