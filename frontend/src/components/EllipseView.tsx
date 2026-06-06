@@ -157,7 +157,63 @@ export function EllipseView() {
     setMounted(true)
   }, [])
 
-  if (!mounted || data.length === 0) {
+  // Memoize all expensive math and layout calculations so they don't re-run on tooltip hover
+  const viz = useMemo(() => {
+    if (data.length === 0) return null
+
+    const width = 800
+    const height = 400
+    const padding = { top: 40, right: 40, bottom: 40, left: 60 }
+    
+    const innerWidth = width - padding.left - padding.right
+    const innerHeight = height - padding.top - padding.bottom
+
+    const minDay = -89
+    const maxDay = 0
+    const xRange = maxDay - minDay
+    
+    // Prevent division by zero if deviation is completely flat
+    const yMax = Math.max(0.1, ...data.map(d => Math.abs(d.dev))) * 1.5
+    const minDev = -yMax
+    const maxDev = yMax
+    const yRange = maxDev - minDev
+
+    const getX = (day: number) => padding.left + ((day - minDay) / xRange) * innerWidth
+    const getY = (dev: number) => padding.top + innerHeight - ((dev - minDev) / yRange) * innerHeight
+
+    const pathData = data.map((d, i) => `${i === 0 ? 'M' : 'L'} ${getX(d.day)} ${getY(d.dev)}`).join(' ')
+
+    const recentData = data.slice(-30)
+    const ellipsePoints = recentData.map(d => ({ x: getX(d.day), y: getY(d.dev) }))
+    const ellipseParams = fitEllipsePCA(ellipsePoints)
+
+    const latestPoint = data[data.length - 1]
+
+    let orbitalPosition = 'Neutral'
+    let period = 0
+    let foci1 = null
+    let foci2 = null
+    
+    if (ellipseParams) {
+      const distToCenter = Math.hypot(getX(latestPoint.day) - ellipseParams.cx, getY(latestPoint.dev) - ellipseParams.cy)
+      const avgRadius = (ellipseParams.rx + ellipseParams.ry) / 2
+      if (distToCenter > avgRadius * 0.8) orbitalPosition = 'Apocenter (Mean-reversion likely)'
+      else if (distToCenter < avgRadius * 0.4) orbitalPosition = 'Pericenter (Swing outward expected)'
+      else orbitalPosition = 'Mid-orbit'
+      
+      period = calculateOrbitalPeriod(ellipsePoints, ellipseParams.cx, ellipseParams.cy)
+
+      const angleRad = ellipseParams.rotation * Math.PI / 180
+      foci1 = { x: ellipseParams.cx + ellipseParams.c * Math.cos(angleRad), y: ellipseParams.cy + ellipseParams.c * Math.sin(angleRad) }
+      foci2 = { x: ellipseParams.cx - ellipseParams.c * Math.cos(angleRad), y: ellipseParams.cy - ellipseParams.c * Math.sin(angleRad) }
+    }
+
+    return {
+      width, height, padding, yMax, getX, getY, pathData, ellipseParams, latestPoint, orbitalPosition, period, foci1, foci2
+    }
+  }, [data])
+
+  if (!mounted || !viz) {
     return (
       <div className="w-full bg-[#000000] font-sans h-full flex flex-col justify-center relative min-h-[400px]">
         <div className="flex items-start justify-between mb-4 px-4 pt-4 sm:px-6 shrink-0">
@@ -175,70 +231,12 @@ export function EllipseView() {
     )
   }
 
-  const width = 800
-  const height = 400
-  const padding = { top: 40, right: 40, bottom: 40, left: 60 }
-  
-  const innerWidth = width - padding.left - padding.right
-  const innerHeight = height - padding.top - padding.bottom
-
-  const minDay = -89
-  const maxDay = 0
-  const xRange = maxDay - minDay
-  
-  // Prevent division by zero if deviation is completely flat
-  const yMax = Math.max(0.1, ...data.map(d => Math.abs(d.dev))) * 1.5
-  const minDev = -yMax
-  const maxDev = yMax
-  const yRange = maxDev - minDev
-
-  const getX = (day: number) => padding.left + ((day - minDay) / xRange) * innerWidth
-  const getY = (dev: number) => padding.top + innerHeight - ((dev - minDev) / yRange) * innerHeight
-
-  const pathData = data.map((d, i) => `${i === 0 ? 'M' : 'L'} ${getX(d.day)} ${getY(d.dev)}`).join(' ')
-
-  const recentData = data.slice(-30)
-  const ellipsePoints = recentData.map(d => ({ x: getX(d.day), y: getY(d.dev) }))
-  const ellipseParams = useMemo(() => fitEllipsePCA(ellipsePoints), [ellipsePoints])
-
-  const latestPoint = data[data.length - 1]
-
-  let orbitalPosition = 'Neutral'
-  let period = 0
-  
-  if (ellipseParams) {
-    const distToCenter = Math.hypot(getX(latestPoint.day) - ellipseParams.cx, getY(latestPoint.dev) - ellipseParams.cy)
-    const avgRadius = (ellipseParams.rx + ellipseParams.ry) / 2
-    if (distToCenter > avgRadius * 0.8) orbitalPosition = 'Apocenter (Mean-reversion likely)'
-    else if (distToCenter < avgRadius * 0.4) orbitalPosition = 'Pericenter (Swing outward expected)'
-    else orbitalPosition = 'Mid-orbit'
-    
-    period = calculateOrbitalPeriod(ellipsePoints, ellipseParams.cx, ellipseParams.cy)
-  }
-
-  // --- Render Helpers ---
-  
-  const renderFoci = () => {
-    if (!ellipseParams) return null
-    const angleRad = ellipseParams.rotation * Math.PI / 180
-    const f1 = { x: ellipseParams.cx + ellipseParams.c * Math.cos(angleRad), y: ellipseParams.cy + ellipseParams.c * Math.sin(angleRad) }
-    const f2 = { x: ellipseParams.cx - ellipseParams.c * Math.cos(angleRad), y: ellipseParams.cy - ellipseParams.c * Math.sin(angleRad) }
-    return (
-      <>
-        <circle cx={f1.x} cy={f1.y} r="3" fill="#D82B2B" opacity="0.6" />
-        <circle cx={f2.x} cy={f2.y} r="3" fill="#D82B2B" opacity="0.6" />
-        <text x={f1.x} y={f1.y + 12} fill="#D82B2B" fontSize="9" textAnchor="middle" opacity="0.8">F1</text>
-        <text x={f2.x} y={f2.y + 12} fill="#D82B2B" fontSize="9" textAnchor="middle" opacity="0.8">F2</text>
-      </>
-    )
-  }
-
   const renderGridLine = (val: number, label: string) => {
-    const y = getY(val)
+    const y = viz.getY(val)
     return (
       <g key={label}>
-        <line x1={padding.left} y1={y} x2={width - padding.right} y2={y} stroke="white" strokeWidth="1" strokeDasharray={val === 0 ? "5,5" : "none"} strokeOpacity={val === 0 ? 0.5 : 0.1} />
-        <text x={padding.left - 10} y={y} fill="white" fillOpacity={val === 0 ? 0.5 : 0.3} fontSize="12" textAnchor="end" alignmentBaseline="middle">{label}</text>
+        <line x1={viz.padding.left} y1={y} x2={viz.width - viz.padding.right} y2={y} stroke="white" strokeWidth="1" strokeDasharray={val === 0 ? "5,5" : "none"} strokeOpacity={val === 0 ? 0.5 : 0.1} />
+        <text x={viz.padding.left - 10} y={y} fill="white" fillOpacity={val === 0 ? 0.5 : 0.3} fontSize="12" textAnchor="end" alignmentBaseline="middle">{label}</text>
       </g>
     )
   }
@@ -258,33 +256,41 @@ export function EllipseView() {
           <svg 
             role="img"
             aria-label="Market trajectory ellipse fitting visualization"
-            viewBox={`0 0 ${width} ${height}`} 
+            viewBox={`0 0 ${viz.width} ${viz.height}`} 
             className="w-full h-full absolute inset-0" 
             onMouseLeave={() => setHoveredPoint(null)}
             onClick={() => setHoveredPoint(null)} // Allows mobile users to tap empty space to dismiss tooltip
           >
             {/* Grid */}
             {renderGridLine(0, "Fair Value (0%)")}
-            {renderGridLine(yMax/2, `+${(yMax/2).toFixed(1)}%`)}
-            {renderGridLine(-yMax/2, `-${(yMax/2).toFixed(1)}%`)}
+            {renderGridLine(viz.yMax/2, `+${(viz.yMax/2).toFixed(1)}%`)}
+            {renderGridLine(-viz.yMax/2, `-${(viz.yMax/2).toFixed(1)}%`)}
 
             {/* Path */}
-            <path d={pathData} fill="none" stroke="#FFFFFF" strokeWidth="2" strokeOpacity="0.8" />
+            <path d={viz.pathData} fill="none" stroke="#FFFFFF" strokeWidth="2" strokeOpacity="0.8" />
             
             {/* Ellipse Fit */}
-            {ellipseParams && (
-              <g transform={`rotate(${ellipseParams.rotation} ${ellipseParams.cx} ${ellipseParams.cy})`}>
-                <ellipse cx={ellipseParams.cx} cy={ellipseParams.cy} rx={ellipseParams.rx} ry={ellipseParams.ry} fill="none" stroke="#D82B2B" strokeWidth="2" strokeOpacity="0.3" />
-                <ellipse cx={ellipseParams.cx} cy={ellipseParams.cy} rx={ellipseParams.rx} ry={ellipseParams.ry} fill="#D82B2B" fillOpacity="0.05" />
+            {viz.ellipseParams && (
+              <g transform={`rotate(${viz.ellipseParams.rotation} ${viz.ellipseParams.cx} ${viz.ellipseParams.cy})`}>
+                <ellipse cx={viz.ellipseParams.cx} cy={viz.ellipseParams.cy} rx={viz.ellipseParams.rx} ry={viz.ellipseParams.ry} fill="none" stroke="#D82B2B" strokeWidth="2" strokeOpacity="0.3" />
+                <ellipse cx={viz.ellipseParams.cx} cy={viz.ellipseParams.cy} rx={viz.ellipseParams.rx} ry={viz.ellipseParams.ry} fill="#D82B2B" fillOpacity="0.05" />
               </g>
             )}
             
-            {renderFoci()}
+            {/* Foci */}
+            {viz.foci1 && viz.foci2 && (
+              <>
+                <circle cx={viz.foci1.x} cy={viz.foci1.y} r="3" fill="#D82B2B" opacity="0.6" />
+                <circle cx={viz.foci2.x} cy={viz.foci2.y} r="3" fill="#D82B2B" opacity="0.6" />
+                <text x={viz.foci1.x} y={viz.foci1.y + 12} fill="#D82B2B" fontSize="9" textAnchor="middle" opacity="0.8">F1</text>
+                <text x={viz.foci2.x} y={viz.foci2.y + 12} fill="#D82B2B" fontSize="9" textAnchor="middle" opacity="0.8">F2</text>
+              </>
+            )}
 
             {/* Interactive Hover Points */}
             {data.map((d, i) => {
-              const x = getX(d.day)
-              const y = getY(d.dev)
+              const x = viz.getX(d.day)
+              const y = viz.getY(d.dev)
               const isHovered = hoveredPoint?.data === d
               return (
                 <circle
@@ -300,15 +306,15 @@ export function EllipseView() {
             })}
 
             {/* Latest Point Fixed Overlay */}
-            <circle cx={getX(latestPoint.day)} cy={getY(latestPoint.dev)} r="6" fill="#D82B2B" className="animate-pulse pointer-events-none" />
-            <circle cx={getX(latestPoint.day)} cy={getY(latestPoint.dev)} r="3" fill="#FFFFFF" className="pointer-events-none" />
+            <circle cx={viz.getX(viz.latestPoint.day)} cy={viz.getY(viz.latestPoint.dev)} r="6" fill="#D82B2B" className="animate-pulse pointer-events-none" />
+            <circle cx={viz.getX(viz.latestPoint.day)} cy={viz.getY(viz.latestPoint.dev)} r="3" fill="#FFFFFF" className="pointer-events-none" />
           </svg>
 
           {/* Dynamic Boundary-Aware Tooltip */}
           {hoveredPoint && (
             <DynamicTooltip 
-              xPct={(hoveredPoint.x / width) * 100} 
-              yPct={(hoveredPoint.y / height) * 100} 
+              xPct={(hoveredPoint.x / viz.width) * 100} 
+              yPct={(hoveredPoint.y / viz.height) * 100} 
               data={hoveredPoint.data} 
             />
           )}
@@ -316,16 +322,16 @@ export function EllipseView() {
       </div>
 
       <div className="border-t border-border/50 pt-4 px-4 pb-4 sm:px-6 shrink-0 mt-4">
-        {ellipseParams && (
+        {viz.ellipseParams && (
           <div className="flex flex-wrap gap-4 mb-4 justify-between">
-            <StatBox label="Eccentricity" value={ellipseParams.eccentricity.toFixed(3)} highlight />
-            <StatBox label="Period (Est)" value={period > 0 ? `~${period.toFixed(0)} Days` : 'N/A'} />
+            <StatBox label="Eccentricity" value={viz.ellipseParams.eccentricity.toFixed(3)} highlight />
+            <StatBox label="Period (Est)" value={viz.period > 0 ? `~${viz.period.toFixed(0)} Days` : 'N/A'} />
           </div>
         )}
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-brand-red animate-pulse"></span>
-            <span className="text-[10px] text-text-tertiary">Pos: <strong className="text-text-primary font-medium">{orbitalPosition}</strong></span>
+            <span className="text-[10px] text-text-tertiary">Pos: <strong className="text-text-primary font-medium">{viz.orbitalPosition}</strong></span>
           </div>
           <div className="flex items-center gap-2">
             <span className="px-2 py-0.5 bg-white/5 border border-white/10 uppercase tracking-widest text-[8px] text-text-secondary">Regime: Volatile Transition</span>
