@@ -58,8 +58,8 @@ function fitEllipsePCA(points: Point2D[]) {
   const trace = covXX + covYY
   const det = covXX * covYY - covXY * covXY
   
-  // Safeguard for perfectly straight lines or singular matrices
-  if (det <= 0 && trace <= 0) return null
+  // Safeguard for perfectly straight lines or singular matrices (float precision edge cases)
+  if (det <= 1e-10 || trace <= 0) return null
 
   const diffSq = (trace * trace) / 4 - det
   const diff = diffSq > 0 ? Math.sqrt(diffSq) : 0
@@ -103,7 +103,43 @@ function calculateOrbitalPeriod(points: Point2D[], cx: number, cy: number): numb
   return period > 3650 ? 0 : period
 }
 
-// --- Component ---
+// --- Subcomponents (DRY) ---
+
+function StatBox({ label, value, highlight = false }: { label: string, value: string | React.ReactNode, highlight?: boolean }) {
+  return (
+    <div className={`border px-3 py-2 flex-1 min-w-[100px] ${highlight ? 'border-brand-red/30 bg-brand-red/5' : 'border-white/10 bg-white/5'}`}>
+      <p className="text-[9px] uppercase tracking-wider text-text-tertiary">{label}</p>
+      <p className={`font-mono font-bold text-base ${highlight ? 'text-brand-red' : 'text-text-primary'}`}>{value}</p>
+    </div>
+  )
+}
+
+function DynamicTooltip({ xPct, yPct, data }: { xPct: number, yPct: number, data: DataPoint }) {
+  // Boundary constraints: ensure tooltip never flows off the left, right, or top edge
+  const xTransform = xPct < 15 ? '0%' : xPct > 85 ? '-100%' : '-50%'
+  const yTransform = yPct < 20 ? '20%' : '-120%'
+
+  return (
+    <div 
+      className="absolute pointer-events-none border border-white/20 bg-black/90 backdrop-blur-md p-3 rounded-md shadow-2xl z-20 w-32 transition-transform duration-75"
+      style={{ 
+        left: `${xPct}%`, 
+        top: `${yPct}%`,
+        transform: `translate(${xTransform}, ${yTransform})`
+      }}
+    >
+      <p className="text-[10px] font-mono text-text-tertiary mb-1">{data.date}</p>
+      <p className="text-sm font-bold text-text-primary">Price: ${data.price.toFixed(2)}</p>
+      <p className="text-xs text-text-secondary mt-1">
+        Dev: <span className={data.dev >= 0 ? 'text-emerald-500' : 'text-red-400'}>
+          {data.dev > 0 ? '+' : ''}{data.dev.toFixed(2)}%
+        </span>
+      </p>
+    </div>
+  )
+}
+
+// --- Main Component ---
 
 export function EllipseView() {
   const data = useMemo(() => generateData(), [])
@@ -189,84 +225,65 @@ export function EllipseView() {
         {/* Aspect ratio wrapper ensures tooltip % positions perfectly match SVG scaling */}
         <div className="relative w-full max-w-[800px] aspect-[2/1] min-w-[600px]">
           <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full absolute inset-0" onMouseLeave={() => setHoveredPoint(null)}>
-          {/* Grid */}
-          {renderGridLine(0, "Fair Value (0%)")}
-          {renderGridLine(yMax/2, `+${(yMax/2).toFixed(1)}%`)}
-          {renderGridLine(-yMax/2, `-${(yMax/2).toFixed(1)}%`)}
+            {/* Grid */}
+            {renderGridLine(0, "Fair Value (0%)")}
+            {renderGridLine(yMax/2, `+${(yMax/2).toFixed(1)}%`)}
+            {renderGridLine(-yMax/2, `-${(yMax/2).toFixed(1)}%`)}
 
-          {/* Path */}
-          <path d={pathData} fill="none" stroke="#FFFFFF" strokeWidth="2" strokeOpacity="0.8" />
-          
-          {/* Ellipse Fit */}
-          {ellipseParams && (
-            <g transform={`rotate(${ellipseParams.rotation} ${ellipseParams.cx} ${ellipseParams.cy})`}>
-              <ellipse cx={ellipseParams.cx} cy={ellipseParams.cy} rx={ellipseParams.rx} ry={ellipseParams.ry} fill="none" stroke="#D82B2B" strokeWidth="2" strokeOpacity="0.3" />
-              <ellipse cx={ellipseParams.cx} cy={ellipseParams.cy} rx={ellipseParams.rx} ry={ellipseParams.ry} fill="#D82B2B" fillOpacity="0.05" />
-            </g>
+            {/* Path */}
+            <path d={pathData} fill="none" stroke="#FFFFFF" strokeWidth="2" strokeOpacity="0.8" />
+            
+            {/* Ellipse Fit */}
+            {ellipseParams && (
+              <g transform={`rotate(${ellipseParams.rotation} ${ellipseParams.cx} ${ellipseParams.cy})`}>
+                <ellipse cx={ellipseParams.cx} cy={ellipseParams.cy} rx={ellipseParams.rx} ry={ellipseParams.ry} fill="none" stroke="#D82B2B" strokeWidth="2" strokeOpacity="0.3" />
+                <ellipse cx={ellipseParams.cx} cy={ellipseParams.cy} rx={ellipseParams.rx} ry={ellipseParams.ry} fill="#D82B2B" fillOpacity="0.05" />
+              </g>
+            )}
+            
+            {renderFoci()}
+
+            {/* Interactive Hover Points */}
+            {data.map((d, i) => {
+              const x = getX(d.day)
+              const y = getY(d.dev)
+              const isHovered = hoveredPoint?.data === d
+              return (
+                <circle
+                  key={i} cx={x} cy={y} r={isHovered ? 6 : 14}
+                  fill={isHovered ? "#FFFFFF" : "transparent"}
+                  stroke={isHovered ? "#D82B2B" : "transparent"} strokeWidth={2}
+                  className="cursor-crosshair transition-all duration-200"
+                  onMouseEnter={() => setHoveredPoint({ x, y, data: d })}
+                  onClick={() => setHoveredPoint({ x, y, data: d })}
+                  onTouchStart={() => setHoveredPoint({ x, y, data: d })}
+                />
+              )
+            })}
+
+            {/* Latest Point Fixed Overlay */}
+            <circle cx={getX(latestPoint.day)} cy={getY(latestPoint.dev)} r="6" fill="#D82B2B" className="animate-pulse pointer-events-none" />
+            <circle cx={getX(latestPoint.day)} cy={getY(latestPoint.dev)} r="3" fill="#FFFFFF" className="pointer-events-none" />
+          </svg>
+
+          {/* Dynamic Boundary-Aware Tooltip */}
+          {hoveredPoint && (
+            <DynamicTooltip 
+              xPct={(hoveredPoint.x / width) * 100} 
+              yPct={(hoveredPoint.y / height) * 100} 
+              data={hoveredPoint.data} 
+            />
           )}
-          
-          {renderFoci()}
-
-          {/* Interactive Hover Points */}
-          {data.map((d, i) => {
-            const x = getX(d.day)
-            const y = getY(d.dev)
-            const isHovered = hoveredPoint?.data === d
-            return (
-              <circle
-                key={i} cx={x} cy={y} r={isHovered ? 6 : 14}
-                fill={isHovered ? "#FFFFFF" : "transparent"}
-                stroke={isHovered ? "#D82B2B" : "transparent"} strokeWidth={2}
-                className="cursor-crosshair transition-all duration-200"
-                onMouseEnter={() => setHoveredPoint({ x, y, data: d })}
-                onClick={() => setHoveredPoint({ x, y, data: d })}
-                onTouchStart={() => setHoveredPoint({ x, y, data: d })}
-              />
-            )
-          })}
-
-          {/* Latest Point Fixed Overlay */}
-          <circle cx={getX(latestPoint.day)} cy={getY(latestPoint.dev)} r="6" fill="#D82B2B" className="animate-pulse pointer-events-none" />
-          <circle cx={getX(latestPoint.day)} cy={getY(latestPoint.dev)} r="3" fill="#FFFFFF" className="pointer-events-none" />
-        </svg>
-
-        {/* Dynamic Tooltip */}
-        {hoveredPoint && (
-          <div 
-            className="absolute pointer-events-none border border-white/20 bg-black/90 backdrop-blur-md p-3 rounded-md shadow-2xl z-20 w-32"
-            style={{ 
-              left: `${(hoveredPoint.x / width) * 100}%`, 
-              top: `${(hoveredPoint.y / height) * 100}%`,
-              transform: 'translate(-50%, -120%)'
-            }}
-          >
-            <p className="text-[10px] font-mono text-text-tertiary mb-1">{hoveredPoint.data.date}</p>
-            <p className="text-sm font-bold text-text-primary">Price: ${hoveredPoint.data.price.toFixed(2)}</p>
-            <p className="text-xs text-text-secondary mt-1">
-              Dev: <span className={hoveredPoint.data.dev >= 0 ? 'text-emerald-500' : 'text-red-400'}>
-                {hoveredPoint.data.dev > 0 ? '+' : ''}{hoveredPoint.data.dev.toFixed(2)}%
-              </span>
-            </p>
-          </div>
-        )}
         </div>
       </div>
 
       <div className="border-t border-border/50 pt-4 px-4 pb-4 sm:px-6 shrink-0 mt-4">
         {ellipseParams && (
-            <div className="flex flex-wrap gap-4 mb-4 justify-between">
-              <div className="border border-brand-red/30 bg-brand-red/5 px-3 py-2 flex-1 min-w-[100px]">
-                <p className="text-[9px] uppercase tracking-wider text-text-tertiary">Eccentricity</p>
-                <p className="text-brand-red font-mono font-bold text-base">{ellipseParams.eccentricity.toFixed(3)}</p>
-              </div>
-              <div className="border border-white/10 bg-white/5 px-3 py-2 flex-1 min-w-[100px]">
-                <p className="text-[9px] uppercase tracking-wider text-text-tertiary">Period (Est)</p>
-                <p className="text-text-primary font-mono font-bold text-base">
-                  {period > 0 ? `~${period.toFixed(0)} Days` : 'N/A'}
-                </p>
-              </div>
-            </div>
-          )}
+          <div className="flex flex-wrap gap-4 mb-4 justify-between">
+            <StatBox label="Eccentricity" value={ellipseParams.eccentricity.toFixed(3)} highlight />
+            <StatBox label="Period (Est)" value={period > 0 ? `~${period.toFixed(0)} Days` : 'N/A'} />
+          </div>
+        )}
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-brand-red animate-pulse"></span>
