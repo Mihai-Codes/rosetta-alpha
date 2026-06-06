@@ -97,7 +97,10 @@ function calculateOrbitalPeriod(points: Point2D[], cx: number, cy: number): numb
   }
   const avgPhaseChange = totalPhaseChange / (points.length - 1)
   if (Math.abs(avgPhaseChange) < 1e-5) return 0
-  return Math.abs((2 * Math.PI) / avgPhaseChange)
+  
+  const period = Math.abs((2 * Math.PI) / avgPhaseChange)
+  // Cap at 10 years to avoid absurdity on straight lines
+  return period > 3650 ? 0 : period
 }
 
 // --- Component ---
@@ -182,8 +185,10 @@ export function EllipseView() {
         </div>
       </div>
 
-      <div className="relative w-full overflow-x-auto flex-1 min-h-[200px] flex items-center">
-        <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto max-h-full" onMouseLeave={() => setHoveredPoint(null)}>
+      <div className="w-full overflow-x-auto flex-1 min-h-[200px] flex items-center justify-center">
+        {/* Aspect ratio wrapper ensures tooltip % positions perfectly match SVG scaling */}
+        <div className="relative w-full max-w-[800px] aspect-[2/1] min-w-[600px]">
+          <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full absolute inset-0" onMouseLeave={() => setHoveredPoint(null)}>
           {/* Grid */}
           {renderGridLine(0, "Fair Value (0%)")}
           {renderGridLine(yMax/2, `+${(yMax/2).toFixed(1)}%`)}
@@ -214,6 +219,8 @@ export function EllipseView() {
                 stroke={isHovered ? "#D82B2B" : "transparent"} strokeWidth={2}
                 className="cursor-crosshair transition-all duration-200"
                 onMouseEnter={() => setHoveredPoint({ x, y, data: d })}
+                onClick={() => setHoveredPoint({ x, y, data: d })}
+                onTouchStart={() => setHoveredPoint({ x, y, data: d })}
               />
             )
           })}
@@ -226,7 +233,7 @@ export function EllipseView() {
         {/* Dynamic Tooltip */}
         {hoveredPoint && (
           <div 
-            className="absolute pointer-events-none border border-white/20 bg-black/80 backdrop-blur-sm p-3 rounded-md shadow-xl z-10 w-32"
+            className="absolute pointer-events-none border border-white/20 bg-black/90 backdrop-blur-md p-3 rounded-md shadow-2xl z-20 w-32"
             style={{ 
               left: `${(hoveredPoint.x / width) * 100}%`, 
               top: `${(hoveredPoint.y / height) * 100}%`,
@@ -242,6 +249,7 @@ export function EllipseView() {
             </p>
           </div>
         )}
+        </div>
       </div>
 
       <div className="border-t border-border/50 pt-4 px-4 pb-4 sm:px-6 shrink-0 mt-4">
