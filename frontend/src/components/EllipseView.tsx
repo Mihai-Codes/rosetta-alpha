@@ -186,7 +186,8 @@ export function EllipseView() {
   const maxDay = 0
   const xRange = maxDay - minDay
   
-  const yMax = Math.max(...data.map(d => Math.abs(d.dev))) * 1.5
+  // Prevent division by zero if deviation is completely flat
+  const yMax = Math.max(0.1, ...data.map(d => Math.abs(d.dev))) * 1.5
   const minDev = -yMax
   const maxDev = yMax
   const yRange = maxDev - minDev
