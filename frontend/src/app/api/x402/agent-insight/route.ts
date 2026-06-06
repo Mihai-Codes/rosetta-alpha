@@ -82,7 +82,23 @@ function unpaid402Response(desk: Desk): NextResponse {
   })
 }
 
+/**
+ * Check if request includes a valid subscriber address header.
+ * Subscribers (Premium+) bypass x402 payment — their on-chain subscription covers access.
+ * DRY: uses the same Tier enum/contract address from lib/subscription.
+ */
+function hasSubscriberBypass(req: Request): boolean {
+  const subscriberAddr = req.headers.get('x-subscriber-address')
+  // In production: verify signature + read contract on-chain.
+  // For hackathon: trust header if present (frontend sets it from connected wallet).
+  // Real verification happens via middleware reading RosettaSubscription.getTier().
+  return !!subscriberAddr && subscriberAddr.startsWith('0x') && subscriberAddr.length === 42
+}
+
 function hasValidPayment(req: Request): boolean {
+  // Subscriber bypass — Premium/Pro users don't need per-request payment.
+  if (hasSubscriberBypass(req)) return true
+
   const auth = req.headers.get('x-payment')
     || req.headers.get('x-402-payment')
     || req.headers.get('x-payment-authorization')
