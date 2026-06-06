@@ -185,6 +185,52 @@ contract RosettaSubscriptionTest is Test {
         sub.unsubscribe();
     }
 
+    function test_resubscribe_afterUnsubscribe() public {
+        // Subscribe, unsubscribe mid-period, then re-subscribe.
+        vm.prank(alice);
+        sub.subscribe(1);
+
+        vm.warp(block.timestamp + 10 days);
+
+        vm.prank(alice);
+        sub.unsubscribe();
+        assertEq(sub.getTier(alice), 0);
+
+        // Re-subscribe should start fresh (not extend old expiry).
+        vm.prank(alice);
+        sub.subscribe(1);
+
+        (, uint256 newExpiry,) = sub.getSubscription(alice);
+        assertEq(newExpiry, block.timestamp + PERIOD);
+        assertEq(sub.getTier(alice), 1);
+    }
+
+    function test_unsubscribe_thenDoubleUnsubscribe_reverts() public {
+        vm.prank(alice);
+        sub.subscribe(2);
+
+        vm.prank(alice);
+        sub.unsubscribe();
+
+        // Second unsubscribe should revert (tier is already 0).
+        vm.prank(alice);
+        vm.expectRevert(abi.encodeWithSelector(RosettaSubscription.NotSubscribed.selector, alice));
+        sub.unsubscribe();
+    }
+
+    function test_subscribe_afterUnsubscribe_canDowngrade() public {
+        // Pro → unsubscribe → subscribe Premium (should work since tier=0 now).
+        vm.prank(alice);
+        sub.subscribe(2);
+
+        vm.prank(alice);
+        sub.unsubscribe();
+
+        vm.prank(alice);
+        sub.subscribe(1); // Not a downgrade — current tier is 0.
+        assertEq(sub.getTier(alice), 1);
+    }
+
     // -----------------------------------------------------------------------
     // View helpers
     // -----------------------------------------------------------------------

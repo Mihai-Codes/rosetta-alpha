@@ -153,7 +153,7 @@ contract RosettaSubscription is Ownable, ReentrancyGuard {
 
     /**
      * @notice Voluntarily cancel subscription. Does NOT refund remaining time.
-     *         Access continues until expiresAt, then tier drops to 0.
+     *         Access revokes immediately (getTier returns 0). No grace period.
      */
     function unsubscribe() external {
         Subscription storage sub = subscriptions[msg.sender];
