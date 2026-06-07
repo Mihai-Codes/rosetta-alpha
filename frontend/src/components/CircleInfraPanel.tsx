@@ -198,7 +198,7 @@ export function CircleInfraPanel() {
                   <div className="relative pl-3 space-y-4">
                     {(gateway?.events ?? []).map((e, idx) => (
                       <div key={`${e.notificationId ?? e.receivedAt}`} className="relative flex items-start gap-4">
-                        <div className="absolute left-[-15px] mt-1.5 h-2 w-2 rounded-full ring-4 ring-[#0A0A0F] bg-blue-500"></div>
+                        <div className="absolute left-[-15px] mt-1.5 h-2 w-2 rounded-full ring-4 ring-[#0A0A0A] bg-blue-500"></div>
                         <div className="flex-1 bg-white/[0.02] border border-white/5 rounded-lg p-3 hover:bg-white/[0.04] transition-colors">
                           <p className="text-xs font-medium text-text-primary mb-1">{e.notificationType}</p>
                           <div className="flex items-center gap-2 text-[10px] text-text-tertiary font-mono">

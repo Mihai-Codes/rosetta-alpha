@@ -188,7 +188,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
             const isOpen = expanded.has(key)
             const isLong = e.direction === 'LONG'
             const isShort = e.direction === 'SHORT'
-            const dirColor = isLong ? '#4A9F6F' : isShort ? '#9F4A4A' : '#7B8FA6'
+            const dirColor = isLong ? '#00FF00' : isShort ? '#D82B2B' : '#888888'
 
             return (
               <div
@@ -253,8 +253,8 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                       <div className="flex justify-between items-end mb-1">
                         <span className="text-[10px] font-bold uppercase tracking-wider text-text-tertiary">Model Conviction</span>
                       </div>
-                      <div className="w-full bg-[#111111] h-2 rounded-full overflow-hidden border border-[#333333] shadow-inner">
-                        <div className="bg-gradient-to-r from-[#7B2424] to-[#C0392B] h-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(192,57,43,0.8)]" style={{ width: `${(e.confidence * 100).toFixed(0)}%` }} />
+                      <div className="w-full bg-[#0A0A0A] h-2 rounded-full overflow-hidden border border-[#888888] shadow-inner">
+                        <div className="bg-gradient-to-r from-[#D82B2B] to-[#D82B2B] h-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(192,57,43,0.8)]" style={{ width: `${(e.confidence * 100).toFixed(0)}%` }} />
                       </div>
                     </div>
                   </div>
@@ -267,7 +267,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                         href={`https://arcscan.app/tx/${e.arc_tx}`}
                         target="_blank" rel="noopener noreferrer"
                         
-                        className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium text-gray-300 bg-[#111111] border border-[#333333] rounded hover:bg-[#222222] transition-colors font-mono"
+                        className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium text-gray-300 bg-[#0A0A0A] border border-[#888888] rounded hover:bg-[#0A0A0A] transition-colors font-mono"
                         onClick={(event) => event.stopPropagation()}
                       >
                         Arc L1 <ExternalLink size={10} />
@@ -282,7 +282,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                         href={`https://gateway.pinata.cloud/ipfs/${e.ipfs_thesis_cid}`}
                         target="_blank" rel="noopener noreferrer"
                         
-                        className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium text-gray-300 bg-[#111111] border border-[#333333] rounded hover:bg-[#222222] transition-colors font-mono"
+                        className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium text-gray-300 bg-[#0A0A0A] border border-[#888888] rounded hover:bg-[#0A0A0A] transition-colors font-mono"
                         onClick={(event) => event.stopPropagation()}
                        >
                          <Database size={10} /> IPFS

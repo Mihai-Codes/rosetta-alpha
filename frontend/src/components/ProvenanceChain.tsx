@@ -57,7 +57,7 @@ function statusView(status: StepStatus) {
   if (status === 'completed') {
     return {
       Icon: CheckCircle2,
-      className: 'text-[#4A9F6F]',
+      className: 'text-[#00FF00]',
       label: 'Completed',
     }
   }

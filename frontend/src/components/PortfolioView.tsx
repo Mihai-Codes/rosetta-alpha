@@ -5,7 +5,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { DeskProps } from './DeskCard'
 
-const CHART_COLORS = ['#C9A84C', '#A07840', '#7B6030', '#52B788', '#7B8FA6']
+const CHART_COLORS = ['#FFD700', '#A07840', '#7B6030', '#00FF00', '#888888']
 
 export function PortfolioView({ desks }: { desks: DeskProps[] }) {
   const chartData = desks.map((d, i) => ({
@@ -22,9 +22,9 @@ export function PortfolioView({ desks }: { desks: DeskProps[] }) {
   const displaySignal = netSignal > 0.1 ? 'LONG' : netSignal < -0.1 ? 'SHORT' : 'NEUTRAL'
 
   const signalColor =
-    displaySignal === 'LONG' ? 'text-[#52B788]' :
-    displaySignal === 'SHORT' ? 'text-[#C0392B]' :
-    'text-[#7B8FA6]'
+    displaySignal === 'LONG' ? 'text-[#00FF00]' :
+    displaySignal === 'SHORT' ? 'text-[#D82B2B]' :
+    'text-[#888888]'
 
   return (
     <div className="space-y-10">
@@ -120,7 +120,7 @@ export function PortfolioView({ desks }: { desks: DeskProps[] }) {
           <span className="text-right">Conviction</span>
         </div>
         {desks.map(d => {
-          const col = d.direction === 'LONG' ? 'text-[#52B788]' : d.direction === 'SHORT' ? 'text-[#C0392B]' : 'text-[#7B8FA6]'
+          const col = d.direction === 'LONG' ? 'text-[#00FF00]' : d.direction === 'SHORT' ? 'text-[#D82B2B]' : 'text-[#888888]'
           return (
             <div key={d.ticker} className="grid grid-cols-4 px-4 sm:px-6 py-3 sm:py-4 hover:bg-accent/20 transition-colors">
               <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground/60">{d.desk.toUpperCase()}</span>

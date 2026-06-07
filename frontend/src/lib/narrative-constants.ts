@@ -14,13 +14,13 @@ export type NarrativeType =
   | 'geopolitical'
 
 export const NARRATIVE_COLORS: Record<NarrativeType, string> = {
-  fear: '#9F4A4A',
-  greed: '#4A9F6F',
-  regulatory: '#7B8FA6',
-  innovation: '#C9A84C',
+  fear: '#D82B2B',
+  greed: '#00FF00',
+  regulatory: '#888888',
+  innovation: '#FFD700',
   risk: '#D82B2B',
   macro_shift: '#8B5CF6',
-  geopolitical: '#F59E0B',
+  geopolitical: '#FFD700',
 }
 
 export const NARRATIVE_LABELS: Record<NarrativeType, string> = {

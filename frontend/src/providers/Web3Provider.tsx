@@ -8,16 +8,16 @@ import { getConfig } from '@/lib/wagmi'
 import '@rainbow-me/rainbowkit/styles.css'
 
 const customTheme = darkTheme({
-  accentColor: '#C9A84C',
-  accentColorForeground: '#0A0A0F',
+  accentColor: '#FFD700',
+  accentColorForeground: '#0A0A0A',
   borderRadius: 'medium',
   overlayBlur: 'small',
 })
 
-customTheme.colors.modalBackground = '#111118'
-customTheme.colors.modalBorder = '#2A2A38'
-customTheme.colors.profileForeground = '#111118'
-customTheme.colors.connectButtonBackground = '#111118'
+customTheme.colors.modalBackground = '#0A0A0A'
+customTheme.colors.modalBorder = '#0A0A0A'
+customTheme.colors.profileForeground = '#0A0A0A'
+customTheme.colors.connectButtonBackground = '#0A0A0A'
 
 interface Web3ProviderProps {
   children: React.ReactNode

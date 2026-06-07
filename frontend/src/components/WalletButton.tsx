@@ -166,8 +166,8 @@ export function WalletButton() {
   if (wrongNetworkBanner && isConnected && !isCoinbaseConnector) {
     return (
       <div className="flex items-center gap-2">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#E8A020]/50 bg-[#E8A020]/10 text-[10px] text-[#E8A020] font-medium uppercase tracking-[0.15em]">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#E8A020]  shrink-0" />
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#FFD700]/50 bg-[#FFD700]/10 text-[10px] text-[#FFD700] font-medium uppercase tracking-[0.15em]">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#FFD700]  shrink-0" />
           <span className="hidden sm:inline">Switch to Arc Testnet</span>
           <button
             onClick={async () => {

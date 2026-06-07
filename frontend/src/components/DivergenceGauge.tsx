@@ -59,11 +59,11 @@ export function DivergenceGauge({ ticker, desks }: DivergenceGaugeProps) {
   
   // Categorize
   let category = 'Consensus'
-  let catColor = 'text-[#4A9F6F]'
+  let catColor = 'text-[#00FF00]'
   let catDesc = 'Agora consensus. Regional desks are fully aligned.'
   if (composite >= 30 && composite < 60) {
     category = 'Healthy Debate'
-    catColor = 'text-[#C9A84C]'
+    catColor = 'text-[#FFD700]'
     catDesc = 'Active, healthy desk debate. Diverging signals present.'
   } else if (composite >= 60) {
     category = 'Fragmented'
@@ -74,12 +74,12 @@ export function DivergenceGauge({ ticker, desks }: DivergenceGaugeProps) {
   // Region meta helper
   const getRegionMeta = (deskKey: string) => {
     const key = deskKey.toLowerCase()
-    if (key === 'us') return { flag: '🇺🇸', name: 'US', color: '#4A9F6F' }
+    if (key === 'us') return { flag: '🇺🇸', name: 'US', color: '#00FF00' }
     if (key === 'cn') return { flag: '🇨🇳', name: 'CN', color: '#D82B2B' }
-    if (key === 'eu') return { flag: '🇪🇺', name: 'EU', color: '#3B82F6' }
-    if (key === 'jp') return { flag: '🇯🇵', name: 'JP', color: '#C9A84C' }
-    if (key === 'crypto') return { flag: '🪙', name: 'CRYPTO', color: '#A855F7' }
-    return { flag: '🌐', name: deskKey.toUpperCase(), color: '#7B8FA6' }
+    if (key === 'eu') return { flag: '🇪🇺', name: 'EU', color: '#FFFFFF' }
+    if (key === 'jp') return { flag: '🇯🇵', name: 'JP', color: '#FFD700' }
+    if (key === 'crypto') return { flag: '🪙', name: 'CRYPTO', color: '#00FF00' }
+    return { flag: '🌐', name: deskKey.toUpperCase(), color: '#888888' }
   }
 
   return (
@@ -109,9 +109,9 @@ export function DivergenceGauge({ ticker, desks }: DivergenceGaugeProps) {
             <div className="relative w-full max-w-[240px] aspect-[2/1] overflow-hidden flex justify-center mt-2">
               <svg className="w-full h-full" viewBox="0 0 100 50">
                 {/* consensus arc (0-30): 0 to 54 degrees */}
-                <path d="M 10,50 A 40,40 0 0,1 21.72,21.72" fill="none" stroke="#4A9F6F" strokeWidth="6" />
+                <path d="M 10,50 A 40,40 0 0,1 21.72,21.72" fill="none" stroke="#00FF00" strokeWidth="6" />
                 {/* debate arc (30-60): 54 to 108 degrees */}
-                <path d="M 21.72,21.72 A 40,40 0 0,1 61.26,13.14" fill="none" stroke="#C9A84C" strokeWidth="6" />
+                <path d="M 21.72,21.72 A 40,40 0 0,1 61.26,13.14" fill="none" stroke="#FFD700" strokeWidth="6" />
                 {/* fragmented arc (60-100): 108 to 180 degrees */}
                 <path d="M 61.26,13.14 A 40,40 0 0,1 90,50" fill="none" stroke="#D82B2B" strokeWidth="6" />
                 
@@ -150,7 +150,7 @@ export function DivergenceGauge({ ticker, desks }: DivergenceGaugeProps) {
           {desks.map(d => {
             const m = getRegionMeta(d.desk)
             let dirColor = 'text-text-tertiary border-white/[0.06]'
-            if (d.direction.toUpperCase() === 'LONG') dirColor = 'text-[#4A9F6F] border-[#4A9F6F]/20 bg-[#4A9F6F]/5'
+            if (d.direction.toUpperCase() === 'LONG') dirColor = 'text-[#00FF00] border-[#00FF00]/20 bg-[#00FF00]/5'
             if (d.direction.toUpperCase() === 'SHORT') dirColor = 'text-[#D82B2B] border-[#D82B2B]/20 bg-[#D82B2B]/5'
             return (
               <div key={d.desk} className="flex flex-col items-center p-1 border border-white/[0.04] bg-white/[0.01]">

@@ -106,7 +106,7 @@ export function StatsBar({ stats }: StatsBarProps) {
           <div key={i} className="flex items-center gap-2 sm:gap-3">
             <span
               className="text-lg sm:text-xl font-bold leading-none"
-              style={{ fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace", color: '#C9A84C' }}
+              style={{ fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace", color: '#FFD700' }}
             >
               <CountUpNumber
                 target={stat.target}

@@ -3,32 +3,33 @@
 @theme {
   --color-bg-primary: #000000;
   --color-bg-secondary: #0A0A0A;
-  --color-bg-tertiary: #141414;
-  --color-border: #1A1A1A;
-  --color-border-strong: #2A2A2A;
+  --color-bg-tertiary: #0A0A0A;
+  --color-border: #0A0A0A;
+  --color-border-strong: #0A0A0A;
 
-  --color-text-primary: #FFFFFF;
-  --color-text-secondary: #A3A3A3;
-  --color-text-tertiary: #666666;
+  --color-text-primary: #FFFFFFFFFFFF;
+  --color-text-secondary: #888888;
+  --color-text-tertiary: #888888;
 
   --color-brand-red: #D82B2B;
   --color-accent-gold: #D82B2B;
   --color-accent-amber: #D82B2B;
-  --color-accent-blue: #4A7FBF;
+  --color-accent-blue: #FFFFFF;
 
-  --color-region-us: #4A7FBF;
-  --color-region-cn: #BF4A4A;
-  --color-region-eu: #4A8F6F;
-  --color-region-jp: #8F6F4A;
-  --color-region-crypto: #7A4ABF;
+  --color-region-us: #FFFFFF;
+  --color-region-cn: #D82B2B;
+  --color-region-eu: #888888;
+  --color-region-jp: #FFD700;
+  --color-region-crypto: #00FF00;
 
-  --color-positive: #4A9F6F;
-  --color-negative: #9F4A4A;
-  --color-neutral: #7B8FA6;
+  --color-positive: #00FF00;
+  --color-negative: #D82B2B;
+  --color-neutral: #888888;
+  --color-warning: #FFD700;
 
   --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
   /* Compatibility tokens for Tailwind utilities */
   --color-background: var(--color-bg-primary);
@@ -202,4 +203,16 @@
 }
 .btn-pulse:hover {
   background-color: rgba(216,43,43,0.05) !important;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #111111 25%, #1a1a1a 50%, #111111 75%);
+  background-size: 400% 100%;
+  animation: shimmer 1.5s infinite linear;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }

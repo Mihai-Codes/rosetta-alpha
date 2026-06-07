@@ -8,7 +8,7 @@ const QUADRANTS = [
     subtitle: 'Falling Inflation',
     assets: ['Equities', 'Corporate Credit'],
     pct: 30,
-    color: '#F0EDE8',
+    color: '#FFFFFFFFFFFF',
   },
   { 
     title: 'Rising Growth',
@@ -22,14 +22,14 @@ const QUADRANTS = [
     subtitle: 'Falling Inflation',
     assets: ['Long Bonds', 'Nominal Bonds'],
     pct: 40,
-    color: '#C9A84C',
+    color: '#FFD700',
   },
   { 
     title: 'Falling Growth',
     subtitle: 'Rising Inflation',
     assets: ['Crypto / Gold', 'ILBs'],
     pct: 15,
-    color: '#7B8FA6',
+    color: '#888888',
   },
 ]
 

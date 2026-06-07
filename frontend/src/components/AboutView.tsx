@@ -30,7 +30,7 @@ export function AboutView() {
         <div className="md:col-span-5 flex justify-center mt-10 md:mt-0">
           {/* Levitating Ray Dalio Portrait */}
           <div className="relative group w-64 h-64 sm:w-80 sm:h-80 animate-levitate">
-            <div className="absolute inset-0 bg-gradient-to-tr from-brand-red to-[#C9A84C] opacity-30 blur-2xl group-hover:opacity-60 transition-opacity duration-700" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-brand-red to-[#FFD700] opacity-30 blur-2xl group-hover:opacity-60 transition-opacity duration-700" />
             <div className="absolute inset-0 border border-white/20 bg-[#0A0A0A] shadow-[0_0_40px_rgba(216,43,43,0.3)] z-10 overflow-hidden ">
               <img 
                 src="/ray-dalio.webp" 
@@ -41,14 +41,14 @@ export function AboutView() {
             {/* Corner Bracket Accents */}
             <div className="absolute -top-2 -left-2 w-6 h-6 border-t-2 border-l-2 border-brand-red z-20" />
             <div className="absolute -bottom-2 -right-2 w-6 h-6 border-b-2 border-r-2 border-brand-red z-20" />
-            <div className="absolute -top-2 -right-2 w-6 h-6 border-t-2 border-r-2 border-[#C9A84C] z-20" />
-            <div className="absolute -bottom-2 -left-2 w-6 h-6 border-b-2 border-l-2 border-[#C9A84C] z-20" />
+            <div className="absolute -top-2 -right-2 w-6 h-6 border-t-2 border-r-2 border-[#FFD700] z-20" />
+            <div className="absolute -bottom-2 -left-2 w-6 h-6 border-b-2 border-l-2 border-[#FFD700] z-20" />
           </div>
         </div>
       </div>
 
       {/* Cognitive Risk Parity & Quadrants */}
-      <div className="bg-gradient-to-b from-[#050505] to-black rounded-[2rem] p-8 md:p-12 border border-brand-red/50 shadow-[0_0_40px_rgba(216,43,43,0.15)]">
+      <div className="bg-gradient-to-b from-[#000000] to-black rounded-[2rem] p-8 md:p-12 border border-brand-red/50 shadow-[0_0_40px_rgba(216,43,43,0.15)]">
         <div className="flex flex-col items-center text-center mb-10">
           <Scale className="text-brand-red w-8 h-8 mb-4" />
           <h3 className="font-display text-2xl text-text-primary tracking-tight">
@@ -64,17 +64,17 @@ export function AboutView() {
                 <span className="text-[10px] uppercase tracking-[0.2em] text-brand-red/60 font-bold">Rising Growth</span>
                 <span className="font-display text-lg sm:text-xl text-text-primary leading-tight">Equities<br/>Commodities</span>
               </div>
-              <div className="border-b border-brand-red/30 bg-gradient-to-bl from-[#C9A84C]/10 to-transparent p-5 flex flex-col justify-between text-right">
-                <span className="text-[10px] uppercase tracking-[0.2em] text-[#C9A84C]/60 font-bold">Falling Growth</span>
+              <div className="border-b border-brand-red/30 bg-gradient-to-bl from-[#FFD700]/10 to-transparent p-5 flex flex-col justify-between text-right">
+                <span className="text-[10px] uppercase tracking-[0.2em] text-[#FFD700]/60 font-bold">Falling Growth</span>
                 <span className="font-display text-lg sm:text-xl text-text-primary leading-tight">Nominal Bonds<br/>Cash</span>
               </div>
-              <div className="border-r border-brand-red/30 bg-gradient-to-tr from-[#4A9F6F]/10 to-transparent p-5 flex flex-col justify-between">
+              <div className="border-r border-brand-red/30 bg-gradient-to-tr from-[#00FF00]/10 to-transparent p-5 flex flex-col justify-between">
                 <span className="font-display text-lg sm:text-xl text-text-primary leading-tight">ILBs<br/>Commodities</span>
-                <span className="text-[10px] uppercase tracking-[0.2em] text-[#4A9F6F]/60 font-bold">Rising Inflation</span>
+                <span className="text-[10px] uppercase tracking-[0.2em] text-[#00FF00]/60 font-bold">Rising Inflation</span>
               </div>
-              <div className="bg-gradient-to-tl from-[#7B8FA6]/10 to-transparent p-5 flex flex-col justify-between text-right">
+              <div className="bg-gradient-to-tl from-[#888888]/10 to-transparent p-5 flex flex-col justify-between text-right">
                 <span className="font-display text-lg sm:text-xl text-text-primary leading-tight">Equities<br/>Nominal Bonds</span>
-                <span className="text-[10px] uppercase tracking-[0.2em] text-[#7B8FA6]/60 font-bold">Falling Inflation</span>
+                <span className="text-[10px] uppercase tracking-[0.2em] text-[#888888]/60 font-bold">Falling Inflation</span>
               </div>
               {/* Center crosshair */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full border border-brand-red/40 bg-[#0A0A0A] flex items-center justify-center">

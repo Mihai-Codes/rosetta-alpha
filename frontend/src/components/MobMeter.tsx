@@ -21,9 +21,9 @@ interface MobMeterData {
 }
 
 function categoryColor(score: number) {
-  if (score < 30) return 'text-[#4A9F6F]'
-  if (score < 60) return 'text-[#C9A84C]'
-  if (score < 80) return 'text-[#D9822B]'
+  if (score < 30) return 'text-[#00FF00]'
+  if (score < 60) return 'text-[#FFD700]'
+  if (score < 80) return 'text-[#FFD700]'
   return 'text-[#D82B2B]'
 }
 
@@ -101,8 +101,8 @@ export function MobMeter({ ticker, compact = false }: MobMeterProps) {
         </div>
       ) : (
         <div className={`relative z-10 flex ${compact ? 'gap-4' : 'gap-6'} items-center`}>
-          <div className="relative h-44 w-12 shrink-0 border border-white/10 bg-[#050505] rounded-full overflow-hidden">
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#4A9F6F] via-[#C9A84C] to-[#D82B2B] transition-all duration-1000 ease-out" style={{ height: fillHeight }} />
+          <div className="relative h-44 w-12 shrink-0 border border-white/10 bg-[#000000] rounded-full overflow-hidden">
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#00FF00] via-[#FFD700] to-[#D82B2B] transition-all duration-1000 ease-out" style={{ height: fillHeight }} />
             <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
             {[0, 25, 50, 75, 100].map(mark => (
               <div

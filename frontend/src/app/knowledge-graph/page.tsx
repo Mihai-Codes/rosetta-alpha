@@ -36,21 +36,21 @@ interface GraphData {
 // ---------------------------------------------------------------------------
 
 const NODE_COLORS: Record<string, string> = {
-  ticker: '#C9A84C',      // Gold
+  ticker: '#FFD700',      // Gold
   thesis: '#D82B2B',      // Crimson
-  sub_agent: '#7B8FA6',   // Steel blue
-  region: '#4A9F6F',      // Green
-  outcome: '#4A9F6F',     // Green (correct) — overridden for incorrect
+  sub_agent: '#888888',   // Steel blue
+  region: '#00FF00',      // Green
+  outcome: '#00FF00',     // Green (correct) — overridden for incorrect
   narrative: '#9B59B6',   // Purple
 }
 
 const EDGE_COLORS: Record<string, string> = {
   ABOUT_TICKER: '#555',
   BELONGS_TO_REGION: '#555',
-  GENERATED_BY: '#7B8FA6',
-  SUPPORTS: '#4A9F6F',
+  GENERATED_BY: '#888888',
+  SUPPORTS: '#00FF00',
   CONTRADICTS: '#D82B2B',
-  RESOLVED_AS: '#C9A84C',
+  RESOLVED_AS: '#FFD700',
   HAS_NARRATIVE: '#9B59B6',
 }
 
@@ -236,7 +236,7 @@ export default function KnowledgeGraphPage() {
         : 7
 
       const color = node.type === 'outcome' && node.was_correct === false
-        ? '#9F4A4A'
+        ? '#D82B2B'
         : NODE_COLORS[node.type] || '#666'
 
       ctx.beginPath()
@@ -246,7 +246,7 @@ export default function KnowledgeGraphPage() {
 
       // Highlight on hover/selection (read from refs, not state)
       if (hoveredRef.current?.id === node.id || selectedRef.current?.id === node.id) {
-        ctx.strokeStyle = '#fff'
+        ctx.strokeStyle = '#FFFFFFFFF'
         ctx.lineWidth = 2
         ctx.stroke()
       }
@@ -415,7 +415,7 @@ export default function KnowledgeGraphPage() {
               {typeof selectedNode.direction === 'string' && (
                 <div>
                   <span className="text-text-tertiary">Direction</span>
-                  <p className={`mt-0.5 font-mono ${selectedNode.direction === 'LONG' ? 'text-[#4A9F6F]' : selectedNode.direction === 'SHORT' ? 'text-[#9F4A4A]' : 'text-text-primary'}`}>
+                  <p className={`mt-0.5 font-mono ${selectedNode.direction === 'LONG' ? 'text-[#00FF00]' : selectedNode.direction === 'SHORT' ? 'text-[#D82B2B]' : 'text-text-primary'}`}>
                     {String(selectedNode.direction)}
                   </p>
                 </div>
@@ -441,7 +441,7 @@ export default function KnowledgeGraphPage() {
               {typeof selectedNode.was_correct === 'boolean' && (
                 <div>
                   <span className="text-text-tertiary">Outcome</span>
-                  <p className={`mt-0.5 font-medium ${selectedNode.was_correct ? 'text-[#4A9F6F]' : 'text-[#9F4A4A]'}`}>
+                  <p className={`mt-0.5 font-medium ${selectedNode.was_correct ? 'text-[#00FF00]' : 'text-[#D82B2B]'}`}>
                     {selectedNode.was_correct ? '✓ Correct' : '✗ Incorrect'}
                   </p>
                 </div>
@@ -455,7 +455,7 @@ export default function KnowledgeGraphPage() {
           <h4 className="text-xs font-medium text-text-secondary uppercase tracking-wider mb-3">Edge Types</h4>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
             <div className="flex items-center gap-2">
-              <span className="w-6 h-0.5 inline-block bg-[#4A9F6F]" />
+              <span className="w-6 h-0.5 inline-block bg-[#00FF00]" />
               <span className="text-text-secondary">Supports</span>
             </div>
             <div className="flex items-center gap-2">
@@ -463,7 +463,7 @@ export default function KnowledgeGraphPage() {
               <span className="text-text-secondary">Contradicts</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-6 h-0.5 inline-block bg-[#C9A84C]" />
+              <span className="w-6 h-0.5 inline-block bg-[#FFD700]" />
               <span className="text-text-secondary">Resolved As</span>
             </div>
             <div className="flex items-center gap-2">

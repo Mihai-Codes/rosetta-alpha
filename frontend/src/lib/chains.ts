@@ -6,7 +6,7 @@ export const arcTestnet = {
   id: Number(process.env.NEXT_PUBLIC_ARC_CHAIN_ID) || 5042002,
   name: 'Arc Testnet',
   iconUrl: 'https://rosetta-alpha.vercel.app/arc-logo.svg',
-  iconBackground: '#0A0A0F',
+  iconBackground: '#0A0A0A',
   nativeCurrency: {
     name: 'USD Coin',
     symbol: 'USDC',

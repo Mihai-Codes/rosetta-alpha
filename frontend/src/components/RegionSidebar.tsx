@@ -17,7 +17,7 @@ function ConfidenceArc({ value, color }: { value: number; color: string }) {
   const offset = c * (1 - value)
   return (
     <svg width="28" height="28" viewBox="0 0 28 28" className="-rotate-90 shrink-0">
-      <circle cx="14" cy="14" r={r} fill="none" stroke="#2A2A38" strokeWidth="2" />
+      <circle cx="14" cy="14" r={r} fill="none" stroke="#0A0A0A" strokeWidth="2" />
       <circle
         cx="14"
         cy="14"

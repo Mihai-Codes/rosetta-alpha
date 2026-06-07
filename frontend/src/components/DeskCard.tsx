@@ -23,10 +23,10 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
   const isShort = desk.direction === 'SHORT'
 
   const directionColor = isLong
-    ? 'text-[#52B788]'
+    ? 'text-[#00FF00]'
     : isShort
-    ? 'text-[#C0392B]'
-    : 'text-[#7B8FA6]'
+    ? 'text-[#D82B2B]'
+    : 'text-[#888888]'
 
   const directionBg = isLong
     ? 'bg-[rgba(82,183,136,0.06)] border-[rgba(82,183,136,0.18)]'
@@ -34,7 +34,7 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
     ? 'bg-[rgba(192,57,43,0.06)] border-[rgba(192,57,43,0.18)]'
     : 'bg-[rgba(123,143,166,0.06)] border-[rgba(123,143,166,0.18)]'
 
-  const barColor = isLong ? 'bg-[#52B788]' : isShort ? 'bg-[#C0392B]' : 'bg-muted-foreground/40'
+  const barColor = isLong ? 'bg-[#00FF00]' : isShort ? 'bg-[#D82B2B]' : 'bg-muted-foreground/40'
 
   return (
     <>
@@ -47,7 +47,7 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
       <motion.article
         whileHover={{ y: -3, transition: { duration: 0.18 } }}
         onClick={() => setShowExplorer(true)}
-        className="group relative glass-panel border border-border/20 hover:border-brand-red/30 shadow-none hover:shadow-none transition-all duration-500 cursor-pointer flex flex-col overflow-hidden rounded-none"
+        className="group relative glass-panel border border-border/20 hover:border-brand-red/30 shadow-none hover:shadow-[0_0_20px_rgba(216,43,43,0.25)] transition-all duration-500 cursor-pointer flex flex-col overflow-hidden rounded-none"
       >
         {/* Gold left accent on hover */}
         <div className="absolute left-0 top-0 w-px h-full bg-brand-red/0 group-hover:bg-brand-red/50 transition-colors duration-300" />
@@ -66,7 +66,7 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
           <div className="flex items-center gap-2 shrink-0 mt-1 flex-wrap justify-end">
             {desk.debate_summary && (
               <span
-                className="px-2 py-1 border border-[#C9A84C]/30 bg-[#C9A84C]/10 text-[#C9A84C] text-[9px] font-bold uppercase tracking-widest cursor-help"
+                className="px-2 py-1 border border-[#FFD700]/30 bg-[#FFD700]/10 text-[#FFD700] text-[9px] font-bold uppercase tracking-widest cursor-help"
                 title={desk.debate_summary}
               >
                 ⚔️ Debated

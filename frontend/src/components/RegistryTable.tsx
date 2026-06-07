@@ -113,7 +113,7 @@ export function RegistryTable({ desks, onCidClick }: RegistryTableProps) {
           </div>
         ) : entries.map((e, i) => {
           const meta = regionMeta(e.desk)
-          const dirColor = e.direction === 'LONG' ? '#4A9F6F' : e.direction === 'SHORT' ? '#9F4A4A' : '#7B8FA6'
+          const dirColor = e.direction === 'LONG' ? '#00FF00' : e.direction === 'SHORT' ? '#D82B2B' : '#888888'
           return (
             <div
               key={i}
@@ -218,7 +218,7 @@ export function RegistryTable({ desks, onCidClick }: RegistryTableProps) {
               </tr>
             ) : entries.map((e, i) => {
               const meta = regionMeta(e.desk)
-              const dirColor = e.direction === 'LONG' ? '#4A9F6F' : e.direction === 'SHORT' ? '#9F4A4A' : '#7B8FA6'
+              const dirColor = e.direction === 'LONG' ? '#00FF00' : e.direction === 'SHORT' ? '#D82B2B' : '#888888'
               return (
                 <tr key={i} className="hover:bg-white/[0.03] transition-all duration-300 cursor-default">
                   <td className="px-4 sm:px-6 py-4">

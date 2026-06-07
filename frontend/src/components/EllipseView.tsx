@@ -357,7 +357,7 @@ export function EllipseView() {
             {renderGridLine(-viz.yMax/2, `-${(viz.yMax/2).toFixed(1)}%`)}
 
             {/* Path */}
-            <path d={viz.pathData} fill="none" stroke="#FFFFFF" strokeWidth="2" strokeOpacity="0.8" />
+            <path d={viz.pathData} fill="none" stroke="#FFFFFFFFFFFF" strokeWidth="2" strokeOpacity="0.8" />
             
             {/* Ellipse Fit */}
             {viz.ellipseParams && (
@@ -385,7 +385,7 @@ export function EllipseView() {
               return (
                 <circle
                   key={i} cx={x} cy={y} r={isHovered ? 6 : 14}
-                  fill={isHovered ? "#FFFFFF" : "transparent"}
+                  fill={isHovered ? "#FFFFFFFFFFFF" : "transparent"}
                   stroke={isHovered ? "#D82B2B" : "transparent"} strokeWidth={2}
                   className="cursor-crosshair transition-all duration-200"
                   onMouseEnter={() => setHoveredPoint({ x, y, data: d })}
@@ -397,7 +397,7 @@ export function EllipseView() {
 
             {/* Latest Point Fixed Overlay */}
             <circle cx={viz.getX(viz.latestPoint.day)} cy={viz.getY(viz.latestPoint.dev)} r="6" fill="#D82B2B" className="animate-pulse pointer-events-none" />
-            <circle cx={viz.getX(viz.latestPoint.day)} cy={viz.getY(viz.latestPoint.dev)} r="3" fill="#FFFFFF" className="pointer-events-none" />
+            <circle cx={viz.getX(viz.latestPoint.day)} cy={viz.getY(viz.latestPoint.dev)} r="3" fill="#FFFFFFFFFFFF" className="pointer-events-none" />
           </svg>
 
           {/* Dynamic Boundary-Aware Tooltip */}

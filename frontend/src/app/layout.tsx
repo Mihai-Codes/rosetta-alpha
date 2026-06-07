@@ -7,6 +7,7 @@ import { Web3Provider } from '@/providers/Web3Provider'
 import { PostHogProvider } from '@/providers/PostHogProvider'
 import { FeedbackSurvey } from '@/components/FeedbackSurvey'
 import { SimpleAnalytics } from '@simpleanalytics/next'
+import { Toaster } from 'sonner'
 import '../index.css'
 
 
@@ -59,6 +60,7 @@ export default async function RootLayout({
         </AuthProvider>
         {/* Simple Analytics — privacy-first traffic analytics (no cookies, GDPR compliant) */}
         <SimpleAnalytics />
+        <Toaster theme="dark" toastOptions={{ style: { background: '#0A0A0A', border: '1px solid #D82B2B', color: '#FFFFFF', borderRadius: 0 } }} />
       </body>
     </html>
   )
