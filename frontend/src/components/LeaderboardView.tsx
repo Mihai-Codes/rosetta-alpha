@@ -19,9 +19,9 @@ interface Trader {
 }
 
 const TRADERS: Trader[] = [
-  { rank: 1,  address: '0xA1b2...9F3c', label: 'macro.eth',    correct: 47, total: 55, earned: 23.5, arcTxCount: 47, streak: 8,  badge: '🏆' },
-  { rank: 2,  address: '0x3E7d...2B1a', label: 'satoshi99',    correct: 41, total: 50, earned: 20.5, arcTxCount: 41, streak: 5,  badge: '🥈' },
-  { rank: 3,  address: '0xF4c8...6D0e', label: 'dalio.arc',    correct: 38, total: 47, earned: 19.0, arcTxCount: 38, streak: 4,  badge: '🥉' },
+  { rank: 1,  address: '0xA1b2...9F3c', label: 'macro.eth',    correct: 47, total: 55, earned: 23.5, arcTxCount: 47, streak: 8,   },
+  { rank: 2,  address: '0x3E7d...2B1a', label: 'satoshi99',    correct: 41, total: 50, earned: 20.5, arcTxCount: 41, streak: 5,   },
+  { rank: 3,  address: '0xF4c8...6D0e', label: 'dalio.arc',    correct: 38, total: 47, earned: 19.0, arcTxCount: 38, streak: 4,   },
   { rank: 4,  address: '0x8B2f...1C7d',                         correct: 34, total: 44, earned: 17.0, arcTxCount: 34, streak: 3  },
   { rank: 5,  address: '0x2D9e...5A4f',                         correct: 31, total: 42, earned: 15.5, arcTxCount: 31, streak: 2  },
   { rank: 6,  address: '0x7F1b...8E2c', label: 'quant.usdc',   correct: 29, total: 40, earned: 14.5, arcTxCount: 29, streak: 1  },
@@ -64,7 +64,7 @@ function PodiumCard({ trader, isMe }: { trader: Trader; isMe: boolean }) {
     >
       {/* Badge + label */}
       <div className="text-center space-y-1">
-        <p className="text-2xl">{trader.badge}</p>
+        
         <p className="font-mono text-[10px] text-text-primary font-bold">
           {trader.label ?? trader.address}
         </p>
@@ -236,7 +236,7 @@ export function LeaderboardView() {
                         t.rank === 3 ? 'text-warning' :
                         'text-text-tertiary'
                       }`}>
-                        {t.badge ?? `#${t.rank}`}
+                        #{t.rank}
                       </span>
                     </td>
                     <td className="px-5 py-4">
@@ -268,7 +268,7 @@ export function LeaderboardView() {
                     <td className="px-5 py-4">
                       {t.streak > 0 ? (
                         <span className="text-[10px] text-brand-red font-medium">
-                          🔥 {t.streak}
+                          STREAK: {t.streak}
                         </span>
                       ) : (
                         <span className="text-text-tertiary text-[10px]">—</span>
@@ -305,7 +305,7 @@ export function LeaderboardView() {
                       t.rank === 3 ? 'text-warning' :
                       'text-text-tertiary'
                     }`}>
-                      {t.badge ?? `#${t.rank}`}
+                      #{t.rank}
                     </span>
                     <div>
                       <p className="font-mono text-[11px] text-text-primary font-bold">
@@ -326,7 +326,7 @@ export function LeaderboardView() {
                 <div className="flex items-center gap-4 text-[10px]">
                   <span className="text-positive font-mono font-bold">+{t.earned} USDC</span>
                   <span className="text-text-tertiary">{t.correct}/{t.total} correct</span>
-                  {t.streak > 0 && <span className="text-brand-red">🔥 {t.streak} streak</span>}
+                  {t.streak > 0 && <span className="text-brand-red">STREAK: {t.streak} streak</span>}
                   <span className="text-text-tertiary">{t.arcTxCount} Arc txs</span>
                 </div>
               </motion.div>

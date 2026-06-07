@@ -395,7 +395,7 @@ function Leaderboard() {
                 className={`border-b border-border/40 hover:bg-bg-tertiary/40 transition-colors ${medalBorder(row.rank)}`}
               >
                 <td className="px-5 py-4">
-                  <span className={`font-display text-lg font-bold ${
+                  <span className={`font-mono text-sm font-semibold ${
                     row.rank === 1 ? 'text-accent-gold' :
                     row.rank === 2 ? 'text-text-secondary' :
                     row.rank === 3 ? 'text-warning' :
@@ -423,7 +423,7 @@ function Leaderboard() {
                 <td className="px-5 py-4">
                   {row.streak > 0 ? (
                     <span className="text-[10px] text-brand-red font-medium">
-                      🔥 {row.streak}
+                      STREAK: {row.streak}
                     </span>
                   ) : (
                     <span className="text-text-tertiary text-[10px]">—</span>
@@ -447,7 +447,7 @@ function Leaderboard() {
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <span className={`font-display text-xl font-bold ${
+                <span className={`font-mono text-sm font-semibold ${
                   row.rank === 1 ? 'text-accent-gold' :
                   row.rank === 2 ? 'text-text-secondary' :
                   row.rank === 3 ? 'text-warning' :
@@ -470,7 +470,7 @@ function Leaderboard() {
             </div>
             <div className="flex items-center gap-4 text-[10px]">
               <span className="text-text-secondary">{row.theses} theses</span>
-              {row.streak > 0 && <span className="text-brand-red">🔥 {row.streak} streak</span>}
+              {row.streak > 0 && <span className="text-brand-red">STREAK: {row.streak} streak</span>}
             </div>
           </motion.div>
         ))}
@@ -715,15 +715,17 @@ export function DashboardView() {
         <div className="lg:col-span-2">
           <MobMeter ticker="AAPL" />
         </div>
-        <div className="bg-bg-primary p-6 sm:p-8 flex flex-col justify-center">
+        <div className="bg-bg-primary p-6 sm:p-8 flex flex-col justify-center text-left">
           <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary mb-4">
             Historical Signal
           </p>
-          <p className="font-display text-2xl text-text-primary leading-tight">
-            Extreme agreement is treated as a reversal-risk warning, not confirmation.
-          </p>
-          <p className="text-[11px] text-text-tertiary leading-relaxed mt-4">
-            Backtest hooks are ready for rosetta_dataset.jsonl; live calibration updates after Arc settlements.
+          <div className="p-5 border border-warning/20 bg-warning/5 rounded mb-5">
+             <p className="font-mono text-sm font-bold text-warning leading-tight uppercase tracking-wider">
+               Extreme agreement is treated as a reversal-risk warning, not confirmation.
+             </p>
+          </div>
+          <p className="text-[11px] text-text-secondary leading-relaxed border-l-[3px] border-border pl-4">
+            Backtest hooks are ready for rosetta_dataset.jsonl. Live calibration updates after Arc settlements.
           </p>
         </div>
       </div>

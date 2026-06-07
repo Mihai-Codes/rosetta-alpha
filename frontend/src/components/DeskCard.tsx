@@ -69,7 +69,7 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
                 className="px-2 py-1 border border-warning/30 bg-warning/10 text-warning text-[9px] font-bold uppercase tracking-widest cursor-help"
                 title={desk.debate_summary}
               >
-                ⚔️ Debated
+                DEBATED
               </span>
             )}
             <RegimeIndicator regime={desk.regime_context} compact />

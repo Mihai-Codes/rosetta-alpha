@@ -299,7 +299,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
                   className="px-2 py-0.5 border border-warning/40 bg-warning/10 text-warning text-[8px] font-bold uppercase tracking-[0.2em] rounded cursor-help"
                   title={desk.debate_summary}
                 >
-                  ⚔️ Debated
+                  DEBATED
                 </span>
               )}
             </div>
@@ -362,7 +362,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
         {desk.debate_summary && (
           <div className="mb-5 border border-warning/20 bg-warning/5 px-4 py-3">
             <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-warning mb-1">
-              ⚔️ Debate Summary
+              DEBATE SUMMARY
             </p>
             <p className="text-xs sm:text-sm text-text-secondary font-light leading-relaxed">
               {desk.debate_summary}

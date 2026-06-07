@@ -143,7 +143,7 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
         </div>
 
         {/* Hide chart on tablet to give thesis card room, show on desktop */}
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }} className="hidden lg:flex flex-col w-[300px] xl:w-[320px] shrink-0 solid-panel rounded-none border overflow-hidden">
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }} className="hidden lg:flex flex-col w-[340px] xl:w-[380px] shrink-0 solid-panel rounded-none border overflow-hidden">
           <div className="flex p-2 border-b border-border/20 gap-2 bg-bg-secondary">
             <button onClick={() => setChartView('matrix')} className={`flex-1 px-2 py-1.5 text-[9px] uppercase tracking-wider border ${chartView === 'matrix' ? 'border-brand-red text-brand-red bg-brand-red/10' : 'border-border text-text-tertiary hover:text-text-primary'}`}>Circle View</button>
             <button onClick={() => setChartView('ellipse')} className={`flex-1 px-2 py-1.5 text-[9px] uppercase tracking-wider border ${chartView === 'ellipse' ? 'border-brand-red text-brand-red bg-brand-red/10' : 'border-border text-text-tertiary hover:text-text-primary'}`}>Ellipse View</button>
@@ -163,17 +163,10 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
         {chartView === 'matrix' ? <AllWeatherChart /> : <EllipseView />}
       </motion.div>
 
-      {/* ── Advanced Telemetry (Gated) ── */}
-      {active && (
+      {/* ── Advanced Telemetry (Hidden for unsigned) ── */}
+      {active && isAuthed && (
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.6, ease: [0.16, 1, 0.3, 1] }} className="w-full relative mt-4">
-          {!isAuthed && (
-            <div className="absolute inset-0 z-20 backdrop-blur-md bg-bg-primary/70 flex flex-col items-center justify-center border border-border">
-              <Lock className="w-6 h-6 text-brand-red mb-3" />
-              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-brand-red mb-4">Encrypted Telemetry</p>
-              <button onClick={() => authModalState.open()} className="px-6 py-3 bg-brand-red text-white text-[10px] font-bold uppercase tracking-widest hover:bg-brand-red/80 transition-colors shadow-[0_0_15px_rgba(216,43,43,0.3)]">Sign in to Decrypt</button>
-            </div>
-          )}
-          <div className={`flex flex-col gap-6 lg:gap-8 ${!isAuthed ? 'opacity-20 pointer-events-none select-none blur-sm' : ''}`}>
+          <div className="flex flex-col gap-6 lg:gap-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-start">
               <MobMeter ticker={active.ticker} />
               <DivergenceGauge ticker={active.ticker} desks={desks} />

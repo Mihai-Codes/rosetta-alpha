@@ -156,7 +156,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                   : 'border-border text-text-secondary hover:text-text-primary hover:border-border-strong'
               }`}
             >
-              ⚠️ High Divergence (≥40)
+              HIGH DIVERGENCE (≥40)
             </button>
           </div>
         </div>
@@ -193,13 +193,16 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
             return (
               <div
                 key={key}
-                className={`border-b border-white/[0.02] last:border-b-0 transition-all duration-300 ${i === 0 ? 'animate-[pulse_2s_ease-in-out_infinite] bg-white/[0.02]' : ''}`}
+                className={`border-b border-border last:border-b-0 transition-all duration-300 group ${i === 0 ? 'animate-[pulse_2s_ease-in-out_infinite] bg-white/[0.02]' : ''}`}
               >
-                <button
-                  onClick={() => toggleExpand(key, e.desk, e.ticker)}
-                  className="w-full flex items-start gap-3 sm:gap-4 p-4 sm:p-5 text-left min-h-[44px] hover:bg-white/[0.03] transition-colors"
-                  style={{ borderLeft: `2px solid ${meta.color}` }}
+                <div 
+                  className="w-full flex flex-col hover:bg-white/[0.03] transition-colors relative"
+                  style={{ borderLeft: `3px solid ${meta.color}` }}
                 >
+                  <button
+                    onClick={() => toggleExpand(key, e.desk, e.ticker)}
+                    className="w-full flex items-start gap-3 sm:gap-4 p-4 sm:p-5 pb-2 text-left min-h-[44px]"
+                  >
                   {/* Timestamp + region — hidden on mobile, shown as col on sm+ */}
                   <div className="hidden sm:block w-28 lg:w-32 shrink-0 space-y-1">
                     <p className="font-mono text-[10px] text-text-tertiary">
@@ -297,7 +300,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                   />
                 </button>
 
-                <div className="px-4 sm:px-5 pb-3 sm:pb-4 flex justify-end">
+                <div className="px-4 sm:px-5 pb-4 flex justify-end">
                   <button
                     type="button"
                     onClick={() => {
@@ -322,7 +325,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                     {e.reasoning_blocks.map((b, j) => (
                       <div
                         key={j}
-                        className="border-l border-border pl-4 py-1"
+                        className="border-l pl-4 py-1"
                         style={{ borderColor: meta.color + '40' }}
                       >
                         <p
@@ -338,6 +341,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                     ))}
                   </div>
                 )}
+                </div>
               </div>
             )
           })

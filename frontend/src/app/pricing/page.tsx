@@ -100,6 +100,14 @@ function TierCard({ tier, name, price, features, highlighted, onSubscribe, isCon
               ? 'Processing…'
               : `Subscribe · ${price} USDC`}
       </button>
+      {price > 0 && (
+        <button
+          onClick={() => {}}
+          className="mt-3 w-full rounded-md py-3 text-sm font-semibold transition-colors border border-border text-text-primary hover:bg-bg-primary"
+        >
+          Pay with Card (Stripe Crypto)
+        </button>
+      )}
     </div>
   )
 }

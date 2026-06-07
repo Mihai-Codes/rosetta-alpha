@@ -16,21 +16,21 @@ const slides = [
     subtitle: 'All Weather Intelligence',
     content:
       'Inspired by Ray Dalio\'s All Weather portfolio strategy, Rosetta Alpha uses five AI agents — each reasoning in their native language — to produce structured investment theses across global markets.',
-    icon: '🌐',
+    icon: '1',
   },
   {
     title: 'How it works',
     subtitle: '5 Agents → Arc Verification',
     content:
       'Each agent analyzes its region (US, China, EU, Japan, Crypto), produces a thesis with confidence scores, then hashes the reasoning trace on Arc L1 for permanent, tamper-proof provenance.',
-    icon: '🔗',
+    icon: '2',
   },
   {
     title: 'Connect your wallet',
     subtitle: 'Arc Testnet is free',
     content:
       'Connect a wallet to stake on predictions, earn USDC rewards, and track your portfolio. Arc Testnet uses free USDC for gas — no real money needed.',
-    icon: '💰',
+    icon: '3',
     isConnectSlide: true,
   },
 ]

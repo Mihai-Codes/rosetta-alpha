@@ -44,14 +44,14 @@ function buildTweetText({
     : ''
 
   // Hook: user just received a signal from Rosetta Alpha
-  let tweet = `🤖 Rosetta Alpha just flagged this:\n\n`
+  let tweet = `[SYSTEM ALERT] Rosetta Alpha flagged:\n\n`
   tweet += `${flagEmoji} ${regionName} • ${direction} $${ticker} — ${pct}% confidence\n`
   if (excerpt) tweet += `"${excerpt}"\n`
   tweet += `\n`
   if (arcHash) {
     const formattedHash = arcHash.startsWith('0x') ? arcHash : `0x${arcHash}`
-    tweet += `📊 Verified on Arc Testnet\n\n`
-    tweet += `🔗 https://testnet.arcscan.app/tx/${formattedHash}\n\n`
+    tweet += `[VERIFIED ON ARC L1]\n\n`
+    tweet += `URL: https://testnet.arcscan.app/tx/${formattedHash}\n\n`
   }
   tweet += `Try it → rosetta-alpha.vercel.app`
 
@@ -68,7 +68,7 @@ function buildTweetText({
  * Example output for US desk, AAPL, LONG, 85%, "Strong earnings momentum...":
  * 🇺🇸 United States: LONG $AAPL — 85%
  * "Strong earnings momentum..."
- * 🔗 https://testnet.arcscan.app/tx/0x9A676e78
+ * URL: https://testnet.arcscan.app/tx/0x9A676e78
  * rosetta-alpha.vercel.app
  */
 

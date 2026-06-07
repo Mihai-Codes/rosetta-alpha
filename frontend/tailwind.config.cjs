@@ -36,7 +36,7 @@ module.exports = {
         amber: '#D82B2B',
         // Regions
         region: {
-          us: '#FFFFFF',
+          us: '#4A90E2',
           cn: '#D82B2B',
           eu: '#888888',
           jp: '#FFD700',
