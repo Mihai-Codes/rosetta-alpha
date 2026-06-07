@@ -64,13 +64,13 @@ export function FeedbackSurvey() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="fixed bottom-6 right-6 z-[9999] w-[420px] max-w-[calc(100vw-3rem)] bg-[#0A0A0A] border border-border-strong solid-panel overflow-hidden shadow-none"
+          className="fixed bottom-6 right-6 z-[9999] w-[420px] max-w-[calc(100vw-3rem)] bg-bg-secondary border border-border-strong solid-panel overflow-hidden shadow-none"
           role="dialog"
           aria-modal="false"
           aria-label="Feedback survey"
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-[#000000] overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-bg-primary overflow-hidden">
             <div className="flex items-center gap-3 pr-2 overflow-hidden">
               <MessageSquareDashed className="w-4 h-4 text-brand-red shrink-0" />
               <h3 className="font-mono text-[9.5px] sm:text-[10px] uppercase tracking-tight text-text-primary whitespace-nowrap overflow-hidden text-ellipsis">
@@ -107,7 +107,7 @@ export function FeedbackSurvey() {
                     onChange={e => setText(e.target.value.slice(0, MAX_CHARS))}
                     placeholder="> Share your thoughts_"
                     rows={3}
-                    className="w-full resize-none bg-[#0A0A0A] border border-border px-3 py-3 text-[11px] font-mono text-text-primary placeholder:text-text-tertiary focus:border-brand-red/60 focus:outline-none transition-colors duration-200 scrollbar-hide"
+                    className="w-full resize-none bg-bg-secondary border border-border px-3 py-3 text-[11px] font-mono text-text-primary placeholder:text-text-tertiary focus:border-brand-red/60 focus:outline-none transition-colors duration-200 scrollbar-hide"
                     aria-label="Feedback response"
                   />
                   {/* Character counter */}

@@ -23,7 +23,7 @@ const REGIME_CONFIG: Record<string, {
 }> = {
   TRENDING: {
     label: 'Trending',
-    color: 'text-[#00FF00]',
+    color: 'text-positive',
     dotColor: '#00FF00',
     bgColor: 'bg-[rgba(45,106,79,0.08)]',
     borderColor: 'border-[rgba(45,106,79,0.25)]',
@@ -31,7 +31,7 @@ const REGIME_CONFIG: Record<string, {
   },
   MEAN_REVERTING: {
     label: 'Mean Reverting',
-    color: 'text-[#FFD700]',
+    color: 'text-warning',
     dotColor: '#FFD700',
     bgColor: 'bg-[rgba(184,134,11,0.08)]',
     borderColor: 'border-[rgba(184,134,11,0.25)]',
@@ -39,7 +39,7 @@ const REGIME_CONFIG: Record<string, {
   },
   CRISIS: {
     label: 'Crisis',
-    color: 'text-[#D82B2B]',
+    color: 'text-brand-red',
     dotColor: '#D82B2B',
     bgColor: 'bg-[rgba(220,20,60,0.08)]',
     borderColor: 'border-[rgba(220,20,60,0.25)]',
@@ -47,7 +47,7 @@ const REGIME_CONFIG: Record<string, {
   },
   UNCERTAIN: {
     label: 'Uncertain',
-    color: 'text-[#888888]',
+    color: 'text-text-secondary',
     dotColor: '#888888',
     bgColor: 'bg-[rgba(123,143,166,0.06)]',
     borderColor: 'border-[rgba(123,143,166,0.20)]',

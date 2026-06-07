@@ -59,15 +59,15 @@ export function DivergenceGauge({ ticker, desks }: DivergenceGaugeProps) {
   
   // Categorize
   let category = 'Consensus'
-  let catColor = 'text-[#00FF00]'
+  let catColor = 'text-positive'
   let catDesc = 'Agora consensus. Regional desks are fully aligned.'
   if (composite >= 30 && composite < 60) {
     category = 'Healthy Debate'
-    catColor = 'text-[#FFD700]'
+    catColor = 'text-warning'
     catDesc = 'Active, healthy desk debate. Diverging signals present.'
   } else if (composite >= 60) {
     category = 'Fragmented'
-    catColor = 'text-[#D82B2B]'
+    catColor = 'text-brand-red'
     catDesc = 'Fragmented narrative. High uncertainty across all regions.'
   }
 
@@ -83,7 +83,7 @@ export function DivergenceGauge({ ticker, desks }: DivergenceGaugeProps) {
   }
 
   return (
-    <div className="border border-white/10 bg-[#0A0A0A] p-6 relative flex flex-col justify-between h-full">
+    <div className="border border-white/10 bg-bg-secondary p-6 relative flex flex-col justify-between h-full">
       <div>
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
@@ -109,11 +109,11 @@ export function DivergenceGauge({ ticker, desks }: DivergenceGaugeProps) {
             <div className="relative w-full max-w-[240px] aspect-[2/1] overflow-hidden flex justify-center mt-2">
               <svg className="w-full h-full" viewBox="0 0 100 50">
                 {/* consensus arc (0-30): 0 to 54 degrees */}
-                <path d="M 10,50 A 40,40 0 0,1 21.72,21.72" fill="none" stroke="#00FF00" strokeWidth="6" />
+                <path d="M 10,50 A 40,40 0 0,1 21.72,21.72" fill="none" stroke="var(--color-positive)" strokeWidth="6" />
                 {/* debate arc (30-60): 54 to 108 degrees */}
-                <path d="M 21.72,21.72 A 40,40 0 0,1 61.26,13.14" fill="none" stroke="#FFD700" strokeWidth="6" />
+                <path d="M 21.72,21.72 A 40,40 0 0,1 61.26,13.14" fill="none" stroke="var(--color-warning)" strokeWidth="6" />
                 {/* fragmented arc (60-100): 108 to 180 degrees */}
-                <path d="M 61.26,13.14 A 40,40 0 0,1 90,50" fill="none" stroke="#D82B2B" strokeWidth="6" />
+                <path d="M 61.26,13.14 A 40,40 0 0,1 90,50" fill="none" stroke="var(--color-negative)" strokeWidth="6" />
                 
                 {/* needle pivot shadow */}
                 <circle cx="50" cy="50" r="4" fill="rgba(0,0,0,0.5)" />
@@ -150,8 +150,8 @@ export function DivergenceGauge({ ticker, desks }: DivergenceGaugeProps) {
           {desks.map(d => {
             const m = getRegionMeta(d.desk)
             let dirColor = 'text-text-tertiary border-white/[0.06]'
-            if (d.direction.toUpperCase() === 'LONG') dirColor = 'text-[#00FF00] border-[#00FF00]/20 bg-[#00FF00]/5'
-            if (d.direction.toUpperCase() === 'SHORT') dirColor = 'text-[#D82B2B] border-[#D82B2B]/20 bg-[#D82B2B]/5'
+            if (d.direction.toUpperCase() === 'LONG') dirColor = 'text-positive border-positive/20 bg-positive/5'
+            if (d.direction.toUpperCase() === 'SHORT') dirColor = 'text-brand-red border-brand-red/20 bg-brand-red/5'
             return (
               <div key={d.desk} className="flex flex-col items-center p-1 border border-white/[0.04] bg-white/[0.01]">
                 <span className="text-xs mb-0.5" title={m.name}>{m.flag}</span>

@@ -48,7 +48,7 @@ export function AllWeatherChart() {
           {QUADRANTS.map((q, i) => (
             <div 
               key={i} 
-              className="border border-white/5 bg-[#0A0A0A] p-4 sm:p-5 transition-colors hover:bg-white/[0.04] flex flex-col justify-between min-h-[140px] rounded-md shadow-lg"
+              className="border border-white/5 bg-bg-secondary p-4 sm:p-5 transition-colors hover:bg-white/[0.04] flex flex-col justify-between min-h-[140px] rounded-md shadow-lg"
               style={{ borderTop: `3px solid ${q.color}` }}
             >
               <div className="flex justify-between items-start mb-3">

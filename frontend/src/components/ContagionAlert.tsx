@@ -36,8 +36,8 @@ function signalLabel(signalType: ContagionAlertData['signal_type']) {
 
 function heatColor(score: number) {
   if (score >= 0.85) return 'bg-brand-red/40 border-brand-red/60 text-brand-red'
-  if (score >= 0.75) return 'bg-[#FFD700]/30 border-[#FFD700]/50 text-[#FFD700]'
-  return 'bg-[#FFD700]/20 border-[#FFD700]/40 text-[#FFD700]'
+  if (score >= 0.75) return 'bg-warning/30 border-warning/50 text-warning'
+  return 'bg-warning/20 border-warning/40 text-warning'
 }
 
 export function ContagionAlert() {
@@ -78,7 +78,7 @@ export function ContagionAlert() {
   if (!alert) return null
 
   return (
-    <div className="border border-[#FFD700]/50 bg-[#0A0A0A] shadow-[0_0_40px_rgba(216,43,43,0.08)]">
+    <div className="border border-warning/50 bg-bg-secondary shadow-[0_0_40px_rgba(216,43,43,0.08)]">
       <div className="flex flex-col gap-3 p-4 sm:flex-row sm:items-start sm:justify-between">
         <button
           type="button"
@@ -86,12 +86,12 @@ export function ContagionAlert() {
           className="flex min-h-[44px] flex-1 items-start gap-3 text-left"
           aria-expanded={expanded}
         >
-          <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center border border-[#FFD700]/50 bg-[#FFD700]/10 text-[#FFD700]">
+          <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center border border-warning/50 bg-warning/10 text-warning">
             <AlertTriangle className="h-4 w-4" />
           </span>
 
           <span className="min-w-0 flex-1">
-            <span className="block font-mono text-[10px] font-bold uppercase tracking-[0.24em] text-[#FFD700]">
+            <span className="block font-mono text-[10px] font-bold uppercase tracking-[0.24em] text-warning">
               Cross-Desk Contagion Alert
             </span>
             <span className="mt-1 block font-display text-base leading-snug text-text-primary sm:text-lg">
@@ -102,7 +102,7 @@ export function ContagionAlert() {
               <span>·</span>
               <span>{alert.origin_desk} → {alert.affected_desks.join(' / ')}</span>
               <span>·</span>
-              <span className="text-[#FFD700]">ρ {alert.correlation_score.toFixed(2)}</span>
+              <span className="text-warning">ρ {alert.correlation_score.toFixed(2)}</span>
             </span>
           </span>
 
@@ -121,7 +121,7 @@ export function ContagionAlert() {
       </div>
 
       {expanded && (
-        <div className="border-t border-[#FFD700]/20 p-4 pt-3">
+        <div className="border-t border-warning/20 p-4 pt-3">
           <div className="grid gap-4 lg:grid-cols-[1.2fr_1fr]">
             <div>
               <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-tertiary">

@@ -23,7 +23,7 @@ export function MarketBoard({ desks }: { desks: DeskProps[] }) {
           </p>
         </div>
         <div className="flex items-center gap-2 px-4 py-2 border border-border text-[10px] font-medium uppercase tracking-widest text-muted-foreground/60 shrink-0">
-          <span className="w-1.5 h-1.5 bg-[#00FF00] rounded-full" />
+          <span className="w-1.5 h-1.5 bg-positive rounded-full" />
           {markets.length} Active
         </div>
       </div>
@@ -75,7 +75,7 @@ export function MarketBoard({ desks }: { desks: DeskProps[] }) {
                     </div>
                   </td>
                   <td className="px-4 sm:px-6 py-4 sm:py-5">
-                    <span className="text-[9px] font-medium uppercase tracking-widest text-[#FFD700] border border-[rgba(201,168,76,0.25)] bg-[rgba(201,168,76,0.05)] px-3 py-1">
+                    <span className="text-[9px] font-medium uppercase tracking-widest text-warning border border-[rgba(201,168,76,0.25)] bg-[rgba(201,168,76,0.05)] px-3 py-1">
                       Pending
                     </span>
                   </td>

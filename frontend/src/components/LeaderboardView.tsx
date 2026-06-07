@@ -145,7 +145,7 @@ export function LeaderboardView() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.07 }}
-            className="bg-[#000000] px-6 py-8 flex flex-col gap-3 hover:bg-[#0A0A0A] border-b-2 border-transparent hover:border-brand-red/50 transition-colors relative group"
+            className="bg-bg-primary px-6 py-8 flex flex-col gap-3 hover:bg-bg-secondary border-b-2 border-transparent hover:border-brand-red/50 transition-colors relative group"
           >
             <div className="absolute top-0 left-0 w-full h-[1px] bg-border group-hover:bg-brand-red/30 transition-colors" />
             <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-text-tertiary">{s.label}</p>
@@ -233,7 +233,7 @@ export function LeaderboardView() {
                       <span className={`font-display text-lg font-bold ${
                         t.rank === 1 ? 'text-accent-gold' :
                         t.rank === 2 ? 'text-text-secondary' :
-                        t.rank === 3 ? 'text-[#FFD700]' :
+                        t.rank === 3 ? 'text-warning' :
                         'text-text-tertiary'
                       }`}>
                         {t.badge ?? `#${t.rank}`}
@@ -302,7 +302,7 @@ export function LeaderboardView() {
                     <span className={`font-display text-xl font-bold ${
                       t.rank === 1 ? 'text-accent-gold' :
                       t.rank === 2 ? 'text-text-secondary' :
-                      t.rank === 3 ? 'text-[#FFD700]' :
+                      t.rank === 3 ? 'text-warning' :
                       'text-text-tertiary'
                     }`}>
                       {t.badge ?? `#${t.rank}`}

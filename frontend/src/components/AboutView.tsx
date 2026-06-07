@@ -31,7 +31,7 @@ export function AboutView() {
           {/* Levitating Ray Dalio Portrait */}
           <div className="relative group w-64 h-64 sm:w-80 sm:h-80 animate-levitate">
             <div className="absolute inset-0 bg-gradient-to-tr from-brand-red to-[#FFD700] opacity-30 blur-2xl group-hover:opacity-60 transition-opacity duration-700" />
-            <div className="absolute inset-0 border border-white/20 bg-[#0A0A0A] shadow-[0_0_40px_rgba(216,43,43,0.3)] z-10 overflow-hidden ">
+            <div className="absolute inset-0 border border-white/20 bg-bg-secondary shadow-[0_0_40px_rgba(216,43,43,0.3)] z-10 overflow-hidden ">
               <img 
                 src="/ray-dalio.webp" 
                 alt="Ray Dalio" 
@@ -41,8 +41,8 @@ export function AboutView() {
             {/* Corner Bracket Accents */}
             <div className="absolute -top-2 -left-2 w-6 h-6 border-t-2 border-l-2 border-brand-red z-20" />
             <div className="absolute -bottom-2 -right-2 w-6 h-6 border-b-2 border-r-2 border-brand-red z-20" />
-            <div className="absolute -top-2 -right-2 w-6 h-6 border-t-2 border-r-2 border-[#FFD700] z-20" />
-            <div className="absolute -bottom-2 -left-2 w-6 h-6 border-b-2 border-l-2 border-[#FFD700] z-20" />
+            <div className="absolute -top-2 -right-2 w-6 h-6 border-t-2 border-r-2 border-warning z-20" />
+            <div className="absolute -bottom-2 -left-2 w-6 h-6 border-b-2 border-l-2 border-warning z-20" />
           </div>
         </div>
       </div>
@@ -59,25 +59,25 @@ export function AboutView() {
 
         <div className="flex flex-col lg:flex-row items-center gap-12 mb-10">
           <div className="relative w-full max-w-sm shrink-0 animate-levitate" style={{ animationDelay: '1.5s' }}>
-            <div className="relative z-10 grid grid-cols-2 grid-rows-2 aspect-square border border-brand-red/40 shadow-[0_10px_40px_rgba(0,0,0,0.8)] rounded-2xl overflow-hidden bg-[#0A0A0A]">
+            <div className="relative z-10 grid grid-cols-2 grid-rows-2 aspect-square border border-brand-red/40 shadow-[0_10px_40px_rgba(0,0,0,0.8)] rounded-2xl overflow-hidden bg-bg-secondary">
               <div className="border-r border-b border-brand-red/30 bg-gradient-to-br from-brand-red/10 to-transparent p-5 flex flex-col justify-between">
                 <span className="text-[10px] uppercase tracking-[0.2em] text-brand-red/60 font-bold">Rising Growth</span>
                 <span className="font-display text-lg sm:text-xl text-text-primary leading-tight">Equities<br/>Commodities</span>
               </div>
               <div className="border-b border-brand-red/30 bg-gradient-to-bl from-[#FFD700]/10 to-transparent p-5 flex flex-col justify-between text-right">
-                <span className="text-[10px] uppercase tracking-[0.2em] text-[#FFD700]/60 font-bold">Falling Growth</span>
+                <span className="text-[10px] uppercase tracking-[0.2em] text-warning/60 font-bold">Falling Growth</span>
                 <span className="font-display text-lg sm:text-xl text-text-primary leading-tight">Nominal Bonds<br/>Cash</span>
               </div>
               <div className="border-r border-brand-red/30 bg-gradient-to-tr from-[#00FF00]/10 to-transparent p-5 flex flex-col justify-between">
                 <span className="font-display text-lg sm:text-xl text-text-primary leading-tight">ILBs<br/>Commodities</span>
-                <span className="text-[10px] uppercase tracking-[0.2em] text-[#00FF00]/60 font-bold">Rising Inflation</span>
+                <span className="text-[10px] uppercase tracking-[0.2em] text-positive/60 font-bold">Rising Inflation</span>
               </div>
               <div className="bg-gradient-to-tl from-[#888888]/10 to-transparent p-5 flex flex-col justify-between text-right">
                 <span className="font-display text-lg sm:text-xl text-text-primary leading-tight">Equities<br/>Nominal Bonds</span>
-                <span className="text-[10px] uppercase tracking-[0.2em] text-[#888888]/60 font-bold">Falling Inflation</span>
+                <span className="text-[10px] uppercase tracking-[0.2em] text-text-secondary/60 font-bold">Falling Inflation</span>
               </div>
               {/* Center crosshair */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full border border-brand-red/40 bg-[#0A0A0A] flex items-center justify-center">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full border border-brand-red/40 bg-bg-secondary flex items-center justify-center">
                 <div className="w-1.5 h-1.5 rounded-full bg-brand-red " />
               </div>
             </div>
@@ -95,7 +95,7 @@ export function AboutView() {
                 { label: 'Rising Inflation', assets: 'ILBs & Commodities', desc: 'Currency devaluation favors inflation-linked bonds and tangible assets.' },
                 { label: 'Falling Inflation', assets: 'Equities & Nominal Bonds', desc: 'Deflationary environments increase real returns on financial capital.' }
               ].map((item, i) => (
-                <div key={i} className="group flex flex-col md:flex-row items-stretch gap-0 p-0 bg-[#0A0A0A] border border-brand-red/20 rounded-none transition-all duration-700 hover:bg-brand-red/[0.05] hover:border-brand-red/40 hover:shadow-[0_0_15px_rgba(216,43,43,0.15)]">
+                <div key={i} className="group flex flex-col md:flex-row items-stretch gap-0 p-0 bg-bg-secondary border border-brand-red/20 rounded-none transition-all duration-700 hover:bg-brand-red/[0.05] hover:border-brand-red/40 hover:shadow-[0_0_15px_rgba(216,43,43,0.15)]">
                   <div className="md:w-[150px] shrink-0 p-4 flex items-center">
                     <p className="text-[10px] uppercase tracking-[0.3em] text-brand-red/50 group-hover:text-brand-red transition-all duration-500 font-bold">{item.label}</p>
                   </div>

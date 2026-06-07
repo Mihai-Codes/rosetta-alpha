@@ -57,14 +57,14 @@ function statusView(status: StepStatus) {
   if (status === 'completed') {
     return {
       Icon: CheckCircle2,
-      className: 'text-[#00FF00]',
+      className: 'text-positive',
       label: 'Completed',
     }
   }
   if (status === 'failed') {
     return {
       Icon: XCircle,
-      className: 'text-[#D82B2B]',
+      className: 'text-brand-red',
       label: 'Failed',
     }
   }
@@ -183,7 +183,7 @@ export function ProvenanceChain({
   if (error || !data) {
     return (
       <div className={`solid-panel border border-white/10 p-5 ${className}`}>
-        <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-[#D82B2B]">
+        <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-brand-red">
           <XCircle className="w-4 h-4" />
           {error ?? 'Unable to load provenance'}
         </div>

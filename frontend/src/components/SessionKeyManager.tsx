@@ -102,7 +102,7 @@ function PillButton({
       className="px-3 py-1.5 text-[10px] font-medium uppercase tracking-[0.15em] border transition-all duration-200"
       style={
         selected
-          ? { color: '#0A0A0A', background: accent, borderColor: accent }
+          ? { color: 'var(--color-bg-primary)', background: accent, borderColor: accent }
           : { color: accent, background: 'transparent', borderColor: accent + '50' }
       }
     >
@@ -139,8 +139,8 @@ function SetupPanel({
       {/* Header */}
       <div>
         <div className="flex items-center gap-2 mb-1.5">
-          <Zap className="w-3.5 h-3.5" style={{ color: '#FFD700' }} />
-          <p className="text-[10px] font-medium uppercase tracking-[0.25em]" style={{ color: '#FFD700' }}>
+          <Zap className="w-3.5 h-3.5 text-warning" />
+          <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-warning">
             Enable One-Click Payments
           </p>
         </div>
@@ -184,7 +184,7 @@ function SetupPanel({
       </div>
 
       {/* What happens info */}
-      <div className="border border-[#FFD700]/20 bg-[#FFD700]/5 p-3 text-[10px] text-text-tertiary leading-relaxed space-y-1">
+      <div className="border border-warning/20 bg-warning/5 p-3 text-[10px] text-text-tertiary leading-relaxed space-y-1">
         <p>
           <span className="text-text-secondary">Step 1:</span> Sign EIP-712 authorization (no gas)
         </p>
@@ -192,7 +192,7 @@ function SetupPanel({
           <span className="text-text-secondary">Step 2:</span> Send {budgetUsdc} USDC to session wallet
         </p>
         <p>
-          <span className="text-[#FFD700]">After that:</span> All payments are instant — no popups
+          <span className="text-warning">After that:</span> All payments are instant — no popups
         </p>
       </div>
 
@@ -209,11 +209,7 @@ function SetupPanel({
         type="button"
         onClick={handleApprove}
         disabled={isApproving}
-        className="w-full flex items-center justify-center gap-2 py-2.5 px-4 text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
-        style={{
-          background: isApproving ? '#FFD70080' : '#FFD700',
-          color: '#0A0A0A',
-        }}
+        className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed text-bg-primary ${isApproving ? 'bg-warning/50' : 'bg-warning'}`}
       >
         {isApproving ? (
           <>
@@ -270,14 +266,14 @@ function ActivePanel({
         <div className="flex items-center justify-between mb-1.5">
           <p className="text-[9px] uppercase tracking-[0.2em] text-text-tertiary">Budget Used</p>
           <p className="font-mono text-[10px] text-text-secondary">
-            <span style={{ color: progressPct > 80 ? '#FFD700' : '#FFD700' }}>
+            <span className="text-warning">
               {spentUsdc.toFixed(4)}
             </span>
             <span className="text-text-tertiary"> / {maxBudget.toFixed(1)} USDC</span>
           </p>
         </div>
         {/* Progress bar */}
-        <div className="h-1 bg-[#0A0A0A] rounded-full overflow-hidden">
+        <div className="h-1 bg-bg-secondary rounded-full overflow-hidden">
           <div
             className="h-full rounded-full transition-all duration-500"
             style={{
@@ -353,8 +349,7 @@ function ExpiredPanel({
         type="button"
         onClick={onRenew}
         disabled={isApproving}
-        className="w-full flex items-center justify-center gap-2 py-2.5 px-4 text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-200 disabled:opacity-60"
-        style={{ background: '#FFD700', color: '#0A0A0A' }}
+        className="w-full flex items-center justify-center gap-2 py-2.5 px-4 text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-200 disabled:opacity-60 bg-warning text-bg-primary"
       >
         {isApproving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Zap className="w-3 h-3" />}
         Renew Session
@@ -422,11 +417,10 @@ export function SessionKeyManager({ variant = 'panel', onClose }: SessionKeyMana
 
   const content = (
     <div
-      className="relative"
-      style={{ background: '#0A0A0A', border: '1px solid rgba(201,168,76,0.15)' }}
+      className="relative bg-bg-secondary border border-warning/15"
     >
       {/* Gold top accent line */}
-      <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, #FFD700, transparent)' }} />
+      <div className="h-[2px] w-full bg-gradient-to-r from-warning to-transparent" />
 
       <div className="p-4 sm:p-5">
         {/* Header label + close button (modal only) */}

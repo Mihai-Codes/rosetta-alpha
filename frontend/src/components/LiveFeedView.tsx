@@ -253,7 +253,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                       <div className="flex justify-between items-end mb-1">
                         <span className="text-[10px] font-bold uppercase tracking-wider text-text-tertiary">Model Conviction</span>
                       </div>
-                      <div className="w-full bg-[#0A0A0A] h-2 rounded-full overflow-hidden border border-[#888888] shadow-inner">
+                      <div className="w-full bg-bg-secondary h-2 rounded-full overflow-hidden border border-text-secondary shadow-inner">
                         <div className="bg-gradient-to-r from-[#D82B2B] to-[#D82B2B] h-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(192,57,43,0.8)]" style={{ width: `${(e.confidence * 100).toFixed(0)}%` }} />
                       </div>
                     </div>
@@ -267,7 +267,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                         href={`https://arcscan.app/tx/${e.arc_tx}`}
                         target="_blank" rel="noopener noreferrer"
                         
-                        className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium text-gray-300 bg-[#0A0A0A] border border-[#888888] rounded hover:bg-[#0A0A0A] transition-colors font-mono"
+                        className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium text-gray-300 bg-bg-secondary border border-text-secondary rounded hover:bg-bg-secondary transition-colors font-mono"
                         onClick={(event) => event.stopPropagation()}
                       >
                         Arc L1 <ExternalLink size={10} />
@@ -282,7 +282,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                         href={`https://gateway.pinata.cloud/ipfs/${e.ipfs_thesis_cid}`}
                         target="_blank" rel="noopener noreferrer"
                         
-                        className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium text-gray-300 bg-[#0A0A0A] border border-[#888888] rounded hover:bg-[#0A0A0A] transition-colors font-mono"
+                        className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium text-gray-300 bg-bg-secondary border border-text-secondary rounded hover:bg-bg-secondary transition-colors font-mono"
                         onClick={(event) => event.stopPropagation()}
                        >
                          <Database size={10} /> IPFS

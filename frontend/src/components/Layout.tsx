@@ -214,7 +214,7 @@ export function Layout({ children, activeTab }: LayoutProps) {
             {isSignedIn ? (
               <button
                 onClick={handleSignOut}
-                className="mt-4 flex items-center justify-center gap-2 px-5 py-4 min-h-[44px] border border-border bg-[#0A0A0A] hover:border-brand-red/50 text-text-secondary hover:text-brand-red text-[10px] font-medium uppercase tracking-[0.2em] transition-all duration-300"
+                className="mt-4 flex items-center justify-center gap-2 px-5 py-4 min-h-[44px] border border-border bg-bg-secondary hover:border-brand-red/50 text-text-secondary hover:text-brand-red text-[10px] font-medium uppercase tracking-[0.2em] transition-all duration-300"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 Sign Out

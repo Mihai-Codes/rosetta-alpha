@@ -93,7 +93,7 @@ export function OnboardingModal({ isSignedIn }: OnboardingModalProps) {
       />
 
       {/* Modal */}
-      <div className="relative z-10 w-full max-w-md mx-4 bg-[#0A0A0A] border border-[#0A0A0A] rounded-2xl overflow-hidden shadow-2xl">
+      <div className="relative z-10 w-full max-w-md mx-4 bg-bg-secondary border border-border rounded-2xl overflow-hidden shadow-2xl">
         {/* Progress dots */}
         <div className="flex items-center justify-center gap-2 pt-6">
           {slides.map((_, i) => (

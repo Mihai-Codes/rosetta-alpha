@@ -23,10 +23,10 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
   const isShort = desk.direction === 'SHORT'
 
   const directionColor = isLong
-    ? 'text-[#00FF00]'
+    ? 'text-positive'
     : isShort
-    ? 'text-[#D82B2B]'
-    : 'text-[#888888]'
+    ? 'text-brand-red'
+    : 'text-text-secondary'
 
   const directionBg = isLong
     ? 'bg-[rgba(82,183,136,0.06)] border-[rgba(82,183,136,0.18)]'
@@ -34,7 +34,7 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
     ? 'bg-[rgba(192,57,43,0.06)] border-[rgba(192,57,43,0.18)]'
     : 'bg-[rgba(123,143,166,0.06)] border-[rgba(123,143,166,0.18)]'
 
-  const barColor = isLong ? 'bg-[#00FF00]' : isShort ? 'bg-[#D82B2B]' : 'bg-muted-foreground/40'
+  const barColor = isLong ? 'bg-positive' : isShort ? 'bg-brand-red' : 'bg-muted-foreground/40'
 
   return (
     <>
@@ -66,7 +66,7 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
           <div className="flex items-center gap-2 shrink-0 mt-1 flex-wrap justify-end">
             {desk.debate_summary && (
               <span
-                className="px-2 py-1 border border-[#FFD700]/30 bg-[#FFD700]/10 text-[#FFD700] text-[9px] font-bold uppercase tracking-widest cursor-help"
+                className="px-2 py-1 border border-warning/30 bg-warning/10 text-warning text-[9px] font-bold uppercase tracking-widest cursor-help"
                 title={desk.debate_summary}
               >
                 ⚔️ Debated
@@ -123,7 +123,7 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3 border-t border-border/50 bg-[#0A0A0A] flex items-center justify-between">
+        <div className="px-6 py-3 border-t border-border/50 bg-bg-secondary flex items-center justify-between">
           {desk.ipfs_thesis_cid && desk.ipfs_thesis_cid.length > 20 ? (
             <a
               href={desk.storacha_url || `https://w3s.link/ipfs/${desk.ipfs_thesis_cid}`}

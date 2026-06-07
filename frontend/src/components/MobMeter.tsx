@@ -21,10 +21,10 @@ interface MobMeterData {
 }
 
 function categoryColor(score: number) {
-  if (score < 30) return 'text-[#00FF00]'
-  if (score < 60) return 'text-[#FFD700]'
-  if (score < 80) return 'text-[#FFD700]'
-  return 'text-[#D82B2B]'
+  if (score < 30) return 'text-positive'
+  if (score < 60) return 'text-warning'
+  if (score < 80) return 'text-warning'
+  return 'text-brand-red'
 }
 
 function categoryDescription(score: number) {
@@ -79,7 +79,7 @@ export function MobMeter({ ticker, compact = false }: MobMeterProps) {
   const fillHeight = useMemo(() => `${Math.max(0, Math.min(100, score))}%`, [score])
 
   return (
-    <div className={`border border-white/10 bg-[#0A0A0A] relative overflow-hidden ${compact ? 'p-4' : 'p-6'}`}>
+    <div className={`border border-white/10 bg-bg-secondary relative overflow-hidden ${compact ? 'p-4' : 'p-6'}`}>
       {isMob && <div className="absolute inset-0 bg-brand-red/5 animate-pulse pointer-events-none" />}
 
       <div className="relative z-10 flex items-start justify-between gap-4 mb-5">
@@ -101,7 +101,7 @@ export function MobMeter({ ticker, compact = false }: MobMeterProps) {
         </div>
       ) : (
         <div className={`relative z-10 flex ${compact ? 'gap-4' : 'gap-6'} items-center`}>
-          <div className="relative h-44 w-12 shrink-0 border border-white/10 bg-[#000000] rounded-full overflow-hidden">
+          <div className="relative h-44 w-12 shrink-0 border border-white/10 bg-bg-primary rounded-full overflow-hidden">
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#00FF00] via-[#FFD700] to-[#D82B2B] transition-all duration-1000 ease-out" style={{ height: fillHeight }} />
             <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
             {[0, 25, 50, 75, 100].map(mark => (

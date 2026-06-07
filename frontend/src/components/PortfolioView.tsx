@@ -22,9 +22,9 @@ export function PortfolioView({ desks }: { desks: DeskProps[] }) {
   const displaySignal = netSignal > 0.1 ? 'LONG' : netSignal < -0.1 ? 'SHORT' : 'NEUTRAL'
 
   const signalColor =
-    displaySignal === 'LONG' ? 'text-[#00FF00]' :
-    displaySignal === 'SHORT' ? 'text-[#D82B2B]' :
-    'text-[#888888]'
+    displaySignal === 'LONG' ? 'text-positive' :
+    displaySignal === 'SHORT' ? 'text-brand-red' :
+    'text-text-secondary'
 
   return (
     <div className="space-y-10">
@@ -120,7 +120,7 @@ export function PortfolioView({ desks }: { desks: DeskProps[] }) {
           <span className="text-right">Conviction</span>
         </div>
         {desks.map(d => {
-          const col = d.direction === 'LONG' ? 'text-[#00FF00]' : d.direction === 'SHORT' ? 'text-[#D82B2B]' : 'text-[#888888]'
+          const col = d.direction === 'LONG' ? 'text-positive' : d.direction === 'SHORT' ? 'text-brand-red' : 'text-text-secondary'
           return (
             <div key={d.ticker} className="grid grid-cols-4 px-4 sm:px-6 py-3 sm:py-4 hover:bg-accent/20 transition-colors">
               <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground/60">{d.desk.toUpperCase()}</span>

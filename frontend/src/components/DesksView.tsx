@@ -72,7 +72,7 @@ function PremiumPaywall() {
   return (
     <div data-testid="thesis-blur-gate" className="absolute inset-0 z-20 flex flex-col justify-end pt-32 bg-gradient-to-t from-bg-primary via-bg-primary/95 to-transparent">
       {/* Brutalist Redaction Overlay */}
-      <div className="relative z-30 w-full max-w-md mx-auto mb-12 sm:mb-20 text-center border-t border-b sm:border border-white/10 bg-[#0A0A0A]/90 backdrop-blur-md p-8 sm:shadow-2xl">
+      <div className="relative z-30 w-full max-w-md mx-auto mb-12 sm:mb-20 text-center border-t border-b sm:border border-white/10 bg-bg-secondary/90 backdrop-blur-md p-8 sm:shadow-2xl">
         <div className="flex justify-center mb-5">
           <div className="w-12 h-12 border border-brand-red/30 bg-brand-red/5 flex items-center justify-center  rounded-none">
             <Lock className="w-5 h-5 text-brand-red" />
@@ -183,7 +183,7 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
 
         {/* Hide chart on tablet to give thesis card room, show on desktop */}
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }} className="hidden lg:flex flex-col w-[300px] xl:w-[320px] shrink-0 solid-panel rounded-none border overflow-hidden">
-          <div className="flex p-2 border-b border-border/20 gap-2 bg-[#0A0A0A]">
+          <div className="flex p-2 border-b border-border/20 gap-2 bg-bg-secondary">
             <button onClick={() => setChartView('circle')} className={`flex-1 px-2 py-1.5 text-[9px] uppercase tracking-wider border ${chartView === 'circle' ? 'border-brand-red text-brand-red bg-brand-red/10' : 'border-border text-text-tertiary hover:text-text-primary'}`}>Circle View</button>
             <button onClick={() => setChartView('ellipse')} className={`flex-1 px-2 py-1.5 text-[9px] uppercase tracking-wider border ${chartView === 'ellipse' ? 'border-brand-red text-brand-red bg-brand-red/10' : 'border-border text-text-tertiary hover:text-text-primary'}`}>Ellipse View</button>
           </div>
@@ -195,7 +195,7 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
       
       {/* Chart below on tablet (md to lg) */}
       <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }} className="hidden md:block lg:hidden w-full solid-panel rounded-none border overflow-hidden mt-2">
-        <div className="flex p-2 border-b border-border/20 gap-2 bg-[#0A0A0A]">
+        <div className="flex p-2 border-b border-border/20 gap-2 bg-bg-secondary">
           <button onClick={() => setChartView('circle')} className={`px-4 py-1.5 text-[10px] uppercase tracking-wider border ${chartView === 'circle' ? 'border-brand-red text-brand-red bg-brand-red/10' : 'border-border text-text-tertiary hover:text-text-primary'}`}>Circle View</button>
           <button onClick={() => setChartView('ellipse')} className={`px-4 py-1.5 text-[10px] uppercase tracking-wider border ${chartView === 'ellipse' ? 'border-brand-red text-brand-red bg-brand-red/10' : 'border-border text-text-tertiary hover:text-text-primary'}`}>Ellipse View</button>
         </div>

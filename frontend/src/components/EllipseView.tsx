@@ -305,7 +305,7 @@ export function EllipseView() {
 
   if (!mounted || !viz) {
     return (
-      <div className="w-full bg-[#000000] font-sans h-full flex flex-col justify-center relative min-h-[400px]">
+      <div className="w-full bg-bg-primary font-sans h-full flex flex-col justify-center relative min-h-[400px]">
         <div className="flex items-start justify-between mb-4 px-4 pt-4 sm:px-6 shrink-0">
           <div>
             <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary mb-2">Orbit Framework</p>
@@ -332,7 +332,7 @@ export function EllipseView() {
   }
 
   return (
-    <div className="w-full bg-[#000000] font-sans h-full flex flex-col justify-center relative">
+    <div className="w-full bg-bg-primary font-sans h-full flex flex-col justify-center relative">
       <div className="flex items-start justify-between mb-4 px-4 pt-4 sm:px-6 shrink-0">
         <div>
           <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary mb-2">Orbit Framework</p>
@@ -357,23 +357,23 @@ export function EllipseView() {
             {renderGridLine(-viz.yMax/2, `-${(viz.yMax/2).toFixed(1)}%`)}
 
             {/* Path */}
-            <path d={viz.pathData} fill="none" stroke="#FFFFFF" strokeWidth="2" strokeOpacity="0.8" />
+            <path d={viz.pathData} fill="none" stroke="var(--color-text-primary)" strokeWidth="2" strokeOpacity="0.8" />
             
             {/* Ellipse Fit */}
             {viz.ellipseParams && (
               <g transform={`rotate(${viz.ellipseParams.rotation} ${viz.ellipseParams.cx} ${viz.ellipseParams.cy})`}>
-                <ellipse cx={viz.ellipseParams.cx} cy={viz.ellipseParams.cy} rx={viz.ellipseParams.rx} ry={viz.ellipseParams.ry} fill="none" stroke="#D82B2B" strokeWidth="2" strokeOpacity="0.3" />
-                <ellipse cx={viz.ellipseParams.cx} cy={viz.ellipseParams.cy} rx={viz.ellipseParams.rx} ry={viz.ellipseParams.ry} fill="#D82B2B" fillOpacity="0.05" />
+                <ellipse cx={viz.ellipseParams.cx} cy={viz.ellipseParams.cy} rx={viz.ellipseParams.rx} ry={viz.ellipseParams.ry} fill="none" stroke="var(--color-brand-red)" strokeWidth="2" strokeOpacity="0.3" />
+                <ellipse cx={viz.ellipseParams.cx} cy={viz.ellipseParams.cy} rx={viz.ellipseParams.rx} ry={viz.ellipseParams.ry} fill="var(--color-brand-red)" fillOpacity="0.05" />
               </g>
             )}
             
             {/* Foci */}
             {viz.foci1 && viz.foci2 && (
               <>
-                <circle cx={viz.foci1.x} cy={viz.foci1.y} r="3" fill="#D82B2B" opacity="0.6" />
-                <circle cx={viz.foci2.x} cy={viz.foci2.y} r="3" fill="#D82B2B" opacity="0.6" />
-                <text x={viz.foci1.x} y={viz.foci1.y + 12} fill="#D82B2B" fontSize="9" textAnchor="middle" opacity="0.8">F1</text>
-                <text x={viz.foci2.x} y={viz.foci2.y + 12} fill="#D82B2B" fontSize="9" textAnchor="middle" opacity="0.8">F2</text>
+                <circle cx={viz.foci1.x} cy={viz.foci1.y} r="3" fill="var(--color-brand-red)" opacity="0.6" />
+                <circle cx={viz.foci2.x} cy={viz.foci2.y} r="3" fill="var(--color-brand-red)" opacity="0.6" />
+                <text x={viz.foci1.x} y={viz.foci1.y + 12} fill="var(--color-brand-red)" fontSize="9" textAnchor="middle" opacity="0.8">F1</text>
+                <text x={viz.foci2.x} y={viz.foci2.y + 12} fill="var(--color-brand-red)" fontSize="9" textAnchor="middle" opacity="0.8">F2</text>
               </>
             )}
 
@@ -396,8 +396,8 @@ export function EllipseView() {
             })}
 
             {/* Latest Point Fixed Overlay */}
-            <circle cx={viz.getX(viz.latestPoint.day)} cy={viz.getY(viz.latestPoint.dev)} r="6" fill="#D82B2B" className="animate-pulse pointer-events-none" />
-            <circle cx={viz.getX(viz.latestPoint.day)} cy={viz.getY(viz.latestPoint.dev)} r="3" fill="#FFFFFF" className="pointer-events-none" />
+            <circle cx={viz.getX(viz.latestPoint.day)} cy={viz.getY(viz.latestPoint.dev)} r="6" fill="var(--color-brand-red)" className="animate-pulse pointer-events-none" />
+            <circle cx={viz.getX(viz.latestPoint.day)} cy={viz.getY(viz.latestPoint.dev)} r="3" fill="var(--color-text-primary)" className="pointer-events-none" />
           </svg>
 
           {/* Dynamic Boundary-Aware Tooltip */}

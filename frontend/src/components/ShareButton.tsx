@@ -157,15 +157,14 @@ export function ShareButton(props: ShareButtonProps) {
       {open && (
         <div
           data-testid="share-modal"
-          className={`absolute z-50 w-72 rounded-lg overflow-hidden border border-[#FFD700]/40 shadow-[0_0_20px_rgba(201,168,76,0.1),_0_8px_32px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-200 max-h-[85vh] overflow-y-auto ${
+          className={`absolute z-50 w-72 rounded-lg overflow-hidden border border-warning/40 shadow-[0_0_20px_rgba(201,168,76,0.1),_0_8px_32px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-200 max-h-[85vh] overflow-y-auto ${
             modalPosition === 'above'
               ? 'bottom-full right-0 mb-2 origin-bottom-right slide-in-from-bottom-2'
               : 'top-full right-0 mt-2 origin-top-right slide-in-from-top-2'
-          }`}
-          style={{ background: '#0A0A0A' }}
+          } bg-bg-secondary`}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#FFD700]/20 bg-[#0A0A0A]">
+          <div className="flex items-center justify-between px-4 py-2.5 border-b border-warning/20 bg-bg-secondary">
             <span className="text-[9px] uppercase tracking-[0.25em] text-text-tertiary font-medium">
               Share Thesis
             </span>
@@ -179,22 +178,22 @@ export function ShareButton(props: ShareButtonProps) {
           </div>
 
           {/* Tweet preview */}
-          <div className="px-4 py-3 border-b border-[#FFD700]/10 bg-black/20">
-            <p data-testid="tweet-preview" className="text-[11px] text-[#FFFFFF]/80 font-mono leading-normal tracking-tight line-clamp-5 whitespace-pre-wrap break-all">
+          <div className="px-4 py-3 border-b border-warning/10 bg-black/20">
+            <p data-testid="tweet-preview" className="text-[11px] text-text-primary/80 font-mono leading-normal tracking-tight line-clamp-5 whitespace-pre-wrap break-all">
               {tweetText.length > 200 ? tweetText.slice(0, 197) + '…' : tweetText}
             </p>
           </div>
 
           {/* Actions — min touch targets for mobile */}
-          <div className="flex flex-col bg-[#0A0A0A]">
+          <div className="flex flex-col bg-bg-secondary">
             <a
               href={tweetUrl}
               target="_blank" rel="noopener noreferrer"
               
               onClick={() => { setOpen(false); posthog.capture('thesis_share_twitter_clicked', { region: props.region, ticker: props.ticker, direction: props.direction }) }}
-              className="flex items-center gap-3 px-4 py-3.5 min-h-[48px] text-[11px] font-medium text-text-secondary hover:text-[#FFFFFF] hover:bg-[#FFFFFF]/10 transition-colors group"
+              className="flex items-center gap-3 px-4 py-3.5 min-h-[48px] text-[11px] font-medium text-text-secondary hover:text-text-primary hover:bg-white/10 transition-colors group"
             >
-              <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0 text-[#FFFFFF] opacity-80 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0 text-text-primary opacity-80 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M4 4l11.733 16H20L8.267 4z" />
                 <path d="M4 20l6.768-6.768M20 4l-6.768 6.768" />
               </svg>
@@ -202,7 +201,7 @@ export function ShareButton(props: ShareButtonProps) {
             </a>
             <button
               onClick={handleCopy}
-              className="flex items-center gap-3 px-4 py-3.5 min-h-[48px] text-[11px] font-medium text-text-secondary hover:text-[#FFD700] hover:bg-[#FFD700]/10 transition-colors border-t border-[#FFD700]/10"
+              className="flex items-center gap-3 px-4 py-3.5 min-h-[48px] text-[11px] font-medium text-text-secondary hover:text-warning hover:bg-warning/10 transition-colors border-t border-warning/10"
             >
               {copied ? (
                 <>

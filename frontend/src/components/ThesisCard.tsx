@@ -296,7 +296,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
               </p>
               {desk.debate_summary && (
                 <span
-                  className="px-2 py-0.5 border border-[#FFD700]/40 bg-[#FFD700]/10 text-[#FFD700] text-[8px] font-bold uppercase tracking-[0.2em] rounded cursor-help"
+                  className="px-2 py-0.5 border border-warning/40 bg-warning/10 text-warning text-[8px] font-bold uppercase tracking-[0.2em] rounded cursor-help"
                   title={desk.debate_summary}
                 >
                   ⚔️ Debated
@@ -333,7 +333,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
       </header>
 
       {/* Reasoning chain */}
-      <section className="px-4 sm:px-8 py-5 sm:py-7 bg-[#0A0A0A]">
+      <section className="px-4 sm:px-8 py-5 sm:py-7 bg-bg-secondary">
         <div className="flex items-center justify-between mb-4 sm:mb-6">
           <div className="flex items-center gap-3">
             <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary">
@@ -360,8 +360,8 @@ export function ThesisCard({ desk }: ThesisCardProps) {
         </div>
 
         {desk.debate_summary && (
-          <div className="mb-5 border border-[#FFD700]/20 bg-[#FFD700]/5 px-4 py-3">
-            <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-[#FFD700] mb-1">
+          <div className="mb-5 border border-warning/20 bg-warning/5 px-4 py-3">
+            <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-warning mb-1">
               ⚔️ Debate Summary
             </p>
             <p className="text-xs sm:text-sm text-text-secondary font-light leading-relaxed">
@@ -385,9 +385,9 @@ export function ThesisCard({ desk }: ThesisCardProps) {
 
             {/* Unlock gate — shown when locked and there are more blocks */}
             {!unlocked && desk.reasoning_blocks.length > 1 && (
-              <div className="mt-6 border border-[#FFD700]/20 bg-[#FFD700]/5 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="mt-6 border border-warning/20 bg-warning/5 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div>
-                  <p className="text-[10px] font-medium uppercase tracking-[0.15em] mb-0.5" style={{ color: '#FFD700' }}>
+                  <p className="text-[10px] font-medium uppercase tracking-[0.15em] mb-0.5 text-warning">
                     🔓 Unlock full reasoning — 0.001 USDC
                   </p>
                   <p className="text-[10px] text-text-tertiary">
@@ -398,8 +398,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
                   type="button"
                   onClick={handleUnlock}
                   disabled={unlocking}
-                  className="shrink-0 flex items-center gap-1.5 px-3 py-2 text-[9px] font-bold uppercase tracking-[0.2em] transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
-                  style={{ background: '#FFD700', color: '#0A0A0A' }}
+                  className="shrink-0 flex items-center gap-1.5 px-3 py-2 text-[9px] font-bold uppercase tracking-[0.2em] transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed bg-warning text-bg-secondary"
                 >
                   {unlocking
                     ? <><Loader2 className="w-3 h-3 animate-spin" />Paying…</>
@@ -470,7 +469,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
       ) : null}
 
       {/* Market question */}
-      <section className="px-4 sm:px-8 py-5 sm:py-6 border-t border-border bg-[#0A0A0A]">
+      <section className="px-4 sm:px-8 py-5 sm:py-6 border-t border-border bg-bg-secondary">
         <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary mb-3">
           Prediction Market Question
         </p>
@@ -480,7 +479,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
       </section>
 
       {/* Footer: provenance & actions */}
-      <footer className="px-4 sm:px-6 py-4 border-t border-border flex flex-col gap-4 mt-auto bg-[#0A0A0A]">
+      <footer className="px-4 sm:px-6 py-4 border-t border-border flex flex-col gap-4 mt-auto bg-bg-secondary">
         {/* Top Row: IPFS & Arc */}
         <div className="flex flex-row items-center justify-between w-full">
           {desk.ipfs_thesis_cid && desk.ipfs_thesis_cid !== 'bafkrei...' && (

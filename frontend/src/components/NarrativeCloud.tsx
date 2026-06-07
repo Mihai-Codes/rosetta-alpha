@@ -145,7 +145,7 @@ export function NarrativeCloud({ narratives, ticker }: NarrativeCloudProps) {
                     cy={circle.y}
                     r={circle.r + 4}
                     fill="none"
-                    stroke="#FFD700"
+                    stroke="var(--color-warning)"
                     strokeWidth={2}
                     strokeDasharray="4 2"
                     opacity={0.7}

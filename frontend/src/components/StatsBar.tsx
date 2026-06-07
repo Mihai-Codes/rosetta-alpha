@@ -99,15 +99,12 @@ export function StatsBar({ stats }: StatsBarProps) {
       viewport={{ once: true }}
       transition={{ duration: 1, delay: 0.7 }}
       data-testid="stats-ticker"
-      className="w-full border-y border-white/[0.05] bg-[#0A0A0A] py-4 sm:py-5 overflow-hidden"
+      className="w-full border-y border-white/[0.05] bg-bg-secondary py-4 sm:py-5 overflow-hidden"
     >
       <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 flex flex-wrap items-center justify-center gap-x-6 sm:gap-x-12 gap-y-4">
         {stats.map((stat, i) => (
           <div key={i} className="flex items-center gap-2 sm:gap-3">
-            <span
-              className="text-lg sm:text-xl font-bold leading-none"
-              style={{ fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace", color: '#FFD700' }}
-            >
+            <span className="text-lg sm:text-xl font-bold leading-none font-mono text-warning">
               <CountUpNumber
                 target={stat.target}
                 prefix={stat.prefix}

@@ -102,12 +102,12 @@ function OptionButton({
 
   if (revealed) {
     if (correct) {
-      borderClass = 'border-[#00FF00]'
-      bgClass = 'bg-[#00FF00]/10'
+      borderClass = 'border-positive'
+      bgClass = 'bg-positive/10'
       textClass = 'text-positive'
     } else if (selected && !correct) {
-      borderClass = 'border-[#D82B2B]'
-      bgClass = 'bg-[#D82B2B]/10'
+      borderClass = 'border-brand-red'
+      bgClass = 'bg-brand-red/10'
       textClass = 'text-negative'
     } else {
       borderClass = 'border-border opacity-40'
@@ -138,9 +138,9 @@ function OptionButton({
       <span
         className={`shrink-0 mt-0 w-6 h-6 rounded flex items-center justify-center text-[10px] font-bold border transition-colors
           ${revealed && correct
-            ? 'border-[#00FF00] text-positive bg-[#00FF00]/15'
+            ? 'border-positive text-positive bg-positive/15'
             : revealed && selected && !correct
-            ? 'border-[#D82B2B] text-negative bg-[#D82B2B]/15'
+            ? 'border-brand-red text-negative bg-brand-red/15'
             : selected
             ? 'border-accent-gold text-accent-gold bg-accent-gold/15'
             : 'border-border-strong text-text-tertiary'
@@ -208,8 +208,8 @@ function ResultsScreen({
       {perfect ? (
         <div className="space-y-4">
           {/* Gold badge */}
-          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-[#FFD700] bg-[#FFD700]/10">
-            <span className="w-2 h-2 rounded-full bg-[#FFD700] " />
+          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-warning bg-warning/10">
+            <span className="w-2 h-2 rounded-full bg-warning " />
             <span
               className="text-[10px] font-bold uppercase tracking-[0.25em]"
               style={{ color: GOLD }}
@@ -567,7 +567,7 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-3">
                 <button
                   onClick={sendClaimTx}
-                  className="flex-1 py-3 rounded-xl bg-[#FFD700] text-bg-primary text-[10px] font-bold uppercase tracking-[0.25em] hover:brightness-110 transition-all duration-200"
+                  className="flex-1 py-3 rounded-xl bg-warning text-bg-primary text-[10px] font-bold uppercase tracking-[0.25em] hover:brightness-110 transition-all duration-200"
                 >
                   Claim USDC Reward on Arc
                 </button>
@@ -619,7 +619,7 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
 
             {/* Error */}
             {claimError && (
-              <div className="rounded-xl border border-[#D82B2B]/40 bg-[#D82B2B]/10 px-4 py-3">
+              <div className="rounded-xl border border-brand-red/40 bg-brand-red/10 px-4 py-3">
                 <p className="text-[10px] text-negative">{claimError}</p>
                 <button
                   onClick={sendClaimTx}
@@ -728,8 +728,8 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
                 <div
                   className={`mx-6 mb-4 px-4 py-3 rounded-xl text-[10px] uppercase tracking-[0.15em] font-medium border ${
                     selected === validQ.correctIndex
-                      ? 'bg-[#00FF00]/10 border-[#00FF00]/30 text-positive'
-                      : 'bg-[#D82B2B]/10 border-[#D82B2B]/30 text-negative'
+                      ? 'bg-positive/10 border-positive/30 text-positive'
+                      : 'bg-brand-red/10 border-brand-red/30 text-negative'
                   }`}
                 >
                   {selected === validQ.correctIndex

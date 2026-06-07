@@ -15,6 +15,9 @@ function truncateAddress(address: string): string {
 }
 
 export function WalletButton() {
+  const [mounted, setMounted] = React.useState(false)
+  React.useEffect(() => setMounted(true), [])
+
   const { address, isConnected, chainId, connector } = useAccount()
   const { disconnectAsync } = useDisconnect()
   const connectors = useConnectors()
@@ -163,11 +166,24 @@ export function WalletButton() {
     }
   }
 
+  // Prevent hydration mismatch by rendering a fallback until client mounts
+  if (!mounted) {
+    return (
+      <button
+        className="flex items-center gap-2 px-5 py-2 solid-panel rounded-full text-text-primary text-[10px] font-medium uppercase tracking-[0.2em] transition-all duration-300 border border-border opacity-50 cursor-default"
+      >
+        <span className="w-1.5 h-1.5 rounded-full bg-border-strong" />
+        <span className="hidden sm:inline">Wallet</span>
+        <span className="sm:hidden">...</span>
+      </button>
+    )
+  }
+
   if (wrongNetworkBanner && isConnected && !isCoinbaseConnector) {
     return (
       <div className="flex items-center gap-2">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#FFD700]/50 bg-[#FFD700]/10 text-[10px] text-[#FFD700] font-medium uppercase tracking-[0.15em]">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#FFD700]  shrink-0" />
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-warning/50 bg-warning/10 text-[10px] text-warning font-medium uppercase tracking-[0.15em]">
+          <span className="w-1.5 h-1.5 rounded-full bg-warning  shrink-0" />
           <span className="hidden sm:inline">Switch to Arc Testnet</span>
           <button
             onClick={async () => {
