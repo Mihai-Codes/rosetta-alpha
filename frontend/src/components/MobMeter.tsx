@@ -39,7 +39,7 @@ export function MobMeter({ ticker, compact = false }: MobMeterProps) {
   const isMob = score >= 80
 
   return (
-    <div className={`solid-panel border border-border bg-bg-secondary relative overflow-hidden flex flex-col justify-between h-full ${compact ? 'p-4' : 'p-6'}`}>
+    <div className={`solid-panel border border-border bg-bg-secondary relative overflow-hidden flex flex-col justify-between h-full w-full ${compact ? 'p-4' : 'p-6'}`}>
       {isMob && <div className="absolute inset-0 bg-brand-red/5 animate-pulse pointer-events-none" />}
       
       <div className="relative z-10 flex items-start justify-between mb-4">
