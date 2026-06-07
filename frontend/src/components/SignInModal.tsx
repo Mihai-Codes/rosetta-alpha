@@ -6,7 +6,6 @@ import { signIn } from 'next-auth/react'
 import posthog from 'posthog-js'
 import { X, Terminal, Loader2 } from 'lucide-react'
 
-// Simple global store for modal state so we can trigger it from anywhere
 export const authModalState = {
   listeners: new Set<(isOpen: boolean) => void>(),
   isOpen: false,
@@ -31,7 +30,6 @@ async function handleSignIn(provider: 'google' | 'github', setIsLoading: (v: str
   try {
     await signIn(provider, { callbackUrl: ["/", "/quiz"].includes(window.location.pathname) ? window.location.pathname : "/dashboard" })
   } catch {
-    // signIn throws on hard errors only; redirect-based auth resolves via callback
     setIsLoading(null)
   }
 }
@@ -41,22 +39,17 @@ export function SignInModal() {
   const [isLoading, setIsLoading] = useState<string | null>(null)
 
   useEffect(() => {
-    // Check if we were redirected here by middleware (auth=login)
     if (typeof window !== 'undefined') {
       const url = new URL(window.location.href)
       if (url.searchParams.get('auth') === 'login') {
-        // Need a small timeout to let the page mount fully before triggering the modal overlay
         setTimeout(() => authModalState.open(), 100)
-        // Clean up the URL
         url.searchParams.delete('auth')
         window.history.replaceState({}, '', url.toString())
       }
     }
-    
     return authModalState.subscribe(setIsOpen)
   }, [])
 
-  // Close on Escape
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') authModalState.close()
@@ -65,23 +58,19 @@ export function SignInModal() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isOpen])
 
-  // Prevent scrolling when modal is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden'
     } else {
       document.body.style.overflow = ''
     }
-    return () => {
-      document.body.style.overflow = ''
-    }
+    return () => { document.body.style.overflow = '' }
   }, [isOpen])
 
   return (
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
-          {/* Backdrop Blur */}
           <motion.div
             initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
             animate={{ opacity: 1, backdropFilter: 'blur(8px)' }}
@@ -91,7 +80,6 @@ export function SignInModal() {
             onClick={() => authModalState.close()}
           />
           
-          {/* Modal Container with Terminal CRT Unroll Animation */}
           <motion.div
             initial={{ opacity: 0, clipPath: 'inset(40% 0 60% 0)' }}
             animate={{ opacity: 1, clipPath: 'inset(0% 0 0% 0)' }}
@@ -99,18 +87,13 @@ export function SignInModal() {
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             className="relative w-full max-w-md bg-bg-primary border border-border-strong solid-panel overflow-hidden shadow-none-strong rounded-none"
           >
-            {/* Subtle CRT Scanline Overlay */}
             <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] z-20 opacity-20" />
-
-            {/* Animated Red Scanning Line */}
             <motion.div
               initial={{ top: '-10%', opacity: 0 }}
               animate={{ top: '110%', opacity: [0, 0.6, 0.6, 0] }}
               transition={{ duration: 2.5, ease: 'linear' }}
               className="absolute left-0 right-0 h-[2px] bg-brand-red z-30 shadow-[0_0_15px_rgba(216,43,43,1)] pointer-events-none"
             />
-
-            {/* Close Button */}
             <button
               onClick={() => authModalState.close()}
               className="absolute top-4 right-4 text-text-secondary hover:text-brand-red transition-colors z-40 bg-bg-primary/50 p-1 border border-transparent hover:border-brand-red/50"
@@ -119,7 +102,6 @@ export function SignInModal() {
             </button>
 
             <div className="relative z-30 p-8 sm:p-10">
-              {/* Header / Brand */}
               <div className="mb-8 text-left border-b border-border pb-6">
                 <div className="flex items-center gap-3 mb-5">
                   <div className="w-8 h-8 border border-brand-red/40 bg-brand-red/10 flex items-center justify-center ">
@@ -131,7 +113,6 @@ export function SignInModal() {
                 </div>
                 <h2 className="font-display text-3xl sm:text-4xl text-text-primary mb-3 leading-tight flex items-center gap-2">
                   Terminal <span className="text-brand-red">Access</span>
-                  {/* Blinking Cursor */}
                   <motion.span 
                     animate={{ opacity: [1, 1, 0, 0, 1] }} 
                     transition={{ repeat: Infinity, duration: 0.9, times: [0, 0.49, 0.5, 0.99, 1], ease: "linear" }} 
@@ -143,37 +124,32 @@ export function SignInModal() {
                 </p>
               </div>
 
-              {/* Auth Buttons */}
               <div className="space-y-4">
                 <button
                   data-testid="signin-google"
                   onClick={() => handleSignIn('google', setIsLoading)}
                   disabled={isLoading !== null}
-                  className="group relative w-full flex items-center justify-center gap-4 px-5 py-4 border border-border border-l-[4px] border-l-brand-red bg-bg-secondary hover:bg-white/[0.04] text-text-primary text-[11px] font-mono uppercase tracking-[0.15em] transition-all duration-300 disabled:opacity-50"
+                  className="group relative w-full flex items-center justify-center gap-4 px-5 py-4 border border-[#333333] border-l-[4px] border-l-brand-red bg-[#111111] hover:bg-[#222222] text-text-primary text-[11px] font-mono uppercase tracking-[0.15em] transition-all duration-300 disabled:opacity-50 shadow-md"
                 >
-                  <div className="absolute inset-0 bg-brand-red/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <svg className="w-4 h-4 shrink-0 relative z-10 grayscale group-hover:grayscale-0 transition-all duration-300" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 shrink-0 relative z-10 text-text-secondary group-hover:text-white transition-colors duration-300" viewBox="0 0 24 24">
                     <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                     <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                     <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                     <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                   </svg>
                   {isLoading === 'google' ? <Loader2 className="w-4 h-4 animate-spin relative z-10" /> : <span className="relative z-10">Initialize via Google</span>}
-                  
                 </button>
 
                 <button
                   data-testid="signin-github"
                   onClick={() => handleSignIn('github', setIsLoading)}
                   disabled={isLoading !== null}
-                  className="group relative w-full flex items-center justify-center gap-4 px-5 py-4 border border-border border-l-[4px] border-l-brand-red bg-bg-secondary hover:bg-white/[0.04] text-text-primary text-[11px] font-mono uppercase tracking-[0.15em] transition-all duration-300 disabled:opacity-50"
+                  className="group relative w-full flex items-center justify-center gap-4 px-5 py-4 border border-[#333333] border-l-[4px] border-l-brand-red bg-[#111111] hover:bg-[#222222] text-text-primary text-[11px] font-mono uppercase tracking-[0.15em] transition-all duration-300 disabled:opacity-50 shadow-md"
                 >
-                  <div className="absolute inset-0 bg-brand-red/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                   <svg className="w-4 h-4 shrink-0 relative z-10 text-text-secondary group-hover:text-white transition-colors duration-300" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
                   </svg>
                   {isLoading === 'github' ? <Loader2 className="w-4 h-4 animate-spin relative z-10" /> : <span className="relative z-10">Initialize via GitHub</span>}
-                  
                 </button>
               </div>
               

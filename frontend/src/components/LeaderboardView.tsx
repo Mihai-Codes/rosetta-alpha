@@ -68,7 +68,7 @@ function PodiumCard({ trader, isMe }: { trader: Trader; isMe: boolean }) {
         <p className="font-mono text-[10px] text-text-primary font-bold">
           {trader.label ?? trader.address}
         </p>
-        <p className={`font-display text-xl font-bold ${accuracyColor(pct)}`}>{pct}%</p>
+        <p className={`font-mono text-sm font-semibold ${accuracyColor(pct)}`}>{pct}%</p>
         <p className="text-[9px] uppercase tracking-[0.2em] text-text-tertiary">
           {trader.earned} USDC earned
         </p>
@@ -86,7 +86,7 @@ function PodiumCard({ trader, isMe }: { trader: Trader; isMe: boolean }) {
             : 'bg-bg-tertiary border border-border'
         }`}
       >
-        <span className="font-display text-3xl font-bold text-text-tertiary">#{trader.rank}</span>
+        <span className="font-mono text-xl font-medium text-text-tertiary">#{trader.rank}</span>
       </div>
     </motion.div>
   )
@@ -149,7 +149,7 @@ export function LeaderboardView() {
           >
             <div className="absolute top-0 left-0 w-full h-[1px] bg-border group-hover:bg-brand-red/30 transition-colors" />
             <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-text-tertiary">{s.label}</p>
-            <p className={`font-display text-3xl font-bold tracking-tight ${s.accent || 'text-text-primary'}`}>
+            <p className={`font-mono text-xl font-bold tracking-tight ${s.accent || 'text-text-primary'}`}>
               {s.value}
             </p>
             {s.sub && <p className="text-[9px] text-text-tertiary font-mono tracking-wide">{s.sub}</p>}
@@ -230,7 +230,7 @@ export function LeaderboardView() {
                     }`}
                   >
                     <td className="px-5 py-4">
-                      <span className={`font-display text-lg font-bold ${
+                      <span className={`font-mono text-sm font-semibold ${
                         t.rank === 1 ? 'text-accent-gold' :
                         t.rank === 2 ? 'text-text-secondary' :
                         t.rank === 3 ? 'text-warning' :
@@ -299,7 +299,7 @@ export function LeaderboardView() {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <span className={`font-display text-xl font-bold ${
+                    <span className={`font-mono text-sm font-semibold ${
                       t.rank === 1 ? 'text-accent-gold' :
                       t.rank === 2 ? 'text-text-secondary' :
                       t.rank === 3 ? 'text-warning' :

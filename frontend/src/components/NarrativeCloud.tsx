@@ -29,8 +29,8 @@ interface PackedCircle {
 function packCircles(narratives: NarrativeBubble[], width: number, height: number): PackedCircle[] {
   if (!narratives.length) return []
   const maxIntensity = Math.max(...narratives.map(n => n.intensity), 0.1)
-  const minR = 25
-  const maxR = Math.min(width, height) * 0.22
+  const minR = 40
+  const maxR = Math.min(width, height) * 0.28
 
   const circles: PackedCircle[] = narratives.map((n, i) => {
     const r = minR + (n.intensity / maxIntensity) * (maxR - minR)
@@ -47,13 +47,13 @@ function packCircles(narratives: NarrativeBubble[], width: number, height: numbe
     }
   })
 
-  for (let pass = 0; pass < 3; pass++) {
+  for (let pass = 0; pass < 5; pass++) {
     for (let i = 0; i < circles.length; i++) {
       for (let j = i + 1; j < circles.length; j++) {
         const dx = circles[j].x - circles[i].x
         const dy = circles[j].y - circles[i].y
         const dist = Math.sqrt(dx * dx + dy * dy)
-        const minDist = circles[i].r + circles[j].r + 8
+        const minDist = circles[i].r + circles[j].r + 12
         if (dist < minDist && dist > 0) {
           const overlap = (minDist - dist) / 2
           const nx = dx / dist
@@ -64,8 +64,8 @@ function packCircles(narratives: NarrativeBubble[], width: number, height: numbe
           circles[j].y += ny * overlap
         }
       }
-      circles[i].x = Math.max(circles[i].r, Math.min(width - circles[i].r, circles[i].x))
-      circles[i].y = Math.max(circles[i].r, Math.min(height - circles[i].r, circles[i].y))
+      circles[i].x = Math.max(circles[i].r + 15, Math.min(width - circles[i].r - 15, circles[i].x))
+      circles[i].y = Math.max(circles[i].r + 15, Math.min(height - circles[i].r - 15, circles[i].y))
     }
   }
   return circles
@@ -73,8 +73,8 @@ function packCircles(narratives: NarrativeBubble[], width: number, height: numbe
 
 export function NarrativeCloud({ narratives, ticker }: NarrativeCloudProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null)
-  const width = 600
-  const height = 300
+  const width = 800
+  const height = 400
 
   const packed = useMemo(() => packCircles(narratives, width, height), [narratives])
 
@@ -84,79 +84,79 @@ export function NarrativeCloud({ narratives, ticker }: NarrativeCloudProps) {
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between mb-3">
-        <h4 className="font-mono text-xs text-text-secondary uppercase tracking-wider">
-          Narrative Cloud — {ticker}
+      <div className="flex items-center justify-between mb-4">
+        <h4 className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-secondary">
+          Narrative Engine — {ticker}
         </h4>
         <span className="text-[10px] text-text-tertiary font-mono">
-          {narratives.length} active · sized by intensity
+          {narratives.length} active
         </span>
       </div>
 
-      <div className="w-full aspect-[2/1] solid-panel bg-bg-primary rounded-none border border-border overflow-hidden">
-        <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full" preserveAspectRatio="xMidYMid meet">
-          {packed.map((circle) => {
-            const isHovered = hoveredId === circle.narrative.id
-            const isDominant = circle.narrative.isDominant
-            const color = NARRATIVE_COLORS[circle.narrative.type] || '#888888'
-
-            return (
-              <g
-                key={circle.narrative.id}
-                onMouseEnter={() => setHoveredId(circle.narrative.id)}
-                onMouseLeave={() => setHoveredId(null)}
-                className="cursor-pointer"
-              >
-                {/* Flat Institutional Circle */}
-                <circle
-                  cx={circle.x} cy={circle.y} r={circle.r * (isHovered ? 1.05 : 1)}
-                  fill={color}
-                  opacity={isHovered ? 1 : 0.8}
-                  stroke="var(--color-bg-primary)"
-                  strokeWidth={isHovered ? 0 : 2}
-                  style={{ transition: 'all 200ms ease-out' }}
-                />
-                
-                {/* Clean white border for dominant */}
-                {isDominant && (
-                  <circle
-                    cx={circle.x} cy={circle.y} r={circle.r + 4}
-                    fill="none" stroke="var(--color-warning)" strokeWidth={1.5}
-                    strokeDasharray="4 4" opacity={0.8}
-                  />
+      <div className="relative w-full aspect-[2/1] solid-panel bg-bg-secondary rounded-xl border border-white/5 overflow-hidden shadow-inner flex items-center justify-center">
+        {packed.map((circle) => {
+          const isHovered = hoveredId === circle.narrative.id
+          const isDominant = circle.narrative.isDominant
+          const color = NARRATIVE_COLORS[circle.narrative.type] || 'var(--color-border-strong)'
+          
+          return (
+            <div
+              key={circle.narrative.id}
+              onMouseEnter={() => setHoveredId(circle.narrative.id)}
+              onMouseLeave={() => setHoveredId(null)}
+              className={`absolute rounded-full flex flex-col items-center justify-center cursor-pointer transition-all duration-300 ease-out border ${isDominant ? 'border-[2px] border-warning shadow-[0_0_20px_rgba(255,215,0,0.3)]' : 'border-[1.5px]'}`}
+              style={{
+                left: `${(circle.x / width) * 100}%`,
+                top: `${(circle.y / height) * 100}%`,
+                width: `${(circle.r * 2 / width) * 100}%`,
+                height: `${(circle.r * 2 / height) * 100}%`,
+                transform: `translate(-50%, -50%) scale(${isHovered ? 1.08 : 1})`,
+                backgroundColor: 'var(--color-bg-primary)',
+                borderColor: isDominant ? 'var(--color-warning)' : color,
+                boxShadow: isHovered ? `0 0 30px ${color}60, inset 0 0 30px ${color}30` : `inset 0 0 15px ${color}10`,
+                zIndex: isHovered ? 10 : (isDominant ? 5 : 1)
+              }}
+            >
+              <div 
+                className="absolute inset-0 rounded-full opacity-20"
+                style={{ backgroundColor: color }}
+              />
+              
+              <div className="relative z-10 px-4 text-center pointer-events-none flex flex-col items-center justify-center h-full w-full">
+                {circle.r > 35 && (
+                  <>
+                    <p 
+                      className="font-display text-text-primary leading-tight tracking-tight mb-1 drop-shadow-lg"
+                      style={{ fontSize: Math.max(12, Math.min(16, circle.r / 3.5)), fontWeight: 600 }}
+                    >
+                      {circle.narrative.title.length > 20 ? circle.narrative.title.slice(0, 18) + '…' : circle.narrative.title}
+                    </p>
+                    <span className="font-mono text-[9px] uppercase tracking-widest font-bold" style={{ color }}>
+                      {circle.narrative.type.replace('_', ' ')}
+                    </span>
+                  </>
                 )}
-                
-                {circle.r > 26 && (
-                  <text
-                    x={circle.x} y={circle.y}
-                    textAnchor="middle" dominantBaseline="middle"
-                    className="fill-bg-primary font-display pointer-events-none tracking-tight"
-                    style={{ fontSize: Math.max(10, Math.min(14, circle.r / 3)), fontWeight: 600 }}
-                  >
-                    {circle.narrative.title.length > 14 ? circle.narrative.title.slice(0, 12) + '…' : circle.narrative.title}
-                  </text>
-                )}
-              </g>
-            )
-          })}
-        </svg>
+              </div>
+            </div>
+          )
+        })}
       </div>
 
       {hoveredId && (() => {
         const hovered = narratives.find(n => n.id === hoveredId)
         if (!hovered) return null
         return (
-          <div className="mt-3 px-4 py-3 solid-panel bg-bg-secondary rounded-none border border-border">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: NARRATIVE_COLORS[hovered.type] }} />
-              <span className="text-sm font-medium text-text-primary">{hovered.title}</span>
-              {hovered.isDominant && <span className="text-[10px] text-warning border border-warning/30 px-1.5 py-0.5 rounded">DOMINANT</span>}
+          <div className="mt-4 px-5 py-4 solid-panel bg-bg-secondary rounded-xl border border-border shadow-lg">
+            <div className="flex items-center gap-3 border-b border-white/5 pb-3 mb-3">
+              <span className="w-3 h-3 rounded-full shadow-[0_0_8px_rgba(255,255,255,0.2)]" style={{ backgroundColor: NARRATIVE_COLORS[hovered.type] }} />
+              <span className="text-sm font-bold text-text-primary uppercase tracking-wide">{hovered.title}</span>
+              {hovered.isDominant && <span className="text-[10px] text-warning border border-warning/30 bg-warning/10 px-2 py-1 rounded-md uppercase tracking-widest font-bold">Dominant</span>}
             </div>
-            <div className="mt-2 grid grid-cols-4 gap-4 text-xs text-text-secondary font-mono">
-              <div><span className="text-text-tertiary block">Velocity</span>{hovered.mentionsPerDay.toFixed(1)}/d</div>
-              <div><span className="text-text-tertiary block">Accel</span>{hovered.acceleration > 0 ? '+' : ''}{hovered.acceleration.toFixed(2)}</div>
-              <div><span className="text-text-tertiary block">Intensity</span>{(hovered.intensity * 100).toFixed(0)}%</div>
-              <div><span className="text-text-tertiary block">Regions</span>{hovered.regionsPresent.join(', ')}</div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs text-text-secondary font-mono">
+              <div className="bg-bg-primary p-3 rounded border border-white/5"><span className="text-text-tertiary block mb-1 uppercase tracking-widest text-[9px]">Velocity</span><span className="text-text-primary font-bold">{hovered.mentionsPerDay.toFixed(1)}/d</span></div>
+              <div className="bg-bg-primary p-3 rounded border border-white/5"><span className="text-text-tertiary block mb-1 uppercase tracking-widest text-[9px]">Accel</span><span className={`font-bold ${hovered.acceleration > 0 ? 'text-positive' : 'text-negative'}`}>{hovered.acceleration > 0 ? '+' : ''}{hovered.acceleration.toFixed(2)}</span></div>
+              <div className="bg-bg-primary p-3 rounded border border-white/5"><span className="text-text-tertiary block mb-1 uppercase tracking-widest text-[9px]">Intensity</span><span className="text-text-primary font-bold">{(hovered.intensity * 100).toFixed(0)}%</span></div>
+              <div className="bg-bg-primary p-3 rounded border border-white/5"><span className="text-text-tertiary block mb-1 uppercase tracking-widest text-[9px]">Regions</span><span className="text-text-primary font-bold truncate block" title={hovered.regionsPresent.join(', ')}>{hovered.regionsPresent.join(', ')}</span></div>
             </div>
           </div>
         )

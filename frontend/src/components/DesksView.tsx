@@ -4,6 +4,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { authModalState } from './SignInModal'
+import { useSession } from 'next-auth/react'
 import { Lock } from 'lucide-react'
 import { DeskProps } from './DeskCard'
 import { RegionSidebar } from './RegionSidebar'
@@ -64,6 +65,25 @@ function RegionPillBar({
           </button>
         )
       })}
+      {/* ── Advanced Telemetry (Gated) ── */}
+      {active && (
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.6, ease: [0.16, 1, 0.3, 1] }} className="w-full relative mt-4">
+          {!isAuthed && (
+            <div className="absolute inset-0 z-20 backdrop-blur-md bg-bg-primary/70 flex flex-col items-center justify-center border border-border">
+              <Lock className="w-6 h-6 text-brand-red mb-3" />
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-brand-red mb-4">Encrypted Telemetry</p>
+              <button onClick={() => authModalState.open()} className="px-6 py-3 bg-brand-red text-white text-[10px] font-bold uppercase tracking-widest hover:bg-brand-red/80 transition-colors shadow-[0_0_15px_rgba(216,43,43,0.3)]">Sign in to Decrypt</button>
+            </div>
+          )}
+          <div className={`flex flex-col gap-6 lg:gap-8 ${!isAuthed ? 'opacity-20 pointer-events-none select-none blur-sm' : ''}`}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-start">
+              <MobMeter ticker={active.ticker} />
+              <DivergenceGauge ticker={active.ticker} desks={desks} />
+            </div>
+            <NarrativeInsights ticker={active?.desk ?? 'Portfolio'} />
+          </div>
+        </motion.div>
+      )}
     </div>
   )
 }
@@ -92,6 +112,25 @@ function PremiumPaywall() {
       
       {/* Decorative scanning line at the bottom */}
       <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-red to-transparent opacity-50" />
+      {/* ── Advanced Telemetry (Gated) ── */}
+      {active && (
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.6, ease: [0.16, 1, 0.3, 1] }} className="w-full relative mt-4">
+          {!isAuthed && (
+            <div className="absolute inset-0 z-20 backdrop-blur-md bg-bg-primary/70 flex flex-col items-center justify-center border border-border">
+              <Lock className="w-6 h-6 text-brand-red mb-3" />
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-brand-red mb-4">Encrypted Telemetry</p>
+              <button onClick={() => authModalState.open()} className="px-6 py-3 bg-brand-red text-white text-[10px] font-bold uppercase tracking-widest hover:bg-brand-red/80 transition-colors shadow-[0_0_15px_rgba(216,43,43,0.3)]">Sign in to Decrypt</button>
+            </div>
+          )}
+          <div className={`flex flex-col gap-6 lg:gap-8 ${!isAuthed ? 'opacity-20 pointer-events-none select-none blur-sm' : ''}`}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-start">
+              <MobMeter ticker={active.ticker} />
+              <DivergenceGauge ticker={active.ticker} desks={desks} />
+            </div>
+            <NarrativeInsights ticker={active?.desk ?? 'Portfolio'} />
+          </div>
+        </motion.div>
+      )}
     </div>
   )
 }
@@ -107,6 +146,8 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
   }, [desks, activeDesk])
 
   const active = desks.find(d => d.desk === activeDesk) ?? desks[0]
+  const { data: session } = useSession()
+  const isAuthed = isAuthenticated || !!session?.user
 
   return (
     <div className="flex flex-col gap-8">
@@ -135,9 +176,12 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
         </motion.div>
 
         {active && (
-          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }} className="mt-8 grid grid-cols-1 gap-4">
-            <MobMeter ticker={active.ticker} />
-            <DivergenceGauge ticker={active.ticker} desks={desks} />
+          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }} className="mt-8 relative">
+            {!isAuthed && <div className="absolute inset-0 z-20 backdrop-blur-md bg-bg-primary/60 flex items-center justify-center border border-white/10"><button onClick={() => authModalState.open()} className="px-6 py-3 bg-brand-red text-white text-[10px] font-bold uppercase tracking-widest hover:bg-brand-red/80 transition-colors">Sign in for Telemetry</button></div>}
+            <div className={`grid grid-cols-1 gap-4 ${!isAuthed ? 'opacity-20 pointer-events-none' : ''}`}>
+              <MobMeter ticker={active.ticker} />
+              <DivergenceGauge ticker={active.ticker} desks={desks} />
+            </div>
           </motion.div>
         )}
 
@@ -174,9 +218,12 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
           </motion.div>
 
           {active && (
-            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }} className="w-full grid grid-cols-1 xl:grid-cols-2 gap-6">
-              <MobMeter ticker={active.ticker} />
-              <DivergenceGauge ticker={active.ticker} desks={desks} />
+            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }} className="w-full relative">
+              {!isAuthed && <div className="absolute inset-0 z-20 backdrop-blur-md bg-bg-primary/60 flex items-center justify-center border border-white/10"><button onClick={() => authModalState.open()} className="px-6 py-3 bg-brand-red text-white text-[10px] font-bold uppercase tracking-widest hover:bg-brand-red/80 transition-colors">Sign in for Advanced Telemetry</button></div>}
+              <div className={`grid grid-cols-1 xl:grid-cols-2 gap-6 ${!isAuthed ? 'opacity-20 pointer-events-none' : ''}`}>
+                <MobMeter ticker={active.ticker} />
+                <DivergenceGauge ticker={active.ticker} desks={desks} />
+              </div>
             </motion.div>
           )}
         </div>
@@ -203,10 +250,32 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
       </motion.div>
 
       {/* Narrative Engine — collapsible insights panel */}
-      <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.7, ease: [0.16, 1, 0.3, 1] }} className="w-full">
-        <NarrativeInsights ticker={active?.desk ?? 'Portfolio'} />
+      <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.7, ease: [0.16, 1, 0.3, 1] }} className="w-full relative">
+        {!isAuthed && <div className="absolute inset-0 z-20 backdrop-blur-md bg-bg-primary/60 flex items-center justify-center border border-white/10"><button onClick={() => authModalState.open()} className="px-6 py-3 bg-brand-red text-white text-[10px] font-bold uppercase tracking-widest hover:bg-brand-red/80 transition-colors">Sign in for Narrative Engine</button></div>}
+        <div className={!isAuthed ? 'opacity-20 pointer-events-none' : ''}>
+          <NarrativeInsights ticker={active?.desk ?? 'Portfolio'} />
+        </div>
       </motion.div>
 
+      {/* ── Advanced Telemetry (Gated) ── */}
+      {active && (
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.6, ease: [0.16, 1, 0.3, 1] }} className="w-full relative mt-4">
+          {!isAuthed && (
+            <div className="absolute inset-0 z-20 backdrop-blur-md bg-bg-primary/70 flex flex-col items-center justify-center border border-border">
+              <Lock className="w-6 h-6 text-brand-red mb-3" />
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-brand-red mb-4">Encrypted Telemetry</p>
+              <button onClick={() => authModalState.open()} className="px-6 py-3 bg-brand-red text-white text-[10px] font-bold uppercase tracking-widest hover:bg-brand-red/80 transition-colors shadow-[0_0_15px_rgba(216,43,43,0.3)]">Sign in to Decrypt</button>
+            </div>
+          )}
+          <div className={`flex flex-col gap-6 lg:gap-8 ${!isAuthed ? 'opacity-20 pointer-events-none select-none blur-sm' : ''}`}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-start">
+              <MobMeter ticker={active.ticker} />
+              <DivergenceGauge ticker={active.ticker} desks={desks} />
+            </div>
+            <NarrativeInsights ticker={active?.desk ?? 'Portfolio'} />
+          </div>
+        </motion.div>
+      )}
     </div>
   )
 }

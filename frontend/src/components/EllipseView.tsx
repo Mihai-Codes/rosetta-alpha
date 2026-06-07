@@ -214,7 +214,7 @@ function DynamicTooltip({ xPct, yPct, data }: { xPct: number, yPct: number, data
     <div 
       role="tooltip"
       aria-hidden="false"
-      className="absolute pointer-events-none border border-white/20 bg-black/90 backdrop-blur-md p-3 rounded-md shadow-2xl z-20 w-32 transition-transform duration-75"
+      className="absolute pointer-events-none border border-white/20 bg-black/90 backdrop-blur-md p-3 rounded-md shadow-2xl z-50 w-32 transition-transform duration-75"
       style={{ 
         left: `${xPct}%`, 
         top: `${yPct}%`,
@@ -387,11 +387,9 @@ export function EllipseView() {
                   <circle cx={x} cy={y} r={isHovered ? 6 : 2} fill={isHovered ? "var(--color-text-primary)" : "var(--color-brand-red)"} className="pointer-events-none transition-all duration-200" />
                   <circle
                     cx={x} cy={y} r={24} fill="transparent"
-                    className="cursor-crosshair"
-                    style={{ pointerEvents: 'all' }}
+                    className="cursor-crosshair pointer-events-auto"
                     onMouseEnter={() => setHoveredPoint({ x, y, data: d })}
-                    onClick={(e) => { e.stopPropagation(); setHoveredPoint({ x, y, data: d }) }}
-                    onTouchStart={(e) => { e.stopPropagation(); setHoveredPoint({ x, y, data: d }) }}
+                    onMouseLeave={() => setHoveredPoint(null)}
                   />
                 </g>
               )
