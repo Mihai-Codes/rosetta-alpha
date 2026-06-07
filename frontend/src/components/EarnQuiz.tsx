@@ -218,7 +218,7 @@ function ResultsScreen({
             </span>
           </div>
 
-          <p className="text-text-secondary text-xs leading-relaxed truncate w-full max-w-[400px] mx-auto">
+          <p className="text-text-secondary text-xs leading-relaxed whitespace-nowrap overflow-visible w-full text-center">
             All {total}/{total} correct. Your USDC has been sent to the Arc Testnet pool.
           </p>
         </div>

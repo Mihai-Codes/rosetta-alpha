@@ -45,7 +45,7 @@ export function AllWeatherChart() {
       </div>
 
       <div className="text-center pt-4 border-t border-border/50 shrink-0 mt-4">
-        <p className="text-[10px] text-text-tertiary whitespace-nowrap w-full text-center">
+        <p className="text-[10px] text-text-tertiary whitespace-nowrap overflow-visible w-full text-center">
           Risk parity balances exposure across four distinct economic environments.
         </p>
       </div>

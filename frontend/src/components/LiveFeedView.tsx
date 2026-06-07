@@ -86,7 +86,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6 animate-rain">
+    <div className="space-y-4 sm:space-y-6">
       <ContagionAlert />
 
       {/* ── Filters ── */}
@@ -193,16 +193,14 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
             return (
               <div
                 key={key}
-                className={`border-b border-border last:border-b-0 transition-all duration-300 group ${i === 0 ? 'animate-[pulse_2s_ease-in-out_infinite] bg-white/[0.02]' : ''}`}
+                className={`border-b border-border last:border-b-0 transition-colors duration-200 group hover:bg-bg-tertiary cursor-pointer ${i === 0 ? 'bg-white/[0.01]' : ''}`}
+                onClick={() => toggleExpand(key, e.desk, e.ticker)}
               >
                 <div 
-                  className="w-full flex flex-col hover:bg-white/[0.03] transition-colors relative"
+                  className="w-full flex flex-col relative h-full transition-colors duration-200 group-hover:bg-bg-tertiary"
                   style={{ borderLeft: `3px solid ${meta.color}` }}
                 >
-                  <button
-                    onClick={() => toggleExpand(key, e.desk, e.ticker)}
-                    className="w-full flex items-start gap-3 sm:gap-4 p-4 sm:p-5 pb-2 text-left min-h-[44px]"
-                  >
+                  <div className="w-full flex items-start gap-3 sm:gap-4 p-4 sm:p-5 pb-2 text-left min-h-[44px]">
                   {/* Timestamp + region — hidden on mobile, shown as col on sm+ */}
                   <div className="hidden sm:block w-28 lg:w-32 shrink-0 space-y-1">
                     <p className="font-mono text-[10px] text-text-tertiary">
@@ -298,12 +296,13 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                       isOpen ? 'rotate-180' : ''
                     }`}
                   />
-                </button>
+                </div>
 
-                <div className="px-4 sm:px-5 pb-4 flex justify-end">
+                <div className="px-4 sm:px-5 pb-4 flex justify-end relative z-10">
                   <button
                     type="button"
-                    onClick={() => {
+                    onClick={(ev) => {
+                      ev.stopPropagation();
                       if (!e.ipfs_thesis_cid) return
                       setSelectedProvenance(e)
                       posthog.capture('feed_provenance_opened', {
@@ -312,7 +311,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                         ticker: e.ticker,
                       })
                     }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-brand-red/40 text-brand-red hover:text-white hover:border-brand-red transition-colors text-[10px] uppercase tracking-[0.2em]"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-brand-red/40 text-brand-red hover:bg-brand-red hover:text-white transition-colors text-[10px] uppercase tracking-[0.2em]"
                   >
                     <Link2 className="w-3 h-3" />
                     View Chain

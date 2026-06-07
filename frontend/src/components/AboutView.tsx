@@ -5,7 +5,7 @@ import { Scale } from 'lucide-react'
 
 export function AboutView() {
   return (
-    <div className="max-w-6xl space-y-24 mx-auto px-4 py-20 animate-rain">
+    <div className="max-w-6xl space-y-24 mx-auto px-4 py-20">
       
       {/* Ray Dalio & The Philosophy Section */}
       <div className="grid md:grid-cols-12 gap-12 items-center">
@@ -29,7 +29,7 @@ export function AboutView() {
         
         <div className="md:col-span-5 flex justify-center mt-10 md:mt-0">
           {/* Levitating Ray Dalio Portrait */}
-          <div className="relative group w-64 h-64 sm:w-80 sm:h-80 animate-levitate">
+          <div className="relative group w-64 h-64 sm:w-80 sm:h-80">
             <div className="absolute inset-0 bg-gradient-to-tr from-brand-red to-[#FFD700] opacity-30 blur-2xl group-hover:opacity-60 transition-opacity duration-700" />
             <div className="absolute inset-0 border border-white/20 bg-bg-secondary shadow-[0_0_40px_rgba(216,43,43,0.3)] z-10 overflow-hidden ">
               <img 
@@ -58,7 +58,7 @@ export function AboutView() {
         </div>
 
         <div className="flex flex-col lg:flex-row items-center gap-12 mb-10">
-          <div className="relative w-full max-w-sm shrink-0 animate-levitate" style={{ animationDelay: '1.5s' }}>
+          <div className="relative w-full max-w-sm shrink-0" style={{ animationDelay: '1.5s' }}>
             <div className="relative z-10 grid grid-cols-2 grid-rows-2 aspect-square border border-brand-red/40 shadow-[0_10px_40px_rgba(0,0,0,0.8)] rounded-2xl overflow-hidden bg-bg-secondary">
               <div className="border-r border-b border-brand-red/30 bg-gradient-to-br from-brand-red/10 to-transparent p-5 flex flex-col justify-between">
                 <span className="text-[10px] uppercase tracking-[0.2em] text-brand-red/60 font-bold">Rising Growth</span>

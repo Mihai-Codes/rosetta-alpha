@@ -82,7 +82,7 @@ export function RegistryTable({ desks, onCidClick }: RegistryTableProps) {
   )
 
   return (
-    <div className="space-y-4 sm:space-y-6 animate-rain">
+    <div className="space-y-4 sm:space-y-6">
       {/* Toolbar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div className="relative flex-1 sm:max-w-md">

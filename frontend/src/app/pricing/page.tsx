@@ -184,7 +184,7 @@ export default function PricingPage() {
           <h1 className="font-display text-4xl md:text-5xl text-text-primary leading-tight">
             Intelligence, Priced Fairly
           </h1>
-          <p className="mt-4 w-full text-center truncate text-text-secondary text-sm">
+          <p className="mt-4 w-full text-center whitespace-nowrap overflow-visible text-text-secondary text-sm">
             Five AI agents. Five regional desks. All reasoning hashed on-chain. Choose how deep you want to go.
           </p>
         </div>

@@ -97,7 +97,7 @@ const AGENT_LEADERBOARD: AgentLeaderboardRow[] = [
 ]
 
 const REGION_META: Record<string, { name: string; flag: string; color: string }> = {
-  us:     { name: 'United States', flag: '🇺🇸', color: '#FFFFFF' },
+  us:     { name: 'United States', flag: '🇺🇸', color: '#4A90E2' },
   cn:     { name: 'China',         flag: '🇨🇳', color: '#D82B2B' },
   eu:     { name: 'Europe',        flag: '🇪🇺', color: '#888888' },
   jp:     { name: 'Japan',         flag: '🇯🇵', color: '#FFD700' },
@@ -154,10 +154,10 @@ interface Quadrant {
 }
 
 const QUADRANTS: Quadrant[] = [
-  { label: 'Equities',    pct: 40, color: '#FFFFFF' },
+  { label: 'Equities',    pct: 40, color: '#4A90E2' },
   { label: 'Bonds',       pct: 30, color: '#FFD700' },
   { label: 'Commodities', pct: 15, color: '#D82B2B' },
-  { label: 'Crypto',      pct: 15, color: '#FFFFFF' },
+  { label: 'Crypto',      pct: 15, color: '#4A90E2' },
 ]
 
 function RingChart() {
@@ -504,7 +504,7 @@ export function DashboardView() {
 
   if (!isConnected) {
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-px bg-border/60 border border-border/60 rounded-none animate-rain">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-px bg-border/60 border border-border/60 rounded-none">
         {/* Terminal Lock Screen */}
         <div className="lg:col-span-2 bg-bg-primary p-8 sm:p-16 flex flex-col items-center justify-center min-h-[450px] text-center relative overflow-hidden border-r border-border/60">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-brand-red/10 via-transparent to-transparent opacity-40 pointer-events-none" />
@@ -715,17 +715,18 @@ export function DashboardView() {
         <div className="lg:col-span-2">
           <MobMeter ticker="AAPL" />
         </div>
-        <div className="bg-bg-primary p-6 sm:p-8 flex flex-col justify-center text-left">
-          <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary mb-4">
-            Historical Signal
-          </p>
-          <div className="p-5 border border-warning/20 bg-warning/5 rounded mb-5">
-             <p className="font-mono text-sm font-bold text-warning leading-tight uppercase tracking-wider">
-               Extreme agreement is treated as a reversal-risk warning, not confirmation.
-             </p>
+        <div className="bg-bg-primary p-6 sm:p-8 flex flex-col justify-center text-left border-l border-border/60">
+          <div className="flex items-center gap-3 mb-6">
+            <span className="w-2 h-2 bg-brand-red rounded-full" />
+            <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary">
+              Historical Signal Engine
+            </p>
           </div>
-          <p className="text-[11px] text-text-secondary leading-relaxed border-l-[3px] border-border pl-4">
-            Backtest hooks are ready for rosetta_dataset.jsonl. Live calibration updates after Arc settlements.
+          <p className="font-display text-2xl text-text-primary leading-snug mb-4">
+            Extreme agreement is a <span className="text-brand-red">reversal-risk</span> warning, not confirmation.
+          </p>
+          <p className="text-[11px] text-text-secondary font-mono leading-relaxed border-l-[2px] border-border-strong pl-4">
+            Backtest hooks ready for rosetta_dataset.jsonl. Live calibration updates post-Arc settlement.
           </p>
         </div>
       </div>

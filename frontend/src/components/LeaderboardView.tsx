@@ -86,7 +86,7 @@ function PodiumCard({ trader, isMe }: { trader: Trader; isMe: boolean }) {
             : 'bg-bg-tertiary border border-border'
         }`}
       >
-        <span className="font-mono text-base font-semibold text-text-tertiary">#{trader.rank}</span>
+        <span className="font-mono text-sm font-semibold text-text-tertiary">#{trader.rank}</span>
       </div>
     </motion.div>
   )
