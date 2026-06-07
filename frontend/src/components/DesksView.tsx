@@ -98,7 +98,7 @@ function PremiumPaywall() {
 
 export function DesksView({ desks, loading, isAuthenticated = false }: DesksViewProps) {
   const [activeDesk, setActiveDesk] = React.useState<string>(desks[0]?.desk ?? '')
-  const [chartView, setChartView] = React.useState<'circle' | 'ellipse'>('circle')
+  const [chartView, setChartView] = React.useState<'matrix' | 'ellipse'>('matrix')
 
   React.useEffect(() => {
     if (!desks.find(d => d.desk === activeDesk) && desks.length > 0) {
@@ -143,10 +143,10 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
 
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }} className="mt-8">
           <div className="flex justify-end mb-2 gap-2">
-            <button onClick={() => setChartView('circle')} className={`px-3 py-1 text-[10px] uppercase tracking-wider border ${chartView === 'circle' ? 'border-brand-red text-brand-red bg-brand-red/10' : 'border-border text-text-tertiary hover:text-text-primary'}`}>Circle View</button>
+            <button onClick={() => setChartView('matrix')} className={`px-3 py-1 text-[10px] uppercase tracking-wider border ${chartView === 'matrix' ? 'border-brand-red text-brand-red bg-brand-red/10' : 'border-border text-text-tertiary hover:text-text-primary'}`}>Matrix View</button>
             <button onClick={() => setChartView('ellipse')} className={`px-3 py-1 text-[10px] uppercase tracking-wider border ${chartView === 'ellipse' ? 'border-brand-red text-brand-red bg-brand-red/10' : 'border-border text-text-tertiary hover:text-text-primary'}`}>Ellipse View</button>
           </div>
-          {chartView === 'circle' ? <AllWeatherChart /> : <EllipseView />}
+          {chartView === 'matrix' ? <AllWeatherChart /> : <EllipseView />}
         </motion.div>
       </div>
 
@@ -184,11 +184,11 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
         {/* Hide chart on tablet to give thesis card room, show on desktop */}
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }} className="hidden lg:flex flex-col w-[300px] xl:w-[320px] shrink-0 solid-panel rounded-none border overflow-hidden">
           <div className="flex p-2 border-b border-border/20 gap-2 bg-bg-secondary">
-            <button onClick={() => setChartView('circle')} className={`flex-1 px-2 py-1.5 text-[9px] uppercase tracking-wider border ${chartView === 'circle' ? 'border-brand-red text-brand-red bg-brand-red/10' : 'border-border text-text-tertiary hover:text-text-primary'}`}>Circle View</button>
+            <button onClick={() => setChartView('matrix')} className={`flex-1 px-2 py-1.5 text-[9px] uppercase tracking-wider border ${chartView === 'matrix' ? 'border-brand-red text-brand-red bg-brand-red/10' : 'border-border text-text-tertiary hover:text-text-primary'}`}>Matrix View</button>
             <button onClick={() => setChartView('ellipse')} className={`flex-1 px-2 py-1.5 text-[9px] uppercase tracking-wider border ${chartView === 'ellipse' ? 'border-brand-red text-brand-red bg-brand-red/10' : 'border-border text-text-tertiary hover:text-text-primary'}`}>Ellipse View</button>
           </div>
           <div className="flex-1 overflow-hidden flex flex-col">
-            {chartView === 'circle' ? <AllWeatherChart /> : <div className="h-full overflow-hidden [&_svg]:h-full [&_svg]:w-auto [&_svg]:min-w-[400px]"><EllipseView /></div>}
+            {chartView === 'matrix' ? <AllWeatherChart /> : <div className="h-full overflow-hidden [&_svg]:h-full [&_svg]:w-auto [&_svg]:min-w-[400px]"><EllipseView /></div>}
           </div>
         </motion.div>
       </div>
@@ -196,10 +196,10 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
       {/* Chart below on tablet (md to lg) */}
       <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }} className="hidden md:block lg:hidden w-full solid-panel rounded-none border overflow-hidden mt-2">
         <div className="flex p-2 border-b border-border/20 gap-2 bg-bg-secondary">
-          <button onClick={() => setChartView('circle')} className={`px-4 py-1.5 text-[10px] uppercase tracking-wider border ${chartView === 'circle' ? 'border-brand-red text-brand-red bg-brand-red/10' : 'border-border text-text-tertiary hover:text-text-primary'}`}>Circle View</button>
+          <button onClick={() => setChartView('matrix')} className={`px-4 py-1.5 text-[10px] uppercase tracking-wider border ${chartView === 'matrix' ? 'border-brand-red text-brand-red bg-brand-red/10' : 'border-border text-text-tertiary hover:text-text-primary'}`}>Matrix View</button>
           <button onClick={() => setChartView('ellipse')} className={`px-4 py-1.5 text-[10px] uppercase tracking-wider border ${chartView === 'ellipse' ? 'border-brand-red text-brand-red bg-brand-red/10' : 'border-border text-text-tertiary hover:text-text-primary'}`}>Ellipse View</button>
         </div>
-        {chartView === 'circle' ? <AllWeatherChart /> : <EllipseView />}
+        {chartView === 'matrix' ? <AllWeatherChart /> : <EllipseView />}
       </motion.div>
 
       {/* Narrative Engine — collapsible insights panel */}

@@ -44,7 +44,7 @@ function TierCard({ tier, name, price, features, highlighted, onSubscribe, isCon
       className={`relative flex flex-col rounded-lg border p-6 sm:p-8 transition-all ${
         highlighted
           ? 'border-brand-red bg-brand-red/5 shadow-lg shadow-brand-red/10'
-          : 'border-border bg-surface-card hover:border-text-tertiary'
+          : 'border-border bg-bg-secondary hover:border-text-tertiary'
       }`}
     >
       {highlighted && (
@@ -75,7 +75,7 @@ function TierCard({ tier, name, price, features, highlighted, onSubscribe, isCon
       <ul className="mt-6 flex-1 space-y-3">
         {features.map((feature) => (
           <li key={feature} className="flex items-start gap-2 text-sm text-text-secondary">
-            <span className="mt-0.5 text-brand-gold">✦</span>
+            <span className="mt-0.5 text-warning">✦</span>
             {feature}
           </li>
         ))}
@@ -157,8 +157,6 @@ export default function PricingPage() {
     })
 
     // Step 2: Subscribe (user triggers after approve confirms)
-    // In production, use useEffect on approveHash confirmation.
-    // For hackathon: sequential UX via wallet popups.
     subscribe({
       address: SUBSCRIPTION_CONTRACT,
       abi: SUBSCRIPTION_ABI,
@@ -169,7 +167,7 @@ export default function PricingPage() {
 
   return (
     <Layout activeTab="pricing">
-      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-16 pt-28 sm:pt-36 lg:pt-48">
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-16 pt-28 sm:pt-36 lg:pt-48 animate-in fade-in slide-in-from-bottom-4 duration-700">
         {/* Header */}
         <div className="mb-12 text-center">
           <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-brand-red mb-3">
@@ -178,9 +176,8 @@ export default function PricingPage() {
           <h1 className="font-display text-4xl md:text-5xl text-text-primary leading-tight">
             Intelligence, Priced Fairly
           </h1>
-          <p className="mt-4 max-w-2xl mx-auto text-text-secondary">
-            Five AI agents. Five regional desks. All reasoning hashed on-chain.
-            Choose how deep you want to go.
+          <p className="mt-4 w-full text-center truncate text-text-secondary text-sm">
+            Five AI agents. Five regional desks. All reasoning hashed on-chain. Choose how deep you want to go.
           </p>
         </div>
 
@@ -218,43 +215,16 @@ export default function PricingPage() {
 
         {/* x402 Callout */}
         <div className="mt-16 max-w-3xl mx-auto text-center">
-          <div className="rounded-lg border border-border bg-surface-card p-6 sm:p-8">
+          <div className="rounded-lg border border-border bg-bg-secondary p-6 sm:p-8">
             <h3 className="font-display text-lg text-text-primary mb-2">
               Pay-per-Insight with x402
             </h3>
             <p className="text-sm text-text-secondary">
               Not ready to commit? Access individual theses for{' '}
-              <span className="font-mono text-brand-gold">0.50 USDC</span> each via our
+              <span className="font-mono text-warning">0.50 USDC</span> each via our
               x402 nanopayment protocol. No subscription needed — your wallet signs once,
               micropayments flow automatically.
             </p>
-          </div>
-        </div>
-
-        {/* Grant Narrative */}
-        <div className="mt-12 max-w-3xl mx-auto">
-          <div className="rounded-lg border border-brand-gold/30 bg-brand-gold/5 p-6 sm:p-8">
-            <h3 className="font-display text-lg text-brand-gold mb-3">
-              Built on Circle
-            </h3>
-            <ul className="space-y-2 text-sm text-text-secondary">
-              <li className="flex items-start gap-2">
-                <span className="text-brand-gold">●</span>
-                USDC settlement on Arc — subscriptions + micropayments
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-brand-gold">●</span>
-                x402 protocol for AI-native pay-per-use access
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-brand-gold">●</span>
-                On-chain subscription state — portable, verifiable, composable
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-brand-gold">●</span>
-                Sustainable model: free tier → adoption, paid tiers → development funding
-              </li>
-            </ul>
           </div>
         </div>
       </div>

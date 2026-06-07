@@ -383,15 +383,17 @@ export function EllipseView() {
               const y = viz.getY(d.dev)
               const isHovered = hoveredPoint?.data === d
               return (
-                <circle
-                  key={i} cx={x} cy={y} r={isHovered ? 6 : 14}
-                  fill={isHovered ? "#FFFFFF" : "transparent"}
-                  stroke={isHovered ? "#D82B2B" : "transparent"} strokeWidth={2}
-                  className="cursor-crosshair transition-all duration-200"
-                  onMouseEnter={() => setHoveredPoint({ x, y, data: d })}
-                  onClick={(e) => { e.stopPropagation(); setHoveredPoint({ x, y, data: d }) }}
-                  onTouchStart={(e) => { e.stopPropagation(); setHoveredPoint({ x, y, data: d }) }}
-                />
+                <g key={i}>
+                  <circle cx={x} cy={y} r={isHovered ? 6 : 2} fill={isHovered ? "var(--color-text-primary)" : "var(--color-brand-red)"} className="pointer-events-none transition-all duration-200" />
+                  <circle
+                    cx={x} cy={y} r={24} fill="transparent"
+                    className="cursor-crosshair"
+                    style={{ pointerEvents: 'all' }}
+                    onMouseEnter={() => setHoveredPoint({ x, y, data: d })}
+                    onClick={(e) => { e.stopPropagation(); setHoveredPoint({ x, y, data: d }) }}
+                    onTouchStart={(e) => { e.stopPropagation(); setHoveredPoint({ x, y, data: d }) }}
+                  />
+                </g>
               )
             })}
 

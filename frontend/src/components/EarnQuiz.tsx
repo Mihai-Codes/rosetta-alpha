@@ -218,9 +218,8 @@ function ResultsScreen({
             </span>
           </div>
 
-          <p className="text-text-secondary text-xs leading-relaxed max-w-xs mx-auto">
-            All {total}/{total} correct. Your USDC reward is being processed — a claim
-            transaction has been sent to the rewards pool on Arc Testnet.
+          <p className="text-text-secondary text-xs leading-relaxed truncate w-full max-w-[400px] mx-auto">
+            All {total}/{total} correct. Your USDC has been sent to the Arc Testnet pool.
           </p>
         </div>
       ) : (

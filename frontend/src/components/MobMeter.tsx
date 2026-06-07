@@ -79,7 +79,7 @@ export function MobMeter({ ticker, compact = false }: MobMeterProps) {
   const fillHeight = useMemo(() => `${Math.max(0, Math.min(100, score))}%`, [score])
 
   return (
-    <div className={`border border-white/10 bg-bg-secondary relative overflow-hidden ${compact ? 'p-4' : 'p-6'}`}>
+    <div className={`solid-panel bg-gradient-to-br from-[#111] to-[#050505] border border-white/10 relative overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.8)] ${compact ? 'p-4' : 'p-6'}`}>
       {isMob && <div className="absolute inset-0 bg-brand-red/5 animate-pulse pointer-events-none" />}
 
       <div className="relative z-10 flex items-start justify-between gap-4 mb-5">

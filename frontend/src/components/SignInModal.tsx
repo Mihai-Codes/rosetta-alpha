@@ -149,7 +149,7 @@ export function SignInModal() {
                   data-testid="signin-google"
                   onClick={() => handleSignIn('google', setIsLoading)}
                   disabled={isLoading !== null}
-                  className="group relative w-full flex items-center justify-center gap-4 px-5 py-4 border border-border-strong bg-bg-secondary hover:bg-bg-secondary hover:border-brand-red/60 text-text-primary text-[11px] font-mono uppercase tracking-[0.15em] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="group relative w-full flex items-center justify-center gap-4 px-5 py-4 border border-border border-l-[4px] border-l-brand-red bg-bg-secondary hover:bg-white/[0.04] text-text-primary text-[11px] font-mono uppercase tracking-[0.15em] transition-all duration-300 disabled:opacity-50"
                 >
                   <div className="absolute inset-0 bg-brand-red/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                   <svg className="w-4 h-4 shrink-0 relative z-10 grayscale group-hover:grayscale-0 transition-all duration-300" viewBox="0 0 24 24">
@@ -166,7 +166,7 @@ export function SignInModal() {
                   data-testid="signin-github"
                   onClick={() => handleSignIn('github', setIsLoading)}
                   disabled={isLoading !== null}
-                  className="group relative w-full flex items-center justify-center gap-4 px-5 py-4 border border-border-strong bg-bg-secondary hover:bg-bg-secondary hover:border-brand-red/60 text-text-primary text-[11px] font-mono uppercase tracking-[0.15em] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="group relative w-full flex items-center justify-center gap-4 px-5 py-4 border border-border border-l-[4px] border-l-brand-red bg-bg-secondary hover:bg-white/[0.04] text-text-primary text-[11px] font-mono uppercase tracking-[0.15em] transition-all duration-300 disabled:opacity-50"
                 >
                   <div className="absolute inset-0 bg-brand-red/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                   <svg className="w-4 h-4 shrink-0 relative z-10 text-text-secondary group-hover:text-white transition-colors duration-300" fill="currentColor" viewBox="0 0 24 24">

@@ -83,7 +83,7 @@ export function DivergenceGauge({ ticker, desks }: DivergenceGaugeProps) {
   }
 
   return (
-    <div className="border border-white/10 bg-bg-secondary p-6 relative flex flex-col justify-between h-full">
+    <div className="solid-panel border border-border bg-bg-secondary p-6 relative flex flex-col justify-between h-full">
       <div>
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
