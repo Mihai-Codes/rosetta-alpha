@@ -246,7 +246,7 @@ export default function KnowledgeGraphPage() {
 
       // Highlight on hover/selection (read from refs, not state)
       if (hoveredRef.current?.id === node.id || selectedRef.current?.id === node.id) {
-        ctx.strokeStyle = '#FFFFFFFFF'
+        ctx.strokeStyle = '#FFFFFF'
         ctx.lineWidth = 2
         ctx.stroke()
       }

@@ -159,7 +159,7 @@ export function NarrativeCloud({ narratives, ticker }: NarrativeCloudProps) {
                   r={circle.r * (isHovered ? 1.08 : 1)}
                   fill={color}
                   opacity={isHovered ? 0.9 : 0.6}
-                  stroke={isHovered ? '#FFFFFFFFF' : 'none'}
+                  stroke={isHovered ? '#FFFFFF' : 'none'}
                   strokeWidth={1.5}
                   style={{ transition: 'all 150ms ease-out' }}
                 />

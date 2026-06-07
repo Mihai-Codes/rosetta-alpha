@@ -154,10 +154,10 @@ interface Quadrant {
 }
 
 const QUADRANTS: Quadrant[] = [
-  { label: 'Equities',    pct: 40, color: '#FFFFFFFFFFFF' },
+  { label: 'Equities',    pct: 40, color: '#FFFFFF' },
   { label: 'Bonds',       pct: 30, color: '#FFD700' },
   { label: 'Commodities', pct: 15, color: '#D82B2B' },
-  { label: 'Crypto',      pct: 15, color: '#FFFFFFFFFFFF' },
+  { label: 'Crypto',      pct: 15, color: '#FFFFFF' },
 ]
 
 function RingChart() {
@@ -344,7 +344,7 @@ function Leaderboard() {
 
   const medalBorder = (rank: number) => {
     if (rank === 1) return 'border-l-2 border-l-accent-gold'
-    if (rank === 2) return 'border-l-2 border-l-[#FFFFFFFFFFFF]'
+    if (rank === 2) return 'border-l-2 border-l-[#FFFFFF]'
     if (rank === 3) return 'border-l-2 border-l-[#FFD700]'
     return ''
   }
@@ -526,7 +526,7 @@ export function DashboardView() {
             </p>
             <button
               onClick={handleConnectClick}
-              className="group relative overflow-hidden inline-flex items-center gap-3 px-8 py-3.5 bg-brand-red/10 border border-brand-red/50 text-brand-red text-[11px] font-bold uppercase tracking-[0.2em] transition-all duration-300 hover:bg-brand-red hover:text-black w-full justify-center"
+              className="group relative overflow-hidden inline-flex items-center gap-3 px-8 py-3.5 bg-brand-red/10 border border-brand-red/50 text-brand-red text-[11px] font-bold uppercase tracking-[0.2em] transition-all duration-300 hover:bg-brand-red hover:text-white w-full justify-center"
             >
               <span className="relative z-10">Initialize Handshake</span>
               <span className="transition-transform duration-300 group-hover:translate-x-1 relative z-10">→</span>

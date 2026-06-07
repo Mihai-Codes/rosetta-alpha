@@ -113,7 +113,7 @@ export function HeroSection({ latestHash, onScrollDown, isAuthenticated }: HeroS
           <button
             data-testid="enter-terminal-btn"
             onClick={onScrollDown}
-            className="flex items-center gap-2 px-8 py-4 bg-white text-bg-primary text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-brand-red hover:text-white transition-colors duration-300 min-h-[52px] cursor-pointer"
+            className="flex items-center gap-2 px-8 py-4 bg-brand-red text-white text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-brand-red/80 hover:text-white transition-colors duration-300 min-h-[52px] cursor-pointer"
           >
             Initialize Terminal
           </button>

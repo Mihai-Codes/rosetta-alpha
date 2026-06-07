@@ -87,7 +87,7 @@ function PremiumPaywall() {
         <p className="text-text-secondary text-xs font-light mb-8 leading-relaxed max-w-[320px] mx-auto">
           Authenticate to decrypt the full multi-agent reasoning chain and verify provenance on Arc L1.
         </p>
-        <button onClick={() => authModalState.open()} className="w-full flex items-center justify-center gap-2 py-5 bg-brand-red text-bg-primary text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-white hover:text-bg-primary transition-colors duration-300 min-h-[56px] cursor-pointer">Authenticate Session →</button>
+        <button onClick={() => authModalState.open()} className="w-full flex items-center justify-center gap-2 py-5 bg-brand-red text-white text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-brand-red/80 hover:text-white transition-colors duration-300 min-h-[56px] cursor-pointer">Authenticate Session →</button>
       </div>
       
       {/* Decorative scanning line at the bottom */}

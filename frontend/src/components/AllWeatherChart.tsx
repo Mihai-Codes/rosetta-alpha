@@ -8,7 +8,7 @@ const QUADRANTS = [
     subtitle: 'Falling Inflation',
     assets: ['Equities', 'Corporate Credit'],
     pct: 30,
-    color: '#FFFFFFFFFFFF',
+    color: '#FFFFFF',
   },
   { 
     title: 'Rising Growth',

@@ -33,9 +33,9 @@ export function formatRelative(date: Date | string | number): string {
 export const REGION_META: Record<string, { name: string; flag: string; color: string }> = {
   us:     { name: 'United States',  flag: '🇺🇸', color: '#D82B2B' },
   cn:     { name: 'China',          flag: '🇨🇳', color: '#FFD700' },
-  eu:     { name: 'Europe',         flag: '🇪🇺', color: '#FFFFFFFFFFFF' },
+  eu:     { name: 'Europe',         flag: '🇪🇺', color: '#FFFFFF' },
   jp:     { name: 'Japan',          flag: '🇯🇵', color: '#888888' },
-  crypto: { name: 'Digital Assets', flag: '₿',   color: '#FFFFFFFFFFFF' },
+  crypto: { name: 'Digital Assets', flag: '₿',   color: '#FFFFFF' },
 }
 
 export function regionMeta(desk: string) {

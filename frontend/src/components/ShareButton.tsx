@@ -180,7 +180,7 @@ export function ShareButton(props: ShareButtonProps) {
 
           {/* Tweet preview */}
           <div className="px-4 py-3 border-b border-[#FFD700]/10 bg-black/20">
-            <p data-testid="tweet-preview" className="text-[11px] text-[#FFFFFFFFFFFF]/80 font-mono leading-normal tracking-tight line-clamp-5 whitespace-pre-wrap break-all">
+            <p data-testid="tweet-preview" className="text-[11px] text-[#FFFFFF]/80 font-mono leading-normal tracking-tight line-clamp-5 whitespace-pre-wrap break-all">
               {tweetText.length > 200 ? tweetText.slice(0, 197) + '…' : tweetText}
             </p>
           </div>

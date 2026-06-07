@@ -130,7 +130,7 @@ export function FeedbackSurvey() {
                       <button
                         type="submit"
                         disabled={!text.trim()}
-                        className="px-4 py-2 border border-brand-red/50 bg-brand-red/10 text-brand-red text-[9.5px] font-mono uppercase tracking-[0.1em] hover:bg-brand-red hover:text-bg-primary transition-all duration-300 disabled:opacity-30 disabled:hover:bg-brand-red/10 disabled:hover:text-brand-red disabled:cursor-not-allowed whitespace-nowrap"
+                        className="px-4 py-2 border border-brand-red/50 bg-brand-red/10 text-brand-red text-[9.5px] font-mono uppercase tracking-[0.1em] hover:bg-brand-red hover:text-white transition-all duration-300 disabled:opacity-30 disabled:hover:bg-brand-red/10 disabled:hover:text-brand-red disabled:cursor-not-allowed whitespace-nowrap"
                       >
                         Send Feedback
                       </button>
