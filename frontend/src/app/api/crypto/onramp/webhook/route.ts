@@ -28,13 +28,6 @@ import { createHmac, timingSafeEqual } from 'crypto'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-// Disable body parser — Stripe needs the raw body for signature verification
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-}
-
 // -------------------------------------------------------------------
 // Stripe signature verification (HMAC-SHA256, no SDK required)
 // -------------------------------------------------------------------
