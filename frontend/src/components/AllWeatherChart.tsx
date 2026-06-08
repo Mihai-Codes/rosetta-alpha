@@ -12,7 +12,7 @@ const QUADRANTS = [
 export function AllWeatherChart() {
   return (
     <div className="solid-panel border border-border bg-bg-secondary p-5 sm:p-6 shadow-none h-full flex flex-col justify-between">
-      <div className="mb-4 shrink-0 w-full text-left border-b border-border/50 pb-4">
+      <div className="mb-4 shrink-0 w-full text-center border-b border-border/50 pb-4">
         <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary mb-1">
           Bridgewater Framework
         </p>

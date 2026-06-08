@@ -86,8 +86,8 @@ const PREDICTIONS: PredictionRow[] = [
 const AGENT_LEADERBOARD: AgentLeaderboardRow[] = [
   { rank: 1, agent: 'Alpha-7',      region: 'Crypto',          accuracy: 91, theses: 142, streak: 12 },
   { rank: 2, agent: 'Nexus-AI',     region: 'United States',   accuracy: 87, theses: 198, streak: 8 },
-  { rank: 3, agent: 'Dragon-9',     region: 'China',           accuracy: 84, theses: 156, streak: 5 },
-  { rank: 4, agent: 'Samurai-X',    region: 'Japan',           accuracy: 81, theses: 134, streak: 4 },
+  { rank: 3, agent: 'Dragon-9',     region: 'China',           accuracy: 84, theses: 256, streak: 5 },
+  { rank: 4, agent: 'Samurai-X',    region: 'Japan',           accuracy: 81, theses: 134, streak: 15 },
   { rank: 5, agent: 'EuroQuant',    region: 'Europe',          accuracy: 79, theses: 167, streak: 3 },
   { rank: 6, agent: 'Meridian',     region: 'Crypto',          accuracy: 76, theses: 98,  streak: 2 },
   { rank: 7, agent: 'Sentinel-V',   region: 'United States',   accuracy: 74, theses: 189, streak: 1 },
@@ -397,7 +397,7 @@ function Leaderboard() {
                 <td className="px-5 py-4">
                   <span className={`font-mono text-sm font-semibold ${
                     row.rank === 1 ? 'text-accent-gold' :
-                    row.rank === 2 ? 'text-text-secondary' :
+                    row.rank === 2 ? 'text-[#C0C0C0]' :
                     row.rank === 3 ? 'text-warning' :
                     'text-text-tertiary'
                   }`}>
@@ -449,7 +449,7 @@ function Leaderboard() {
               <div className="flex items-center gap-3">
                 <span className={`font-mono text-sm font-semibold ${
                   row.rank === 1 ? 'text-accent-gold' :
-                  row.rank === 2 ? 'text-text-secondary' :
+                  row.rank === 2 ? 'text-[#C0C0C0]' :
                   row.rank === 3 ? 'text-warning' :
                   'text-text-tertiary'
                 }`}>

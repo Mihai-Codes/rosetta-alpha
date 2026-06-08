@@ -107,7 +107,7 @@ function ReasoningBlock({
 
       {/* Desktop: always expanded */}
       <div
-        className="hidden md:block pl-8 pr-4"
+        className="hidden md:block pl-10 pr-6 pb-2"
         style={{ borderLeft: `1px solid ${meta.color}30` }}
       >
         <span
@@ -142,12 +142,12 @@ function BlockContent({
   return (
     <>
       {block.input_data_summary && (
-        <p className="text-[11px] text-text-tertiary mb-3 font-light italic">
+        <p className="text-[13px] text-text-tertiary mb-5 font-light italic">
           Input: {block.input_data_summary}
         </p>
       )}
       {block.analysis && (
-        <p className="text-sm text-text-primary font-light leading-relaxed mb-2 text-justify">
+        <p className="text-[15px] text-text-primary font-light leading-loose mb-4 text-justify">
           <TypewriterText text={block.analysis} />
         </p>
       )}
@@ -374,7 +374,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
           <p className="text-text-tertiary font-light italic text-sm">No reasoning blocks recorded for this thesis.</p>
         ) : (
           <>
-            <ol className="space-y-4 sm:space-y-6">
+            <ol className="space-y-8 sm:space-y-12">
               {/* Always show first block free */}
               <ReasoningBlock key={0} block={desk.reasoning_blocks[0]} index={0} meta={meta} />
               {/* Show rest only when unlocked */}

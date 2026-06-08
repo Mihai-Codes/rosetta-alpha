@@ -306,7 +306,7 @@ export function EllipseView() {
   if (!mounted || !viz) {
     return (
       <div className="w-full bg-bg-primary font-sans h-full flex flex-col justify-center relative min-h-[400px]">
-        <div className="flex items-start justify-between mb-4 px-4 pt-4 sm:px-6 shrink-0">
+        <div className="flex flex-col items-center justify-center text-center mb-4 px-4 pt-4 sm:px-6 shrink-0">
           <div>
             <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary mb-2">Orbit Framework</p>
             <p className="font-display text-lg text-text-primary">The Ellipse View</p>
@@ -333,7 +333,7 @@ export function EllipseView() {
 
   return (
     <div className="w-full bg-bg-primary font-sans h-full flex flex-col justify-center relative">
-      <div className="flex items-start justify-between mb-4 px-4 pt-4 sm:px-6 shrink-0">
+      <div className="flex flex-col items-center justify-center text-center mb-4 px-4 pt-4 sm:px-6 shrink-0">
         <div>
           <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-text-tertiary mb-2">Orbit Framework</p>
           <p className="font-display text-lg text-text-primary">The Ellipse View</p>
@@ -418,12 +418,12 @@ export function EllipseView() {
             <StatBox label="Period (Est)" value={viz.period > 0 ? `~${viz.period.toFixed(0)} Days` : 'N/A'} />
           </div>
         )}
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-brand-red animate-pulse"></span>
-            <span className="text-[10px] text-text-tertiary">Pos: <strong className="text-text-primary font-medium">{viz.orbitalPosition}</strong></span>
+        <div className="flex flex-col items-center justify-center gap-3">
+          <div className="flex items-center justify-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-brand-red"></span>
+            <span className="text-[10px] text-text-tertiary text-center">Pos: <strong className="text-text-primary font-medium">{viz.orbitalPosition}</strong></span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center gap-2">
             <span className="px-2 py-0.5 bg-white/5 border border-white/10 uppercase tracking-widest text-[8px] text-text-secondary">Regime: Volatile Transition</span>
           </div>
         </div>
