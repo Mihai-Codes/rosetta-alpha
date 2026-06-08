@@ -10,9 +10,16 @@
  * Flow:
  * 1. POST /api/crypto/onramp/session with { amount_usd, tier, wallet_address }
  * 2. Mount OnrampElement with returned clientSecret
- * 3. Listen for onramp_session_updated events
+ * 3. Poll session status via GET /api/crypto/onramp/session/[sessionId]
  * 4. On fulfillment_complete → show confirmation, auto-close, call onSuccess
  * 5. On rejected → show error with retry
+ *
+ * Completion is detected via polling (primary) and widget onChange (secondary).
+ * A single useEffect watches `status` and triggers all side effects — no duplicates.
+ *
+ * NOTE: A webhook endpoint exists at /api/crypto/onramp/webhook for when Stripe
+ * enables crypto.onramp_session.updated in the Dashboard. Until then, polling is
+ * the only server-side confirmation path.
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -21,8 +28,12 @@ import { Tier, TIER_PRICES_USD, TIER_LABELS } from '@/lib/subscription'
 import { STRIPE_ONRAMP_APPEARANCE } from '@/lib/stripe-api'
 
 // -------------------------------------------------------------------
-// Status messages for each onramp state
+// Constants
 // -------------------------------------------------------------------
+
+const POLL_INTERVAL_MS = 3000
+const AUTO_CLOSE_DELAY_MS = 3000
+const MAX_POLL_DURATION_MS = 10 * 60 * 1000 // 10 minutes — after this, stop polling
 
 const STATUS_MESSAGES: Record<string, string> = {
   initialized: 'Initializing payment…',
@@ -63,6 +74,7 @@ function CryptoOnrampModalInner({ tier, walletAddress, onSuccess, onClose }: Omi
   const createSession = useCallback(async () => {
     setStatus('loading')
     setError(null)
+    setIsRetrying(false)
 
     try {
       const res = await fetch('/api/crypto/onramp/session', {
@@ -95,42 +107,55 @@ function CryptoOnrampModalInner({ tier, walletAddress, onSuccess, onClose }: Omi
     createSession()
   }, [createSession])
 
-  // Poll session status as fallback (webhook might arrive before UI update)
+  // -----------------------------------------------------------------
+  // Completion handler — single source of truth for all side effects
+  // -----------------------------------------------------------------
+
+  useEffect(() => {
+    if (status !== 'fulfillment_complete') return
+
+    onSuccessRef.current()
+    const timer = setTimeout(() => onClose(), AUTO_CLOSE_DELAY_MS)
+    return () => clearTimeout(timer)
+  }, [status, onClose])
+
+  // -----------------------------------------------------------------
+  // Poll session status (primary detection path)
+  // -----------------------------------------------------------------
+
   useEffect(() => {
     if (!sessionId || status === 'fulfillment_complete' || status === 'rejected' || status === 'error') return
 
+    const startedAt = Date.now()
+
     const interval = setInterval(async () => {
+      // Stop polling after MAX_POLL_DURATION_MS
+      if (Date.now() - startedAt > MAX_POLL_DURATION_MS) {
+        clearInterval(interval)
+        return
+      }
+
       try {
         const res = await fetch(`/api/crypto/onramp/session/${sessionId}`)
         const data = await res.json() as { success: boolean; status?: string }
 
         if (data.success && data.status) {
           setStatus(data.status)
-          if (data.status === 'fulfillment_complete') {
-            onSuccessRef.current()
-          }
         }
       } catch {
-        // Ignore poll errors — webhook is primary path
+        // Ignore poll errors — will retry on next interval
       }
-    }, 3000)
+    }, POLL_INTERVAL_MS)
 
     return () => clearInterval(interval)
   }, [sessionId, status])
 
+  // -----------------------------------------------------------------
+  // Widget callbacks — update status, completion handled by effect above
+  // -----------------------------------------------------------------
+
   const handleStatusChange = useCallback((_newStatus: string, session: { status: string }) => {
     setStatus(session.status)
-  }, [])
-
-  const handleFulfillmentComplete = useCallback(() => {
-    setStatus('fulfillment_complete')
-    onSuccessRef.current()
-    // Auto-close after 3 seconds
-    setTimeout(() => onClose(), 3000)
-  }, [onClose])
-
-  const handleRejected = useCallback(() => {
-    setStatus('rejected')
   }, [])
 
   const isComplete = status === 'fulfillment_complete'
@@ -233,7 +258,6 @@ function CryptoOnrampModalInner({ tier, walletAddress, onSuccess, onClose }: Omi
               <OnrampElement
                 clientSecret={clientSecret}
                 appearance={STRIPE_ONRAMP_APPEARANCE}
-                onReady={() => setStatus('ready')}
                 onChange={handleStatusChange}
               />
             </div>

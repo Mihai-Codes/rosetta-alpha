@@ -7,6 +7,16 @@
  *
  * IMPORTANT: Stripe requires the raw body for signature verification.
  * We disable Next.js body parsing and read req.text() instead.
+ *
+ * STATUS: Dormant — Stripe has not yet added crypto.onramp_session.updated
+ * to the Dashboard webhook event picker (beta event). This code is correct
+ * and ready. When Stripe enables it:
+ *   1. Go to Developers → Webhooks → Add destination
+ *   2. URL: https://rosetta-alpha.vercel.app/api/crypto/onramp/webhook
+ *   3. Event: crypto.onramp_session.updated
+ *
+ * Until then, the frontend relies on client-side polling as the primary
+ * completion detection path (see CryptoOnrampModal).
  */
 
 import { NextResponse } from 'next/server'
