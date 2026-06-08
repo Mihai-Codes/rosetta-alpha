@@ -33,11 +33,11 @@ export function AllWeatherChart() {
               
               <div className="space-y-1 mb-3">
                 <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-text-primary leading-tight">{q.title}</p>
-                <p className="text-[9px] sm:text-[10px] uppercase tracking-wider text-text-tertiary leading-tight">{q.subtitle}</p>
+                <p className="text-[8px] sm:text-[9px] uppercase tracking-wider text-text-tertiary leading-tight">{q.subtitle}</p>
               </div>
 
               <div className="border-t border-white/5 pt-2 mt-auto">
-                <p className="text-[9px] sm:text-[10px] text-text-secondary font-mono opacity-80 truncate">{q.assets.join(', ')}</p>
+                <p className="text-[10px] text-text-secondary font-mono opacity-80 truncate">{q.assets.join(', ')}</p>
               </div>
             </div>
           ))}

@@ -1,10 +1,6 @@
 'use client'
 
-import { useState } from 'react'
-
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
+import { NARRATIVE_COLORS, NARRATIVE_LABELS, type NarrativeType } from '../lib/narrative-constants'
 
 interface NarrativeEvent {
   id: string
@@ -15,119 +11,56 @@ interface NarrativeEvent {
   region: string
 }
 
-interface NarrativeTimelineProps {
-  events: NarrativeEvent[]
-  ticker: string
-}
-
-import { NARRATIVE_COLORS, NARRATIVE_LABELS, type NarrativeType } from '../lib/narrative-constants'
-
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
-
-export function NarrativeTimeline({ events, ticker }: NarrativeTimelineProps) {
-  const [hoveredId, setHoveredId] = useState<string | null>(null)
-
+export function NarrativeTimeline({ events, ticker }: { events: NarrativeEvent[], ticker: string }) {
   if (!events.length) {
-    return (
-      <div className="text-text-tertiary text-sm italic py-4">
-        No narrative data available for {ticker}
-      </div>
-    )
+    return <div className="text-text-tertiary text-sm italic py-4">No narrative data available for {ticker}</div>
   }
 
-  // Sort chronologically
-  const sorted = [...events].sort(
-    (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
-  )
-
-  const timeRange = {
-    start: new Date(sorted[0].timestamp).getTime(),
-    end: new Date(sorted[sorted.length - 1].timestamp).getTime(),
-  }
-  const duration = Math.max(timeRange.end - timeRange.start, 1)
+  // Sort chronologically (newest first for a feed)
+  const sorted = [...events].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
 
   return (
     <div className="w-full">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-3">
-        <h4 className="font-mono text-xs text-text-secondary uppercase tracking-wider">
-          Narrative Timeline — {ticker}
+      <div className="flex items-center justify-between mb-4 border-b border-border/50 pb-2">
+        <h4 className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-secondary">
+          Chronological Feed — {ticker}
         </h4>
-        <div className="flex gap-2 flex-wrap">
-          {(Object.entries(NARRATIVE_LABELS) as [NarrativeType, string][]).map(([key, label]) => (
-            <span
-              key={key}
-              className="flex items-center gap-1 text-[10px] text-text-tertiary"
-            >
-              <span
-                className="inline-block w-2 h-2 rounded-full"
-                style={{ backgroundColor: NARRATIVE_COLORS[key] }}
-              />
-              {label}
-            </span>
-          ))}
-        </div>
       </div>
 
-      {/* Timeline track */}
-      <div className="relative h-16 bg-surface-secondary/30 rounded-lg border border-border overflow-hidden">
-        {/* Time axis */}
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-border" />
-
-        {/* Events as positioned dots */}
+      <div className="relative border-l-2 border-border ml-2 space-y-6 pb-4">
         {sorted.map((event) => {
-          const position = ((new Date(event.timestamp).getTime() - timeRange.start) / duration) * 100
-          const color = NARRATIVE_COLORS[event.type] || '#666'
-          const size = 8 + event.intensity * 16 // 8px to 24px based on intensity
-          const isHovered = hoveredId === event.id
-
+          const color = NARRATIVE_COLORS[event.type] || '#888888'
+          const d = new Date(event.timestamp)
+          
           return (
-            <div
-              key={event.id}
-              className="absolute top-1/2 -translate-y-1/2 transition-transform duration-150"
-              style={{
-                left: `${Math.min(Math.max(position, 2), 98)}%`,
-                transform: `translate(-50%, -50%) scale(${isHovered ? 1.4 : 1})`,
-                zIndex: isHovered ? 10 : 1,
-              }}
-              onMouseEnter={() => setHoveredId(event.id)}
-              onMouseLeave={() => setHoveredId(null)}
-            >
-              {/* Dot */}
-              <div
-                className="rounded-full border border-black/20 cursor-pointer"
-                style={{
-                  width: `${size}px`,
-                  height: `${size}px`,
-                  backgroundColor: color,
-                  opacity: 0.6 + event.intensity * 0.4,
-                  boxShadow: isHovered ? `0 0 12px ${color}80` : 'none',
-                }}
+            <div key={event.id} className="relative pl-6">
+              {/* Timeline Node */}
+              <div 
+                className="absolute left-[-5px] top-1.5 w-2 h-2 rounded-full ring-4 ring-bg-primary"
+                style={{ backgroundColor: color }}
               />
-
-              {/* Tooltip */}
-              {isHovered && (
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-surface-primary border border-border rounded-md shadow-lg whitespace-nowrap z-20">
-                  <p className="text-xs font-medium text-text-primary">{event.title}</p>
-                  <p className="text-[10px] text-text-tertiary mt-0.5">
-                    {NARRATIVE_LABELS[event.type]} · {(event.intensity * 100).toFixed(0)}% intensity
-                  </p>
-                  <p className="text-[10px] text-text-tertiary">
-                    {new Date(event.timestamp).toLocaleDateString()} · {event.region}
-                  </p>
-                </div>
-              )}
+              
+              <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3 mb-1">
+                <span className="font-mono text-[10px] text-text-tertiary shrink-0">
+                  {d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                </span>
+                <span className="text-[9px] uppercase tracking-widest px-1.5 py-0.5 border" style={{ color: color, borderColor: `${color}40`, backgroundColor: `${color}10` }}>
+                  {NARRATIVE_LABELS[event.type]}
+                </span>
+              </div>
+              
+              <p className="font-display text-sm text-text-primary leading-snug mt-2">
+                {event.title}
+              </p>
+              
+              <div className="flex items-center gap-3 mt-2 font-mono text-[9px] text-text-tertiary">
+                <span>INTENSITY: {(event.intensity * 100).toFixed(0)}%</span>
+                <span>•</span>
+                <span className="uppercase">{event.region}</span>
+              </div>
             </div>
           )
         })}
-      </div>
-
-      {/* Time labels */}
-      <div className="flex justify-between mt-1 text-[10px] text-text-tertiary font-mono">
-        <span>{new Date(sorted[0].timestamp).toLocaleDateString()}</span>
-        <span>{new Date(sorted[sorted.length - 1].timestamp).toLocaleDateString()}</span>
       </div>
     </div>
   )

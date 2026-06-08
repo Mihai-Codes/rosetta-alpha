@@ -715,18 +715,16 @@ export function DashboardView() {
         <div className="lg:col-span-2">
           <MobMeter ticker="AAPL" />
         </div>
-        <div className="bg-bg-primary p-6 sm:p-8 flex flex-col justify-center text-left border-l border-border/60">
-          <div className="flex items-center gap-3 mb-6">
-            <span className="w-2 h-2 bg-brand-red rounded-full" />
-            <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary">
-              Historical Signal Engine
-            </p>
-          </div>
-          <p className="font-display text-2xl text-text-primary leading-snug mb-4">
-            Extreme agreement is a <span className="text-brand-red">reversal-risk</span> warning, not confirmation.
+        <div className="bg-bg-primary p-6 sm:p-8 flex flex-col justify-center text-left border-l-0 lg:border-l border-border/60">
+          <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-text-tertiary mb-4 flex items-center gap-2">
+            <span className="w-1.5 h-1.5 bg-brand-red rounded-full"></span> Historical Signal
           </p>
-          <p className="text-[11px] text-text-secondary font-mono leading-relaxed border-l-[2px] border-border-strong pl-4">
-            Backtest hooks ready for rosetta_dataset.jsonl. Live calibration updates post-Arc settlement.
+          <p className="font-display text-xl text-text-primary leading-snug mb-3">
+            Extreme agreement is a reversal-risk warning, not confirmation.
+          </p>
+          <div className="h-px w-8 bg-brand-red/50 mb-4" />
+          <p className="text-[10px] font-mono text-text-secondary leading-relaxed">
+            Backtest hooks ready for rosetta_dataset.jsonl. Live calibration updates after Arc settlements.
           </p>
         </div>
       </div>

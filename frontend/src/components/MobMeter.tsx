@@ -39,15 +39,13 @@ export function MobMeter({ ticker, compact = false }: MobMeterProps) {
   const isMob = score >= 80
 
   return (
-    <div className={`solid-panel border border-border bg-bg-secondary relative overflow-hidden flex flex-col justify-between h-full w-full ${compact ? 'p-4' : 'p-6'}`}>
-      {isMob && <div className="absolute inset-0 bg-brand-red/5 animate-pulse pointer-events-none" />}
-      
-      <div className="relative z-10 flex items-start justify-between mb-4">
+    <div className={`solid-panel border border-border bg-bg-secondary flex flex-col justify-between h-full w-full ${compact ? 'p-4' : 'p-6'}`}>
+      <div className="flex justify-between items-start mb-6 border-b border-border/50 pb-3">
         <div>
-          <h4 className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-secondary">Mob Extremity</h4>
-          <p className="text-[9px] text-text-tertiary mt-1">Consensus × confidence × narrative</p>
+          <h4 className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-primary">Mob Extremity</h4>
+          <p className="text-[9px] text-text-tertiary mt-1">Consensus × Confidence × Narrative</p>
         </div>
-        <span className="font-mono text-[10px] text-brand-red uppercase tracking-wider">{ticker}</span>
+        <span className="font-mono text-[10px] text-brand-red uppercase tracking-wider px-2 py-1 bg-brand-red/10 border border-brand-red/20">{ticker}</span>
       </div>
 
       {loading ? (
@@ -58,8 +56,8 @@ export function MobMeter({ ticker, compact = false }: MobMeterProps) {
       ) : (
         <div className="flex-1 flex flex-col justify-center">
           <div className="flex items-end justify-between mb-3">
-            <div className="font-display text-4xl font-bold tracking-tight text-white leading-none">
-              {score.toFixed(1)} <span className="text-sm text-text-tertiary font-sans font-normal">/ 100</span>
+            <div className="font-display text-4xl text-text-primary leading-none">
+              {score.toFixed(1)}<span className="text-sm text-text-tertiary font-sans font-normal ml-1">/ 100</span>
             </div>
             <div className={`font-mono text-[10px] uppercase tracking-widest font-bold ${categoryColor(score)} text-right max-w-[140px] leading-tight`}>
               {data?.label ?? 'Normal disagreement'}

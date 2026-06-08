@@ -163,7 +163,7 @@ export function LeaderboardView() {
           Top Traders
         </p>
         <div className="grid grid-cols-3 gap-3 sm:gap-6 items-end max-w-lg mx-auto">
-          {TRADERS.slice(0, 3).map(t => (
+          {sorted.slice(0, 3).map(t => (
             <PodiumCard key={t.rank} trader={t} isMe={t.address === myAddress} />
           ))}
         </div>
