@@ -388,7 +388,7 @@ function Leaderboard() {
           <tbody>
             {sorted.map((row, i) => (
               <motion.tr
-                key={row.address || row.agent}
+                key={row.agent}
                 initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.04 }}
@@ -439,7 +439,7 @@ function Leaderboard() {
       <div className="md:hidden divide-y divide-border/40">
         {sorted.map((row, i) => (
           <motion.div
-            key={row.address || row.agent}
+            key={row.agent}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: i * 0.05 }}

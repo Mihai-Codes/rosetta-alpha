@@ -164,7 +164,7 @@ export function LeaderboardView() {
         </p>
         <div className="grid grid-cols-3 gap-3 sm:gap-6 items-end max-w-lg mx-auto">
           {sorted.slice(0, 3).map(t => (
-            <PodiumCard key={t.address || t.agent} trader={t} isMe={t.address === myAddress} />
+            <PodiumCard key={t.address} trader={t} isMe={t.address === myAddress} />
           ))}
         </div>
       </div>
@@ -220,7 +220,7 @@ export function LeaderboardView() {
                 const pct = accuracy(t)
                 return (
                   <motion.tr
-                    key={t.address || t.agent}
+                    key={t.address}
                     data-testid="leaderboard-row"
                     initial={{ opacity: 0, x: -8 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -291,7 +291,7 @@ export function LeaderboardView() {
             const pct = accuracy(t)
             return (
               <motion.div
-                key={t.address || t.agent}
+                key={t.address}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: i * 0.05 }}

@@ -1,6 +1,7 @@
 'use client'
 
 import { Layout } from '@/components/Layout'
+import { motion } from 'framer-motion'
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { parseUnits } from 'viem'
 import { useState } from 'react'
@@ -221,8 +222,6 @@ export default function PricingPage() {
           />
         </div>
 
-      </motion.div>
-      </motion.div>
         {/* x402 Callout */}
         <div className="mt-16 max-w-3xl mx-auto text-center">
           <div className="rounded-lg border border-border bg-bg-secondary p-6 sm:p-8">
@@ -237,7 +236,7 @@ export default function PricingPage() {
             </p>
           </div>
         </div>
-      </div>
+      </motion.div>
     </Layout>
   )
 }
