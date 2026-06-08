@@ -226,13 +226,13 @@ export function LeaderboardView() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.04 }}
                     className={`border-b border-border/40 transition-colors ${
-                      isMe ? 'bg-accent-gold/5 hover:bg-accent-gold/8' : 'hover:bg-bg-tertiary/40'
+                      isMe ? 'bg-brand-red/5 hover:bg-brand-red/10' : 'hover:bg-bg-tertiary/40'
                     }`}
                   >
                     <td className="px-5 py-4">
                       <span className={`font-mono text-sm font-semibold ${
-                        t.rank === 1 ? 'text-accent-gold' :
-                        t.rank === 2 ? 'text-[#E5E7EB]' :
+                        t.rank === 1 ? 'text-brand-red' :
+                        t.rank === 2 ? 'text-[#CCCCCC]' :
                         t.rank === 3 ? 'text-warning' :
                         'text-text-tertiary'
                       }`}>
@@ -295,13 +295,13 @@ export function LeaderboardView() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: i * 0.05 }}
-                className={`px-5 py-4 space-y-2 ${isMe ? 'bg-accent-gold/5' : ''}`}
+                className={`px-5 py-4 space-y-2 ${isMe ? 'bg-brand-red/5' : ''}`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <span className={`font-mono text-sm font-semibold ${
-                      t.rank === 1 ? 'text-accent-gold' :
-                      t.rank === 2 ? 'text-[#E5E7EB]' :
+                      t.rank === 1 ? 'text-brand-red' :
+                      t.rank === 2 ? 'text-[#CCCCCC]' :
                       t.rank === 3 ? 'text-warning' :
                       'text-text-tertiary'
                     }`}>

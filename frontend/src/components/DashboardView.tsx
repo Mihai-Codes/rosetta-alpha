@@ -343,8 +343,8 @@ function Leaderboard() {
   })
 
   const medalBorder = (rank: number) => {
-    if (rank === 1) return 'border-l-2 border-l-accent-gold'
-    if (rank === 2) return 'border-l-2 border-l-[#FFFFFF]'
+    if (rank === 1) return 'border-l-2 border-l-brand-red'
+    if (rank === 2) return 'border-l-2 border-l-[#CCCCCC]'
     if (rank === 3) return 'border-l-2 border-l-[#F59E0B]'
     return ''
   }
@@ -396,8 +396,8 @@ function Leaderboard() {
               >
                 <td className="px-5 py-4">
                   <span className={`font-mono text-sm font-semibold ${
-                    row.rank === 1 ? 'text-accent-gold' :
-                    row.rank === 2 ? 'text-[#E5E7EB]' :
+                    row.rank === 1 ? 'text-brand-red' :
+                    row.rank === 2 ? 'text-[#CCCCCC]' :
                     row.rank === 3 ? 'text-warning' :
                     'text-text-tertiary'
                   }`}>
@@ -448,8 +448,8 @@ function Leaderboard() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className={`font-mono text-sm font-semibold ${
-                  row.rank === 1 ? 'text-accent-gold' :
-                  row.rank === 2 ? 'text-[#E5E7EB]' :
+                  row.rank === 1 ? 'text-brand-red' :
+                  row.rank === 2 ? 'text-[#CCCCCC]' :
                   row.rank === 3 ? 'text-warning' :
                   'text-text-tertiary'
                 }`}>
