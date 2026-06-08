@@ -81,6 +81,32 @@ prompts/private/
 
 # Text-grad feedback accumulator (personal, not for commit)
 training/feedback_cache.json
+training/learned_guidelines.json
+
+# Stripe agent skills (install locally via: npx skills add)
+.adal/
+.agents/
+.augment/
+.claude/
+.commandcode/
+.factory/
+.forge/
+.hermes/
+.junie/
+.kiro/
+.pi/
+.qwen/
+.vibe/
+skills-lock.json
+
+# Vendored contract deps (use git submodules: forge install)
+contracts/lib/
+
+# Foundry verify output (on-chain, re-queryable)
+contracts/*_verify.json
+
+# Remotion generated assets
+assets/media_assets.json
 .vercel
 docs/outreach/
 docs/debug_live*.jpg
