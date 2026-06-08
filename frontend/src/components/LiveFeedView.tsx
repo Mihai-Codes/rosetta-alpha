@@ -266,7 +266,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                         href={`https://arcscan.app/tx/${e.arc_tx}`}
                         target="_blank" rel="noopener noreferrer"
                         
-                        className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium text-gray-300 bg-bg-secondary border border-text-secondary rounded hover:bg-bg-secondary transition-colors font-mono"
+                        className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium text-[#CCCCCC] bg-bg-secondary border border-text-secondary rounded hover:bg-bg-secondary transition-colors font-mono"
                         onClick={(event) => event.stopPropagation()}
                       >
                         Arc L1 <ExternalLink size={10} />
@@ -281,7 +281,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                         href={`https://gateway.pinata.cloud/ipfs/${e.ipfs_thesis_cid}`}
                         target="_blank" rel="noopener noreferrer"
                         
-                        className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium text-gray-300 bg-bg-secondary border border-text-secondary rounded hover:bg-bg-secondary transition-colors font-mono"
+                        className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium text-[#CCCCCC] bg-bg-secondary border border-text-secondary rounded hover:bg-bg-secondary transition-colors font-mono"
                         onClick={(event) => event.stopPropagation()}
                        >
                          <Database size={10} /> IPFS

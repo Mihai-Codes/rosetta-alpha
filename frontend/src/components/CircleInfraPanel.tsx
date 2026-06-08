@@ -244,10 +244,10 @@ export function CircleInfraPanel() {
                 <div className="bg-white/[0.02] border border-white/5 rounded-xl p-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2 text-xs text-text-secondary">
-                      <Lock size={14} className="text-amber-500" />
+                      <Lock size={14} className="text-[#F59E0B]" />
                       <span>Unpaid Request</span>
                     </div>
-                    <span className="inline-flex items-center justify-center px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                    <span className="inline-flex items-center justify-center px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20">
                       HTTP {x402Unpaid?.status ?? '—'}
                     </span>
                   </div>

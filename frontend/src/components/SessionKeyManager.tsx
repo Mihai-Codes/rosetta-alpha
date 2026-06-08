@@ -198,7 +198,7 @@ function SetupPanel({
 
       {/* Error */}
       {error && (
-        <div className="flex items-start gap-2 border border-red-500/30 bg-red-500/10 p-2.5 text-[10px] text-[#D82B2B]">
+        <div className="flex items-start gap-2 border border-[#D82B2B]/30 bg-[#D82B2B]/10 p-2.5 text-[10px] text-[#D82B2B]">
           <XCircle className="w-3 h-3 mt-0.5 shrink-0" />
           <span>{error}</span>
         </div>
@@ -301,7 +301,7 @@ function ActivePanel({
       <button
         type="button"
         onClick={onRevoke}
-        className="w-full py-2 px-4 text-[9px] font-medium uppercase tracking-[0.2em] border border-red-500/30 text-[#D82B2B] hover:bg-red-500/10 transition-colors duration-200"
+        className="w-full py-2 px-4 text-[9px] font-medium uppercase tracking-[0.2em] border border-[#D82B2B]/30 text-[#D82B2B] hover:bg-[#D82B2B]/10 transition-colors duration-200"
       >
         Revoke Session
       </button>
@@ -324,10 +324,10 @@ function ExpiredPanel({
 }) {
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-start gap-2.5 border border-amber-500/30 bg-amber-500/10 p-3">
-        <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+      <div className="flex items-start gap-2.5 border border-[#F59E0B]/30 bg-[#F59E0B]/10 p-3">
+        <AlertTriangle className="w-4 h-4 text-[#F59E0B] shrink-0 mt-0.5" />
         <div>
-          <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-amber-400 mb-0.5">
+          <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-[#F59E0B] mb-0.5">
             {reason === 'expired' ? 'Session Expired' : 'Budget Exhausted'}
           </p>
           <p className="text-[10px] text-text-tertiary">
@@ -339,7 +339,7 @@ function ExpiredPanel({
       </div>
 
       {error && (
-        <div className="flex items-start gap-2 border border-red-500/30 bg-red-500/10 p-2.5 text-[10px] text-[#D82B2B]">
+        <div className="flex items-start gap-2 border border-[#D82B2B]/30 bg-[#D82B2B]/10 p-2.5 text-[10px] text-[#D82B2B]">
           <XCircle className="w-3 h-3 mt-0.5 shrink-0" />
           <span>{error}</span>
         </div>

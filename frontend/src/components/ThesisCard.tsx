@@ -410,7 +410,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
 
             {/* Error state */}
             {unlockError && (
-              <p className="mt-3 text-[10px] text-[#D82B2B] border border-red-500/20 bg-red-500/5 px-3 py-2">
+              <p className="mt-3 text-[10px] text-[#D82B2B] border border-[#D82B2B]/20 bg-[#D82B2B]/5 px-3 py-2">
                 {unlockError}
               </p>
             )}
@@ -428,35 +428,35 @@ export function ThesisCard({ desk }: ThesisCardProps) {
 
       {/* Hidden flow */}
       {(desk.hidden_flow_signals?.length || desk.potential_dark_pool_activity) ? (
-        <section className="px-4 sm:px-8 py-5 sm:py-6 border-t border-amber-500/30 bg-amber-500/[0.04]">
+        <section className="px-4 sm:px-8 py-5 sm:py-6 border-t border-[#F59E0B]/30 bg-[#F59E0B]/[0.04]">
           <details className="group" open>
             <summary className="list-none cursor-pointer flex items-center justify-between gap-3 min-h-[44px]">
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-medium uppercase tracking-[0.25em] text-amber-300">
+                <span className="text-[10px] font-medium uppercase tracking-[0.25em] text-[#F59E0B]">
                   Hidden Flow
                 </span>
-                <span className="text-[9px] uppercase tracking-[0.2em] text-amber-400/80 border border-amber-500/30 px-2 py-0.5">
+                <span className="text-[9px] uppercase tracking-[0.2em] text-[#F59E0B]/80 border border-[#F59E0B]/30 px-2 py-0.5">
                   Warning
                 </span>
               </div>
-              <ChevronDown className="w-4 h-4 text-amber-300/80 group-open:rotate-180 transition-transform" />
+              <ChevronDown className="w-4 h-4 text-[#F59E0B]/80 group-open:rotate-180 transition-transform" />
             </summary>
             {desk.potential_dark_pool_activity && (
-              <p className="mt-2 text-[12px] text-amber-200/90">
+              <p className="mt-2 text-[12px] text-[#F59E0B]/90">
                 Potential dark pool activity detected from large block-trade proxy signals.
               </p>
             )}
             {desk.hidden_flow_signals && desk.hidden_flow_signals.length > 0 && (
               <ul className="mt-3 space-y-2">
                 {desk.hidden_flow_signals.map((signal, i) => (
-                  <li key={`${signal.type}-${signal.asset}-${i}`} className="border border-amber-500/20 bg-black/20 p-3">
+                  <li key={`${signal.type}-${signal.asset}-${i}`} className="border border-[#F59E0B]/20 bg-black/20 p-3">
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                      <span className="text-[10px] uppercase tracking-[0.2em] text-amber-300">
+                      <span className="text-[10px] uppercase tracking-[0.2em] text-[#F59E0B]">
                         {HIDDEN_FLOW_LABEL[signal.type] ?? signal.type}
                       </span>
-                      <span className="text-[10px] font-mono text-amber-100/90">{signal.asset}</span>
-                      <span className="text-[10px] text-amber-200/80">{signal.direction}</span>
-                      <span className="text-[10px] text-amber-200/80">
+                      <span className="text-[10px] font-mono text-[#FFFFFF]/90">{signal.asset}</span>
+                      <span className="text-[10px] text-[#F59E0B]/80">{signal.direction}</span>
+                      <span className="text-[10px] text-[#F59E0B]/80">
                         Conf {(signal.confidence * 100).toFixed(0)}%
                       </span>
                     </div>

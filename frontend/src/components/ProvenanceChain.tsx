@@ -70,7 +70,7 @@ function statusView(status: StepStatus) {
   }
   return {
     Icon: Loader2,
-    className: 'text-amber-400 animate-spin',
+    className: 'text-[#F59E0B] animate-spin',
     label: 'In Progress',
   }
 }
@@ -172,7 +172,7 @@ export function ProvenanceChain({
   if (loading) {
     return (
       <div className={`solid-panel border border-white/10 p-5 ${className}`}>
-        <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-amber-400">
+        <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-[#F59E0B]">
           <Loader2 className="w-4 h-4 animate-spin" />
           Loading provenance chain
         </div>
