@@ -556,7 +556,7 @@ export function DashboardView() {
           </div>
           
           {/* Overlay scanning effect */}
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] bg-[length:100%_4px,3px_100%] z-20 pointer-events-none opacity-40" />
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(216,43,43,0.03),rgba(34,197,94,0.01),rgba(216,43,43,0.03))] bg-[length:100%_4px,3px_100%] z-20 pointer-events-none opacity-40" />
           
           {/* Overlay text */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30 bg-bg-primary/40 backdrop-blur-[2px]">
@@ -585,7 +585,12 @@ export function DashboardView() {
   }
 
   return (
-    <div className="space-y-8 sm:space-y-10">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      className="space-y-8 sm:space-y-10"
+    >
       {/* ── Genuine Terminal Telemetry Dashboard ── */}
       <div className="mb-10 solid-panel bg-bg-primary p-6 sm:p-8 border border-border/80 shadow-2xl relative overflow-hidden">
         {/* Subtle top red glow */}
