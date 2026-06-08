@@ -734,6 +734,43 @@ export function DashboardView() {
         </div>
       </div>
 
+      {/* ── Cross-Desk Contagion Monitor ── */}
+      <div className="solid-panel rounded-none border overflow-hidden mt-4">
+        <div className="px-6 py-4 border-b border-border flex items-center justify-between">
+          <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary">
+            Cross-Desk Contagion Monitor
+          </p>
+          <span className="text-[9px] uppercase tracking-[0.2em] text-brand-red font-medium">
+            Real-Time Narrative Spillover
+          </span>
+        </div>
+        <div className="px-6 py-4">
+          <div className="space-y-3 max-h-[250px] overflow-y-auto">
+            {/* Mock data - replace with API call to /api/cross-desk-contagion when available */}
+            {[
+              { title: 'AI Bubble Fears', regions: ['US', 'CN', 'EU'], intensity: 4.2, acceleration: 1.3 },
+              { title: 'Fed Pivot Incoming', regions: ['US'], intensity: 2.8, acceleration: 0.5 },
+              { title: 'China Tech Crackdown', regions: ['CN', 'JP'], intensity: 1.9, acceleration: -0.2 },
+            ].map((item, index) => (
+              <div key={index} className="flex items-center gap-3 text-xs border-b border-border/20 pb-2 last:border-b-0">
+                <span className="text-brand-red font-mono">⚡</span>
+                <span className="text-text-primary font-medium">{item.title}</span>
+                <span className="text-text-tertiary">→</span>
+                <span className="text-text-secondary font-mono">
+                  {item.regions.join(' · ')}
+                </span>
+                <span className="ml-auto text-text-tertiary font-mono text-[10px]">
+                  {item.intensity.toFixed(1)}/day · {item.acceleration > 0 ? '+' : ''}{item.acceleration.toFixed(1)}
+                </span>
+              </div>
+            ))}
+          </div>
+          <p className="text-[9px] text-text-tertiary uppercase tracking-[0.2em] pt-3 border-t border-border/20 mt-2">
+            Tracking {3} cross-regional narrative spillovers · Updated every 60s
+          </p>
+        </div>
+      </div>
+
       {/* ── My Predictions ── */}
       <MyPredictions />
 

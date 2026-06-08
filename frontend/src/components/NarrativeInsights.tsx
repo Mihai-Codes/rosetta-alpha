@@ -60,11 +60,11 @@ export function NarrativeInsights({ ticker = 'Portfolio' }: NarrativeInsightsPro
 
       {/* Expandable content */}
       {isExpanded && (
-        <div className="px-6 pb-6 space-y-6 border-t border-border pt-5">
-          {/* Horizontal layout - all components in sequence */}
-          <div className="space-y-6">
+        <div className="px-6 pb-6 border-t border-border pt-5">
+          {/* Horizontal layout - all components side by side */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 min-h-[300px]">
             {/* Narrative Heatmap */}
-            <div className="border-b border-border pb-4">
+            <div className="border border-border p-4">
               <h4 className="font-mono text-xs text-text-secondary uppercase tracking-wider mb-3">
                 Narrative Heatmap
               </h4>
@@ -72,7 +72,7 @@ export function NarrativeInsights({ ticker = 'Portfolio' }: NarrativeInsightsPro
             </div>
 
             {/* Chronological Feed */}
-            <div className="border-b border-border pb-4">
+            <div className="border border-border p-4">
               <h4 className="font-mono text-xs text-text-secondary uppercase tracking-wider mb-3">
                 Chronological Feed
               </h4>
@@ -80,11 +80,11 @@ export function NarrativeInsights({ ticker = 'Portfolio' }: NarrativeInsightsPro
             </div>
 
             {/* Cross-Desk Contagion */}
-            <div className="pb-4">
+            <div className="border border-border p-4">
               <h4 className="font-mono text-xs text-text-secondary uppercase tracking-wider mb-3">
                 Cross-Desk Contagion
               </h4>
-              <div className="space-y-2">
+              <div className="space-y-2 max-h-[200px] overflow-y-auto">
                 {MOCK_CLOUD_NARRATIVES
                   .filter(n => n.regionsPresent.length > 1)
                   .map(n => (

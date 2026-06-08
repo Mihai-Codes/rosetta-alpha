@@ -115,10 +115,10 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                     onClick={() => setRegionFilter(r)}
                     className={`shrink-0 snap-start px-3 py-2 min-h-[44px] text-[10px] font-medium uppercase tracking-[0.18em] border transition-all ${
                       isActive
-                        ? 'border-brand-red text-brand-red'
-                        : 'border-border text-text-secondary hover:text-text-primary hover:border-border-strong'
+                        ? 'bg-brand-red border-brand-red text-white'
+                        : 'bg-bg-secondary border-border text-text-primary hover:bg-white/[0.05]'
                     }`}
-                    style={isActive && meta ? { borderColor: meta.color, color: meta.color } : undefined}
+                    style={isActive && meta ? { borderColor: meta.color, backgroundColor: `${meta.color}20` } : undefined}
                   >
                     {r === 'ALL' ? 'All' : (meta?.flag ? `${meta.flag} ` : '') + (meta?.name ?? r)}
                   </button>
@@ -143,8 +143,8 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                     onClick={() => setDirectionFilter(d)}
                     className={`shrink-0 snap-start px-3 py-2 min-h-[44px] text-[10px] font-medium uppercase tracking-[0.18em] border transition-all ${
                       directionFilter === d
-                        ? 'border-brand-red text-brand-red'
-                        : 'border-border text-text-secondary hover:text-text-primary'
+                        ? 'bg-brand-red border-brand-red text-white'
+                        : 'bg-bg-secondary border-border text-text-primary hover:bg-white/[0.05]'
                     }`}
                   >
                     {d === 'ALL' ? 'All' : d}
