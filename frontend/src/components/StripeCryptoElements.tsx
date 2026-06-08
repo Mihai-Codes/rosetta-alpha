@@ -124,43 +124,6 @@ export function useStripeOnramp() {
   return useContext(CryptoElementsContext)
 }
 
-interface SessionListenerOptions {
-  onStatusChange?: (status: string, session: OnrampSessionData) => void
-  onFulfillmentComplete?: (session: OnrampSessionData) => void
-  onRejected?: (session: OnrampSessionData) => void
-  onReady?: () => void
-}
-
-export function useOnrampSessionListener(options: SessionListenerOptions) {
-  const sessionRef = useRef<OnrampSession | null>(null)
-
-  const addListeners = useCallback((session: OnrampSession) => {
-    sessionRef.current = session
-
-    session.addEventListener('onramp_ui_loaded', () => {
-      options.onReady?.()
-    })
-
-    session.addEventListener('onramp_session_updated', (event) => {
-      const updatedSession = event.payload.session
-      options.onStatusChange?.(updatedSession.status, updatedSession)
-
-      if (updatedSession.status === 'fulfillment_complete') {
-        options.onFulfillmentComplete?.(updatedSession)
-      } else if (updatedSession.status === 'rejected') {
-        options.onRejected?.(updatedSession)
-      }
-    })
-  }, [options])
-
-  const unmount = useCallback(() => {
-    sessionRef.current?.unmount()
-    sessionRef.current = null
-  }, [])
-
-  return { addListeners, unmount, sessionRef }
-}
-
 // -------------------------------------------------------------------
 // OnrampElement — mounts the Stripe onramp widget into a container
 // -------------------------------------------------------------------

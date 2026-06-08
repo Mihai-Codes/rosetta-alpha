@@ -1,10 +1,10 @@
 'use client'
 
 import { Layout } from '@/components/Layout'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { parseUnits } from 'viem'
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   SUBSCRIPTION_CONTRACT,
   SUBSCRIPTION_ABI,
@@ -147,6 +147,8 @@ export default function PricingPage() {
   const [pendingTier, setPendingTier] = useState<Tier | null>(null)
   const [onrampTier, setOnrampTier] = useState<Tier | null>(null)
   const [showOnramp, setShowOnramp] = useState(false)
+  const [paymentSuccess, setPaymentSuccess] = useState(false)
+  const [subStatus, setSubStatus] = useState<string | null>(null)
 
   const { writeContract: approveUsdc, data: approveHash } = useWriteContract()
   const { writeContract: subscribe, data: subscribeHash } = useWriteContract()
@@ -155,6 +157,32 @@ export default function PricingPage() {
   const { isLoading: isSubscribing } = useWaitForTransactionReceipt({ hash: subscribeHash })
 
   const isPending = isApproving || isSubscribing
+
+  const fetchSubStatus = useCallback(async () => {
+    if (!address) return
+    try {
+      const res = await fetch(`/api/subscription/status?wallet=${address.toLowerCase()}`)
+      const data = await res.json()
+      setSubStatus(data.active ? `${data.tierName} active` : null)
+    } catch {
+      // Silent — non-critical
+    }
+  }, [address])
+
+  useEffect(() => {
+    fetchSubStatus()
+  }, [fetchSubStatus])
+
+  // Re-check subscription status after successful payment
+  useEffect(() => {
+    if (!paymentSuccess || !address) return
+    // Poll a few times — DB write may lag behind Stripe webhook
+    const intervals = [1000, 3000, 6000, 10000]
+    const timers = intervals.map((delay) =>
+      setTimeout(() => fetchSubStatus(), delay)
+    )
+    return () => timers.forEach(clearTimeout)
+  }, [paymentSuccess, address, fetchSubStatus])
 
   async function handleSubscribe(tier: Tier) {
     if (!isConnected || !address || tier === Tier.None) return
@@ -188,6 +216,22 @@ export default function PricingPage() {
   return (
     <Layout activeTab="pricing">
       <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-16 pt-28 sm:pt-36 lg:pt-48">
+        {/* Success Banner */}
+        <AnimatePresence>
+          {paymentSuccess && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="fixed top-20 left-1/2 -translate-x-1/2 z-50 rounded-lg border border-[#4A9F6F]/30 bg-[#4A9F6F]/10 px-6 py-3 text-sm text-[#4A9F6F] backdrop-blur-sm"
+            >
+              {subStatus
+                ? `✓ ${subStatus} — welcome aboard`
+                : '✓ Payment received — subscription activating shortly…'}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Header */}
         <div className="mb-12 text-center">
           <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-brand-red mb-3">
@@ -259,8 +303,8 @@ export default function PricingPage() {
           tier={onrampTier}
           walletAddress={address}
           onSuccess={() => {
-            // Refresh to pick up the new subscription status from DB/chain
-            window.location.reload()
+            setPaymentSuccess(true)
+            fetchSubStatus()
           }}
           onClose={() => {
             setShowOnramp(false)

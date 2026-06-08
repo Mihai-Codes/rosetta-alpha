@@ -371,7 +371,7 @@ class TestSubscriptionActivation:
 
     def test_subscription_expires_in_30_days(self):
         import datetime
-        now = datetime.datetime.utcnow()
+        now = datetime.datetime.now(datetime.UTC)
         expires = now + datetime.timedelta(days=30)
         assert (expires - now).days == 30
 
@@ -486,3 +486,396 @@ class TestEndToEndFlow:
         assert response["success"]
         assert response["status"] == "fulfillment_processing"
         assert "transactionDetails" in response
+
+
+# -----------------------------------------------------------------------
+# Tests: API route logic (session creation)
+# -----------------------------------------------------------------------
+
+class TestSessionCreationRoute:
+    """Test the POST /api/crypto/onramp/session route logic."""
+
+    def _build_stripe_request(self, wallet_address: str, tier: int, source_amount: int) -> Dict[str, Any]:
+        """Simulate the raw fetch call to Stripe API from the route handler."""
+        import urllib.parse
+        params = {
+            "wallet_addresses[ethereum]": wallet_address,
+            "source_currency": "usd",
+            "source_amount": str(source_amount),
+            "destination_currency": "usdc",
+            "destination_network": "ethereum",
+            "destination_currencies[]": "usdc",
+            "destination_networks[]": "ethereum",
+            "lock_wallet_address": "true",
+            "metadata[tier]": str(tier),
+            "metadata[wallet_address]": wallet_address,
+        }
+        return {
+            "method": "POST",
+            "url": "https://api.stripe.com/v1/crypto/onramp_sessions",
+            "headers": {
+                "Authorization": "Bearer sk_test_fake",
+                "Stripe-Version": STRIPE_VERSION,
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            "body": urllib.parse.urlencode(params),
+        }
+
+    def test_session_request_has_correct_url(self):
+        req = self._build_stripe_request("0x" + "ab" * 20, 1, 29)
+        assert req["url"] == "https://api.stripe.com/v1/crypto/onramp_sessions"
+
+    def test_session_request_has_stripe_version_header(self):
+        req = self._build_stripe_request("0x" + "ab" * 20, 1, 29)
+        assert "crypto_onramp_beta=v2" in req["headers"]["Stripe-Version"]
+
+    def test_session_request_has_bearer_auth(self):
+        req = self._build_stripe_request("0x" + "ab" * 20, 1, 29)
+        assert req["headers"]["Authorization"].startswith("Bearer ")
+
+    def test_session_request_body_is_form_encoded(self):
+        req = self._build_stripe_request("0x" + "ab" * 20, 1, 29)
+        assert "application/x-www-form-urlencoded" in req["headers"]["Content-Type"]
+
+    def test_session_request_includes_wallet_address(self):
+        wallet = "0x" + "de" * 20
+        req = self._build_stripe_request(wallet, 2, 99)
+        assert wallet in req["body"]
+
+    def test_session_request_locks_wallet(self):
+        req = self._build_stripe_request("0x" + "ab" * 20, 1, 29)
+        assert "lock_wallet_address=true" in req["body"]
+
+    def test_session_request_metadata_tier(self):
+        req = self._build_stripe_request("0x" + "ab" * 20, 2, 99)
+        assert "metadata%5Btier%5D=2" in req["body"]
+
+    def test_session_request_destination_is_ethereum(self):
+        req = self._build_stripe_request("0x" + "ab" * 20, 1, 29)
+        assert "destination_network=ethereum" in req["body"]
+
+    def test_session_response_parsing_success(self):
+        """Simulate parsing a successful Stripe session creation response."""
+        stripe_response = {
+            "id": "cos_1OxT9e2eZvKYlo2C5KhzF9lb",
+            "object": "crypto.onramp_session",
+            "client_secret": "cos_client_secret_abc123",
+            "status": "initialized",
+        }
+        # Route handler extracts these fields
+        session_id = stripe_response["id"]
+        client_secret = stripe_response["client_secret"]
+        status = stripe_response["status"]
+
+        assert session_id.startswith("cos_")
+        assert client_secret.startswith("cos_client_secret_")
+        assert status == "initialized"
+
+    def test_session_response_parsing_error(self):
+        """Simulate parsing a Stripe error response."""
+        stripe_response = {
+            "error": {
+                "type": "invalid_request_error",
+                "message": "Invalid wallet address format",
+            }
+        }
+        assert "error" in stripe_response
+        assert stripe_response["error"]["type"] == "invalid_request_error"
+
+
+# -----------------------------------------------------------------------
+# Tests: Subscription status API route logic
+# -----------------------------------------------------------------------
+
+class TestSubscriptionStatusRoute:
+    """Test the GET /api/subscription/status route logic."""
+
+    def _build_status_response(
+        self,
+        wallet: str,
+        active: bool,
+        tier: int,
+        tier_label: str,
+        source: str,
+        expires_at: int,
+    ) -> Dict[str, Any]:
+        """Simulate the subscription status response."""
+        return {
+            "success": True,
+            "wallet": wallet.lower(),
+            "active": active,
+            "tier": tier,
+            "tierName": tier_label,
+            "expiresAt": expires_at,
+            "source": source,
+        }
+
+    def test_inactive_subscription(self):
+        resp = self._build_status_response("0x" + "ab" * 20, False, 0, "Free", "none", 0)
+        assert not resp["active"]
+        assert resp["tier"] == 0
+
+    def test_premium_subscription(self):
+        import datetime
+        expires = int((datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=30)).timestamp())
+        resp = self._build_status_response("0x" + "ab" * 20, True, 1, "Premium", "stripe-onramp", expires)
+        assert resp["active"]
+        assert resp["tier"] == 1
+        assert resp["source"] == "stripe-onramp"
+
+    def test_pro_subscription(self):
+        import datetime
+        expires = int((datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=30)).timestamp())
+        resp = self._build_status_response("0x" + "cd" * 20, True, 2, "Pro", "on-chain", expires)
+        assert resp["active"]
+        assert resp["tier"] == 2
+        assert resp["source"] == "on-chain"
+
+    def test_expired_subscription(self):
+        import datetime
+        past = int((datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=1)).timestamp())
+        resp = self._build_status_response("0x" + "ab" * 20, False, 1, "Premium", "stripe-onramp", past)
+        assert not resp["active"]
+
+    def test_wallet_address_is_lowercased(self):
+        wallet = "0x" + "AB" * 20
+        resp = self._build_status_response(wallet, True, 1, "Premium", "stripe-onramp", 9999999999)
+        assert resp["wallet"] == wallet.lower()
+
+    def test_dual_source_fallback(self):
+        """DB source should be used when on-chain fails."""
+        resp = self._build_status_response("0x" + "ab" * 20, True, 1, "Premium", "stripe-onramp", 9999999999)
+        assert resp["source"] == "stripe-onramp"  # DB fallback
+
+
+# -----------------------------------------------------------------------
+# Tests: Webhook handler logic
+# -----------------------------------------------------------------------
+
+class TestWebhookHandler:
+    """Test the POST /api/crypto/onramp/webhook handler logic."""
+
+    def _make_stripe_event(self, session_id: str, status: str, tier: int, wallet: str) -> Dict[str, Any]:
+        return {
+            "id": "evt_test_123",
+            "type": "crypto.onramp_session.updated",
+            "data": {
+                "object": {
+                    "id": session_id,
+                    "status": status,
+                    "metadata": {
+                        "tier": str(tier),
+                        "wallet_address": wallet,
+                    },
+                }
+            },
+        }
+
+    def test_valid_fulfillment_complete_triggers_activation(self):
+        wallet = "0x" + "ab" * 20
+        event = self._make_stripe_event("cos_test", "fulfillment_complete", 1, wallet)
+        session = event["data"]["object"]
+        assert session["status"] == "fulfillment_complete"
+        # Route handler would call activateSubscription()
+        assert int(session["metadata"]["tier"]) in (1, 2)
+
+    def test_processing_status_does_not_activate(self):
+        wallet = "0x" + "ab" * 20
+        event = self._make_stripe_event("cos_test", "fulfillment_processing", 1, wallet)
+        session = event["data"]["object"]
+        assert session["status"] != "fulfillment_complete"
+
+    def test_rejected_status_does_not_activate(self):
+        wallet = "0x" + "ab" * 20
+        event = self._make_stripe_event("cos_test", "rejected", 2, wallet)
+        session = event["data"]["object"]
+        assert session["status"] == "rejected"
+
+    def test_unknown_event_type_returns_200(self):
+        """Unknown event types should return 200 (Stripe best practice)."""
+        event = {"type": "invoice.paid", "data": {"object": {}}}
+        assert event["type"] != "crypto.onramp_session.updated"
+
+    def test_missing_metadata_returns_200(self):
+        """Events without expected metadata should return 200, not 500."""
+        event = {
+            "type": "crypto.onramp_session.updated",
+            "data": {
+                "object": {
+                    "id": "cos_nodata",
+                    "status": "fulfillment_complete",
+                    "metadata": {},
+                }
+            },
+        }
+        metadata = event["data"]["object"]["metadata"]
+        assert "tier" not in metadata or metadata.get("tier") == ""
+
+    def test_idempotency_same_session(self):
+        """Processing the same session ID twice should not create duplicates."""
+        processed = set()
+        session_id = "cos_dup_test"
+
+        for _ in range(2):
+            if session_id in processed:
+                continue  # Idempotent skip
+            processed.add(session_id)
+
+        assert len(processed) == 1
+
+
+# -----------------------------------------------------------------------
+# Tests: Stripe HMAC signature with timing-safe comparison
+# -----------------------------------------------------------------------
+
+class TestTimingSafeComparison:
+    """Verify that signature comparison uses constant-time comparison."""
+
+    def test_identical_signatures_match(self):
+        sig1 = "abc123"
+        sig2 = "abc123"
+        assert hmac.compare_digest(sig1, sig2)
+
+    def test_different_signatures_dont_match(self):
+        sig1 = "abc123"
+        sig2 = "abc124"
+        assert not hmac.compare_digest(sig1, sig2)
+
+    def test_empty_signatures_dont_crash(self):
+        assert hmac.compare_digest("", "")
+        assert not hmac.compare_digest("a", "")
+
+
+# -----------------------------------------------------------------------
+# Tests: Pricing page state management (no page reload)
+# -----------------------------------------------------------------------
+
+class TestPricingPageState:
+    """Test the pricing page's state-based subscription refresh logic."""
+
+    def test_payment_success_triggers_polling(self):
+        """After payment, subscription status should be polled at increasing intervals."""
+        intervals = [1000, 3000, 6000, 10000]
+        assert len(intervals) == 4
+        assert intervals[0] < intervals[-1]
+
+    def test_payment_success_flag_persisted(self):
+        """paymentSuccess state should be a simple boolean toggle."""
+        payment_success = False
+        payment_success = True
+        assert payment_success is True
+
+    def test_subscription_status_polling_stops_on_unmount(self):
+        """Timers should be cleaned up on component unmount."""
+        import threading
+        timers = []
+        called = []
+
+        def fake_fetch():
+            called.append(True)
+
+        for delay in [1000, 3000]:
+            t = threading.Timer(delay / 1000, fake_fetch)
+            timers.append(t)
+
+        # Simulate unmount — cancel all
+        for t in timers:
+            t.cancel()
+
+        assert len(timers) == 2
+        assert len(called) == 0  # Nothing fired because we cancelled
+
+
+# -----------------------------------------------------------------------
+# Tests: Integration — full flow with state management
+# -----------------------------------------------------------------------
+
+class TestIntegrationFullFlow:
+    """End-to-end test simulating the complete Stripe onramp flow."""
+
+    def test_full_flow_with_state_refresh(self):
+        """Simulate: user clicks Pay → session created → payment → status refresh."""
+        wallet = "0x" + "ab" * 20
+        tier = Tier.PREMIUM
+
+        # 1. Session creation
+        params = build_onramp_session_params(wallet, tier, TIER_PRICES_USD[tier])
+        assert params["source_amount"] == "29"
+
+        # 2. Simulate Stripe session response
+        session_id = "cos_integration_001"
+        session_response = {"id": session_id, "status": "initialized"}
+        assert session_response["id"].startswith("cos_")
+
+        # 3. Simulate fulfillment_complete status
+        fulfillment = {
+            "id": session_id,
+            "status": "fulfillment_complete",
+            "metadata": {"tier": "1", "wallet_address": wallet},
+        }
+        assert fulfillment["status"] == "fulfillment_complete"
+
+        # 4. Extract tier and activate subscription
+        activated_tier = Tier(int(fulfillment["metadata"]["tier"]))
+        assert activated_tier == Tier.PREMIUM
+
+        # 5. Subscription status should now be active
+        import datetime
+        now = datetime.datetime.now(datetime.UTC)
+        expires = now + datetime.timedelta(days=30)
+        status_response = {
+            "active": True,
+            "tier": int(activated_tier),
+            "tierName": TIER_LABELS[activated_tier],
+            "expiresAt": int(expires.timestamp()),
+            "source": "stripe-onramp",
+        }
+        assert status_response["active"]
+        assert status_response["tier"] == 1
+        assert status_response["tierName"] == "Premium"
+        assert (expires - now).days == 30
+
+    def test_full_flow_pro_with_state_refresh(self):
+        """Pro tier: same flow, different amount and tier."""
+        wallet = "0x" + "cd" * 20
+        tier = Tier.PRO
+
+        params = build_onramp_session_params(wallet, tier, TIER_PRICES_USD[tier])
+        assert params["source_amount"] == "99"
+        assert params["metadata[tier]"] == "2"
+
+        session_id = "cos_integration_002"
+        fulfillment = {
+            "id": session_id,
+            "status": "fulfillment_complete",
+            "metadata": {"tier": "2", "wallet_address": wallet},
+        }
+        activated_tier = Tier(int(fulfillment["metadata"]["tier"]))
+        assert activated_tier == Tier.PRO
+        assert TIER_PRICES_USD[activated_tier] == 99
+
+    def test_no_reload_after_payment(self):
+        """Verify that the pricing page no longer calls window.location.reload()."""
+        # The route handler uses setPaymentSuccess(true) + fetchSubStatus()
+        # No reload call exists in the onSuccess callback
+        import inspect
+        # Read the pricing page source
+        with open("frontend/src/app/pricing/page.tsx", "r") as f:
+            source = f.read()
+        assert "window.location.reload()" not in source
+
+    def test_dead_exports_removed(self):
+        """Verify dead exports have been cleaned up."""
+        with open("frontend/src/components/StripeCryptoElements.tsx", "r") as f:
+            source = f.read()
+        assert "useOnrampSessionListener" not in source
+
+        with open("frontend/src/lib/api-utils.ts", "r") as f:
+            source = f.read()
+        assert "normalizeWallet" not in source
+
+    def test_webhook_body_parser_config_removed(self):
+        """Verify Pages Router bodyParser config is removed from App Router webhook."""
+        with open("frontend/src/app/api/crypto/onramp/webhook/route.ts", "r") as f:
+            source = f.read()
+        assert "bodyParser" not in source

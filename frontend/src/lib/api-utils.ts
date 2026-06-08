@@ -15,11 +15,6 @@ export function isValidEthereumAddress(addr: string): boolean {
   return /^0x[0-9a-fA-F]{40}$/.test(addr)
 }
 
-/** Normalize a wallet address to lowercase for consistent DB lookups. */
-export function normalizeWallet(addr: string): string {
-  return addr.toLowerCase()
-}
-
 /**
  * Handle an unexpected server error — log + return structured 500 response.
  * DRY: every route's catch block becomes `return handleServerError(error, 'Label')`.
