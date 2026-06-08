@@ -168,7 +168,7 @@ test.describe('CryptoOnrampModal', () => {
     }
 
     // Click Pay with Card
-    const payBtn = page.getByRole('button', { name: /Pay with Card/i }).first()
+    const payBtn = page.getByRole('button', { name: /Buy.*USDC with Card/i }).first()
     if (await payBtn.isEnabled({ timeout: 3000 }).catch(() => false)) {
       await payBtn.click()
 
@@ -177,6 +177,50 @@ test.describe('CryptoOnrampModal', () => {
       // Status message should show
       await expect(page.getByText(/Initializing secure session|Loading payment|Complete the payment/)).toBeVisible()
     }
+  })
+
+  test('Stripe widget container renders after session creation', async ({ page }) => {
+    // This test requires a running dev server with valid Stripe test keys
+    // It verifies the widget mount point exists and loading state transitions
+    test.skip(process.env.CI === 'true', 'Widget rendering requires live Stripe session — run locally')
+
+    await page.goto('/pricing')
+
+    // Connect wallet
+    const connectBtn = page.getByTestId('connect-wallet-btn')
+    if (await connectBtn.isVisible()) {
+      await connectBtn.click()
+      const mockWallet = page.getByText('MetaMask').first()
+      if (await mockWallet.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await mockWallet.click()
+        await page.waitForTimeout(1000)
+      }
+    }
+
+    if (!page.url().includes('/pricing')) {
+      await page.goto('/pricing')
+    }
+
+    // Click Pay with Card
+    const payBtn = page.getByRole('button', { name: /Buy.*USDC with Card/i }).first()
+    await payBtn.click()
+
+    // Wait for client secret and widget container
+    await expect(page.getByText('Buy USDC with Card')).toBeVisible({ timeout: 5000 })
+
+    // The widget should mount in the container with class 'onramp-widget-container'
+    const widgetContainer = page.locator('.onramp-widget-container')
+    await expect(widgetContainer).toBeVisible({ timeout: 10000 })
+
+    // Loading state should appear first
+    await expect(page.getByText('Loading payment form…')).toBeVisible({ timeout: 5000 })
+
+    // Wait for Stripe widget to load (iframe or Stripe elements)
+    // The widget loads in an iframe or creates Stripe elements
+    await page.waitForTimeout(3000)
+
+    // Verify no error state
+    await expect(page.getByText('Failed to load payment form')).not.toBeVisible()
   })
 })
 
