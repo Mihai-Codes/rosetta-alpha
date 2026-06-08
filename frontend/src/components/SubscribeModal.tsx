@@ -271,8 +271,8 @@ function PaymentMethodSelector({ tier, tierName, price, isConnected, onSelect }:
           className="w-full p-4 bg-bg-secondary border border-border rounded-lg text-left hover:border-brand-red/50 hover:bg-brand-red/5 transition-all group"
         >
           <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-full bg-accent-gold/10 flex items-center justify-center shrink-0 group-hover:bg-accent-gold/20 transition-colors">
-              <CreditCard className="w-5 h-5 text-accent-gold" />
+            <div className="w-10 h-10 rounded-full bg-brand-red/10 flex items-center justify-center shrink-0 group-hover:bg-brand-red/20 transition-colors">
+              <CreditCard className="w-5 h-5 text-brand-red" />
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between">
@@ -283,7 +283,7 @@ function PaymentMethodSelector({ tier, tierName, price, isConnected, onSelect }:
                 Credit or debit card via Stripe
               </p>
               <div className="flex items-center gap-2 mt-2">
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-accent-gold/10 text-accent-gold text-[10px] font-medium">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-red/10 text-brand-red text-[10px] font-medium">
                   <Shield className="w-3 h-3" />
                   Secure
                 </span>
@@ -494,8 +494,8 @@ function CardPayment({
         <button onClick={onBack} className="p-1 text-text-tertiary hover:text-text-primary transition-colors">
           <ArrowRight className="w-4 h-4 rotate-180" />
         </button>
-        <div className="w-8 h-8 rounded-full bg-accent-gold/10 flex items-center justify-center">
-          <CreditCard className="w-4 h-4 text-accent-gold" />
+        <div className="w-8 h-8 rounded-full bg-brand-red/10 flex items-center justify-center">
+          <CreditCard className="w-4 h-4 text-brand-red" />
         </div>
         <div>
           <h2 className="text-base font-semibold text-text-primary">Pay with Card</h2>
@@ -505,8 +505,8 @@ function CardPayment({
 
       {!isConnected ? (
         <div className="text-center py-8">
-          <div className="w-12 h-12 rounded-full bg-accent-gold/10 flex items-center justify-center mx-auto mb-4">
-            <CreditCard className="w-6 h-6 text-accent-gold" />
+          <div className="w-12 h-12 rounded-full bg-brand-red/10 flex items-center justify-center mx-auto mb-4">
+            <CreditCard className="w-6 h-6 text-brand-red" />
           </div>
           <p className="text-sm text-text-secondary mb-4">
             Connect your wallet first — we need a destination address for your USDC
@@ -575,7 +575,7 @@ function CardPayment({
           </div>
 
           <div className="flex items-center gap-2 p-2 bg-bg-secondary rounded-lg border border-border">
-            <Shield className="w-4 h-4 text-accent-gold" />
+            <Shield className="w-4 h-4 text-brand-red" />
             <span className="text-[10px] text-text-secondary">
               Powered by Stripe · 256-bit encryption · PCI compliant
             </span>

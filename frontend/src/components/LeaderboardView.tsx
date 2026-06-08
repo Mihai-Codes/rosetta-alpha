@@ -44,7 +44,7 @@ function accuracy(t: Trader) {
 
 function accuracyColor(pct: number) {
   if (pct >= 80) return 'text-positive'
-  if (pct >= 65) return 'text-accent-gold'
+  if (pct >= 65) return 'text-brand-red'
   return 'text-text-secondary'
 }
 
@@ -73,7 +73,7 @@ function PodiumCard({ trader, isMe }: { trader: Trader; isMe: boolean }) {
           {trader.earned} USDC earned
         </p>
         {isMe && (
-          <span className="inline-block text-[8px] uppercase tracking-[0.2em] px-2 py-0.5 rounded border border-accent-gold text-accent-gold">
+          <span className="inline-block text-[8px] uppercase tracking-[0.2em] px-2 py-0.5 rounded border border-brand-red text-brand-red">
             You
           </span>
         )}
@@ -82,7 +82,7 @@ function PodiumCard({ trader, isMe }: { trader: Trader; isMe: boolean }) {
       <div
         className={`w-full ${h} rounded-none flex items-center justify-center ${
           trader.rank === 1
-            ? 'bg-accent-gold/20 border border-accent-gold/40'
+            ? 'bg-brand-red/20 border border-brand-red/40'
             : 'bg-bg-tertiary border border-border'
         }`}
       >
@@ -135,7 +135,7 @@ export function LeaderboardView() {
       {/* ── Stats banner ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-border/60 border border-border/60 rounded-none mb-10">
         {[
-          { label: 'Active Traders',  value: String(TRADERS.length), accent: 'text-accent-gold' },
+          { label: 'Active Traders',  value: String(TRADERS.length), accent: 'text-brand-red' },
           { label: 'USDC Distributed', value: `${TRADERS.reduce((s, t) => s + t.earned, 0)}`, sub: 'USDC', accent: 'text-positive' },
           { label: 'Correct Calls',   value: String(TRADERS.reduce((s, t) => s + t.correct, 0)), accent: '' },
           { label: 'Arc Settlements', value: String(TRADERS.reduce((s, t) => s + t.arcTxCount, 0)), accent: '' },
@@ -188,15 +188,15 @@ export function LeaderboardView() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="px-5 sm:px-6 py-3 border-b border-accent-gold/20 bg-accent-gold/5 flex items-center justify-between"
+            className="px-5 sm:px-6 py-3 border-b border-brand-red/20 bg-brand-red/5 flex items-center justify-between"
           >
             <div className="flex items-center gap-3">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent-gold " />
-              <span className="text-[10px] uppercase tracking-[0.2em] text-accent-gold font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-red " />
+              <span className="text-[10px] uppercase tracking-[0.2em] text-brand-red font-medium">
                 Your Position — #{myEntry.rank}
               </span>
             </div>
-            <span className="text-[10px] font-mono text-accent-gold">
+            <span className="text-[10px] font-mono text-brand-red">
               {accuracy(myEntry)}% accuracy · {myEntry.earned} USDC
             </span>
           </motion.div>
@@ -248,7 +248,7 @@ export function LeaderboardView() {
                           <span className="text-[9px] text-text-tertiary font-mono">{t.address}</span>
                         )}
                         {isMe && (
-                          <span className="text-[8px] uppercase tracking-[0.2em] px-1.5 py-0.5 border border-accent-gold/50 text-accent-gold rounded">
+                          <span className="text-[8px] uppercase tracking-[0.2em] px-1.5 py-0.5 border border-brand-red/50 text-brand-red rounded">
                             You
                           </span>
                         )}
@@ -316,7 +316,7 @@ export function LeaderboardView() {
                       )}
                     </div>
                     {isMe && (
-                      <span className="text-[8px] uppercase tracking-[0.15em] px-1.5 py-0.5 border border-accent-gold/50 text-accent-gold rounded">
+                      <span className="text-[8px] uppercase tracking-[0.15em] px-1.5 py-0.5 border border-brand-red/50 text-brand-red rounded">
                         You
                       </span>
                     )}

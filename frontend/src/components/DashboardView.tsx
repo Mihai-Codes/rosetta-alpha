@@ -107,7 +107,7 @@ const REGION_META: Record<string, { name: string; flag: string; color: string }>
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function statusColor(s: PredictionRow['status']) {
-  if (s === 'OPEN')         return 'text-accent-gold border-accent-gold/40 bg-accent-gold/5'
+  if (s === 'OPEN')         return 'text-brand-red border-brand-red/40 bg-brand-red/5'
   if (s === 'RESOLVED_WIN') return 'text-positive border-positive/40 bg-positive/5'
   return 'text-negative border-negative/40 bg-negative/5'
 }
@@ -230,7 +230,7 @@ function MyPredictions() {
         <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-text-tertiary">
           My Predictions
         </p>
-        <span className="text-[9px] uppercase tracking-[0.2em] text-accent-gold font-medium">
+        <span className="text-[9px] uppercase tracking-[0.2em] text-brand-red font-medium">
           {PREDICTIONS.filter(p => p.status === 'RESOLVED_WIN').length}/{PREDICTIONS.length} Wins
         </span>
       </div>
@@ -318,7 +318,7 @@ function MyPredictions() {
                 href={`https://testnet.arcscan.app/tx/${row.arcTx}`}
                 target="_blank" rel="noopener noreferrer"
 
-                className="block font-mono text-[10px] text-accent-gold hover:underline truncate"
+                className="block font-mono text-[10px] text-brand-red hover:underline truncate"
               >
                 Arc: {truncateHash(row.arcTx, 6, 4)}
               </a>
@@ -412,7 +412,7 @@ function Leaderboard() {
                 </td>
                 <td className={`px-5 py-4 font-mono font-bold text-[11px] ${
                   row.accuracy >= 80 ? 'text-positive' :
-                  row.accuracy >= 65 ? 'text-accent-gold' :
+                  row.accuracy >= 65 ? 'text-brand-red' :
                   'text-text-secondary'
                 }`}>
                   {row.accuracy}%
@@ -462,7 +462,7 @@ function Leaderboard() {
               </div>
               <span className={`font-mono font-bold text-sm ${
                 row.accuracy >= 80 ? 'text-positive' :
-                row.accuracy >= 65 ? 'text-accent-gold' :
+                row.accuracy >= 65 ? 'text-brand-red' :
                 'text-text-secondary'
               }`}>
                 {row.accuracy}%
@@ -613,7 +613,7 @@ export function DashboardView() {
           {[
             { label: 'USDC Balance', value: balance ? `${parseFloat(balance.formatted).toFixed(2)}` : '—', sub: 'AVAILABLE', color: 'text-text-primary' },
             { label: 'Total Earned', value: `+${totalEarned.toFixed(2)}`, sub: 'USDC (PnL)', color: 'text-positive' },
-            { label: 'Win Rate', value: `${accuracy}%`, sub: `${PREDICTIONS.filter(p => p.status === 'RESOLVED_WIN').length}/${PREDICTIONS.length} TRADES`, color: 'text-accent-gold' },
+            { label: 'Win Rate', value: `${accuracy}%`, sub: `${PREDICTIONS.filter(p => p.status === 'RESOLVED_WIN').length}/${PREDICTIONS.length} TRADES`, color: 'text-brand-red' },
             { label: 'Active Stakes', value: String(PREDICTIONS.filter(p => p.status === 'OPEN').length), sub: 'OPEN POSITIONS', color: 'text-brand-red' },
           ].map((s, i) => (
             <motion.div
@@ -692,7 +692,7 @@ export function DashboardView() {
                     {copiedDash ? <span className="text-positive text-[9px] ml-1 font-bold">✓</span> : null}
                   </button>
                 ) : (
-                  <span className={`font-mono text-[11px] ${r.label === 'Balance' ? 'text-accent-gold font-bold' : 'text-text-primary'}`}>{r.value}</span>
+                  <span className={`font-mono text-[11px] ${r.label === 'Balance' ? 'text-brand-red font-bold' : 'text-text-primary'}`}>{r.value}</span>
                 )}
               </div>
             ))}

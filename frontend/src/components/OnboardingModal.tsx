@@ -101,9 +101,9 @@ export function OnboardingModal({ isSignedIn }: OnboardingModalProps) {
               key={i}
               className={`w-2 h-2 rounded-full transition-all duration-300 ${
                 i === currentSlide
-                  ? 'bg-accent-gold w-6'
+                  ? 'bg-brand-red w-6'
                   : i < currentSlide
-                  ? 'bg-accent-gold/50'
+                  ? 'bg-brand-red/50'
                   : 'bg-border-strong'
               }`}
             />
@@ -113,7 +113,7 @@ export function OnboardingModal({ isSignedIn }: OnboardingModalProps) {
         {/* Content */}
         <div className="px-8 py-8 text-center">
           <span className="text-4xl mb-4 block">{slide.icon}</span>
-          <p className="text-[10px] uppercase tracking-[0.3em] text-accent-gold mb-2">
+          <p className="text-[10px] uppercase tracking-[0.3em] text-brand-red mb-2">
             {slide.subtitle}
           </p>
           <h2 className="font-display text-2xl text-text-primary mb-4">
@@ -129,14 +129,14 @@ export function OnboardingModal({ isSignedIn }: OnboardingModalProps) {
               onClick={handleConnectClick}
               className="
                 mt-6 inline-flex items-center gap-2 px-6 py-3
-                bg-accent-gold/10 border border-accent-gold/40 rounded-lg
+                bg-brand-red/10 border border-brand-red/40 rounded-lg
                 text-text-primary text-sm font-medium
-                hover:bg-accent-gold/20 hover:border-accent-gold/60
+                hover:bg-brand-red/20 hover:border-brand-red/60
                 transition-all duration-300
                 hover:shadow-[0_0_30px_rgba(201,168,76,0.3)]
               "
             >
-              <span className="w-2 h-2 rounded-full bg-accent-gold" />
+              <span className="w-2 h-2 rounded-full bg-brand-red" />
               Connect Wallet
             </button>
           )}
@@ -156,7 +156,7 @@ export function OnboardingModal({ isSignedIn }: OnboardingModalProps) {
           {currentSlide < slides.length - 1 ? (
             <button
               onClick={handleNext}
-              className="text-xs text-accent-gold hover:text-accent-gold/80 font-medium transition-colors"
+              className="text-xs text-brand-red hover:text-brand-red/80 font-medium transition-colors"
             >
               Next →
             </button>

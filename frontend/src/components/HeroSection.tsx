@@ -126,7 +126,7 @@ export function HeroSection({ latestHash, onScrollDown, isAuthenticated }: HeroS
               }
             }}
             data-testid="try-quiz-cta"
-            className="flex items-center gap-2 px-8 py-4 border border-white/20 text-text-secondary text-[11px] font-medium uppercase tracking-[0.2em] hover:border-accent-gold/60 hover:text-accent-gold transition-all duration-300 min-h-[52px]"
+            className="flex items-center gap-2 px-8 py-4 border border-white/20 text-text-secondary text-[11px] font-medium uppercase tracking-[0.2em] hover:border-brand-red/60 hover:text-brand-red transition-all duration-300 min-h-[52px]"
           >
             Try Quiz
           </Link>

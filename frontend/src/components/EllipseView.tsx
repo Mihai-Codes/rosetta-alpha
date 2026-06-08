@@ -224,7 +224,7 @@ function DynamicTooltip({ xPct, yPct, data }: { xPct: number, yPct: number, data
       <p className="text-[10px] font-mono text-text-tertiary mb-1">{data.date}</p>
       <p className="text-sm font-bold text-text-primary">Price: ${data.price.toFixed(2)}</p>
       <p className="text-xs text-text-secondary mt-1">
-        Dev: <span className={data.dev >= 0 ? 'text-emerald-500' : 'text-red-400'}>
+        Dev: <span className={data.dev >= 0 ? 'text-[#22C55E]' : 'text-[#D82B2B]'}>
           {data.dev > 0 ? '+' : ''}{data.dev.toFixed(2)}%
         </span>
       </p>

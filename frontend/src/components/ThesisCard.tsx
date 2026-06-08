@@ -352,7 +352,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
             </div>
           )}
           {unlocked && (
-            <div className="flex items-center gap-1.5 text-[9px] text-emerald-500">
+            <div className="flex items-center gap-1.5 text-[9px] text-[#22C55E]">
               <Unlock className="w-2.5 h-2.5" />
               <span>Full chain unlocked</span>
             </div>
@@ -410,7 +410,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
 
             {/* Error state */}
             {unlockError && (
-              <p className="mt-3 text-[10px] text-red-400 border border-red-500/20 bg-red-500/5 px-3 py-2">
+              <p className="mt-3 text-[10px] text-[#D82B2B] border border-red-500/20 bg-red-500/5 px-3 py-2">
                 {unlockError}
               </p>
             )}

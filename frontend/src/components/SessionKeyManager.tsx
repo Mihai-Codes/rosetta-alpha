@@ -198,7 +198,7 @@ function SetupPanel({
 
       {/* Error */}
       {error && (
-        <div className="flex items-start gap-2 border border-red-500/30 bg-red-500/10 p-2.5 text-[10px] text-red-400">
+        <div className="flex items-start gap-2 border border-red-500/30 bg-red-500/10 p-2.5 text-[10px] text-[#D82B2B]">
           <XCircle className="w-3 h-3 mt-0.5 shrink-0" />
           <span>{error}</span>
         </div>
@@ -251,14 +251,14 @@ function ActivePanel({
         <div className="flex items-center gap-2">
           {/* Green pulse dot */}
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#22C55E] opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#22C55E]" />
           </span>
-          <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-emerald-400">
+          <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[#22C55E]">
             Session Active
           </p>
         </div>
-        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+        <CheckCircle2 className="w-3.5 h-3.5 text-[#22C55E]" />
       </div>
 
       {/* Budget progress */}
@@ -301,7 +301,7 @@ function ActivePanel({
       <button
         type="button"
         onClick={onRevoke}
-        className="w-full py-2 px-4 text-[9px] font-medium uppercase tracking-[0.2em] border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-colors duration-200"
+        className="w-full py-2 px-4 text-[9px] font-medium uppercase tracking-[0.2em] border border-red-500/30 text-[#D82B2B] hover:bg-red-500/10 transition-colors duration-200"
       >
         Revoke Session
       </button>
@@ -339,7 +339,7 @@ function ExpiredPanel({
       </div>
 
       {error && (
-        <div className="flex items-start gap-2 border border-red-500/30 bg-red-500/10 p-2.5 text-[10px] text-red-400">
+        <div className="flex items-start gap-2 border border-red-500/30 bg-red-500/10 p-2.5 text-[10px] text-[#D82B2B]">
           <XCircle className="w-3 h-3 mt-0.5 shrink-0" />
           <span>{error}</span>
         </div>

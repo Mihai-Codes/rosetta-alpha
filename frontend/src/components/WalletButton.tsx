@@ -216,7 +216,7 @@ export function WalletButton() {
         onClick={handleConnectClick}
         className="flex items-center gap-1.5 px-3 py-1.5 solid-panel rounded-full text-text-primary text-[9px] font-medium uppercase tracking-[0.18em] transition-all duration-300 hover:border-brand-red hover:bg-brand-red/5  hover: cursor-pointer"
       >
-        <span className="w-1.5 h-1.5 rounded-full bg-accent-gold" />
+        <span className="w-1.5 h-1.5 rounded-full bg-brand-red" />
         <span className="hidden sm:inline">Connect Wallet</span>
         <span className="sm:hidden">Wallet</span>
       </button>
@@ -233,8 +233,8 @@ export function WalletButton() {
           solid-panel rounded-full
           text-text-primary text-[9px] font-medium tracking-wide
           transition-all duration-300
-          border border-accent-gold/30
-          hover:border-accent-gold/60
+          border border-brand-red/30
+          hover:border-brand-red/60
         "
       >
         <span className="w-1.5 h-1.5 rounded-full bg-positive " />

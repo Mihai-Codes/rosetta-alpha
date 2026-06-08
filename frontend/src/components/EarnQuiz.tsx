@@ -63,7 +63,7 @@ function ProgressDots({
               isDone
                 ? 'w-8 bg-positive'
                 : isCurrent
-                ? 'w-8 bg-accent-gold/70 '
+                ? 'w-8 bg-brand-red/70 '
                 : 'w-4 bg-border-strong'
             }`}
           />
@@ -114,8 +114,8 @@ function OptionButton({
       textClass = 'text-text-tertiary'
     }
   } else if (selected) {
-    borderClass = 'border-accent-gold'
-    bgClass = 'bg-accent-gold/10'
+    borderClass = 'border-brand-red'
+    bgClass = 'bg-brand-red/10'
   }
 
   return (
@@ -131,7 +131,7 @@ function OptionButton({
         flex items-start gap-3
         ${borderClass} ${bgClass} ${textClass}
         ${selected ? 'selected' : ''}
-        ${disabled && !revealed ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:border-accent-gold/60'}
+        ${disabled && !revealed ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:border-brand-red/60'}
       `}
     >
       {/* Letter badge */}
@@ -142,7 +142,7 @@ function OptionButton({
             : revealed && selected && !correct
             ? 'border-brand-red text-negative bg-brand-red/15'
             : selected
-            ? 'border-accent-gold text-accent-gold bg-accent-gold/15'
+            ? 'border-brand-red text-brand-red bg-brand-red/15'
             : 'border-border-strong text-text-tertiary'
           }`}
       >
@@ -235,7 +235,7 @@ function ResultsScreen({
 
       <button
         onClick={handleRetryClick}
-        className="mt-2 px-8 py-3 rounded-full border border-accent-gold/40 text-accent-gold text-[10px] uppercase tracking-[0.2em] font-medium hover:border-accent-gold hover: transition-all duration-300"
+        className="mt-2 px-8 py-3 rounded-full border border-brand-red/40 text-brand-red text-[10px] uppercase tracking-[0.2em] font-medium hover:border-brand-red hover: transition-all duration-300"
       >
         Retake Quiz
       </button>
@@ -575,7 +575,7 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
 
             {/* Switching chain */}
             {claimStatus === 'switching' && (
-              <p className="text-center text-[10px] uppercase tracking-[0.2em] text-accent-gold py-3 ">
+              <p className="text-center text-[10px] uppercase tracking-[0.2em] text-brand-red py-3 ">
                 Switching to Arc Testnet…
               </p>
             )}
@@ -598,7 +598,7 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
                   <span className="text-[9px] uppercase tracking-[0.25em] text-text-tertiary">
                     Arc Testnet
                   </span>
-                  <span className={`text-[9px] uppercase tracking-[0.2em] font-bold ${claimStatus === 'confirmed' ? 'text-positive' : 'text-accent-gold '}`}>
+                  <span className={`text-[9px] uppercase tracking-[0.2em] font-bold ${claimStatus === 'confirmed' ? 'text-positive' : 'text-brand-red '}`}>
                     {claimStatus === 'confirmed' ? '✓ Confirmed' : '⏳ Confirming…'}
                   </span>
                 </div>
@@ -609,7 +609,7 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
                   href={ARCSCAN_TX(claimTxHash)}
                   target="_blank" rel="noopener noreferrer"
                   
-                  className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-accent-gold hover:underline"
+                  className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-brand-red hover:underline"
                 >
                   View on ArcScan →
                 </a>
@@ -622,7 +622,7 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
                 <p className="text-[10px] text-negative">{claimError}</p>
                 <button
                   onClick={sendClaimTx}
-                  className="mt-2 text-[9px] uppercase tracking-[0.2em] text-accent-gold hover:underline"
+                  className="mt-2 text-[9px] uppercase tracking-[0.2em] text-brand-red hover:underline"
                 >
                   Retry →
                 </button>
@@ -752,7 +752,7 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
                 <button
                   data-testid="quiz-submit"
                   onClick={handleNext}
-                  className="w-full py-3 rounded-xl border border-border-strong text-text-primary text-[10px] font-medium uppercase tracking-[0.2em] hover:border-accent-gold/50 hover:text-accent-gold transition-all duration-200"
+                  className="w-full py-3 rounded-xl border border-border-strong text-text-primary text-[10px] font-medium uppercase tracking-[0.2em] hover:border-brand-red/50 hover:text-brand-red transition-all duration-200"
                 >
                   {qIndex + 1 >= questions.length ? 'See Results →' : 'Next Question →'}
                 </button>

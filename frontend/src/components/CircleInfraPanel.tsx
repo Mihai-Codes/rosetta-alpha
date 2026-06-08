@@ -224,9 +224,9 @@ export function CircleInfraPanel() {
 
         {/* x402 */}
         <div className="solid-panel flex flex-col p-6 border border-white/5 bg-gradient-to-b from-white/[0.03] to-transparent rounded-2xl relative overflow-hidden group">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-transparent opacity-50"></div>
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#22C55E] to-transparent opacity-50"></div>
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/20">
+            <div className="p-2 rounded-lg bg-[#22C55E]/10 text-[#22C55E] ring-1 ring-[#22C55E]/20">
               <Coins size={18} />
             </div>
             <h3 className="text-sm font-semibold tracking-wide text-text-primary">x402 Nanopayments</h3>
@@ -258,10 +258,10 @@ export function CircleInfraPanel() {
                 <div className="bg-white/[0.02] border border-white/5 rounded-xl p-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2 text-xs text-text-secondary">
-                      <Unlock size={14} className="text-emerald-500" />
+                      <Unlock size={14} className="text-[#22C55E]" />
                       <span>Paid Request</span>
                     </div>
-                    <span className="inline-flex items-center justify-center px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                    <span className="inline-flex items-center justify-center px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-[#22C55E]/10 text-[#22C55E] border border-[#22C55E]/20">
                       HTTP {x402Paid?.status ?? '—'}
                     </span>
                   </div>
@@ -272,7 +272,7 @@ export function CircleInfraPanel() {
               <div className="mt-6 pt-4 border-t border-white/5">
                 <p className="text-[9px] text-text-tertiary uppercase tracking-widest break-all">
                   Security Layer:<br/>
-                  <span className="text-emerald-400/70 font-mono text-[10px] uppercase tracking-widest">Encrypted Agent API (x402-Protected)</span>
+                  <span className="text-[#22C55E]/70 font-mono text-[10px] uppercase tracking-widest">Encrypted Agent API (x402-Protected)</span>
                 </p>
               </div>
             </div>
