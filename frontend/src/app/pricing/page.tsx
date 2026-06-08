@@ -104,13 +104,33 @@ function TierCard({ tier, name, price, features, highlighted, onSubscribe, onPay
               : `Subscribe · ${price} USDC`}
       </button>
       {price > 0 && (
+        <p className="mt-2 text-center text-[11px] text-text-tertiary">
+          {isConnected ? 'Pay on-chain via USDC' : 'Connect wallet first'}
+        </p>
+      )}
+      {price > 0 && (
+        <div className="relative mt-4">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-border" />
+          </div>
+          <div className="relative flex justify-center text-[11px]">
+            <span className="bg-bg-secondary px-2 text-text-tertiary">or pay with card</span>
+          </div>
+        </div>
+      )}
+      {price > 0 && (
         <button
           onClick={() => onPayWithCard(tier)}
           disabled={!isConnected}
-          className="mt-3 w-full rounded-md py-3 text-sm font-semibold transition-colors border border-border text-text-primary hover:bg-bg-primary disabled:opacity-50"
+          className="mt-4 w-full rounded-md border border-border py-3 text-sm font-semibold text-text-primary transition-colors hover:bg-bg-primary disabled:opacity-50"
         >
-          {!isConnected ? 'Connect Wallet' : 'Pay with Card (Stripe Crypto)'}
+          {!isConnected ? 'Connect Wallet' : `Buy ${price} USDC with Card`}
         </button>
+      )}
+      {price > 0 && (
+        <p className="mt-2 text-center text-[11px] text-text-tertiary">
+          {isConnected ? 'Via Stripe · credit or debit card' : 'Connect wallet first'}
+        </p>
       )}
     </div>
   )
@@ -173,11 +193,11 @@ export default function PricingPage() {
     fetchSubStatus()
   }, [fetchSubStatus])
 
-  // Re-check subscription status after successful payment
+  // Aggressive polling after payment: server-side activation means DB should
+  // reflect the new tier within 1-2 seconds of Stripe fulfillment.
   useEffect(() => {
     if (!paymentSuccess || !address) return
-    // Poll a few times — DB write may lag behind Stripe webhook
-    const intervals = [1000, 3000, 6000, 10000]
+    const intervals = [500, 1000, 2000, 4000, 8000, 15000]
     const timers = intervals.map((delay) =>
       setTimeout(() => fetchSubStatus(), delay)
     )

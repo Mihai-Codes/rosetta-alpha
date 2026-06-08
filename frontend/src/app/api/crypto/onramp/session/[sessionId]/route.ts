@@ -3,12 +3,15 @@
  * ================================================================================
  *
  * Returns the current status and transaction_details for a given onramp session.
- * Used by the frontend to check if payment completed (handles race with webhook).
+ * Also activates subscription server-side when fulfillment_complete is detected,
+ * eliminating DB write latency as a concern (belt-and-suspenders with webhook).
  */
 
 import { NextResponse } from 'next/server'
 import { NO_STORE_HEADERS, handleServerError } from '@/lib/api-utils'
 import { getStripeOnrampSession } from '@/lib/stripe-api'
+import { Tier, activateSubscription, isValidTier } from '@/lib/subscription'
+import { prisma } from '@/lib/prisma'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -34,6 +37,31 @@ export async function GET(
         { success: false, error: 'Failed to fetch onramp session' },
         { status: 404, headers: NO_STORE_HEADERS }
       )
+    }
+
+    // Update the purchase record in DB
+    if (session.status) {
+      const txHash = (session.transaction_details as Record<string, unknown> | null)?.transaction_id as string | null
+      await prisma.onrampPurchase.update({
+        where: { stripeSessionId: sessionId },
+        data: { status: session.status, destinationTxHash: txHash },
+      }).catch(() => {})
+    }
+
+    // Belt-and-suspenders: activate subscription server-side when we detect
+    // fulfillment_complete. This eliminates DB latency as a concern — the
+    // subscription is activated at the same moment the status is returned.
+    if (session.status === 'fulfillment_complete' && session.metadata) {
+      const walletAddress = session.metadata.wallet_address as string | undefined
+      const tier = Number(session.metadata.tier) as Tier
+
+      if (walletAddress && isValidTier(tier)) {
+        try {
+          await activateSubscription(walletAddress, tier, sessionId)
+        } catch (err) {
+          console.error(`[poll] Failed to activate subscription for ${walletAddress}:`, err)
+        }
+      }
     }
 
     return NextResponse.json(

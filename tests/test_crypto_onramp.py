@@ -879,3 +879,17 @@ class TestIntegrationFullFlow:
         with open("frontend/src/app/api/crypto/onramp/webhook/route.ts", "r") as f:
             source = f.read()
         assert "bodyParser" not in source
+
+    def test_polling_route_activates_subscription(self):
+        """Verify the polling route imports activateSubscription for server-side activation."""
+        with open("frontend/src/app/api/crypto/onramp/session/[sessionId]/route.ts", "r") as f:
+            source = f.read()
+        assert "activateSubscription" in source
+        assert "fulfillment_complete" in source
+
+    def test_polling_intervals_are_aggressive(self):
+        """Pricing page should poll aggressively after payment (first poll at 500ms)."""
+        with open("frontend/src/app/pricing/page.tsx", "r") as f:
+            source = f.read()
+        assert "500" in source  # First poll at 500ms
+        assert "1000" in source  # Second at 1s

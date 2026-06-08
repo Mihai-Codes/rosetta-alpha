@@ -8,15 +8,16 @@
  * IMPORTANT: Stripe requires the raw body for signature verification.
  * We disable Next.js body parsing and read req.text() instead.
  *
- * STATUS: Dormant — Stripe has not yet added crypto.onramp_session.updated
- * to the Dashboard webhook event picker (beta event). This code is correct
- * and ready. When Stripe enables it:
+ * PRODUCTION SETUP (stripe docs say this event is GA, not beta):
  *   1. Go to Developers → Webhooks → Add destination
  *   2. URL: https://rosetta-alpha.vercel.app/api/crypto/onramp/webhook
  *   3. Event: crypto.onramp_session.updated
+ *   4. Select the crypto.onramp_session resource
  *
- * Until then, the frontend relies on client-side polling as the primary
- * completion detection path (see CryptoOnrampModal).
+ * This webhook is a backup path. The primary completion detection paths are:
+ *   - Client-side: CryptoOnrampModal polls GET /api/crypto/onramp/session/[sessionId]
+ *   - Server-side: That polling route also activates subscription when it detects
+ *     fulfillment_complete (belt-and-suspenders with this webhook)
  */
 
 import { NextResponse } from 'next/server'
