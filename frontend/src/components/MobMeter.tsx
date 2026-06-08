@@ -57,21 +57,21 @@ export function MobMeter({ ticker, compact = false }: MobMeterProps) {
         <div className="flex-1 flex flex-col justify-center">
           <div className="flex items-end justify-between mb-3">
             <div className="font-display text-4xl text-text-primary leading-none">
-              {score.toFixed(1)}<span className="text-sm text-text-tertiary font-sans font-normal ml-1">/ 100</span>
+              {score.toFixed(1)}<span className="text-sm text-text-tertiary font-sans font-normal">/100</span>
             </div>
             <div className={`font-mono text-[10px] uppercase tracking-widest font-bold ${categoryColor(score)} text-right max-w-[140px] leading-tight`}>
               {data?.label ?? 'Normal disagreement'}
             </div>
           </div>
 
-          <div className="w-full mt-2 mb-6">
+          <div className="w-full mt-2 mb-4">
             <div className="relative h-2 w-full shrink-0 border border-white/10 bg-bg-primary rounded-full overflow-hidden">
               <div className="absolute inset-y-0 left-0 bg-gradient-to-r from-positive via-warning to-brand-red transition-all duration-1000 ease-out" style={{ width: `${Math.max(0, Math.min(100, score))}%` }} />
             </div>
           </div>
 
           {!compact && (
-            <div className="grid grid-cols-3 gap-3 mt-auto border-t border-border/50 pt-4">
+            <div className="grid grid-cols-3 gap-3 mt-2 border-t border-border/50 pt-4">
               {[
                 ['Consensus', data?.consensus_level ?? 0],
                 ['Confidence', data?.confidence_extremity ?? 0],

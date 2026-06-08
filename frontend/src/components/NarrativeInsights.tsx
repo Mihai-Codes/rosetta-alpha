@@ -61,11 +61,13 @@ export function NarrativeInsights({ ticker = 'Portfolio' }: NarrativeInsightsPro
       {/* Expandable content */}
       {isExpanded && (
         <div className="px-6 pb-6 space-y-6 border-t border-border pt-5">
-          {/* Narrative Cloud (bubble chart) */}
-          <NarrativeCloud narratives={MOCK_CLOUD_NARRATIVES} ticker={ticker} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Narrative Cloud (bubble chart) */}
+            <NarrativeCloud narratives={MOCK_CLOUD_NARRATIVES} ticker={ticker} />
 
-          {/* Narrative Timeline */}
-          <NarrativeTimeline events={MOCK_TIMELINE_EVENTS} ticker={ticker} />
+            {/* Narrative Timeline */}
+            <NarrativeTimeline events={MOCK_TIMELINE_EVENTS} ticker={ticker} />
+          </div>
 
           {/* Contagion alerts */}
           <div className="border-t border-border pt-4">

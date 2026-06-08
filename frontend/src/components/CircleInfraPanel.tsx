@@ -213,8 +213,8 @@ export function CircleInfraPanel() {
                 )}
               </div>
               <div className="mt-6 pt-4 border-t border-white/5">
-                <div className="flex items-center gap-2 whitespace-nowrap overflow-visible">
-                  <span className="text-[9px] text-text-tertiary uppercase tracking-widest">Subscribed Events:</span>
+                <div className="flex flex-wrap items-start sm:items-center gap-x-2 gap-y-1">
+                  <span className="text-[9px] text-text-tertiary uppercase tracking-widest shrink-0">Subscribed Events:</span>
                   <span className="text-[9px] text-blue-400/70 uppercase tracking-widest">Automated Deposits / Institutional Verification / On-chain Minting</span>
                 </div>
               </div>
