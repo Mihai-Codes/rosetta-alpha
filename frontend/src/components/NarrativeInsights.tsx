@@ -38,7 +38,7 @@ export function NarrativeInsights({ ticker = 'Portfolio' }: NarrativeInsightsPro
   const [isExpanded, setIsExpanded] = useState(false)
 
   return (
-    <div className="w-full border border-border bg-surface-primary/50">
+    <div className="w-full border border-border bg-bg-secondary">
       {/* Collapsible header */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
