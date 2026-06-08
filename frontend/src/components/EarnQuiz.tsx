@@ -7,6 +7,7 @@ import { useAccount, useWaitForTransactionReceipt, useChainId } from 'wagmi'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { toHex } from 'viem'
 import { toast } from 'sonner'
+import { EmptyState } from './SkeletonLoader'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -276,7 +277,10 @@ export function EarnQuiz({ thesisId, questions, onComplete }: EarnQuizProps) {
   if (questions.length === 0) {
     return (
       <div className="solid-panel rounded-2xl p-8 text-center">
-        <p className="text-text-tertiary text-sm">No quiz questions available for this thesis.</p>
+        <EmptyState
+          title="No quiz questions available"
+          subtitle="Check back after analyses have been run."
+        />
       </div>
     )
   }

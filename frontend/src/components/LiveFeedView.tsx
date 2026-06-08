@@ -5,7 +5,7 @@ import posthog from 'posthog-js'
 import { TrendingUp, TrendingDown, Minus, ChevronDown, ExternalLink, Database, Link2 } from 'lucide-react'
 import { DeskProps } from './DeskCard'
 import { regionMeta, formatRelative, truncateHash } from '../lib/format'
-import { FeedItemSkeleton } from './SkeletonLoader'
+import { FeedItemSkeleton, ErrorState, EmptyState } from './SkeletonLoader'
 import { ProvenanceChain } from './ProvenanceChain'
 import { SidePanel } from './SidePanel'
 import { MobMeter } from './MobMeter'
@@ -32,7 +32,15 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
   const [selectedProvenance, setSelectedProvenance] = React.useState<DeskProps | null>(null)
 
   const [now, setNow] = React.useState<number | null>(null)
+  const [error, setError] = React.useState<string | null>(null)
+  
   React.useEffect(() => { setNow(Date.now()) }, [])
+
+  const handleRetry = () => {
+    setError(null)
+    // Trigger a refetch by updating the now timestamp
+    setNow(Date.now())
+  }
 
   React.useEffect(() => {
     // Fetch divergence scores for all unique tickers in background
@@ -162,7 +170,11 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
         </div>
       </div>
 
-      {primaryTicker && (
+      {error ? (
+        <div className="solid-panel overflow-hidden">
+          <ErrorState message={error} onRetry={handleRetry} />
+        </div>
+      ) : primaryTicker && (
         <MobMeter ticker={primaryTicker} compact />
       )}
 
@@ -174,12 +186,14 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
             <FeedItemSkeleton />
             <FeedItemSkeleton />
           </>
+        ) : error ? (
+          <ErrorState message={error} onRetry={handleRetry} />
         ) : entries.length === 0 ? (
           <div className="p-12 sm:p-16 text-center">
-            <p className="font-display text-xl text-text-tertiary">No traces match filters</p>
-            <p className="text-[11px] uppercase tracking-[0.25em] text-text-tertiary/60 mt-2">
-              Try widening your selection
-            </p>
+            <EmptyState
+              title="No traces match filters"
+              subtitle="Try widening your selection"
+            />
           </div>
         ) : (
           entries.map((e, i) => {

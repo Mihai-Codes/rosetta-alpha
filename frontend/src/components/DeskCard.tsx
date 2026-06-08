@@ -48,6 +48,10 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
         whileHover={{ y: -3, transition: { duration: 0.18 } }}
         onClick={() => setShowExplorer(true)}
         className="group relative glass-panel border border-border/20 hover:border-brand-red/30 shadow-none hover:shadow-[0_0_20px_rgba(216,43,43,0.25)] transition-all duration-500 cursor-pointer flex flex-col overflow-hidden rounded-none"
+        role="article"
+        aria-label={`${desk.ticker} analysis by ${desk.desk} desk`}
+        tabIndex={0}
+        onKeyDown={(e) => e.key === 'Enter' && setShowExplorer(true)}
       >
         {/* Gold left accent on hover */}
         <div className="absolute left-0 top-0 w-px h-full bg-brand-red/0 group-hover:bg-brand-red/50 transition-colors duration-300" />

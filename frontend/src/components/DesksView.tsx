@@ -11,7 +11,7 @@ import { RegionSidebar } from './RegionSidebar'
 import { ThesisCard } from './ThesisCard'
 import { AllWeatherChart } from './AllWeatherChart'
 import { NarrativeInsights } from './NarrativeInsights'
-import { ThesisSkeleton } from './SkeletonLoader'
+import { ThesisSkeleton, EmptyState } from './SkeletonLoader'
 import { regionMeta } from '../lib/format'
 import { DivergenceGauge } from './DivergenceGauge'
 import { MobMeter } from './MobMeter'
@@ -21,6 +21,8 @@ import { EllipseView } from './EllipseView'
 interface DesksViewProps {
   desks: DeskProps[]
   loading: boolean
+  error?: string | null
+  onRetry?: () => void
   isAuthenticated?: boolean
   manifestCid?: string
 }
@@ -83,6 +85,8 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
   const { data: session } = useSession()
   const isAuthed = isAuthenticated || !!session?.user
 
+
+
   return (
     <div className="flex flex-col gap-8">
       <ContagionAlert />
@@ -104,7 +108,10 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
             </div>
           ) : (
             <div className="solid-panel p-16 text-center border-x-0 border-y">
-              <p className="font-display text-xl text-text-tertiary">No desks available</p>
+              <EmptyState
+                title="No desks available"
+                subtitle="Run your first analysis to see regional AI theses."
+              />
             </div>
           )}
         </motion.div>
@@ -136,7 +143,10 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
               </div>
             ) : (
               <div className="solid-panel p-16 text-center border">
-                <p className="font-display text-xl text-text-tertiary">No desks available</p>
+                <EmptyState
+                  title="No desks available"
+                  subtitle="Run your first analysis to see regional AI theses."
+                />
               </div>
             )}
           </motion.div>

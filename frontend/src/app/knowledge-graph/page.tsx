@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Layout } from '@/components/Layout'
+import { ErrorState, LoadingSpinner } from '@/components/SkeletonLoader'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -151,6 +152,7 @@ export default function KnowledgeGraphPage() {
   const [searchInput, setSearchInput] = useState('AAPL')
   const [graphData, setGraphData] = useState<GraphData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [hoveredNode, setHoveredNode] = useState<GraphNode | null>(null)
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -166,8 +168,12 @@ export default function KnowledgeGraphPage() {
   // Fetch graph data
   const fetchGraph = useCallback(async (t: string) => {
     setLoading(true)
+    setError(null)
     try {
       const res = await fetch(`/api/knowledge-graph?ticker=${encodeURIComponent(t)}`)
+      if (!res.ok) {
+        throw new Error(res.status === 404 ? 'No data available for this ticker' : 'Failed to fetch graph data')
+      }
       const data: GraphData = await res.json()
       setGraphData(data)
       nodesRef.current = data.nodes.map(n => ({ ...n }))
@@ -176,7 +182,8 @@ export default function KnowledgeGraphPage() {
       initPositions(nodesRef.current, width, height)
       resolveEdges(nodesRef.current, edgesRef.current)
       alphaRef.current = 0.3 // Reset cooling on new data
-    } catch {
+    } catch (err: any) {
+      setError(err.message || 'Unable to build knowledge graph. Please try again.')
       setGraphData(null)
     } finally {
       setLoading(false)
@@ -372,18 +379,23 @@ export default function KnowledgeGraphPage() {
 
         {/* Graph canvas */}
         <div className="relative w-full h-[600px] border border-border rounded-lg overflow-hidden bg-black">
-          {loading && (
+          {error ? (
             <div className="absolute inset-0 flex items-center justify-center z-10">
-              <div className="text-text-secondary text-sm">Loading graph...</div>
+              <ErrorState message={error} onRetry={() => fetchGraph(ticker)} />
             </div>
+          ) : loading ? (
+            <div className="absolute inset-0 flex items-center justify-center z-10">
+              <LoadingSpinner />
+            </div>
+          ) : (
+            <canvas
+              ref={canvasRef}
+              className="w-full h-full"
+              style={{ width: '100%', height: '100%' }}
+              onMouseMove={handleCanvasMouseMove}
+              onClick={handleCanvasClick}
+            />
           )}
-          <canvas
-            ref={canvasRef}
-            className="w-full h-full"
-            style={{ width: '100%', height: '100%' }}
-            onMouseMove={handleCanvasMouseMove}
-            onClick={handleCanvasClick}
-          />
         </div>
 
         {/* Stats bar */}

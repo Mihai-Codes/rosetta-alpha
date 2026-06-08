@@ -117,6 +117,15 @@ export function Layout({ children, activeTab }: LayoutProps) {
         <div className="global-grid-bg" />
       </div>
 
+      {/* Skip to content link (accessibility) */}
+      <a
+        href="#main-content"
+        className="absolute -top-16 left-4 z-50 px-4 py-2 bg-bg-primary border border-brand-red/30 text-brand-red text-sm font-medium rounded focus:top-4 focus:left-4 transition-all duration-300"
+        aria-label="Skip to main content"
+      >
+        Skip to Content
+      </a>
+
       {/* ── Header ── */}
       <header 
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -124,6 +133,7 @@ export function Layout({ children, activeTab }: LayoutProps) {
             ? 'bg-bg-primary/90 backdrop-blur-md border-b border-brand-red/50 shadow-[0_4px_30px_rgba(216,43,43,0.3)]' 
             : 'bg-transparent border-b border-brand-red/20 shadow-[0_4px_30px_rgba(216,43,43,0.05)]'
         }`}
+        role="banner"
       >
         <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 h-16 flex items-center justify-between">
 
@@ -230,9 +240,9 @@ export function Layout({ children, activeTab }: LayoutProps) {
       <OnboardingModal isSignedIn={isSignedIn} />
       <SignInModal />
 
-      <main className="flex-1 w-full z-10">{children}</main>
+      <main className="flex-1 w-full z-10" role="main" id="main-content">{children}</main>
 
-      <footer className="border-t border-white/10 py-8 sm:py-12 mt-0 bg-bg-primary z-10 relative">
+      <footer className="border-t border-white/10 py-8 sm:py-12 mt-0 bg-bg-primary z-10 relative" role="contentinfo">
         <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 flex flex-col lg:flex-row justify-between items-center gap-12 lg:gap-4 text-[11px] text-text-tertiary">
           
           {/* Left: Rosetta Alpha */}

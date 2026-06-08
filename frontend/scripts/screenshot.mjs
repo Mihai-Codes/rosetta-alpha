@@ -30,12 +30,15 @@ const BREAKPOINTS = [
 
 const PAGES = [
   { name: 'home',      path: '/' },
+  { name: 'desks',     path: '/desks' },
   { name: 'feed',      path: '/feed' },
   { name: 'registry',  path: '/registry' },
   { name: 'quiz',      path: '/quiz' },
   { name: 'dashboard', path: '/dashboard' },
+  { name: 'leaderboard', path: '/leaderboard' },
+  { name: 'pricing',   path: '/pricing' },
+  { name: 'knowledge-graph', path: '/knowledge-graph' },
   { name: 'about',     path: '/about' },
-  { name: 'signin',    path: '/signin' },
 ]
 
 const OUT_DIR = join(__dirname, 'screenshots')
