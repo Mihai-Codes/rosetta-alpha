@@ -44,7 +44,7 @@ function TierCard({ tier, name, price, features, highlighted, onSubscribe, isCon
     <div
       className={`relative flex flex-col rounded-lg border p-6 sm:p-8 transition-all ${
         highlighted
-          ? 'border-brand-red bg-brand-red/5 shadow-lg shadow-brand-red/10'
+          ? 'border-brand-red bg-bg-secondary shadow-lg shadow-brand-red/10'
           : 'border-border bg-bg-secondary hover:border-text-tertiary'
       }`}
     >
