@@ -86,7 +86,7 @@ export function RegistryTable({ desks, onCidClick }: RegistryTableProps) {
   return (
     <PageTransition className="space-y-4 sm:space-y-6">
       {/* Toolbar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3" role="search">
         <div className="relative flex-1 sm:max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-tertiary" />
           <input
@@ -95,6 +95,7 @@ export function RegistryTable({ desks, onCidClick }: RegistryTableProps) {
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="w-full pl-9 pr-3 py-3 min-h-[44px] bg-bg-secondary border border-border text-sm text-text-primary placeholder:text-text-tertiary focus:border-brand-red focus:outline-none transition-colors"
+            aria-label="Search registry entries"
           />
         </div>
         <button
@@ -107,7 +108,7 @@ export function RegistryTable({ desks, onCidClick }: RegistryTableProps) {
       </div>
 
       {/* ── Mobile card stack (< md) ── */}
-      <div className="md:hidden space-y-2">
+      <div className="md:hidden space-y-2" role="list">
         {entries.length === 0 ? (
           <div className="solid-panel p-12 text-center">
             <p className="font-display text-xl text-text-tertiary">No traces found</p>
@@ -122,6 +123,9 @@ export function RegistryTable({ desks, onCidClick }: RegistryTableProps) {
               className="solid-panel p-4 border-l-2 cursor-pointer"
               style={{ borderLeftColor: meta.color }}
               onClick={() => posthog.capture('registry_row_clicked', { region: e.desk, hash_truncated: e.arc_tx?.slice(0, 10) })}
+              role="listitem"
+              tabIndex={0}
+              onKeyDown={(event) => event.key === 'Enter' && event.currentTarget.click()}
             >
               {/* Row 1: Region + Asset + Direction */}
               <div className="flex items-center justify-between mb-2">
@@ -194,7 +198,7 @@ export function RegistryTable({ desks, onCidClick }: RegistryTableProps) {
 
       {/* ── Desktop table (≥ md) ── */}
       <div className="hidden md:block solid-panel overflow-x-auto">
-        <table className="w-full">
+        <table className="w-full" role="table">
           <thead>
             <tr className="border-b border-white/[0.05]">
               <th className="px-4 sm:px-6 py-4 text-left"><SortHeader label="Desk" k="desk" /></th>

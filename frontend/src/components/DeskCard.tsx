@@ -17,7 +17,7 @@ const REGION_LABEL: Record<string, string> = {
   crypto: 'Digital Assets',
 }
 
-export function DeskCard({ desk }: { desk: DeskProps }) {
+export function DeskCard({ desk, role }: { desk: DeskProps; role?: string }) {
   const [showExplorer, setShowExplorer] = React.useState(false)
   const isLong = desk.direction === 'LONG'
   const isShort = desk.direction === 'SHORT'
@@ -48,7 +48,7 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
         whileHover={{ y: -3, transition: { duration: 0.18 } }}
         onClick={() => setShowExplorer(true)}
         className="group relative glass-panel border border-border/20 hover:border-brand-red/30 shadow-none hover:shadow-[0_0_20px_rgba(216,43,43,0.25)] transition-all duration-500 cursor-pointer flex flex-col overflow-hidden rounded-none"
-        role="article"
+        role={role || "article"}
         aria-label={`${desk.ticker} analysis by ${desk.desk} desk`}
         tabIndex={0}
         onKeyDown={(e) => e.key === 'Enter' && setShowExplorer(true)}

@@ -1,6 +1,7 @@
 'use client'
 
 import { NARRATIVE_COLORS, NARRATIVE_LABELS, type NarrativeType } from '../lib/narrative-constants'
+import { EmptyState } from './SkeletonLoader'
 
 interface NarrativeEvent {
   id: string
@@ -13,7 +14,14 @@ interface NarrativeEvent {
 
 export function NarrativeTimeline({ events, ticker }: { events: NarrativeEvent[], ticker: string }) {
   if (!events.length) {
-    return <div className="text-text-tertiary text-sm italic py-4">No narrative data available for {ticker}</div>
+    return (
+      <div className="py-4">
+        <EmptyState
+          title="No narrative data available"
+          subtitle={`No narrative events found for ${ticker}`}
+        />
+      </div>
+    )
   }
 
   // Sort chronologically (newest first for a feed)

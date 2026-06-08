@@ -4,7 +4,7 @@ import React from 'react'
 import { ExternalLink, Clock } from 'lucide-react'
 import { DeskProps } from './DeskCard'
 
-export function MarketBoard({ desks }: { desks: DeskProps[] }) {
+export function MarketBoard({ desks, loading = false }: { desks: DeskProps[]; loading?: boolean }) {
   const markets = desks.filter(d => d.arc_tx && d.question)
 
   return (
@@ -31,18 +31,27 @@ export function MarketBoard({ desks }: { desks: DeskProps[] }) {
       {/* Table */}
       <div className="glass-panel border border-border/20 rounded-2xl overflow-hidden shadow-none">
         <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-white/[0.05] bg-transparent">
-                {['Question', 'Region', 'Arc Transaction', 'Expiry', 'Status'].map(h => (
-                  <th key={h} className="px-4 sm:px-6 py-3 sm:py-4 text-[9px] font-medium uppercase tracking-[0.2em] text-muted-foreground/40">
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/[0.02]">
-              {markets.map((m, i) => (
+          {loading ? (
+            <div className="p-8">
+              <div className="space-y-4">
+                <div className="h-4 bg-white/5 rounded w-3/4"></div>
+                <div className="h-4 bg-white/5 rounded w-1/2"></div>
+                <div className="h-4 bg-white/5 rounded w-2/3"></div>
+              </div>
+            </div>
+          ) : (
+            <table className="w-full text-left">
+              <thead>
+                <tr className="border-b border-white/[0.05] bg-transparent">
+                  {['Question', 'Region', 'Arc Transaction', 'Expiry', 'Status'].map(h => (
+                    <th key={h} className="px-4 sm:px-6 py-3 sm:py-4 text-[9px] font-medium uppercase tracking-[0.2em] text-muted-foreground/40">
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/[0.02]">
+                {markets.map((m, i) => (
                 <tr key={i} className="hover:bg-accent/10 transition-colors group">
                   <td className="px-4 sm:px-6 py-4 sm:py-5 max-w-xs">
                     <p className="text-sm font-light text-foreground/80 leading-snug group-hover:text-foreground transition-colors">
@@ -91,6 +100,7 @@ export function MarketBoard({ desks }: { desks: DeskProps[] }) {
               )}
             </tbody>
           </table>
+          )}
         </div>
       </div>
 
