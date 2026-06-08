@@ -198,7 +198,7 @@ export function ThesisCard({ desk }: ThesisCardProps) {
 
   const isLong = desk.direction === 'LONG'
   const isShort = desk.direction === 'SHORT'
-  const directionColor = isLong ? '#00FF00' : isShort ? '#D82B2B' : '#888888'
+  const directionColor = isLong ? '#22C55E' : isShort ? '#D82B2B' : '#888888'
   const directionGlow = isLong ? 'shadow-none' : isShort ? 'shadow-none' : ''
 
   const handleCopy = async () => {

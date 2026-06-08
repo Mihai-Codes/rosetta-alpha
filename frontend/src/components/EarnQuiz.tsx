@@ -38,7 +38,7 @@ function encodeClaimData(thesisId: string): string {
 }
 
 // Color tokens from design system
-const GOLD = '#FFD700'
+const GOLD = '#F59E0B'
 
 // ─── Progress dots ──────────────────────────────────────────────────────────
 

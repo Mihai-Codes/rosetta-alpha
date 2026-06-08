@@ -15,12 +15,12 @@ export type NarrativeType =
 
 export const NARRATIVE_COLORS: Record<NarrativeType, string> = {
   fear: '#D82B2B',
-  greed: '#00FF00',
+  greed: '#22C55E',
   regulatory: '#888888',
-  innovation: '#FFD700',
+  innovation: '#F59E0B',
   risk: '#D82B2B',
   macro_shift: '#8B5CF6',
-  geopolitical: '#FFD700',
+  geopolitical: '#F59E0B',
 }
 
 export const NARRATIVE_LABELS: Record<NarrativeType, string> = {

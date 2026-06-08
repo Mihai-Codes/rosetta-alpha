@@ -16,16 +16,16 @@
   --color-accent-amber: #D82B2B;
   --color-accent-blue: #FFFFFF;
 
-  --color-region-us: #4A90E2;
+  --color-region-us: #888888;
   --color-region-cn: #D82B2B;
   --color-region-eu: #888888;
-  --color-region-jp: #FFD700;
-  --color-region-crypto: #00FF00;
+  --color-region-jp: #F59E0B;
+  --color-region-crypto: #22C55E;
 
-  --color-positive: #00FF00;
+  --color-positive: #22C55E;
   --color-negative: #D82B2B;
   --color-neutral: #888888;
-  --color-warning: #FFD700;
+  --color-warning: #F59E0B;
 
   --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;

@@ -13,7 +13,7 @@
  *   1. Inline in the dashboard sidebar (variant="panel")
  *   2. As a modal triggered by X402SessionRequired (variant="modal")
  *
- * Design tokens: #0A0A0A bg, #FFD700 gold accent, brand-red primary
+ * Design tokens: #0A0A0A bg, #F59E0B gold accent, brand-red primary
  */
 
 import React from 'react'
@@ -88,7 +88,7 @@ function PillButton({
   label,
   selected,
   onClick,
-  accent = '#FFD700',
+  accent = '#F59E0B',
 }: {
   label: string
   selected: boolean
@@ -279,8 +279,8 @@ function ActivePanel({
             style={{
               width: `${Math.min(progressPct, 100)}%`,
               background: progressPct > 80
-                ? 'linear-gradient(90deg, #FFD700, #EF4444)'
-                : 'linear-gradient(90deg, #FFD700, #FFD700)',
+                ? 'linear-gradient(90deg, #F59E0B, #EF4444)'
+                : 'linear-gradient(90deg, #F59E0B, #F59E0B)',
             }}
           />
         </div>

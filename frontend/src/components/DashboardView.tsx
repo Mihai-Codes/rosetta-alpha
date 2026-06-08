@@ -97,11 +97,11 @@ const AGENT_LEADERBOARD: AgentLeaderboardRow[] = [
 ]
 
 const REGION_META: Record<string, { name: string; flag: string; color: string }> = {
-  us:     { name: 'United States', flag: '🇺🇸', color: '#4A90E2' },
+  us:     { name: 'United States', flag: '🇺🇸', color: '#888888' },
   cn:     { name: 'China',         flag: '🇨🇳', color: '#D82B2B' },
   eu:     { name: 'Europe',        flag: '🇪🇺', color: '#888888' },
-  jp:     { name: 'Japan',         flag: '🇯🇵', color: '#FFD700' },
-  crypto: { name: 'Crypto',        flag: '₿',  color: '#00FF00' },
+  jp:     { name: 'Japan',         flag: '🇯🇵', color: '#F59E0B' },
+  crypto: { name: 'Crypto',        flag: '₿',  color: '#22C55E' },
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -154,10 +154,10 @@ interface Quadrant {
 }
 
 const QUADRANTS: Quadrant[] = [
-  { label: 'Equities',    pct: 40, color: '#4A90E2' },
-  { label: 'Bonds',       pct: 30, color: '#FFD700' },
+  { label: 'Equities',    pct: 40, color: '#888888' },
+  { label: 'Bonds',       pct: 30, color: '#F59E0B' },
   { label: 'Commodities', pct: 15, color: '#D82B2B' },
-  { label: 'Crypto',      pct: 15, color: '#4A90E2' },
+  { label: 'Crypto',      pct: 15, color: '#888888' },
 ]
 
 function RingChart() {
@@ -345,7 +345,7 @@ function Leaderboard() {
   const medalBorder = (rank: number) => {
     if (rank === 1) return 'border-l-2 border-l-accent-gold'
     if (rank === 2) return 'border-l-2 border-l-[#FFFFFF]'
-    if (rank === 3) return 'border-l-2 border-l-[#FFD700]'
+    if (rank === 3) return 'border-l-2 border-l-[#F59E0B]'
     return ''
   }
 

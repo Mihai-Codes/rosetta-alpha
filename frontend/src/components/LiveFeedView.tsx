@@ -188,7 +188,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
             const isOpen = expanded.has(key)
             const isLong = e.direction === 'LONG'
             const isShort = e.direction === 'SHORT'
-            const dirColor = isLong ? '#00FF00' : isShort ? '#D82B2B' : '#888888'
+            const dirColor = isLong ? '#22C55E' : isShort ? '#D82B2B' : '#888888'
 
             return (
               <div

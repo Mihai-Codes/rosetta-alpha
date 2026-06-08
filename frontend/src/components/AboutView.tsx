@@ -30,7 +30,7 @@ export function AboutView() {
         <div className="md:col-span-5 flex justify-center mt-10 md:mt-0">
           {/* Levitating Ray Dalio Portrait */}
           <div className="relative group w-64 h-64 sm:w-80 sm:h-80">
-            <div className="absolute inset-0 bg-gradient-to-tr from-brand-red to-[#FFD700] opacity-30 blur-2xl group-hover:opacity-60 transition-opacity duration-700" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-brand-red to-[#F59E0B] opacity-30 blur-2xl group-hover:opacity-60 transition-opacity duration-700" />
             <div className="absolute inset-0 border border-white/20 bg-bg-secondary shadow-[0_0_40px_rgba(216,43,43,0.3)] z-10 overflow-hidden ">
               <img 
                 src="/ray-dalio.webp" 
@@ -64,11 +64,11 @@ export function AboutView() {
                 <span className="text-[10px] uppercase tracking-[0.2em] text-brand-red/60 font-bold">Rising Growth</span>
                 <span className="font-display text-lg sm:text-xl text-text-primary leading-tight">Equities<br/>Commodities</span>
               </div>
-              <div className="border-b border-brand-red/30 bg-gradient-to-bl from-[#FFD700]/10 to-transparent p-5 flex flex-col justify-between text-right">
+              <div className="border-b border-brand-red/30 bg-gradient-to-bl from-[#F59E0B]/10 to-transparent p-5 flex flex-col justify-between text-right">
                 <span className="text-[10px] uppercase tracking-[0.2em] text-warning/60 font-bold">Falling Growth</span>
                 <span className="font-display text-lg sm:text-xl text-text-primary leading-tight">Nominal Bonds<br/>Cash</span>
               </div>
-              <div className="border-r border-brand-red/30 bg-gradient-to-tr from-[#00FF00]/10 to-transparent p-5 flex flex-col justify-between">
+              <div className="border-r border-brand-red/30 bg-gradient-to-tr from-[#22C55E]/10 to-transparent p-5 flex flex-col justify-between">
                 <span className="font-display text-lg sm:text-xl text-text-primary leading-tight">ILBs<br/>Commodities</span>
                 <span className="text-[10px] uppercase tracking-[0.2em] text-positive/60 font-bold">Rising Inflation</span>
               </div>

@@ -24,7 +24,7 @@ const REGIME_CONFIG: Record<string, {
   TRENDING: {
     label: 'Trending',
     color: 'text-positive',
-    dotColor: '#00FF00',
+    dotColor: '#22C55E',
     bgColor: 'bg-[rgba(45,106,79,0.08)]',
     borderColor: 'border-[rgba(45,106,79,0.25)]',
     description: 'Sustained directional momentum',
@@ -32,7 +32,7 @@ const REGIME_CONFIG: Record<string, {
   MEAN_REVERTING: {
     label: 'Mean Reverting',
     color: 'text-warning',
-    dotColor: '#FFD700',
+    dotColor: '#F59E0B',
     bgColor: 'bg-[rgba(184,134,11,0.08)]',
     borderColor: 'border-[rgba(184,134,11,0.25)]',
     description: 'Range-bound oscillation',

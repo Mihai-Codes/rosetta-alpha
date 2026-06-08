@@ -165,18 +165,18 @@ export function CircleInfraPanel() {
 
         {/* Gateway webhooks */}
         <div className="solid-panel flex flex-col p-6 border border-white/5 bg-gradient-to-b from-white/[0.03] to-transparent rounded-2xl relative overflow-hidden group">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-transparent opacity-50"></div>
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#888888] to-transparent opacity-50"></div>
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-blue-500/10 text-blue-400 ring-1 ring-blue-500/20">
+              <div className="p-2 rounded-lg bg-[#888888]/10 text-[#888888] ring-1 ring-[#888888]/20">
                 <Webhook size={18} />
               </div>
               <h3 className="text-sm font-semibold tracking-wide text-text-primary">Gateway Webhooks</h3>
             </div>
-            <div className="flex items-center gap-1.5 text-[10px] text-blue-400 font-medium tracking-wide uppercase px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/20">
+            <div className="flex items-center gap-1.5 text-[10px] text-[#888888] font-medium tracking-wide uppercase px-2.5 py-1 rounded-full bg-[#888888]/10 border border-[#888888]/20">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#CCCCCC] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#888888]"></span>
               </span>
               Listening
             </div>
@@ -198,11 +198,11 @@ export function CircleInfraPanel() {
                   <div className="relative pl-3 space-y-4">
                     {(gateway?.events ?? []).map((e, idx) => (
                       <div key={`${e.notificationId ?? e.receivedAt}`} className="relative flex items-start gap-4">
-                        <div className="absolute left-[-15px] mt-1.5 h-2 w-2 rounded-full ring-4 ring-[#0A0A0A] bg-blue-500"></div>
+                        <div className="absolute left-[-15px] mt-1.5 h-2 w-2 rounded-full ring-4 ring-[#0A0A0A] bg-[#888888]"></div>
                         <div className="flex-1 bg-white/[0.02] border border-white/5 rounded-lg p-3 hover:bg-white/[0.04] transition-colors">
                           <p className="text-xs font-medium text-text-primary mb-1">{e.notificationType}</p>
                           <div className="flex items-center gap-2 text-[10px] text-text-tertiary font-mono">
-                            <span className="text-blue-400/70">{shortHash(e.txHash)}</span>
+                            <span className="text-[#888888]/70">{shortHash(e.txHash)}</span>
                             <span>•</span>
                             <span>{shortHash(e.walletAddress)}</span>
                           </div>
@@ -215,7 +215,7 @@ export function CircleInfraPanel() {
               <div className="mt-6 pt-4 border-t border-white/5">
                 <div className="flex flex-wrap items-start sm:items-center gap-x-2 gap-y-1">
                   <span className="text-[9px] text-text-tertiary uppercase tracking-widest shrink-0">Subscribed Events:</span>
-                  <span className="text-[9px] text-blue-400/70 uppercase tracking-widest">Automated Deposits / Institutional Verification / On-chain Minting</span>
+                  <span className="text-[9px] text-[#888888]/70 uppercase tracking-widest">Automated Deposits / Institutional Verification / On-chain Minting</span>
                 </div>
               </div>
             </div>

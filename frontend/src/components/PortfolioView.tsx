@@ -5,7 +5,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { DeskProps } from './DeskCard'
 
-const CHART_COLORS = ['#FFD700', '#A07840', '#7B6030', '#00FF00', '#888888']
+const CHART_COLORS = ['#F59E0B', '#CCCCCC', '#888888', '#22C55E', '#888888']
 
 export function PortfolioView({ desks }: { desks: DeskProps[] }) {
   const chartData = desks.map((d, i) => ({

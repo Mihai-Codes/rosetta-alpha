@@ -8,7 +8,7 @@ import { getConfig } from '@/lib/wagmi'
 import '@rainbow-me/rainbowkit/styles.css'
 
 const customTheme = darkTheme({
-  accentColor: '#FFD700',
+  accentColor: '#F59E0B',
   accentColorForeground: '#0A0A0A',
   borderRadius: 'medium',
   overlayBlur: 'small',

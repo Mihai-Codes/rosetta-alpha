@@ -74,11 +74,11 @@ export function DivergenceGauge({ ticker, desks }: DivergenceGaugeProps) {
   // Region meta helper
   const getRegionMeta = (deskKey: string) => {
     const key = deskKey.toLowerCase()
-    if (key === 'us') return { flag: '🇺🇸', name: 'US', color: '#00FF00' }
+    if (key === 'us') return { flag: '🇺🇸', name: 'US', color: '#22C55E' }
     if (key === 'cn') return { flag: '🇨🇳', name: 'CN', color: '#D82B2B' }
     if (key === 'eu') return { flag: '🇪🇺', name: 'EU', color: '#FFFFFF' }
-    if (key === 'jp') return { flag: '🇯🇵', name: 'JP', color: '#FFD700' }
-    if (key === 'crypto') return { flag: '🪙', name: 'CRYPTO', color: '#00FF00' }
+    if (key === 'jp') return { flag: '🇯🇵', name: 'JP', color: '#F59E0B' }
+    if (key === 'crypto') return { flag: '🪙', name: 'CRYPTO', color: '#22C55E' }
     return { flag: '🌐', name: deskKey.toUpperCase(), color: '#888888' }
   }
 
