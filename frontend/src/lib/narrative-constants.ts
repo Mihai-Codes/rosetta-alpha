@@ -19,7 +19,7 @@ export const NARRATIVE_COLORS: Record<NarrativeType, string> = {
   regulatory: '#888888',
   innovation: '#F59E0B',
   risk: '#D82B2B',
-  macro_shift: '#8B5CF6',
+  macro_shift: '#888888',
   geopolitical: '#F59E0B',
 }
 

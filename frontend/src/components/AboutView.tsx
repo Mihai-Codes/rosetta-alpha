@@ -2,10 +2,12 @@
 
 import React from 'react'
 import { Scale } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { PageTransition } from '@/components/PageTransition'
 
 export function AboutView() {
   return (
-    <div className="max-w-6xl space-y-24 mx-auto px-4 py-20">
+    <PageTransition className="max-w-6xl space-y-24 mx-auto px-4 py-20">
       
       {/* Ray Dalio & The Philosophy Section */}
       <div className="grid md:grid-cols-12 gap-12 items-center">
@@ -133,6 +135,6 @@ export function AboutView() {
         </ol>
       </section>
 
-    </div>
+    </PageTransition>
   )
 }

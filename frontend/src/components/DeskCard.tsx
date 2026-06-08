@@ -29,10 +29,10 @@ export function DeskCard({ desk }: { desk: DeskProps }) {
     : 'text-text-secondary'
 
   const directionBg = isLong
-    ? 'bg-[rgba(82,183,136,0.06)] border-[rgba(82,183,136,0.18)]'
+    ? 'bg-[rgba(34, 197, 94,0.06)] border-[rgba(34, 197, 94,0.18)]'
     : isShort
-    ? 'bg-[rgba(192,57,43,0.06)] border-[rgba(192,57,43,0.18)]'
-    : 'bg-[rgba(123,143,166,0.06)] border-[rgba(123,143,166,0.18)]'
+    ? 'bg-[rgba(216, 43, 43,0.06)] border-[rgba(216, 43, 43,0.18)]'
+    : 'bg-[rgba(136, 136, 136,0.06)] border-[rgba(136, 136, 136,0.18)]'
 
   const barColor = isLong ? 'bg-positive' : isShort ? 'bg-brand-red' : 'bg-muted-foreground/40'
 

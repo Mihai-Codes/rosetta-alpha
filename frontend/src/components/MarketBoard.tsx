@@ -75,7 +75,7 @@ export function MarketBoard({ desks }: { desks: DeskProps[] }) {
                     </div>
                   </td>
                   <td className="px-4 sm:px-6 py-4 sm:py-5">
-                    <span className="text-[9px] font-medium uppercase tracking-widest text-warning border border-[rgba(201,168,76,0.25)] bg-[rgba(201,168,76,0.05)] px-3 py-1">
+                    <span className="text-[9px] font-medium uppercase tracking-widest text-warning border border-[rgba(216, 43, 43,0.25)] bg-[rgba(216, 43, 43,0.05)] px-3 py-1">
                       Pending
                     </span>
                   </td>

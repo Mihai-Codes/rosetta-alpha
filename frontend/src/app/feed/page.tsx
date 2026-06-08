@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { PageTransition } from '@/components/PageTransition'
 import posthog from 'posthog-js'
 import { LiveFeedView } from '@/components/LiveFeedView'
 import { Layout } from '@/components/Layout'
@@ -24,7 +25,7 @@ export default function FeedPage() {
 
   return (
     <Layout activeTab="feed">
-      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-16 pt-28 sm:pt-36 lg:pt-48">
+      <PageTransition className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-16 pt-28 sm:pt-36 lg:pt-48">
         <div className="mb-12">
           <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-brand-red mb-3">
             Real-Time Stream
@@ -34,7 +35,7 @@ export default function FeedPage() {
           </h1>
         </div>
         <LiveFeedView desks={data} loading={loading} />
-      </div>
+      </PageTransition>
     </Layout>
   )
 }

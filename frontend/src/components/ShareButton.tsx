@@ -157,7 +157,7 @@ export function ShareButton(props: ShareButtonProps) {
       {open && (
         <div
           data-testid="share-modal"
-          className={`absolute z-50 w-72 rounded-lg overflow-hidden border border-warning/40 shadow-[0_0_20px_rgba(201,168,76,0.1),_0_8px_32px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-200 max-h-[85vh] overflow-y-auto ${
+          className={`absolute z-50 w-72 rounded-lg overflow-hidden border border-warning/40 shadow-[0_0_20px_rgba(216, 43, 43,0.1),_0_8px_32px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-200 max-h-[85vh] overflow-y-auto ${
             modalPosition === 'above'
               ? 'bottom-full right-0 mb-2 origin-bottom-right slide-in-from-bottom-2'
               : 'top-full right-0 mt-2 origin-top-right slide-in-from-top-2'

@@ -1,6 +1,8 @@
 'use client'
 
 import React from 'react'
+import { motion } from 'framer-motion'
+import { PageTransition } from '@/components/PageTransition'
 import posthog from 'posthog-js'
 import { CheckCircle2, ExternalLink, Search, Download, ArrowUpDown } from 'lucide-react'
 import { DeskProps } from './DeskCard'
@@ -82,7 +84,7 @@ export function RegistryTable({ desks, onCidClick }: RegistryTableProps) {
   )
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <PageTransition className="space-y-4 sm:space-y-6">
       {/* Toolbar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div className="relative flex-1 sm:max-w-md">
@@ -295,6 +297,6 @@ export function RegistryTable({ desks, onCidClick }: RegistryTableProps) {
       <p className="text-[10px] text-text-tertiary uppercase tracking-[0.25em]">
         {entries.length} trace{entries.length === 1 ? '' : 's'} · All hashes verified on Arc L1 testnet
       </p>
-    </div>
+    </PageTransition>
   )
 }

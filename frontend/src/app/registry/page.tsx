@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { PageTransition } from '@/components/PageTransition'
 import posthog from 'posthog-js'
 import { RegistryTable } from '@/components/RegistryTable'
 import { Layout } from '@/components/Layout'
@@ -39,7 +40,7 @@ export default function RegistryPage() {
 
   return (
     <Layout activeTab="registry">
-      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-16 pt-28 sm:pt-36 lg:pt-48">
+      <PageTransition className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-16 pt-28 sm:pt-36 lg:pt-48">
         <div className="mb-12">
           <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-brand-red mb-3">
             On-Chain Provenance
@@ -50,7 +51,7 @@ export default function RegistryPage() {
         </div>
         <RegistryTable desks={data} onCidClick={openProvenance} />
         {!loading && <CircleInfraPanel />}
-      </div>
+      </PageTransition>
 
       {selectedDesk && (
         <SidePanel

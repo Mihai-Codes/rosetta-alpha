@@ -133,7 +133,7 @@ export function OnboardingModal({ isSignedIn }: OnboardingModalProps) {
                 text-text-primary text-sm font-medium
                 hover:bg-brand-red/20 hover:border-brand-red/60
                 transition-all duration-300
-                hover:shadow-[0_0_30px_rgba(201,168,76,0.3)]
+                hover:shadow-[0_0_30px_rgba(216, 43, 43,0.3)]
               "
             >
               <span className="w-2 h-2 rounded-full bg-brand-red" />

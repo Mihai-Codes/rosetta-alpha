@@ -178,7 +178,7 @@ export default function PricingPage() {
     <Layout activeTab="pricing">
       <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-16 pt-28 sm:pt-36 lg:pt-48">
         {subStatus && (
-          <div className="mb-8 max-w-md mx-auto rounded-lg border border-[#4A9F6F]/30 bg-[#4A9F6F]/10 px-4 py-2 text-center text-xs text-[#4A9F6F]">
+          <div className="mb-8 max-w-md mx-auto rounded-lg border border-[#22C55E]/30 bg-[#22C55E]/10 px-4 py-2 text-center text-xs text-[#22C55E]">
             {subStatus} — <button onClick={() => setSelectedTier(Tier.Premium)} className="underline">Upgrade</button>
           </div>
         )}
@@ -221,10 +221,8 @@ export default function PricingPage() {
         </div>
 
         <div className="mt-8 max-w-3xl mx-auto text-center">
-          <p className="text-xs text-text-secondary">
-            Pay with your crypto wallet (USDC on Arc) or credit/debit card (via Stripe).
-            {' '}
-            <span className="text-text-tertiary">Card payments are converted to USDC and delivered to your wallet.</span>
+          <p className="text-xs text-text-secondary whitespace-nowrap">
+            Pay with your crypto wallet (USDC on Arc) or credit/debit card (via Stripe). <span className="text-text-tertiary">Card payments are converted to USDC and delivered to your wallet.</span>
           </p>
         </div>
 

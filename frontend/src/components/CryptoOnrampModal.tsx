@@ -204,7 +204,7 @@ function CryptoOnrampContent({ tier, walletAddress, onSuccess, onClose }: Omit<C
           <div className="flex flex-col items-center py-12 gap-4">
             <div className="w-16 h-16 rounded-full bg-positive/10 flex items-center justify-center">
               <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                <path d="M8 16L14 22L24 10" stroke="#4A9F6F" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M8 16L14 22L24 10" stroke="#22C55E" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
             <p className="font-display text-xl text-text-primary">Payment Complete</p>
@@ -221,7 +221,7 @@ function CryptoOnrampContent({ tier, walletAddress, onSuccess, onClose }: Omit<C
           <div className="flex flex-col items-center py-12 gap-4">
             <div className="w-16 h-16 rounded-full bg-negative/10 flex items-center justify-center">
               <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                <path d="M10 10L22 22M22 10L10 22" stroke="#9F4A4A" strokeWidth="3" strokeLinecap="round" />
+                <path d="M10 10L22 22M22 10L10 22" stroke="#EF4444" strokeWidth="3" strokeLinecap="round" />
               </svg>
             </div>
             <p className="font-display text-xl text-text-primary">

@@ -21,7 +21,7 @@ export const STRIPE_ONRAMP_APPEARANCE = {
     colorBackground: '#000000',
     colorPrimary: '#D82B2B',
     colorText: '#ffffff',
-    colorTextSecondary: '#999999',
+    colorTextSecondary: '#888888',
   },
 } as const
 

@@ -39,7 +39,7 @@ export const REGION_META: Record<string, { name: string; flag: string; color: st
 }
 
 export function regionMeta(desk: string) {
-  return REGION_META[desk.toLowerCase()] ?? { name: desk, flag: '◆', color: '#A09C94' }
+  return REGION_META[desk.toLowerCase()] ?? { name: desk, flag: '◆', color: '#888888' }
 }
 
 export async function copyToClipboard(text: string): Promise<boolean> {

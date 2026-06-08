@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import posthog from 'posthog-js'
 import { motion } from 'framer-motion'
+import { PageTransition } from '@/components/PageTransition'
 import { useAccount, useBalance } from 'wagmi'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { arcTestnet } from '@/lib/chains'
@@ -585,12 +586,7 @@ export function DashboardView() {
   }
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      className="space-y-8 sm:space-y-10"
-    >
+    <PageTransition className="space-y-8 sm:space-y-10">
       {/* ── Genuine Terminal Telemetry Dashboard ── */}
       <div className="mb-10 solid-panel bg-bg-primary p-6 sm:p-8 border border-border/80 shadow-2xl relative overflow-hidden">
         {/* Subtle top red glow */}
@@ -743,6 +739,6 @@ export function DashboardView() {
 
       {/* ── Agent Leaderboard ── */}
       <Leaderboard />
-    </div>
+    </PageTransition>
   )
 }

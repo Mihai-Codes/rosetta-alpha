@@ -39,7 +39,7 @@ export function NarrativeCloud({ narratives, ticker }: { narratives: NarrativeBu
           return (
             <div
               key={narrative.id}
-              className={`solid-panel bg-bg-secondary border p-5 flex flex-col justify-between transition-colors hover:bg-white/[0.03] ${narrative.isDominant ? 'border-warning shadow-[0_0_15px_rgba(255,215,0,0.1)]' : 'border-border'}`}
+              className={`solid-panel bg-bg-secondary border p-5 flex flex-col justify-between transition-colors hover:bg-white/[0.03] ${narrative.isDominant ? 'border-warning shadow-[0_0_15px_rgba(245, 158, 11,0.1)]' : 'border-border'}`}
             >
               <div className="flex items-start justify-between gap-2 mb-4">
                 <div className="flex items-center gap-2">

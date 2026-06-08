@@ -25,32 +25,32 @@ const REGIME_CONFIG: Record<string, {
     label: 'Trending',
     color: 'text-positive',
     dotColor: '#22C55E',
-    bgColor: 'bg-[rgba(45,106,79,0.08)]',
-    borderColor: 'border-[rgba(45,106,79,0.25)]',
+    bgColor: 'bg-[rgba(34, 197, 94,0.08)]',
+    borderColor: 'border-[rgba(34, 197, 94,0.25)]',
     description: 'Sustained directional momentum',
   },
   MEAN_REVERTING: {
     label: 'Mean Reverting',
     color: 'text-warning',
     dotColor: '#F59E0B',
-    bgColor: 'bg-[rgba(184,134,11,0.08)]',
-    borderColor: 'border-[rgba(184,134,11,0.25)]',
+    bgColor: 'bg-[rgba(245, 158, 11,0.08)]',
+    borderColor: 'border-[rgba(245, 158, 11,0.25)]',
     description: 'Range-bound oscillation',
   },
   CRISIS: {
     label: 'Crisis',
     color: 'text-brand-red',
     dotColor: '#D82B2B',
-    bgColor: 'bg-[rgba(220,20,60,0.08)]',
-    borderColor: 'border-[rgba(220,20,60,0.25)]',
+    bgColor: 'bg-[rgba(216, 43, 43,0.08)]',
+    borderColor: 'border-[rgba(216, 43, 43,0.25)]',
     description: 'High volatility regime',
   },
   UNCERTAIN: {
     label: 'Uncertain',
     color: 'text-text-secondary',
     dotColor: '#888888',
-    bgColor: 'bg-[rgba(123,143,166,0.06)]',
-    borderColor: 'border-[rgba(123,143,166,0.20)]',
+    bgColor: 'bg-[rgba(136, 136, 136,0.06)]',
+    borderColor: 'border-[rgba(136, 136, 136,0.20)]',
     description: 'Low confidence detection',
   },
 }
@@ -101,7 +101,7 @@ export function RegimeIndicator({ regime, compact = false }: RegimeIndicatorProp
         style={{
           backgroundColor: config.dotColor,
           boxShadow: regime.current_regime === 'CRISIS'
-            ? '0 0 6px rgba(220,20,60,0.4)'
+            ? '0 0 6px rgba(216, 43, 43,0.4)'
             : 'none',
         }}
       />

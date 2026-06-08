@@ -45,13 +45,13 @@ const NODE_COLORS: Record<string, string> = {
 }
 
 const EDGE_COLORS: Record<string, string> = {
-  ABOUT_TICKER: '#555',
-  BELONGS_TO_REGION: '#555',
+  ABOUT_TICKER: '#888888',
+  BELONGS_TO_REGION: '#888888',
   GENERATED_BY: '#888888',
   SUPPORTS: '#22C55E',
   CONTRADICTS: '#D82B2B',
   RESOLVED_AS: '#F59E0B',
-  HAS_NARRATIVE: '#9B59B6',
+  HAS_NARRATIVE: '#888888',
 }
 
 // ---------------------------------------------------------------------------
@@ -217,7 +217,7 @@ export default function KnowledgeGraphPage() {
       ctx.beginPath()
       ctx.moveTo(source.x!, source.y!)
       ctx.lineTo(target.x!, target.y!)
-      ctx.strokeStyle = EDGE_COLORS[edge.type] || '#333'
+      ctx.strokeStyle = EDGE_COLORS[edge.type] || '#333333'
       ctx.lineWidth = edge.type === 'CONTRADICTS' ? 2 : 1
       if (edge.type === 'CONTRADICTS') {
         ctx.setLineDash([4, 4])
@@ -237,7 +237,7 @@ export default function KnowledgeGraphPage() {
 
       const color = node.type === 'outcome' && node.was_correct === false
         ? '#D82B2B'
-        : NODE_COLORS[node.type] || '#666'
+        : NODE_COLORS[node.type] || '#888888'
 
       ctx.beginPath()
       ctx.arc(node.x!, node.y!, radius, 0, Math.PI * 2)
@@ -467,7 +467,7 @@ export default function KnowledgeGraphPage() {
               <span className="text-text-secondary">Resolved As</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-6 h-0.5 inline-block bg-[#9B59B6]" />
+              <span className="w-6 h-0.5 inline-block bg-[#888888]" />
               <span className="text-text-secondary">Has Narrative</span>
             </div>
           </div>

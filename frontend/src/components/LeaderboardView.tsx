@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
+import { PageTransition } from '@/components/PageTransition'
 import { useAccount } from 'wagmi'
 
 // ─── Mock leaderboard data ────────────────────────────────────────────────────
@@ -130,7 +131,7 @@ export function LeaderboardView() {
   const myEntry = sorted.find(t => t.address === myAddress)
 
   return (
-    <div className="space-y-10">
+    <PageTransition className="space-y-10">
 
       {/* ── Stats banner ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-border/60 border border-border/60 rounded-none mb-10">
@@ -341,6 +342,6 @@ export function LeaderboardView() {
           </p>
         </div>
       </div>
-    </div>
+    </PageTransition>
   )
 }
