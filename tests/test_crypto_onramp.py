@@ -888,8 +888,8 @@ class TestIntegrationFullFlow:
         assert "fulfillment_complete" in source
 
     def test_polling_intervals_are_aggressive(self):
-        """Pricing page should poll aggressively after payment (first poll at 500ms)."""
-        with open("frontend/src/app/pricing/page.tsx", "r") as f:
+        """CryptoOnrampModal should poll session status periodically."""
+        with open("frontend/src/components/CryptoOnrampModal.tsx", "r") as f:
             source = f.read()
-        assert "500" in source  # First poll at 500ms
-        assert "1000" in source  # Second at 1s
+        assert "POLL_INTERVAL_MS" in source
+        assert "MAX_POLL_DURATION_MS" in source

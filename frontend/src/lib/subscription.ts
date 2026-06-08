@@ -24,6 +24,20 @@ export const ARC_USDC: Address = '0x3600000000000000000000000000000000000000'
 /** Subscription duration in days — used by onramp webhook activation. */
 export const SUBSCRIPTION_DURATION_DAYS = 30
 
+/** Minimal ABI for ERC-20 approve — used by SubscribeModal and pricing page. */
+export const ERC20_APPROVE_ABI = [
+  {
+    name: 'approve',
+    type: 'function',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'spender', type: 'address' },
+      { name: 'amount', type: 'uint256' },
+    ],
+    outputs: [{ name: '', type: 'bool' }],
+  },
+] as const
+
 /** Minimal ABI for read operations — keeps bundle small. */
 export const SUBSCRIPTION_ABI = [
   {

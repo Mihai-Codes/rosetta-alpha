@@ -95,6 +95,7 @@ export function CryptoElements({ children }: CryptoElementsProps) {
         if (!publishableKey) throw new Error('NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not set')
 
         const onramp = await loadStripeOnramp(publishableKey)
+        if (!onramp) throw new Error('loadStripeOnramp returned null — check your publishable key')
         if (!cancelled) {
           setValue({ stripeOnramp: onramp as unknown as StripeOnrampInstance, loading: false, error: null })
         }

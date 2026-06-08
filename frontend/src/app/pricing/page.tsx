@@ -1,33 +1,12 @@
 'use client'
 
 import { Layout } from '@/components/Layout'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
-import { parseUnits } from 'viem'
+import { motion } from 'framer-motion'
+import { useAccount } from 'wagmi'
 import { useState, useEffect, useCallback } from 'react'
-import {
-  SUBSCRIPTION_CONTRACT,
-  SUBSCRIPTION_ABI,
-  ARC_USDC,
-  Tier,
-  TIER_LABELS,
-  TIER_PRICES_USD,
-} from '@/lib/subscription'
-import { CryptoOnrampModal } from '@/components/CryptoOnrampModal'
-
-// ERC-20 approve ABI fragment
-const ERC20_APPROVE_ABI = [
-  {
-    name: 'approve',
-    type: 'function',
-    stateMutability: 'nonpayable',
-    inputs: [
-      { name: 'spender', type: 'address' },
-      { name: 'amount', type: 'uint256' },
-    ],
-    outputs: [{ name: '', type: 'bool' }],
-  },
-] as const
+import { Check, Wallet, CreditCard } from 'lucide-react'
+import { SubscribeModal } from '@/components/SubscribeModal'
+import { Tier, TIER_LABELS, TIER_PRICES_USD } from '@/lib/subscription'
 
 interface TierCardProps {
   tier: Tier
@@ -36,12 +15,9 @@ interface TierCardProps {
   features: string[]
   highlighted?: boolean
   onSubscribe: (tier: Tier) => void
-  onPayWithCard: (tier: Tier) => void
-  isConnected: boolean
-  isPending: boolean
 }
 
-function TierCard({ tier, name, price, features, highlighted, onSubscribe, onPayWithCard, isConnected, isPending }: TierCardProps) {
+function TierCard({ tier, name, price, features, highlighted, onSubscribe }: TierCardProps) {
   return (
     <div
       className={`relative flex flex-col rounded-lg border p-6 sm:p-8 transition-all ${
@@ -70,9 +46,9 @@ function TierCard({ tier, name, price, features, highlighted, onSubscribe, onPay
       </div>
 
       {price > 0 && (
-        <p className="mt-1 text-xs text-text-tertiary font-mono">
-          or {price} USDC on Arc
-        </p>
+        <div className="mt-2 flex items-center gap-2">
+          <span className="text-[10px] text-text-tertiary font-mono">or {price} USDC on Arc</span>
+        </div>
       )}
 
       <ul className="mt-6 flex-1 space-y-3">
@@ -86,51 +62,30 @@ function TierCard({ tier, name, price, features, highlighted, onSubscribe, onPay
 
       <button
         onClick={() => onSubscribe(tier)}
-        disabled={tier === Tier.None || !isConnected || isPending}
+        disabled={tier === Tier.None}
         className={`mt-8 w-full rounded-md py-3 text-sm font-semibold transition-colors ${
           tier === Tier.None
             ? 'cursor-default border border-border text-text-tertiary'
             : highlighted
-              ? 'bg-brand-red text-white hover:bg-brand-red/90 disabled:opacity-50'
-              : 'border border-brand-red text-brand-red hover:bg-brand-red/10 disabled:opacity-50'
+              ? 'bg-brand-red text-white hover:bg-brand-red/90'
+              : 'border border-brand-red text-brand-red hover:bg-brand-red/10'
         }`}
       >
-        {tier === Tier.None
-          ? 'Current Plan'
-          : !isConnected
-            ? 'Connect Wallet'
-            : isPending
-              ? 'Processing…'
-              : `Subscribe · ${price} USDC`}
+        {tier === Tier.None ? 'Current Plan' : 'Subscribe'}
       </button>
+
       {price > 0 && (
-        <p className="mt-2 text-center text-[11px] text-text-tertiary">
-          {isConnected ? 'Pay on-chain via USDC' : 'Connect wallet first'}
-        </p>
-      )}
-      {price > 0 && (
-        <div className="relative mt-4">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-border" />
-          </div>
-          <div className="relative flex justify-center text-[11px]">
-            <span className="bg-bg-secondary px-2 text-text-tertiary">or pay with card</span>
-          </div>
+        <div className="mt-3 flex items-center justify-center gap-3 text-[10px] text-text-tertiary">
+          <span className="flex items-center gap-1">
+            <Wallet className="w-3 h-3" />
+            Wallet
+          </span>
+          <span>or</span>
+          <span className="flex items-center gap-1">
+            <CreditCard className="w-3 h-3" />
+            Card
+          </span>
         </div>
-      )}
-      {price > 0 && (
-        <button
-          onClick={() => onPayWithCard(tier)}
-          disabled={!isConnected}
-          className="mt-4 w-full rounded-md border border-border py-3 text-sm font-semibold text-text-primary transition-colors hover:bg-bg-primary disabled:opacity-50"
-        >
-          {!isConnected ? 'Connect Wallet' : `Buy ${price} USDC with Card`}
-        </button>
-      )}
-      {price > 0 && (
-        <p className="mt-2 text-center text-[11px] text-text-tertiary">
-          {isConnected ? 'Via Stripe · credit or debit card' : 'Connect wallet first'}
-        </p>
       )}
     </div>
   )
@@ -162,21 +117,33 @@ const TIER_FEATURES: Record<Tier, string[]> = {
   ],
 }
 
+const COMPARISON_FEATURES = [
+  { name: 'Real-time thesis access', free: false, premium: true, pro: true },
+  { name: 'Provenance chain visibility', free: 'Partial', premium: true, pro: true },
+  { name: 'Knowledge graph search', free: false, premium: true, pro: true },
+  { name: 'API access', free: false, premium: false, pro: true },
+  { name: 'Builder code integration', free: false, premium: false, pro: true },
+  { name: 'Custom alert thresholds', free: false, premium: false, pro: true },
+  { name: 'Quiz-to-earn rewards', free: false, premium: true, pro: true },
+  { name: 'x402 micropayment bypass', free: false, premium: true, pro: true },
+  { name: 'Email alerts', free: false, premium: true, pro: true },
+  { name: 'Priority support', free: false, premium: false, pro: true },
+]
+
+function ComparisonCell({ value }: { value: boolean | string }) {
+  if (value === true) {
+    return <span className="text-brand-red"><Check className="w-4 h-4" /></span>
+  }
+  if (value === false) {
+    return <span className="text-text-tertiary">—</span>
+  }
+  return <span className="text-text-secondary text-xs">{value}</span>
+}
+
 export default function PricingPage() {
   const { address, isConnected } = useAccount()
-  const [pendingTier, setPendingTier] = useState<Tier | null>(null)
-  const [onrampTier, setOnrampTier] = useState<Tier | null>(null)
-  const [showOnramp, setShowOnramp] = useState(false)
-  const [paymentSuccess, setPaymentSuccess] = useState(false)
+  const [selectedTier, setSelectedTier] = useState<Tier | null>(null)
   const [subStatus, setSubStatus] = useState<string | null>(null)
-
-  const { writeContract: approveUsdc, data: approveHash } = useWriteContract()
-  const { writeContract: subscribe, data: subscribeHash } = useWriteContract()
-
-  const { isLoading: isApproving } = useWaitForTransactionReceipt({ hash: approveHash })
-  const { isLoading: isSubscribing } = useWaitForTransactionReceipt({ hash: subscribeHash })
-
-  const isPending = isApproving || isSubscribing
 
   const fetchSubStatus = useCallback(async () => {
     if (!address) return
@@ -193,66 +160,29 @@ export default function PricingPage() {
     fetchSubStatus()
   }, [fetchSubStatus])
 
-  // Aggressive polling after payment: server-side activation means DB should
-  // reflect the new tier within 1-2 seconds of Stripe fulfillment.
-  useEffect(() => {
-    if (!paymentSuccess || !address) return
-    const intervals = [500, 1000, 2000, 4000, 8000, 15000]
-    const timers = intervals.map((delay) =>
-      setTimeout(() => fetchSubStatus(), delay)
-    )
-    return () => timers.forEach(clearTimeout)
-  }, [paymentSuccess, address, fetchSubStatus])
-
-  async function handleSubscribe(tier: Tier) {
-    if (!isConnected || !address || tier === Tier.None) return
-    setPendingTier(tier)
-
-    const price = parseUnits(TIER_PRICES_USD[tier].toString(), 6)
-
-    // Step 1: Approve USDC spend
-    approveUsdc({
-      address: ARC_USDC,
-      abi: ERC20_APPROVE_ABI,
-      functionName: 'approve',
-      args: [SUBSCRIPTION_CONTRACT, price],
-    })
-
-    // Step 2: Subscribe (user triggers after approve confirms)
-    subscribe({
-      address: SUBSCRIPTION_CONTRACT,
-      abi: SUBSCRIPTION_ABI,
-      functionName: 'subscribe',
-      args: [tier],
-    })
+  const handleSubscribe = (tier: Tier) => {
+    if (tier === Tier.None) return
+    setSelectedTier(tier)
   }
 
-  function handlePayWithCard(tier: Tier) {
-    if (!isConnected || !address) return
-    setOnrampTier(tier)
-    setShowOnramp(true)
+  const handleModalClose = () => {
+    setSelectedTier(null)
+  }
+
+  const handleModalSuccess = () => {
+    setSelectedTier(null)
+    fetchSubStatus()
   }
 
   return (
     <Layout activeTab="pricing">
       <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-16 pt-28 sm:pt-36 lg:pt-48">
-        {/* Success Banner */}
-        <AnimatePresence>
-          {paymentSuccess && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="fixed top-20 left-1/2 -translate-x-1/2 z-50 rounded-lg border border-[#4A9F6F]/30 bg-[#4A9F6F]/10 px-6 py-3 text-sm text-[#4A9F6F] backdrop-blur-sm"
-            >
-              {subStatus
-                ? `✓ ${subStatus} — welcome aboard`
-                : '✓ Payment received — subscription activating shortly…'}
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {subStatus && (
+          <div className="mb-8 max-w-md mx-auto rounded-lg border border-[#4A9F6F]/30 bg-[#4A9F6F]/10 px-4 py-2 text-center text-xs text-[#4A9F6F]">
+            {subStatus} — <button onClick={() => setSelectedTier(Tier.Premium)} className="underline">Upgrade</button>
+          </div>
+        )}
 
-        {/* Header */}
         <div className="mb-12 text-center">
           <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-brand-red mb-3">
             Pricing
@@ -265,7 +195,6 @@ export default function PricingPage() {
           </p>
         </div>
 
-        {/* Pricing Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto">
           <TierCard
             tier={Tier.None}
@@ -273,9 +202,6 @@ export default function PricingPage() {
             price={TIER_PRICES_USD[Tier.None]}
             features={TIER_FEATURES[Tier.None]}
             onSubscribe={handleSubscribe}
-            onPayWithCard={handlePayWithCard}
-            isConnected={isConnected}
-            isPending={isPending}
           />
           <TierCard
             tier={Tier.Premium}
@@ -284,9 +210,6 @@ export default function PricingPage() {
             features={TIER_FEATURES[Tier.Premium]}
             highlighted
             onSubscribe={handleSubscribe}
-            onPayWithCard={handlePayWithCard}
-            isConnected={isConnected}
-            isPending={isPending}
           />
           <TierCard
             tier={Tier.Pro}
@@ -294,13 +217,45 @@ export default function PricingPage() {
             price={TIER_PRICES_USD[Tier.Pro]}
             features={TIER_FEATURES[Tier.Pro]}
             onSubscribe={handleSubscribe}
-            onPayWithCard={handlePayWithCard}
-            isConnected={isConnected}
-            isPending={isPending}
           />
         </div>
 
-        {/* x402 Callout */}
+        <div className="mt-8 max-w-3xl mx-auto text-center">
+          <p className="text-xs text-text-secondary">
+            Pay with your crypto wallet (USDC on Arc) or credit/debit card (via Stripe).
+            {' '}
+            <span className="text-text-tertiary">Card payments are converted to USDC and delivered to your wallet.</span>
+          </p>
+        </div>
+
+        <div className="mt-16 max-w-4xl mx-auto">
+          <h2 className="font-display text-2xl text-text-primary text-center mb-8">
+            Feature Comparison
+          </h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left py-3 px-4 text-text-secondary font-medium">Feature</th>
+                  <th className="text-center py-3 px-4 text-text-secondary font-medium">Free</th>
+                  <th className="text-center py-3 px-4 text-brand-red font-medium">Premium</th>
+                  <th className="text-center py-3 px-4 text-text-secondary font-medium">Pro</th>
+                </tr>
+              </thead>
+              <tbody>
+                {COMPARISON_FEATURES.map((feature) => (
+                  <tr key={feature.name} className="border-b border-border/50">
+                    <td className="py-3 px-4 text-text-primary">{feature.name}</td>
+                    <td className="text-center py-3 px-4"><ComparisonCell value={feature.free} /></td>
+                    <td className="text-center py-3 px-4"><ComparisonCell value={feature.premium} /></td>
+                    <td className="text-center py-3 px-4"><ComparisonCell value={feature.pro} /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         <div className="mt-16 max-w-3xl mx-auto text-center">
           <div className="rounded-lg border border-border bg-bg-secondary p-6 sm:p-8">
             <h3 className="font-display text-lg text-text-primary mb-2">
@@ -316,20 +271,12 @@ export default function PricingPage() {
         </div>
       </motion.div>
 
-      {/* Stripe Crypto Onramp Modal */}
-      {showOnramp && onrampTier && address && (
-        <CryptoOnrampModal
-          isOpen={showOnramp}
-          tier={onrampTier}
-          walletAddress={address}
-          onSuccess={() => {
-            setPaymentSuccess(true)
-            fetchSubStatus()
-          }}
-          onClose={() => {
-            setShowOnramp(false)
-            setOnrampTier(null)
-          }}
+      {selectedTier && (
+        <SubscribeModal
+          tier={selectedTier}
+          isOpen={!!selectedTier}
+          onClose={handleModalClose}
+          onSuccess={handleModalSuccess}
         />
       )}
     </Layout>

@@ -1,27 +1,14 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Wallet, CreditCard, Loader2, AlertCircle, Check, ArrowRight, Shield, Zap } from 'lucide-react'
 import { useAccount, useBalance, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { parseUnits } from 'viem'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { CryptoOnrampWidget } from './CryptoOnrampModal'
-import { Tier, TIER_LABELS, TIER_PRICES_USD, ARC_USDC, SUBSCRIPTION_CONTRACT, SUBSCRIPTION_ABI } from '@/lib/subscription'
+import { Tier, TIER_LABELS, TIER_PRICES_USD, ARC_USDC, SUBSCRIPTION_CONTRACT, SUBSCRIPTION_ABI, ERC20_APPROVE_ABI } from '@/lib/subscription'
 import { arcTestnet } from '@/lib/chains'
-
-const ERC20_APPROVE_ABI = [
-  {
-    name: 'approve',
-    type: 'function',
-    stateMutability: 'nonpayable',
-    inputs: [
-      { name: 'spender', type: 'address' },
-      { name: 'amount', type: 'uint256' },
-    ],
-    outputs: [{ name: '', type: 'bool' }],
-  },
-] as const
 
 interface SubscribeModalProps {
   tier: Tier
@@ -31,13 +18,6 @@ interface SubscribeModalProps {
 }
 
 type PaymentMethod = 'select' | 'wallet' | 'card'
-
-const STATUS_MESSAGES = {
-  idle: '',
-  approving: 'Approving USDC spend...',
-  subscribing: 'Confirming transaction on Arc...',
-  success: 'Subscribed!',
-}
 
 export function SubscribeModal({ tier, isOpen, onClose, onSuccess }: SubscribeModalProps) {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('select')
@@ -52,7 +32,17 @@ export function SubscribeModal({ tier, isOpen, onClose, onSuccess }: SubscribeMo
   const { isLoading: isApproving } = useWaitForTransactionReceipt({ hash: approveHash })
   const { isLoading: isSubscribing } = useWaitForTransactionReceipt({ hash: subscribeHash })
 
-  const isPending = isApproving || isSubscribing
+  // Wallet payment step: idle → approving → subscribing → done
+  const [walletStep, setWalletStep] = useState<'idle' | 'approving' | 'subscribing' | 'done' | 'error'>('idle')
+  const [walletError, setWalletError] = useState<string | null>(null)
+  const onSuccessRef = useRef(onSuccess)
+  onSuccessRef.current = onSuccess
+  const onCloseRef = useRef(onClose)
+  onCloseRef.current = onClose
+  const tierRef = useRef(tier)
+  tierRef.current = tier
+
+  const isPending = isApproving || isSubscribing || walletStep === 'approving' || walletStep === 'subscribing'
   const isWrongNetwork = isConnected && chainId !== arcTestnet.id
 
   const price = TIER_PRICES_USD[tier]
@@ -60,8 +50,10 @@ export function SubscribeModal({ tier, isOpen, onClose, onSuccess }: SubscribeMo
   const balanceNum = balance ? parseFloat(balance.formatted) : 0
   const hasInsufficientBalance = balanceNum < price
 
-  const statusKey = isApproving ? 'approving' : isSubscribing ? 'subscribing' : 'idle'
-  const statusMessage = STATUS_MESSAGES[statusKey]
+  const statusMessage =
+    walletStep === 'approving' ? 'Approving USDC spend...' :
+    walletStep === 'subscribing' ? 'Confirming transaction on Arc...' :
+    ''
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -81,27 +73,61 @@ export function SubscribeModal({ tier, isOpen, onClose, onSuccess }: SubscribeMo
     if (!isOpen) {
       setPaymentMethod('select')
       setCardSuccess(false)
+      setWalletStep('idle')
+      setWalletError(null)
     }
   }, [isOpen])
+
+  // Step 2: After approval confirms, trigger subscribe
+  useEffect(() => {
+    if (walletStep !== 'approving' || !approveHash) return
+    if (isApproving) return // still waiting for receipt
+
+    // Approval mined — now subscribe
+    setWalletStep('subscribing')
+    try {
+      subscribe({
+        address: SUBSCRIPTION_CONTRACT,
+        abi: SUBSCRIPTION_ABI,
+        functionName: 'subscribe',
+        args: [tierRef.current],
+      })
+    } catch (err) {
+      setWalletStep('error')
+      setWalletError(err instanceof Error ? err.message : 'Subscribe transaction failed')
+    }
+  }, [walletStep, approveHash, isApproving, subscribe])
+
+  // Step 3: After subscribe confirms, complete
+  useEffect(() => {
+    if (walletStep !== 'subscribing' || !subscribeHash) return
+    if (isSubscribing) return // still waiting for receipt
+
+    setWalletStep('done')
+    onSuccessRef.current()
+    const timer = setTimeout(() => onCloseRef.current(), 1500)
+    return () => clearTimeout(timer)
+  }, [walletStep, subscribeHash, isSubscribing])
 
   async function handleWalletSubscribe() {
     if (!isConnected || !address || tier === Tier.None || isPending) return
 
+    setWalletStep('approving')
+    setWalletError(null)
+
     const priceWei = parseUnits(price.toString(), 6)
 
-    approveUsdc({
-      address: ARC_USDC,
-      abi: ERC20_APPROVE_ABI,
-      functionName: 'approve',
-      args: [SUBSCRIPTION_CONTRACT, priceWei],
-    })
-
-    subscribe({
-      address: SUBSCRIPTION_CONTRACT,
-      abi: SUBSCRIPTION_ABI,
-      functionName: 'subscribe',
-      args: [tier],
-    })
+    try {
+      approveUsdc({
+        address: ARC_USDC,
+        abi: ERC20_APPROVE_ABI,
+        functionName: 'approve',
+        args: [SUBSCRIPTION_CONTRACT, priceWei],
+      })
+    } catch (err) {
+      setWalletStep('error')
+      setWalletError(err instanceof Error ? err.message : 'Approval transaction failed')
+    }
   }
 
   const handleCardSuccess = () => {
@@ -163,10 +189,12 @@ export function SubscribeModal({ tier, isOpen, onClose, onSuccess }: SubscribeMo
                 hasInsufficientBalance={hasInsufficientBalance}
                 isPending={isPending}
                 statusMessage={statusMessage}
-                onBack={() => setPaymentMethod('select')}
+                walletStep={walletStep}
+                walletError={walletError}
+                onBack={() => { setPaymentMethod('select'); setWalletStep('idle'); setWalletError(null) }}
                 onConnect={() => openConnectModal?.()}
                 onSubscribe={handleWalletSubscribe}
-                onSwitchToCard={() => setPaymentMethod('card')}
+                onSwitchToCard={() => { setPaymentMethod('card'); setWalletStep('idle'); setWalletError(null) }}
               />
             ) : (
               <CardPayment
@@ -284,6 +312,8 @@ interface WalletPaymentProps {
   hasInsufficientBalance: boolean
   isPending: boolean
   statusMessage: string
+  walletStep: 'idle' | 'approving' | 'subscribing' | 'done' | 'error'
+  walletError: string | null
   onBack: () => void
   onConnect: () => void
   onSubscribe: () => void
@@ -301,6 +331,8 @@ function WalletPayment({
   hasInsufficientBalance,
   isPending,
   statusMessage,
+  walletStep,
+  walletError,
   onBack,
   onConnect,
   onSubscribe,
@@ -391,6 +423,12 @@ function WalletPayment({
                 </button>{' '}
                 to buy USDC with your credit card.
               </p>
+            </div>
+          )}
+
+          {walletStep === 'error' && walletError && (
+            <div className="p-3 bg-negative/10 border border-negative/20 rounded-lg">
+              <p className="text-xs text-negative">{walletError}</p>
             </div>
           )}
 
