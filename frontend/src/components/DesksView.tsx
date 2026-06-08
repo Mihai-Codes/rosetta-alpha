@@ -177,10 +177,6 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
       {active && isAuthed && (
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.6, ease: [0.16, 1, 0.3, 1] }} className="w-full relative mt-4">
           <div className="flex flex-col gap-6 lg:gap-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-start">
-              <MobMeter ticker={active.ticker} />
-              <DivergenceGauge ticker={active.ticker} desks={desks} />
-            </div>
             <NarrativeInsights ticker={active?.desk ?? 'Portfolio'} />
           </div>
         </motion.div>

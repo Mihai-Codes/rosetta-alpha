@@ -61,35 +61,46 @@ export function NarrativeInsights({ ticker = 'Portfolio' }: NarrativeInsightsPro
       {/* Expandable content */}
       {isExpanded && (
         <div className="px-6 pb-6 space-y-6 border-t border-border pt-5">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Narrative Cloud (bubble chart) */}
-            <NarrativeCloud narratives={MOCK_CLOUD_NARRATIVES} ticker={ticker} />
+          {/* Horizontal layout - all components in sequence */}
+          <div className="space-y-6">
+            {/* Narrative Heatmap */}
+            <div className="border-b border-border pb-4">
+              <h4 className="font-mono text-xs text-text-secondary uppercase tracking-wider mb-3">
+                Narrative Heatmap
+              </h4>
+              <NarrativeCloud narratives={MOCK_CLOUD_NARRATIVES} ticker={ticker} />
+            </div>
 
-            {/* Narrative Timeline */}
-            <NarrativeTimeline events={MOCK_TIMELINE_EVENTS} ticker={ticker} />
-          </div>
+            {/* Chronological Feed */}
+            <div className="border-b border-border pb-4">
+              <h4 className="font-mono text-xs text-text-secondary uppercase tracking-wider mb-3">
+                Chronological Feed
+              </h4>
+              <NarrativeTimeline events={MOCK_TIMELINE_EVENTS} ticker={ticker} />
+            </div>
 
-          {/* Contagion alerts */}
-          <div className="border-t border-border pt-4">
-            <h4 className="font-mono text-xs text-text-secondary uppercase tracking-wider mb-3">
-              Cross-Desk Contagion
-            </h4>
-            <div className="space-y-2">
-              {MOCK_CLOUD_NARRATIVES
-                .filter(n => n.regionsPresent.length > 1)
-                .map(n => (
-                  <div key={n.id} className="flex items-center gap-3 text-xs">
-                    <span className="text-brand-red font-mono">⚡</span>
-                    <span className="text-text-primary font-medium">{n.title}</span>
-                    <span className="text-text-tertiary">→</span>
-                    <span className="text-text-secondary font-mono">
-                      {n.regionsPresent.join(' · ')}
-                    </span>
-                    <span className="ml-auto text-text-tertiary font-mono text-[10px]">
-                      {n.mentionsPerDay.toFixed(1)}/day
-                    </span>
-                  </div>
-                ))}
+            {/* Cross-Desk Contagion */}
+            <div className="pb-4">
+              <h4 className="font-mono text-xs text-text-secondary uppercase tracking-wider mb-3">
+                Cross-Desk Contagion
+              </h4>
+              <div className="space-y-2">
+                {MOCK_CLOUD_NARRATIVES
+                  .filter(n => n.regionsPresent.length > 1)
+                  .map(n => (
+                    <div key={n.id} className="flex items-center gap-3 text-xs">
+                      <span className="text-brand-red font-mono">⚡</span>
+                      <span className="text-text-primary font-medium">{n.title}</span>
+                      <span className="text-text-tertiary">→</span>
+                      <span className="text-text-secondary font-mono">
+                        {n.regionsPresent.join(' · ')}
+                      </span>
+                      <span className="ml-auto text-text-tertiary font-mono text-[10px]">
+                        {n.mentionsPerDay.toFixed(1)}/day
+                      </span>
+                    </div>
+                  ))}
+              </div>
             </div>
           </div>
         </div>

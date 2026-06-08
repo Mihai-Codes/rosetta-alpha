@@ -50,7 +50,7 @@ function CountUpNumber({ target, suffix, prefix, isDecimal = false, decimals = 2
       ([entry]) => {
         if (entry.isIntersecting && !hasStarted.current) {
           hasStarted.current = true
-          const duration = 2000
+          const duration = 800  // Match DesksView animation duration
 
           if (target === 0) {
             setDisplay(formatDisplay(0, isDecimal, decimals))
@@ -63,9 +63,11 @@ function CountUpNumber({ target, suffix, prefix, isDecimal = false, decimals = 2
           function animate(now: number) {
             const elapsed = now - start
             const progress = Math.min(elapsed / duration, 1)
-            // Ease-out cubic for a smooth deceleration
-            const eased = 1 - Math.pow(1 - progress, 3)
-            
+            // Use same easing as DesksView: [0.16, 1, 0.3, 1]
+            const eased = progress < 0.5 
+              ? 4 * progress * progress * progress 
+              : 1 - Math.pow(-2 * progress + 2, 3) / 2
+             
             const currentVal = eased * target
             
             setDisplay(formatDisplay(currentVal, isDecimal, decimals))

@@ -160,8 +160,8 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
               onClick={() => setHighDivergenceOnly(!highDivergenceOnly)}
               className={`px-3 py-2 min-h-[44px] text-[10px] font-medium uppercase tracking-[0.18em] border transition-all ${
                 highDivergenceOnly
-                  ? 'bg-brand-red/10 border-brand-red text-brand-red'
-                  : 'border-border text-text-secondary hover:text-text-primary hover:border-border-strong'
+                  ? 'bg-brand-red border-brand-red text-white'
+                  : 'bg-bg-secondary border-border text-text-primary hover:bg-white/[0.05]'
               }`}
             >
               HIGH DIVERGENCE (≥40)

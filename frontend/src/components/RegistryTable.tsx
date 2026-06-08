@@ -100,7 +100,7 @@ export function RegistryTable({ desks, onCidClick }: RegistryTableProps) {
         </div>
         <button
           onClick={exportCsv}
-          className="flex items-center justify-center gap-2 px-4 py-3 min-h-[44px] border border-border text-[10px] font-medium uppercase tracking-[0.2em] text-text-secondary hover:border-brand-red hover:text-brand-red transition-colors"
+          className="flex items-center justify-center gap-2 px-4 py-3 min-h-[44px] border border-border text-[10px] font-medium uppercase tracking-[0.2em] text-text-primary bg-bg-secondary hover:bg-white/[0.05] transition-colors"
         >
           <Download className="w-3 h-3" />
           Export CSV
