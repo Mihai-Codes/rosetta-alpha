@@ -36,7 +36,7 @@ const AUTH_TABS: { id: Tab; label: string; href: string }[] = [
 
 function GreekDelimiter({ isGreek }: { isGreek: boolean }) {
   return (
-    <span className="relative inline-flex items-center justify-center w-3 h-3 text-[10px] text-white/20 select-none mx-1">
+    <span className="relative inline-flex items-center justify-center w-2 h-3 text-[9px] text-white/20 select-none mx-0.5">
       <span className={`absolute transition-opacity duration-1000 ease-in-out ${isGreek ? 'opacity-100' : 'opacity-0'}`}>|</span>
       <span className={`absolute transition-opacity duration-1000 ease-in-out ${!isGreek ? 'opacity-80 text-brand-red drop-shadow-[0_0_4px_rgba(216,43,43,0.5)]' : 'opacity-0'}`}>Δ</span>
     </span>
@@ -143,7 +143,7 @@ export function Layout({ children, activeTab }: LayoutProps) {
                 <React.Fragment key={tab.id}>
                   <Link
                     href={tab.href}
-                    className={`nav-link px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] ${isActive ? 'text-brand-red' : 'text-text-secondary hover:text-text-primary'}`}
+                    className={`nav-link px-2.5 lg:px-3 py-1 text-[10px] font-medium uppercase tracking-[0.16em] ${isActive ? 'text-brand-red' : 'text-text-secondary hover:text-text-primary'}`}
                     data-active={isActive}
                   >
                     {tab.label}
@@ -154,7 +154,7 @@ export function Layout({ children, activeTab }: LayoutProps) {
             })}
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             {isSignedIn ? (
               <>
                 {session?.user?.image && (
@@ -163,7 +163,7 @@ export function Layout({ children, activeTab }: LayoutProps) {
                 <WalletButton />
                 <button
                   onClick={handleSignOut}
-                  className="hidden md:flex items-center justify-center w-9 h-9 text-text-tertiary hover:text-brand-red transition-colors"
+                  className="hidden md:flex items-center justify-center w-8 h-8 text-text-tertiary hover:text-brand-red transition-colors"
                   aria-label="Sign out"
                   title="Sign out"
                 >
