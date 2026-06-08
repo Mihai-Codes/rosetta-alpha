@@ -193,13 +193,11 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
             return (
               <div
                 key={key}
-                className={`border-b border-border last:border-b-0 transition-colors duration-200 group hover:bg-bg-tertiary cursor-pointer ${i === 0 ? 'bg-white/[0.01]' : ''}`}
+                className={`relative border-b border-border last:border-b-0 transition-colors duration-200 group hover:bg-white/[0.03] cursor-pointer ${i === 0 ? 'bg-white/[0.01]' : ''}`}
                 onClick={() => toggleExpand(key, e.desk, e.ticker)}
               >
-                <div 
-                  className="w-full flex flex-col relative h-full transition-colors duration-200 group-hover:bg-bg-tertiary"
-                  style={{ borderLeft: `3px solid ${meta.color}` }}
-                >
+                <div className="absolute left-0 top-0 bottom-0 w-[3px]" style={{ backgroundColor: meta.color }} />
+                <div className="w-full flex flex-col relative h-full pl-[3px]">
                   <div className="w-full flex items-start gap-3 sm:gap-4 p-4 sm:p-5 pb-2 text-left min-h-[44px]">
                   {/* Timestamp + region — hidden on mobile, shown as col on sm+ */}
                   <div className="hidden sm:block w-28 lg:w-32 shrink-0 space-y-1">
@@ -301,15 +299,11 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                 <div className="px-4 sm:px-5 pb-4 flex justify-end relative z-10">
                   <button
                     type="button"
+                    
                     onClick={(ev) => {
                       ev.stopPropagation();
                       if (!e.ipfs_thesis_cid) return
                       setSelectedProvenance(e)
-                      posthog.capture('feed_provenance_opened', {
-                        cid_prefix: e.ipfs_thesis_cid.slice(0, 12),
-                        desk: e.desk,
-                        ticker: e.ticker,
-                      })
                     }}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-brand-red/40 text-brand-red hover:bg-brand-red hover:text-white transition-colors text-[10px] uppercase tracking-[0.2em]"
                   >

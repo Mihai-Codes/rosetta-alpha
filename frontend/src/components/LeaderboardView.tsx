@@ -121,9 +121,9 @@ export function LeaderboardView() {
   const myAddress = isConnected ? MY_ADDRESS_MOCK : null
 
   const sorted = [...TRADERS].sort((a, b) => {
-    if (sort === 'accuracy') return accuracy(b) - accuracy(a)
-    if (sort === 'earned')   return b.earned - a.earned
-    if (sort === 'streak')   return b.streak - a.streak
+    if (sort === 'accuracy') return accuracy(b) !== accuracy(a) ? accuracy(b) - accuracy(a) : b.earned - a.earned
+    if (sort === 'earned')   return b.earned !== a.earned ? b.earned - a.earned : accuracy(b) - accuracy(a)
+    if (sort === 'streak')   return b.streak !== a.streak ? b.streak - a.streak : b.earned - a.earned
     return a.rank - b.rank
   })
 
