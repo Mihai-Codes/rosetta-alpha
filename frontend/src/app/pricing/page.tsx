@@ -259,7 +259,8 @@ export default function PricingPage() {
           tier={onrampTier}
           walletAddress={address}
           onSuccess={() => {
-            // Optionally refresh subscription status or show toast
+            // Refresh to pick up the new subscription status from DB/chain
+            window.location.reload()
           }}
           onClose={() => {
             setShowOnramp(false)

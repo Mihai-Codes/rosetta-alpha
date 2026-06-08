@@ -36,7 +36,9 @@ const AUTO_CLOSE_DELAY_MS = 3000
 const MAX_POLL_DURATION_MS = 10 * 60 * 1000 // 10 minutes — after this, stop polling
 
 const STATUS_MESSAGES: Record<string, string> = {
+  loading: 'Loading payment form…',
   initialized: 'Initializing payment…',
+  ready: 'Complete the payment below',
   requires_payment: 'Waiting for payment details…',
   fulfillment_processing: 'Processing payment… Verifying identity…',
   fulfillment_complete: 'USDC delivered to your wallet!',
@@ -74,7 +76,6 @@ function CryptoOnrampModalInner({ tier, walletAddress, onSuccess, onClose }: Omi
   const createSession = useCallback(async () => {
     setStatus('loading')
     setError(null)
-    setIsRetrying(false)
 
     try {
       const res = await fetch('/api/crypto/onramp/session', {
@@ -106,6 +107,13 @@ function CryptoOnrampModalInner({ tier, walletAddress, onSuccess, onClose }: Omi
   useEffect(() => {
     createSession()
   }, [createSession])
+
+  // Reset isRetrying once session creation succeeds (status leaves 'loading')
+  useEffect(() => {
+    if (status !== 'loading' && isRetrying) {
+      setIsRetrying(false)
+    }
+  }, [status, isRetrying])
 
   // -----------------------------------------------------------------
   // Completion handler — single source of truth for all side effects

@@ -13,7 +13,6 @@ import { NO_STORE_HEADERS, isValidEthereumAddress, handleServerError } from '@/l
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
-export const revalidate = 0
 
 export async function GET(req: Request) {
   try {

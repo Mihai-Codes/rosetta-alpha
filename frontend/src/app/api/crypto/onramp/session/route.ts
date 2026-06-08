@@ -17,7 +17,6 @@ import { STRIPE_API_BASE, stripeHeaders } from '@/lib/stripe-api'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
-export const revalidate = 0
 
 type SessionPayload = {
   amount_usd?: unknown
@@ -93,7 +92,17 @@ export async function POST(req: Request) {
       )
     }
 
-    // Persist the session for webhook correlation and polling
+    // Persist the session for webhook correlation and polling.
+    // Clean up any stale purchase records for this wallet+tier first
+    // (user may have retried after a failed/expired session).
+    await prisma.onrampPurchase.deleteMany({
+      where: {
+        userWallet: walletAddress.toLowerCase(),
+        tier: tier as number,
+        status: { notIn: ['fulfillment_complete'] },
+      },
+    }).catch(() => {})
+
     await prisma.onrampPurchase.create({
       data: {
         userWallet: walletAddress.toLowerCase(),

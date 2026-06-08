@@ -27,7 +27,6 @@ import { createHmac, timingSafeEqual } from 'crypto'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
-export const revalidate = 0
 
 // Disable body parser — Stripe needs the raw body for signature verification
 export const config = {
@@ -100,11 +99,12 @@ export async function POST(req: Request) {
     )
   }
 
-  // Verify signature (skip in development if no secret)
-  const isDev = process.env.NODE_ENV !== 'production'
+  // Verify signature — always verify when secret is set.
+  // In dev without a secret, log a warning but accept (for local stripe listen testing).
   const signatureHeader = req.headers.get('stripe-signature')
+  const isDev = process.env.NODE_ENV !== 'production'
 
-  if (!isDev || webhookSecret) {
+  if (webhookSecret) {
     const valid = verifyStripeSignature(rawBody, signatureHeader, webhookSecret)
     if (!valid) {
       return NextResponse.json(
@@ -112,6 +112,14 @@ export async function POST(req: Request) {
         { status: 401, headers: NO_STORE_HEADERS }
       )
     }
+  } else if (!isDev) {
+    console.error('[webhook] STRIPE_WEBHOOK_SECRET is not set — rejecting in production')
+    return NextResponse.json(
+      { success: false, error: 'Webhook secret not configured' },
+      { status: 500, headers: NO_STORE_HEADERS }
+    )
+  } else {
+    console.warn('[webhook] STRIPE_WEBHOOK_SECRET not set — skipping signature verification (dev only)')
   }
 
   let event: Record<string, unknown>
