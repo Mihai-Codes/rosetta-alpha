@@ -23,7 +23,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { CryptoElements, OnrampElement, useStripeOnramp } from './StripeCryptoElements'
+import { CryptoElements, OnrampElement } from './StripeCryptoElements'
 import { Tier, TIER_PRICES_USD, TIER_LABELS } from '@/lib/subscription'
 import { STRIPE_ONRAMP_APPEARANCE } from '@/lib/stripe-api'
 
@@ -69,6 +69,8 @@ function CryptoOnrampModalInner({ tier, walletAddress, onSuccess, onClose }: Omi
   const [isRetrying, setIsRetrying] = useState(false)
   const onSuccessRef = useRef(onSuccess)
   onSuccessRef.current = onSuccess
+  const onCloseRef = useRef(onClose)
+  onCloseRef.current = onClose
 
   const amountUsd = TIER_PRICES_USD[tier]
 
@@ -116,16 +118,17 @@ function CryptoOnrampModalInner({ tier, walletAddress, onSuccess, onClose }: Omi
   }, [status, isRetrying])
 
   // -----------------------------------------------------------------
-  // Completion handler — single source of truth for all side effects
+  // Completion handler — single source of truth for all side effects.
+  // Uses refs for callbacks to avoid re-running on prop changes.
   // -----------------------------------------------------------------
 
   useEffect(() => {
     if (status !== 'fulfillment_complete') return
 
     onSuccessRef.current()
-    const timer = setTimeout(() => onClose(), AUTO_CLOSE_DELAY_MS)
+    const timer = setTimeout(() => onCloseRef.current(), AUTO_CLOSE_DELAY_MS)
     return () => clearTimeout(timer)
-  }, [status, onClose])
+  }, [status])
 
   // -----------------------------------------------------------------
   // Poll session status (primary detection path)

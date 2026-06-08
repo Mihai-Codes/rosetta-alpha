@@ -25,7 +25,6 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { STRIPE_ONRAMP_APPEARANCE } from '@/lib/stripe-api'
 
 // -------------------------------------------------------------------
 // Types

@@ -100,26 +100,14 @@ export async function POST(req: Request) {
   }
 
   // Verify signature — always verify when secret is set.
-  // In dev without a secret, log a warning but accept (for local stripe listen testing).
+  // The early return above ensures webhookSecret is always set in production.
   const signatureHeader = req.headers.get('stripe-signature')
-  const isDev = process.env.NODE_ENV !== 'production'
-
-  if (webhookSecret) {
-    const valid = verifyStripeSignature(rawBody, signatureHeader, webhookSecret)
-    if (!valid) {
-      return NextResponse.json(
-        { success: false, error: 'Invalid Stripe webhook signature' },
-        { status: 401, headers: NO_STORE_HEADERS }
-      )
-    }
-  } else if (!isDev) {
-    console.error('[webhook] STRIPE_WEBHOOK_SECRET is not set — rejecting in production')
+  const valid = verifyStripeSignature(rawBody, signatureHeader, webhookSecret)
+  if (!valid) {
     return NextResponse.json(
-      { success: false, error: 'Webhook secret not configured' },
-      { status: 500, headers: NO_STORE_HEADERS }
+      { success: false, error: 'Invalid Stripe webhook signature' },
+      { status: 401, headers: NO_STORE_HEADERS }
     )
-  } else {
-    console.warn('[webhook] STRIPE_WEBHOOK_SECRET not set — skipping signature verification (dev only)')
   }
 
   let event: Record<string, unknown>
