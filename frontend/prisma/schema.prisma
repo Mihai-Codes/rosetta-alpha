@@ -87,6 +87,34 @@ model Authenticator {
   @@id([userId, credentialID])
 }
 
+model OnrampPurchase {
+  id               String   @id @default(cuid())
+  userWallet       String
+  amountUsdc       Float
+  tier             Int      // 1 = Premium, 2 = Pro
+  stripeSessionId  String   @unique
+  status           String   @default("initialized") // initialized | requires_payment | fulfillment_processing | fulfillment_complete | rejected
+  destinationTxHash String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([userWallet])
+  @@index([stripeSessionId])
+  @@index([createdAt])
+}
+
+model Subscription {
+  id              String   @id @default(cuid())
+  userWallet      String   @unique
+  tier            Int      // 1 = Premium, 2 = Pro
+  expiresAt       DateTime
+  stripeSessionId String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userWallet])
+}
+
 model QuizAttempt {
   id        String   @id @default(cuid())
   userId    String? // Optional, as anonymous users can take the quiz

@@ -13,6 +13,7 @@ import {
   TIER_LABELS,
   TIER_PRICES_USD,
 } from '@/lib/subscription'
+import { CryptoOnrampModal } from '@/components/CryptoOnrampModal'
 
 // ERC-20 approve ABI fragment
 const ERC20_APPROVE_ABI = [
@@ -35,11 +36,12 @@ interface TierCardProps {
   features: string[]
   highlighted?: boolean
   onSubscribe: (tier: Tier) => void
+  onPayWithCard: (tier: Tier) => void
   isConnected: boolean
   isPending: boolean
 }
 
-function TierCard({ tier, name, price, features, highlighted, onSubscribe, isConnected, isPending }: TierCardProps) {
+function TierCard({ tier, name, price, features, highlighted, onSubscribe, onPayWithCard, isConnected, isPending }: TierCardProps) {
   return (
     <div
       className={`relative flex flex-col rounded-lg border p-6 sm:p-8 transition-all ${
@@ -103,10 +105,11 @@ function TierCard({ tier, name, price, features, highlighted, onSubscribe, isCon
       </button>
       {price > 0 && (
         <button
-          onClick={() => {}}
-          className="mt-3 w-full rounded-md py-3 text-sm font-semibold transition-colors border border-border text-text-primary hover:bg-bg-primary"
+          onClick={() => onPayWithCard(tier)}
+          disabled={!isConnected}
+          className="mt-3 w-full rounded-md py-3 text-sm font-semibold transition-colors border border-border text-text-primary hover:bg-bg-primary disabled:opacity-50"
         >
-          Pay with Card (Stripe Crypto)
+          {!isConnected ? 'Connect Wallet' : 'Pay with Card (Stripe Crypto)'}
         </button>
       )}
     </div>
@@ -142,6 +145,8 @@ const TIER_FEATURES: Record<Tier, string[]> = {
 export default function PricingPage() {
   const { address, isConnected } = useAccount()
   const [pendingTier, setPendingTier] = useState<Tier | null>(null)
+  const [onrampTier, setOnrampTier] = useState<Tier | null>(null)
+  const [showOnramp, setShowOnramp] = useState(false)
 
   const { writeContract: approveUsdc, data: approveHash } = useWriteContract()
   const { writeContract: subscribe, data: subscribeHash } = useWriteContract()
@@ -174,6 +179,12 @@ export default function PricingPage() {
     })
   }
 
+  function handlePayWithCard(tier: Tier) {
+    if (!isConnected || !address) return
+    setOnrampTier(tier)
+    setShowOnramp(true)
+  }
+
   return (
     <Layout activeTab="pricing">
       <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-16 pt-28 sm:pt-36 lg:pt-48">
@@ -198,6 +209,7 @@ export default function PricingPage() {
             price={TIER_PRICES_USD[Tier.None]}
             features={TIER_FEATURES[Tier.None]}
             onSubscribe={handleSubscribe}
+            onPayWithCard={handlePayWithCard}
             isConnected={isConnected}
             isPending={isPending}
           />
@@ -208,6 +220,7 @@ export default function PricingPage() {
             features={TIER_FEATURES[Tier.Premium]}
             highlighted
             onSubscribe={handleSubscribe}
+            onPayWithCard={handlePayWithCard}
             isConnected={isConnected}
             isPending={isPending}
           />
@@ -217,6 +230,7 @@ export default function PricingPage() {
             price={TIER_PRICES_USD[Tier.Pro]}
             features={TIER_FEATURES[Tier.Pro]}
             onSubscribe={handleSubscribe}
+            onPayWithCard={handlePayWithCard}
             isConnected={isConnected}
             isPending={isPending}
           />
@@ -237,6 +251,22 @@ export default function PricingPage() {
           </div>
         </div>
       </motion.div>
+
+      {/* Stripe Crypto Onramp Modal */}
+      {showOnramp && onrampTier && address && (
+        <CryptoOnrampModal
+          isOpen={showOnramp}
+          tier={onrampTier}
+          walletAddress={address}
+          onSuccess={() => {
+            // Optionally refresh subscription status or show toast
+          }}
+          onClose={() => {
+            setShowOnramp(false)
+            setOnrampTier(null)
+          }}
+        />
+      )}
     </Layout>
   )
 }

@@ -2,24 +2,12 @@
  * Subscription tier helpers for Rosetta Alpha.
  *
  * DRY: Single source of truth for contract address, ABI fragment, and tier logic.
- * Used by: API middleware, frontend components, pricing page.
+ * Used by: API middleware, frontend components, pricing page, webhook handlers.
  */
 
 import { createPublicClient, http, type Address } from 'viem'
-import { defineChain } from 'viem'
-
-// Arc Testnet chain definition (reuse from wagmi config if available).
-export const arcTestnet = defineChain({
-  id: 5_042_002,
-  name: 'Arc Testnet',
-  nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
-  rpcUrls: {
-    default: { http: [process.env.NEXT_PUBLIC_ARC_RPC_URL || 'https://rpc-testnet.arc.gel.network'] },
-  },
-  blockExplorers: {
-    default: { name: 'ArcScan', url: 'https://testnet.arcscan.app' },
-  },
-})
+import { prisma } from './prisma'
+import { arcTestnet } from './chains'
 
 // -----------------------------------------------------------------------
 // Contract constants
@@ -32,6 +20,9 @@ export const SUBSCRIPTION_CONTRACT: Address =
 
 /** USDC on Arc testnet (6 decimals ERC-20 interface). */
 export const ARC_USDC: Address = '0x3600000000000000000000000000000000000000'
+
+/** Subscription duration in days — used by onramp webhook activation. */
+export const SUBSCRIPTION_DURATION_DAYS = 30
 
 /** Minimal ABI for read operations — keeps bundle small. */
 export const SUBSCRIPTION_ABI = [
@@ -108,6 +99,11 @@ export const TIER_PRICES_USD: Record<Tier, number> = {
   [Tier.Pro]: 99,
 }
 
+/** Check if a value is a valid paid tier (Premium or Pro). */
+export function isValidTier(tier: unknown): tier is Tier {
+  return tier === Tier.Premium || tier === Tier.Pro
+}
+
 // -----------------------------------------------------------------------
 // Read helpers (server-side or client-side)
 // -----------------------------------------------------------------------
@@ -173,4 +169,38 @@ export function formatTimeRemaining(expiresAt: number): string {
   const hours = Math.floor((remaining % 86400) / 3600)
   if (days > 0) return `${days}d ${hours}h remaining`
   return `${hours}h remaining`
+}
+
+// -----------------------------------------------------------------------
+// Write helpers (server-side only — called by webhook handlers)
+// -----------------------------------------------------------------------
+
+/**
+ * Activate a subscription after successful Stripe onramp payment.
+ * Upserts into the Subscription table with 30-day expiry.
+ *
+ * DRY: This is the write-side counterpart to getSubscriptionStatus.
+ */
+export async function activateSubscription(
+  walletAddress: string,
+  tier: Tier,
+  stripeSessionId: string
+): Promise<void> {
+  const expiresAt = new Date()
+  expiresAt.setDate(expiresAt.getDate() + SUBSCRIPTION_DURATION_DAYS)
+
+  await prisma.subscription.upsert({
+    where: { userWallet: walletAddress.toLowerCase() },
+    update: {
+      tier: tier as number,
+      expiresAt,
+      stripeSessionId,
+    },
+    create: {
+      userWallet: walletAddress.toLowerCase(),
+      tier: tier as number,
+      expiresAt,
+      stripeSessionId,
+    },
+  })
 }
