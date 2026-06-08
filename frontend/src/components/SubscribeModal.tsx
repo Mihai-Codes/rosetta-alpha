@@ -508,6 +508,7 @@ function CardPayment({
           tier={tier}
           walletAddress={address}
           onSuccess={onSuccess}
+          onClose={onClose}
         />
       ) : (
         <div className="space-y-4">

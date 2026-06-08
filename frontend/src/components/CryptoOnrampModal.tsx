@@ -314,3 +314,20 @@ export function CryptoOnrampModal({ isOpen, tier, walletAddress, onSuccess, onCl
     </CryptoElements>
   )
 }
+
+// -------------------------------------------------------------------
+// Content-only export (no modal wrapper) — for use inside other modals
+// -------------------------------------------------------------------
+
+export function CryptoOnrampWidget({ tier, walletAddress, onSuccess, onClose }: Omit<CryptoOnrampModalProps, 'isOpen'>) {
+  return (
+    <CryptoElements>
+      <CryptoOnrampModalInner
+        tier={tier}
+        walletAddress={walletAddress}
+        onSuccess={onSuccess}
+        onClose={onClose}
+      />
+    </CryptoElements>
+  )
+}
