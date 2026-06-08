@@ -107,21 +107,21 @@ function ReasoningBlock({
 
       {/* Desktop: always expanded */}
       <div
-        className="hidden md:block pl-10 pr-6 pb-2"
-        style={{ borderLeft: `1px solid ${meta.color}30` }}
+        className="hidden md:block bg-bg-secondary/40 border border-white/5 p-6 ml-6 mb-8 rounded-lg relative"
+        style={{ borderLeft: `3px solid ${meta.color}` }}
       >
         <span
-          className="absolute -left-[13px] top-0 w-6 h-6 flex items-center justify-center font-mono text-[10px] bg-bg-primary"
+          className="absolute -left-[14px] top-6 w-6 h-6 flex items-center justify-center font-mono text-[10px] bg-bg-primary"
           style={{ color: meta.color, border: `1px solid ${meta.color}80` }}
         >
           {String(index + 1).padStart(2, '0')}
         </span>
-        <div className="flex items-baseline justify-between gap-4 flex-wrap mb-2">
-          <p className="text-[10px] font-medium uppercase tracking-[0.25em]" style={{ color: meta.color }}>
+        <div className="flex items-baseline justify-between gap-4 flex-wrap mb-4">
+          <p className="text-[12px] font-bold uppercase tracking-[0.25em]" style={{ color: meta.color }}>
             {role}
           </p>
           {block.language && block.language !== 'en' && (
-            <span className="text-[9px] uppercase tracking-[0.25em] text-text-tertiary border border-border px-2 py-0.5">
+            <span className="text-[10px] uppercase tracking-[0.25em] text-text-secondary border border-white/10 bg-white/5 px-2 py-1">
               {block.language.toUpperCase()}
             </span>
           )}
@@ -142,12 +142,12 @@ function BlockContent({
   return (
     <>
       {block.input_data_summary && (
-        <p className="text-[13px] text-text-tertiary mb-5 font-light italic">
+        <p className="text-[14px] text-text-secondary mb-6 font-mono leading-relaxed bg-bg-primary p-4 border border-white/5">
           Input: {block.input_data_summary}
         </p>
       )}
       {block.analysis && (
-        <p className="text-[15px] text-text-primary font-light leading-loose mb-4 text-justify">
+        <p className="text-[16px] text-text-primary font-light leading-[1.8] mb-8 text-justify">
           <TypewriterText text={block.analysis} />
         </p>
       )}

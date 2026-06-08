@@ -85,8 +85,8 @@ const PREDICTIONS: PredictionRow[] = [
 
 const AGENT_LEADERBOARD: AgentLeaderboardRow[] = [
   { rank: 1, agent: 'Alpha-7',      region: 'Crypto',          accuracy: 91, theses: 142, streak: 12 },
-  { rank: 2, agent: 'Nexus-AI',     region: 'United States',   accuracy: 87, theses: 198, streak: 8 },
-  { rank: 3, agent: 'Dragon-9',     region: 'China',           accuracy: 84, theses: 256, streak: 5 },
+  { rank: 2, agent: 'Nexus-AI',     region: 'United States',   accuracy: 87, theses: 210, streak: 3 },
+  { rank: 3, agent: 'Dragon-9',     region: 'China',           accuracy: 84, theses: 150, streak: 9 },
   { rank: 4, agent: 'Samurai-X',    region: 'Japan',           accuracy: 81, theses: 134, streak: 15 },
   { rank: 5, agent: 'EuroQuant',    region: 'Europe',          accuracy: 79, theses: 167, streak: 3 },
   { rank: 6, agent: 'Meridian',     region: 'Crypto',          accuracy: 76, theses: 98,  streak: 2 },
@@ -388,7 +388,7 @@ function Leaderboard() {
           <tbody>
             {sorted.map((row, i) => (
               <motion.tr
-                key={row.rank}
+                key={row.address || row.agent}
                 initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.04 }}
@@ -397,7 +397,7 @@ function Leaderboard() {
                 <td className="px-5 py-4">
                   <span className={`font-mono text-sm font-semibold ${
                     row.rank === 1 ? 'text-accent-gold' :
-                    row.rank === 2 ? 'text-[#C0C0C0]' :
+                    row.rank === 2 ? 'text-[#E5E7EB]' :
                     row.rank === 3 ? 'text-warning' :
                     'text-text-tertiary'
                   }`}>
@@ -439,7 +439,7 @@ function Leaderboard() {
       <div className="md:hidden divide-y divide-border/40">
         {sorted.map((row, i) => (
           <motion.div
-            key={row.rank}
+            key={row.address || row.agent}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: i * 0.05 }}
@@ -449,7 +449,7 @@ function Leaderboard() {
               <div className="flex items-center gap-3">
                 <span className={`font-mono text-sm font-semibold ${
                   row.rank === 1 ? 'text-accent-gold' :
-                  row.rank === 2 ? 'text-[#C0C0C0]' :
+                  row.rank === 2 ? 'text-[#E5E7EB]' :
                   row.rank === 3 ? 'text-warning' :
                   'text-text-tertiary'
                 }`}>
@@ -715,16 +715,20 @@ export function DashboardView() {
         <div className="lg:col-span-2">
           <MobMeter ticker="AAPL" />
         </div>
-        <div className="bg-bg-primary p-6 sm:p-8 flex flex-col justify-center text-left border-l-0 lg:border-l border-border/60">
-          <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-text-tertiary mb-4 flex items-center gap-2">
-            <span className="w-1.5 h-1.5 bg-brand-red rounded-full"></span> Historical Signal
+        <div className="bg-bg-secondary p-6 sm:p-8 flex flex-col justify-center text-left border-l-0 lg:border-l border-border">
+          <div className="flex items-center gap-3 mb-6 border-b border-border/50 pb-3">
+            <div className="w-6 h-6 rounded border border-brand-red/30 bg-brand-red/10 flex items-center justify-center">
+              <span className="w-1.5 h-1.5 bg-brand-red rounded-full" />
+            </div>
+            <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-text-tertiary">
+              Signal Calibration
+            </p>
+          </div>
+          <p className="font-display text-xl text-text-primary leading-snug mb-4">
+            Extreme consensus implies <span className="text-brand-red">reversal risk</span>, not confirmation.
           </p>
-          <p className="font-display text-xl text-text-primary leading-snug mb-3">
-            Extreme agreement is a reversal-risk warning, not confirmation.
-          </p>
-          <div className="h-px w-8 bg-brand-red/50 mb-4" />
-          <p className="text-[10px] font-mono text-text-secondary leading-relaxed">
-            Backtest hooks ready for rosetta_dataset.jsonl. Live calibration updates after Arc settlements.
+          <p className="text-[11px] font-mono text-text-secondary leading-relaxed border-l-[2px] border-border-strong pl-4 mt-2">
+            Backtest hooks active. Live calibration updates post-Arc settlement.
           </p>
         </div>
       </div>

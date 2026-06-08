@@ -36,7 +36,7 @@ export default function DesksPage() {
           </h1>
           {manifestCid && (
             <div className="mt-4 flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-red animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-red" />
               <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-text-tertiary">
                 Verified Run Manifest: <a href={`https://w3s.link/ipfs/${manifestCid}`} target="_blank" rel="noopener noreferrer" className="text-brand-red hover:underline">{manifestCid}</a>
               </p>

@@ -175,7 +175,7 @@ export default function PricingPage() {
 
   return (
     <Layout activeTab="pricing">
-      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-16 pt-28 sm:pt-36 lg:pt-48 animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out">
+      <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pb-16 pt-28 sm:pt-36 lg:pt-48">
         {/* Header */}
         <div className="mb-12 text-center">
           <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-brand-red mb-3">
@@ -221,6 +221,8 @@ export default function PricingPage() {
           />
         </div>
 
+      </motion.div>
+      </motion.div>
         {/* x402 Callout */}
         <div className="mt-16 max-w-3xl mx-auto text-center">
           <div className="rounded-lg border border-border bg-bg-secondary p-6 sm:p-8">

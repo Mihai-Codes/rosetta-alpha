@@ -21,7 +21,7 @@ export function NarrativeTimeline({ events, ticker }: { events: NarrativeEvent[]
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between mb-4 border-b border-border/50 pb-2">
+      <div className="flex items-center justify-between mb-6 border-b border-border/50 pb-3">
         <h4 className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-secondary">
           Chronological Feed — {ticker}
         </h4>
@@ -34,26 +34,26 @@ export function NarrativeTimeline({ events, ticker }: { events: NarrativeEvent[]
           
           return (
             <div key={event.id} className="relative pl-6">
-              {/* Timeline Node */}
+              {/* Vertical Feed Node */}
               <div 
                 className="absolute left-[-5px] top-1.5 w-2 h-2 rounded-full ring-4 ring-bg-primary"
                 style={{ backgroundColor: color }}
               />
               
-              <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3 mb-1">
-                <span className="font-mono text-[10px] text-text-tertiary shrink-0">
+              <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-4 mb-2">
+                <span className="font-mono text-[11px] text-text-tertiary shrink-0">
                   {d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                 </span>
-                <span className="text-[9px] uppercase tracking-widest px-1.5 py-0.5 border" style={{ color: color, borderColor: `${color}40`, backgroundColor: `${color}10` }}>
+                <span className="text-[9px] uppercase tracking-widest px-2 py-0.5 border" style={{ color: color, borderColor: `${color}40`, backgroundColor: `${color}10` }}>
                   {NARRATIVE_LABELS[event.type]}
                 </span>
               </div>
               
-              <p className="font-display text-sm text-text-primary leading-snug mt-2">
+              <p className="font-display text-[15px] text-text-primary leading-snug mt-1">
                 {event.title}
               </p>
               
-              <div className="flex items-center gap-3 mt-2 font-mono text-[9px] text-text-tertiary">
+              <div className="flex items-center gap-3 mt-2 font-mono text-[10px] text-text-tertiary">
                 <span>INTENSITY: {(event.intensity * 100).toFixed(0)}%</span>
                 <span>•</span>
                 <span className="uppercase">{event.region}</span>

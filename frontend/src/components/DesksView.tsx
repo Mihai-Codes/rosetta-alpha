@@ -143,7 +143,7 @@ export function DesksView({ desks, loading, isAuthenticated = false }: DesksView
         </div>
 
         {/* Hide chart on tablet to give thesis card room, show on desktop */}
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }} className="hidden lg:flex flex-col w-[420px] xl:w-[460px] shrink-0 solid-panel rounded-none border overflow-hidden">
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }} className="hidden lg:flex flex-col w-[460px] xl:w-[520px] shrink-0 solid-panel rounded-none border overflow-hidden">
           <div className="flex p-2 border-b border-border/20 gap-2 bg-bg-secondary">
             <button onClick={() => setChartView('matrix')} className={`flex-1 px-2 py-1.5 text-[9px] uppercase tracking-wider border ${chartView === 'matrix' ? 'border-brand-red text-brand-red bg-brand-red/10' : 'border-border text-text-tertiary hover:text-text-primary'}`}>Circle View</button>
             <button onClick={() => setChartView('ellipse')} className={`flex-1 px-2 py-1.5 text-[9px] uppercase tracking-wider border ${chartView === 'ellipse' ? 'border-brand-red text-brand-red bg-brand-red/10' : 'border-border text-text-tertiary hover:text-text-primary'}`}>Ellipse View</button>

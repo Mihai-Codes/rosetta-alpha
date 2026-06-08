@@ -253,7 +253,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                         <span className="text-[10px] font-bold uppercase tracking-wider text-text-tertiary">Model Conviction</span>
                       </div>
                       <div className="w-full bg-bg-secondary h-2 rounded-full overflow-hidden border border-text-secondary shadow-inner">
-                        <div className="bg-gradient-to-r from-[#D82B2B] to-[#D82B2B] h-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(192,57,43,0.8)]" style={{ width: `${(e.confidence * 100).toFixed(0)}%` }} />
+                        <div className="bg-gradient-to-r from-[#D82B2B] to-[#D82B2B] h-full transition-all duration-1000 ease-out" style={{ width: `${(e.confidence * 100).toFixed(0)}%` }} />
                       </div>
                     </div>
                   </div>
@@ -296,7 +296,7 @@ export function LiveFeedView({ desks, loading }: LiveFeedViewProps) {
                   />
                 </div>
 
-                <div className="px-4 sm:px-5 pb-4 flex justify-end relative z-10">
+                <div className="px-4 sm:px-5 flex justify-end relative z-10 mt-2">
                   <button
                     type="button"
                     

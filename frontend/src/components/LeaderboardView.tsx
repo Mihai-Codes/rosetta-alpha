@@ -20,9 +20,9 @@ interface Trader {
 
 const TRADERS: Trader[] = [
   { rank: 1,  address: '0xA1b2...9F3c', label: 'macro.eth',    correct: 47, total: 55, earned: 23.5, arcTxCount: 47, streak: 8,   },
-  { rank: 2,  address: '0x3E7d...2B1a', label: 'satoshi99',    correct: 45, total: 50, earned: 20.5, arcTxCount: 41, streak: 5,   },
-  { rank: 3,  address: '0xF4c8...6D0e', label: 'dalio.arc',    correct: 38, total: 47, earned: 19.0, arcTxCount: 38, streak: 4,   },
-  { rank: 4,  address: '0x8B2f...1C7d',                         correct: 44, total: 44, earned: 17.0, arcTxCount: 34, streak: 12  },
+  { rank: 2,  address: '0x3E7d...2B1a', label: 'satoshi99',    correct: 41, total: 50, earned: 18.0, arcTxCount: 41, streak: 2,   },
+  { rank: 3,  address: '0xF4c8...6D0e', label: 'dalio.arc',    correct: 38, total: 47, earned: 21.0, arcTxCount: 38, streak: 6,   },
+  { rank: 4,  address: '0x8B2f...1C7d',                         correct: 44, total: 44, earned: 15.0, arcTxCount: 34, streak: 12  },
   { rank: 5,  address: '0x2D9e...5A4f',                         correct: 31, total: 42, earned: 15.5, arcTxCount: 31, streak: 2  },
   { rank: 6,  address: '0x7F1b...8E2c', label: 'quant.usdc',   correct: 29, total: 40, earned: 14.5, arcTxCount: 29, streak: 1  },
   { rank: 7,  address: '0xC5a3...3F9b',                         correct: 26, total: 38, earned: 13.0, arcTxCount: 26, streak: 0  },
@@ -164,7 +164,7 @@ export function LeaderboardView() {
         </p>
         <div className="grid grid-cols-3 gap-3 sm:gap-6 items-end max-w-lg mx-auto">
           {sorted.slice(0, 3).map(t => (
-            <PodiumCard key={t.rank} trader={t} isMe={t.address === myAddress} />
+            <PodiumCard key={t.address || t.agent} trader={t} isMe={t.address === myAddress} />
           ))}
         </div>
       </div>
@@ -220,7 +220,7 @@ export function LeaderboardView() {
                 const pct = accuracy(t)
                 return (
                   <motion.tr
-                    key={t.rank}
+                    key={t.address || t.agent}
                     data-testid="leaderboard-row"
                     initial={{ opacity: 0, x: -8 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -232,7 +232,7 @@ export function LeaderboardView() {
                     <td className="px-5 py-4">
                       <span className={`font-mono text-sm font-semibold ${
                         t.rank === 1 ? 'text-accent-gold' :
-                        t.rank === 2 ? 'text-[#C0C0C0]' :
+                        t.rank === 2 ? 'text-[#E5E7EB]' :
                         t.rank === 3 ? 'text-warning' :
                         'text-text-tertiary'
                       }`}>
@@ -291,7 +291,7 @@ export function LeaderboardView() {
             const pct = accuracy(t)
             return (
               <motion.div
-                key={t.rank}
+                key={t.address || t.agent}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: i * 0.05 }}
@@ -301,7 +301,7 @@ export function LeaderboardView() {
                   <div className="flex items-center gap-3">
                     <span className={`font-mono text-sm font-semibold ${
                       t.rank === 1 ? 'text-accent-gold' :
-                      t.rank === 2 ? 'text-[#C0C0C0]' :
+                      t.rank === 2 ? 'text-[#E5E7EB]' :
                       t.rank === 3 ? 'text-warning' :
                       'text-text-tertiary'
                     }`}>

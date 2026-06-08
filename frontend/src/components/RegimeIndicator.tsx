@@ -80,7 +80,7 @@ export function RegimeIndicator({ regime, compact = false }: RegimeIndicatorProp
         title={`${config.description} — ${confidencePct}% confidence, ${regime.regime_duration_days}d duration (${regime.method})`}
       >
         <span
-          className="w-1.5 h-1.5 rounded-full animate-pulse"
+          className="w-1.5 h-1.5 rounded-full"
           style={{ backgroundColor: config.dotColor }}
         />
         {config.label}

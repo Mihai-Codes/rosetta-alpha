@@ -235,7 +235,7 @@ function ResultsScreen({
 
       <button
         onClick={handleRetryClick}
-        className="mt-2 px-8 py-3 rounded-full border border-accent-gold/40 text-accent-gold text-[10px] uppercase tracking-[0.2em] font-medium hover:border-accent-gold hover:shadow-[0_0_30px_rgba(201,168,76,0.25)] transition-all duration-300"
+        className="mt-2 px-8 py-3 rounded-full border border-accent-gold/40 text-accent-gold text-[10px] uppercase tracking-[0.2em] font-medium hover:border-accent-gold hover: transition-all duration-300"
       >
         Retake Quiz
       </button>

@@ -374,7 +374,7 @@ export default function KnowledgeGraphPage() {
         <div className="relative w-full h-[600px] border border-border rounded-lg overflow-hidden bg-black">
           {loading && (
             <div className="absolute inset-0 flex items-center justify-center z-10">
-              <div className="text-text-secondary text-sm animate-pulse">Loading graph...</div>
+              <div className="text-text-secondary text-sm">Loading graph...</div>
             </div>
           )}
           <canvas

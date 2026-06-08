@@ -213,10 +213,10 @@ export function CircleInfraPanel() {
                 )}
               </div>
               <div className="mt-6 pt-4 border-t border-white/5">
-                <p className="text-[9px] text-text-tertiary uppercase tracking-widest leading-relaxed">
-                  Subscribed Events:<br/>
-                  <span className="text-blue-400/70">Automated Deposits</span> / <span className="text-blue-400/70">Institutional Verification</span> / <span className="text-blue-400/70">On-chain Minting</span>
-                </p>
+                <div className="flex items-center gap-2 whitespace-nowrap overflow-visible">
+                  <span className="text-[9px] text-text-tertiary uppercase tracking-widest">Subscribed Events:</span>
+                  <span className="text-[9px] text-blue-400/70 uppercase tracking-widest">Automated Deposits / Institutional Verification / On-chain Minting</span>
+                </div>
               </div>
             </div>
           )}
@@ -271,8 +271,8 @@ export function CircleInfraPanel() {
 
               <div className="mt-6 pt-4 border-t border-white/5">
                 <p className="text-[9px] text-text-tertiary uppercase tracking-widest break-all">
-                  Endpoint Protection:<br/>
-                  <span className="text-emerald-400/70 font-mono text-[10px] uppercase tracking-widest">Secure Agent Intelligence API (x402-Protected)</span>
+                  Security Layer:<br/>
+                  <span className="text-emerald-400/70 font-mono text-[10px] uppercase tracking-widest">Encrypted Agent API (x402-Protected)</span>
                 </p>
               </div>
             </div>

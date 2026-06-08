@@ -313,7 +313,7 @@ export function EllipseView() {
           </div>
         </div>
         <div className="flex-1 w-full flex items-center justify-center p-6">
-          <div className="w-full max-w-[800px] aspect-[2/1] border border-white/5 bg-white/[0.02] animate-pulse flex items-center justify-center">
+          <div className="w-full max-w-[800px] aspect-[2/1] border border-white/5 bg-white/[0.02] flex items-center justify-center">
             <p className="text-[10px] uppercase tracking-[0.2em] text-text-tertiary">Plotting Trajectories...</p>
           </div>
         </div>

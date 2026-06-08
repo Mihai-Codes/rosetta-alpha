@@ -92,7 +92,7 @@ export function SignInModal() {
               initial={{ top: '-10%', opacity: 0 }}
               animate={{ top: '110%', opacity: [0, 0.6, 0.6, 0] }}
               transition={{ duration: 2.5, ease: 'linear' }}
-              className="absolute left-0 right-0 h-[2px] bg-brand-red z-30 shadow-[0_0_15px_rgba(216,43,43,1)] pointer-events-none"
+              className="absolute left-0 right-0 h-[2px] bg-brand-red z-30 pointer-events-none"
             />
             <button
               onClick={() => authModalState.close()}
