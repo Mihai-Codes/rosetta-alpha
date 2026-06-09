@@ -83,6 +83,14 @@ prompts/private/
 training/feedback_cache.json
 training/learned_guidelines.json
 
+# One-off fix scripts (not for commit)
+fix_*.js
+validate_*.js
+scripts/fix_*.py
+
+# Aider
+.aider*
+
 # Stripe agent skills (install locally via: npx skills add)
 .adal/
 .agents/
@@ -118,4 +126,3 @@ workflows/
 /api/
 narratives.db
 data/knowledge_graph.db
-.aider*

@@ -56,37 +56,33 @@ import {
 import { privateKeyToAccount } from 'viem/accounts'
 import { decodePaymentHeader, buildTransferAuthorizationMessage } from './eip3009'
 import type { SignedAuthorization } from './eip3009'
+import { prisma } from './prisma'
 
 // ─── Replay Protection (settleOnChain: false only) ─────────────────────────
 
 /**
- * In-memory nonce dedup for off-chain-only payments.
+ * Prisma-based nonce dedup for off-chain-only payments.
  * When settleOnChain: false, the USDC contract doesn't track the nonce,
  * so we must prevent replay attacks ourselves.
  *
- * Map key: nonce (hex string)
- * Map value: expiration timestamp (ms)
- * Cleanup runs every 60s to prevent memory growth.
+ * Uses the UsedNonce table in PostgreSQL — works across serverless invocations
+ * (unlike an in-memory Map which resets per cold start on Vercel).
  */
-const usedNonces = new Map<string, number>()
-
-function cleanupExpiredNonces(): void {
-  const now = Date.now()
-  for (const [nonce, expiresAt] of usedNonces) {
-    if (expiresAt < now) usedNonces.delete(nonce)
-  }
-}
-setInterval(cleanupExpiredNonces, 60_000)
-
-function isNonceUsed(nonce: string): boolean {
-  return usedNonces.has(nonce)
+async function isNonceUsed(nonce: string): Promise<boolean> {
+  const record = await prisma.usedNonce.findUnique({
+    where: { nonce },
+    select: { id: true },
+  }).catch(() => null)
+  return record !== null
 }
 
-function markNonceUsed(nonce: string, validBeforeMs: number): void {
-  // Cap TTL to 5 minutes to prevent memory bloat from misconfigured validBefore
+async function markNonceUsed(nonce: string, validBeforeMs: number): Promise<void> {
   const ttl = Math.min(validBeforeMs - Date.now(), 5 * 60 * 1000)
   if (ttl > 0) {
-    usedNonces.set(nonce, Date.now() + ttl)
+    const expiresAt = new Date(Date.now() + ttl)
+    await prisma.usedNonce.create({
+      data: { nonce, expiresAt },
+    }).catch(() => {})
   }
 }
 
@@ -272,7 +268,7 @@ export function withX402(
     } else {
       // Off-chain only: check nonce dedup to prevent replay
       const nonceHex = signedAuth.nonce.toLowerCase()
-      if (isNonceUsed(nonceHex)) {
+      if (await isNonceUsed(nonceHex)) {
         return new Response(
           JSON.stringify({
             error: 'Payment already used',
@@ -285,7 +281,7 @@ export function withX402(
           }
         )
       }
-      markNonceUsed(nonceHex, Number(signedAuth.validBefore) * 1000)
+      await markNonceUsed(nonceHex, Number(signedAuth.validBefore) * 1000)
     }
 
     // ── Step 6: Payment verified/settled! Call the actual handler ──

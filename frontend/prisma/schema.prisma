@@ -159,3 +159,13 @@ model QuizAttempt {
   @@index([desk])
   @@index([createdAt])
 }
+
+model UsedNonce {
+  id        String   @id @default(cuid())
+  nonce     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([nonce])
+  @@index([expiresAt])
+}

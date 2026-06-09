@@ -85,6 +85,29 @@ This problem is compounded by what Cambrian Network's financial agent landscape 
   <img src="docs/diagrams/whats_built.svg" alt="What's Built — Rosetta Alpha" width="800" />
 </p>
 
+### Core Pages
+
+| Page | Route | Description |
+|------|-------|-------------|
+| Hero Landing | `/` | "Enter Terminal" — dark-mode institutional fintech design |
+| Regional Desks | `/desks` | AI thesis cards with conviction meters, 5 regions |
+| Live Feed | `/feed` | Real-time reasoning trace stream with Arc TX hashes |
+| Registry | `/registry` | Verifiable ledger — every thesis → IPFS CID → Arc L1 tx |
+| Quiz | `/quiz` | Pick LONG/SHORT/NEUTRAL → match AI → claim 0.5 USDC on Arc |
+| Dashboard | `/dashboard` | Wallet-gated: live USDC balance, prediction history, Arc receipts |
+| Leaderboard | `/leaderboard` | Rankings by accuracy, USDC earned, win streak |
+| Pricing | `/pricing` | Tiered subscriptions (Free / Premium $29 / Pro $99) with Stripe Onramp |
+
+### Payment Infrastructure
+
+| Feature | Implementation |
+|---------|---------------|
+| **x402 Micropayments** | Pay-per-read thesis access + session key UX |
+| **Stripe Crypto Onramp** | Fiat-to-crypto onramp — buy USDC with credit/debit card |
+| **Session Keys** | One-time wallet approval, then frictionless micropayments |
+| **Replay Protection** | Prisma-backed nonce dedup for off-chain payments |
+| **Gateway Webhooks** | Signature-aware webhook ingestion for Circle deposits |
+
 ---
 
 ## Architecture
@@ -191,12 +214,14 @@ The AI isn't a single model making a call. It's a **three-layer deliberation cha
 
 ### Traction (30%)
 
-- All 7 pages live with no placeholders — quiz, dashboard, leaderboard fully functional
+- All 8 pages live with no placeholders — quiz, dashboard, leaderboard, pricing fully functional
 - Full auth stack: email magic links + Google/GitHub OAuth + wallet connect
+- Stripe Crypto Onramp: fiat-to-crypto onramp for buying USDC with credit/debit card
 - On-chain evidence: 5 live Arc TX hashes + IPFS CIDs (see Smart Contracts above)
 - Leaderboard tracks accuracy, USDC earned, Arc settlement count per user
 - 32 automated visual QA screenshots (Playwright, 8 pages × 4 breakpoints)
 - x402 nanopayment integration — pay-per-read thesis access + session key UX
+- Security audit: 2 CRITICAL, 4 HIGH fixed; DRY refactored across 10+ files
 
 ### Circle Tool Usage (20%)
 
@@ -316,15 +341,23 @@ rosetta-alpha/
 │   ├── adalflow_trace.py    # Training dataset generator (JSONL)
 │   ├── prompt_optimizer.py  # Text-grad sweep runner
 │   └── bake_feedback.py     # Distill feedback → permanent guidelines
-├── contracts/src/           # Solidity contracts (verified on Arc testnet)
-├── frontend/                # Next.js 15 dashboard (Vercel)
-│   ├── scripts/screenshot.mjs  # Playwright visual QA (32 screenshots)
-│   └── src/components/     # EarnQuiz, DashboardView, LeaderboardView, …
+├── contracts/               # Solidity contracts (verified on Arc testnet)
+│   ├── src/                 # ReasoningRegistry, RosettaToken, PredictionMarket, OwnerPriceOracle
+│   ├── test/                # Foundry tests (unit + fuzz + invariant — 111 tests pass)
+│   └── SECURITY_AUDIT.md    # Smart contract audit findings
+├── frontend/                # Next.js 16 dashboard (Vercel)
+│   ├── prisma/schema.prisma # Database schema (User, Session, ApiKey, UsedNonce, ...)
+│   ├── src/app/api/         # API routes (auth, quiz, keys, onramp, x402, webhooks)
+│   ├── src/lib/             # x402Server, api-utils, stripe-api, subscription, chains
+│   ├── src/components/      # EarnQuiz, DashboardView, LeaderboardView, CryptoOnrampModal, ...
+│   ├── SECURITY_AUDIT.md    # Frontend security audit findings
+│   └── scripts/screenshot.mjs  # Playwright visual QA (32 screenshots)
 ├── demo/
 │   └── e2e_run.py           # Full pipeline orchestrator
 ├── scripts/
 │   └── circle_paymaster_demo.js  # Circle Paymaster (ERC-4337 v0.7) gasless USDC
-└── tests/                   # pytest suite
+├── tests/                   # pytest suite (342 tests pass)
+└── SECURITY.md              # Vulnerability reporting policy
 ```
 
 ---
