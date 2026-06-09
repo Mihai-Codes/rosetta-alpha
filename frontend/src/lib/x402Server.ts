@@ -57,6 +57,39 @@ import { privateKeyToAccount } from 'viem/accounts'
 import { decodePaymentHeader, buildTransferAuthorizationMessage } from './eip3009'
 import type { SignedAuthorization } from './eip3009'
 
+// ─── Replay Protection (settleOnChain: false only) ─────────────────────────
+
+/**
+ * In-memory nonce dedup for off-chain-only payments.
+ * When settleOnChain: false, the USDC contract doesn't track the nonce,
+ * so we must prevent replay attacks ourselves.
+ *
+ * Map key: nonce (hex string)
+ * Map value: expiration timestamp (ms)
+ * Cleanup runs every 60s to prevent memory growth.
+ */
+const usedNonces = new Map<string, number>()
+
+function cleanupExpiredNonces(): void {
+  const now = Date.now()
+  for (const [nonce, expiresAt] of usedNonces) {
+    if (expiresAt < now) usedNonces.delete(nonce)
+  }
+}
+setInterval(cleanupExpiredNonces, 60_000)
+
+function isNonceUsed(nonce: string): boolean {
+  return usedNonces.has(nonce)
+}
+
+function markNonceUsed(nonce: string, validBeforeMs: number): void {
+  // Cap TTL to 5 minutes to prevent memory bloat from misconfigured validBefore
+  const ttl = Math.min(validBeforeMs - Date.now(), 5 * 60 * 1000)
+  if (ttl > 0) {
+    usedNonces.set(nonce, Date.now() + ttl)
+  }
+}
+
 // ─── Arc Testnet Chain Definition (server-safe, no process.env at module level) ──
 
 /**
@@ -203,10 +236,11 @@ export function withX402(
     // ── Step 4: Verify the payment ──
     const verification = await verifyPayment(signedAuth, config)
     if (!verification.valid) {
+      console.warn(`[x402] Verification failed: ${verification.reason}`)
       return new Response(
         JSON.stringify({
           error: 'Payment verification failed',
-          detail: verification.reason,
+          detail: 'Payment signature verification failed',
           code: 'PAYMENT_VERIFICATION_FAILED',
         }),
         {
@@ -226,7 +260,7 @@ export function withX402(
         return new Response(
           JSON.stringify({
             error: 'Payment settlement failed',
-            detail: message,
+            detail: 'Settlement transaction failed',
             code: 'SETTLEMENT_FAILED',
           }),
           {
@@ -235,6 +269,23 @@ export function withX402(
           }
         )
       }
+    } else {
+      // Off-chain only: check nonce dedup to prevent replay
+      const nonceHex = signedAuth.nonce.toLowerCase()
+      if (isNonceUsed(nonceHex)) {
+        return new Response(
+          JSON.stringify({
+            error: 'Payment already used',
+            detail: 'This payment has already been redeemed',
+            code: 'PAYMENT_REPLAY_DETECTED',
+          }),
+          {
+            status: 402,
+            headers: { 'Content-Type': 'application/json' },
+          }
+        )
+      }
+      markNonceUsed(nonceHex, Number(signedAuth.validBefore) * 1000)
     }
 
     // ── Step 6: Payment verified/settled! Call the actual handler ──

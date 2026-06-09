@@ -17,7 +17,9 @@ export async function GET(req: Request) {
   }
 
   const { searchParams } = new URL(req.url)
-  const redirectTo = searchParams.get('next') ?? '/'
+  const rawNext = searchParams.get('next') ?? '/'
+  // Prevent open redirect: only allow relative paths starting with /
+  const redirectTo = rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : '/'
 
   const mode = searchParams.get('mode')
   const response = mode === 'json'

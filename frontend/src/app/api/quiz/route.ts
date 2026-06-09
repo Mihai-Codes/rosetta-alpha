@@ -1,14 +1,11 @@
 import { NextResponse } from 'next/server'
 import { auth } from '../../../../auth'
 import { prisma } from '@/lib/prisma'
+import { NO_STORE_HEADERS, ARC_TREASURY_FALLBACK, ARC_USDC_ADDRESS } from '@/lib/api-utils'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
-
-const NO_STORE_HEADERS = {
-  'Cache-Control': 'no-store, max-age=0',
-}
 
 type QuizAttemptPayload = {
   desk?: unknown

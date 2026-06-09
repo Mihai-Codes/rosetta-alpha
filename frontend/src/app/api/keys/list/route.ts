@@ -8,7 +8,7 @@
 import { NextResponse } from 'next/server'
 import { auth } from '../../../../../auth'
 import { prisma } from '@/lib/prisma'
-import { NO_STORE_HEADERS, handleServerError } from '@/lib/api-utils'
+import { NO_STORE_HEADERS, handleServerError, isValidEthereumAddress } from '@/lib/api-utils'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -26,7 +26,7 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url)
     const wallet = searchParams.get('wallet')?.trim() ?? ''
 
-    if (!wallet || !/^0x[a-fA-F0-9]{40}$/.test(wallet)) {
+    if (!wallet || !isValidEthereumAddress(wallet)) {
       return NextResponse.json(
         { success: false, error: 'Invalid wallet address' },
         { status: 400, headers: NO_STORE_HEADERS }

@@ -26,29 +26,20 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { withX402 } from '@/lib/x402Server'
-
-
-function getEnv(val: string | undefined, fallback: string): string {
-  if (!val || val === 'undefined' || val === 'null' || val === '') return fallback;
-  return val;
-}
+import { NO_STORE_HEADERS, getEnv, ARC_TREASURY_FALLBACK, ARC_USDC_ADDRESS } from '@/lib/api-utils'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
-
-const NO_STORE_HEADERS = {
-  'Cache-Control': 'no-store, max-age=0',
-}
 
 export const GET = withX402(
   {
     resource: '/api/thesis/[id]',
     priceUsdc: 0.001,
     description: 'Full thesis reasoning chain — 0.001 USDC',
-    treasuryAddress: getEnv(process.env.ROSETTA_TREASURY_ADDRESS, '0x000000000000000000000000000000000000dEaD'),
+    treasuryAddress: getEnv(process.env.ROSETTA_TREASURY_ADDRESS, ARC_TREASURY_FALLBACK),
     arcRpcUrl: process.env.NEXT_PUBLIC_ARC_RPC_URL!,
-    usdcAddress: getEnv(process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS, '0x3600000000000000000000000000000000000000'),
+    usdcAddress: getEnv(process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS, ARC_USDC_ADDRESS),
     settlerPrivateKey: process.env.ARC_SETTLER_PRIVATE_KEY!,
     // Thesis unlock is a demo read-gate: verify x402 proof, then unlock.
     // Quiz claims still perform on-chain settlement.

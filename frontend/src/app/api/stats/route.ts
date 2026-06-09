@@ -1,13 +1,10 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { NO_STORE_HEADERS } from '@/lib/api-utils'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
-
-const NO_STORE_HEADERS = {
-  'Cache-Control': 'no-store, max-age=0',
-}
 
 /**
  * GET /api/stats
