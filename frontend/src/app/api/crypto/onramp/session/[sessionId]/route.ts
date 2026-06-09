@@ -8,7 +8,7 @@
  */
 
 import { NextResponse } from 'next/server'
-import { NO_STORE_HEADERS, handleServerError } from '@/lib/api-utils'
+import { NO_STORE_HEADERS, handleServerError, requireAuth } from '@/lib/api-utils'
 import { getStripeOnrampSession } from '@/lib/stripe-api'
 import { Tier, activateSubscription, isValidTier } from '@/lib/subscription'
 import { prisma } from '@/lib/prisma'
@@ -21,6 +21,9 @@ export async function GET(
   { params }: { params: Promise<{ sessionId: string }> }
 ) {
   try {
+    const authError = await requireAuth()
+    if (authError) return authError
+
     const { sessionId } = await params
 
     if (!sessionId || !sessionId.startsWith('cos_')) {

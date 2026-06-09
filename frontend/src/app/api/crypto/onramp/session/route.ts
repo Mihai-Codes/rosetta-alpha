@@ -12,7 +12,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { Tier, TIER_PRICES_USD, isValidTier } from '@/lib/subscription'
-import { NO_STORE_HEADERS, isValidEthereumAddress, handleServerError } from '@/lib/api-utils'
+import { NO_STORE_HEADERS, isValidEthereumAddress, handleServerError, requireAuth } from '@/lib/api-utils'
 import { createStripeOnrampSession } from '@/lib/stripe-api'
 
 export const runtime = 'nodejs'
@@ -26,6 +26,9 @@ type SessionPayload = {
 
 export async function POST(req: Request) {
   try {
+    const authError = await requireAuth()
+    if (authError) return authError
+
     const body = (await req.json().catch(() => null)) as SessionPayload | null
 
     const walletAddress = typeof body?.wallet_address === 'string' ? body.wallet_address.trim() : ''
