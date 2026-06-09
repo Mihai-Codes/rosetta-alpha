@@ -22,6 +22,12 @@ export function FeedbackSurvey() {
   const [text, setText] = useState('')
   const [submitted, setSubmitted] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const mountedRef = useRef(true)
+
+  useEffect(() => {
+    mountedRef.current = true
+    return () => { mountedRef.current = false }
+  }, [])
 
   useEffect(() => {
     if (typeof window !== 'undefined' && localStorage.getItem(STORAGE_KEY)) return
@@ -53,7 +59,9 @@ export function FeedbackSurvey() {
       localStorage.setItem(STORAGE_KEY, '1')
     }
     setSubmitted(true)
-    setTimeout(() => setVisible(false), 2000)
+    timerRef.current = setTimeout(() => {
+      if (mountedRef.current) setVisible(false)
+    }, 2000)
   }
 
   return (

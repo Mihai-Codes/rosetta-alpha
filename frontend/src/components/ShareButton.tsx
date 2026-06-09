@@ -98,6 +98,13 @@ export function ShareButton(props: ShareButtonProps) {
   const [open, setOpen] = React.useState(false)
   const [copied, setCopied] = React.useState(false)
   const ref = React.useRef<HTMLDivElement>(null)
+  const timerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
+  const mountedRef = React.useRef(true)
+
+  React.useEffect(() => {
+    mountedRef.current = true
+    return () => { mountedRef.current = false }
+  }, [])
 
   const modalPosition = useModalPosition(ref, open)
 
@@ -123,7 +130,9 @@ export function ShareButton(props: ShareButtonProps) {
     try {
       await navigator.clipboard.writeText(tweetText)
       setCopied(true)
-      setTimeout(() => { setCopied(false); setOpen(false) }, 1500)
+      timerRef.current = setTimeout(() => {
+        if (mountedRef.current) { setCopied(false); setOpen(false) }
+      }, 1500)
     } catch {
       // fallback for non-HTTPS contexts
       const el = document.createElement('textarea')
@@ -133,7 +142,9 @@ export function ShareButton(props: ShareButtonProps) {
       document.execCommand('copy')
       document.body.removeChild(el)
       setCopied(true)
-      setTimeout(() => { setCopied(false); setOpen(false) }, 1500)
+      timerRef.current = setTimeout(() => {
+        if (mountedRef.current) { setCopied(false); setOpen(false) }
+      }, 1500)
     }
   }
 

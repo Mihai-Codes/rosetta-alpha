@@ -35,6 +35,12 @@ export function SubscribeModal({ tier, isOpen, onClose, onSuccess }: SubscribeMo
   // Wallet payment step: idle → approving → subscribing → done
   const [walletStep, setWalletStep] = useState<'idle' | 'approving' | 'subscribing' | 'done' | 'error'>('idle')
   const [walletError, setWalletError] = useState<string | null>(null)
+  const mountedRef = useRef(true)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  useEffect(() => {
+    mountedRef.current = true
+    return () => { mountedRef.current = false }
+  }, [])
   const onSuccessRef = useRef(onSuccess)
   onSuccessRef.current = onSuccess
   const onCloseRef = useRef(onClose)
@@ -142,9 +148,11 @@ export function SubscribeModal({ tier, isOpen, onClose, onSuccess }: SubscribeMo
 
   const handleCardSuccess = () => {
     setCardSuccess(true)
-    setTimeout(() => {
-      onSuccess()
-      onClose()
+    timerRef.current = setTimeout(() => {
+      if (mountedRef.current) {
+        onSuccess()
+        onClose()
+      }
     }, 3000)
   }
 

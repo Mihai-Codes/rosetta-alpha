@@ -21,6 +21,7 @@ import React from 'react'
 import { useSignTypedData, useAccount, useWriteContract } from 'wagmi'
 import { parseUnits } from 'viem'
 import { arcTestnet } from '@/lib/chains'
+import { ARC_USDC_ADDRESS } from '@/lib/api-utils'
 import {
   generateSessionKey,
   buildSessionAuthMessage,
@@ -238,17 +239,15 @@ export function useSessionKey() {
         // This is wallet popup #1 — authorizes the session key's spending limits
         const typedData = buildSessionAuthMessage(address, sessionAddress, configWithNonce)
         // wagmi's signTypedDataAsync has strict generic inference on `message`.
-        // We cast the whole argument as `never` to bypass the inferred constraint —
-        // the runtime values are correct (built by buildSessionAuthMessage).
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const authorizationSig = await signTypedDataAsync(typedData as any)
+        // The runtime values are correct (built by buildSessionAuthMessage) but
+        // TypeScript can't narrow the union due to readonly/mutable array mismatch.
+        const authorizationSig = await signTypedDataAsync(typedData as unknown as Parameters<typeof signTypedDataAsync>[0])
 
         // ── Step 3: Fund the session key address with USDC ──
         // EIP-3009 requires signer == from, so the session key's address must
         // hold the USDC. We transfer maxAmountUsdc from the user's wallet.
         // This is wallet popup #2 — the last popup until session is exhausted.
-        // Defaulting to Arc Testnet USDC contract if env var is missing
-        const usdcAddress = (process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS && process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS !== 'undefined' ? process.env.NEXT_PUBLIC_USDC_ARC_ADDRESS : '0x3600000000000000000000000000000000000000')
+        const usdcAddress = ARC_USDC_ADDRESS
 
         const fundingAmount = parseUnits(String(config.maxAmountUsdc), 6) // USDC = 6 decimals
 
