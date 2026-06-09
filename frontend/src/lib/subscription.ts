@@ -113,10 +113,105 @@ export const TIER_PRICES_USD: Record<Tier, number> = {
   [Tier.Pro]: 99,
 }
 
+/** Annual billing discount (20% off). */
+export const ANNUAL_DISCOUNT = 0.8
+
+export const TIER_PRICES_ANNUAL: Record<Tier, number> = {
+  [Tier.None]: 0,
+  [Tier.Premium]: Math.round(TIER_PRICES_USD[Tier.Premium] * ANNUAL_DISCOUNT),
+  [Tier.Pro]: Math.round(TIER_PRICES_USD[Tier.Pro] * ANNUAL_DISCOUNT),
+}
+
 /** Check if a value is a valid paid tier (Premium or Pro). */
 export function isValidTier(tier: unknown): tier is Tier {
   return tier === Tier.Premium || tier === Tier.Pro
 }
+
+// -----------------------------------------------------------------------
+// Feature definitions (single source of truth for pricing page)
+// -----------------------------------------------------------------------
+
+export interface TierFeature {
+  label: string
+  implemented: boolean
+}
+
+export const TIER_FEATURES: Record<Tier, TierFeature[]> = {
+  [Tier.None]: [
+    { label: 'US desk thesis preview (24h delayed)', implemented: true },
+    { label: 'Mob Meter sentiment gauge', implemented: true },
+    { label: 'Community leaderboard (top 3)', implemented: true },
+    { label: 'Basic knowledge graph view', implemented: true },
+  ],
+  [Tier.Premium]: [
+    { label: 'All 5 regional desks (real-time)', implemented: true },
+    { label: 'Full provenance chain visibility', implemented: true },
+    { label: 'Knowledge graph (full search + contradictions)', implemented: true },
+    { label: 'x402 micropayment bypass', implemented: true },
+    { label: 'Quiz-to-earn (0.5 USDC rewards)', implemented: false },
+    { label: 'Email alerts: regime changes + divergence', implemented: false },
+  ],
+  [Tier.Pro]: [
+    { label: 'Everything in Premium', implemented: true },
+    { label: 'API access (programmatic thesis feed)', implemented: false },
+    { label: 'Early adversarial debate theses', implemented: false },
+    { label: 'Custom alert thresholds', implemented: false },
+    { label: 'Builder code integration (earn on copies)', implemented: false },
+    { label: 'Priority support', implemented: false },
+  ],
+}
+
+export interface ComparisonRow {
+  name: string
+  free: boolean | string
+  premium: boolean | string
+  pro: boolean | string
+}
+
+export const COMPARISON_FEATURES: ComparisonRow[] = [
+  { name: 'Regional desks', free: 'US only', premium: 'All 5', pro: 'All 5' },
+  { name: 'Thesis delivery', free: '24h delayed', premium: 'Real-time', pro: 'Real-time' },
+  { name: 'Provenance chain', free: 'Partial', premium: true, pro: true },
+  { name: 'Knowledge graph', free: 'Basic', premium: true, pro: true },
+  { name: 'x402 micropayments', free: false, premium: true, pro: true },
+  { name: 'Quiz-to-earn', free: false, premium: 'Coming soon', pro: 'Coming soon' },
+  { name: 'Email alerts', free: false, premium: 'Coming soon', pro: 'Coming soon' },
+  { name: 'API access', free: false, premium: false, pro: 'Coming soon' },
+  { name: 'Custom alerts', free: false, premium: false, pro: 'Coming soon' },
+  { name: 'Priority support', free: false, premium: false, pro: 'Coming soon' },
+]
+
+export interface PricingFAQ {
+  question: string
+  answer: string
+}
+
+export const PRICING_FAQS: PricingFAQ[] = [
+  {
+    question: 'Can I cancel anytime?',
+    answer: 'Yes. Your subscription lasts 30 days and does not auto-renew. Simply don\'t renew when your period ends.',
+  },
+  {
+    question: 'What happens when my subscription expires?',
+    answer: 'You revert to the Free tier. Your historical data and preferences are preserved — just renew to regain access.',
+  },
+  {
+    question: 'How does crypto payment work?',
+    answer: 'Pay with USDC on Arc Testnet directly from your wallet. Approve the spend, confirm the transaction, and your subscription activates on-chain within seconds.',
+  },
+  {
+    question: 'Can I pay with a credit card?',
+    answer: 'Yes. We use Stripe to accept Visa, Mastercard, and other major cards. Your card payment is converted to USDC and delivered to your Arc wallet automatically.',
+  },
+  {
+    question: 'Can I switch between payment methods?',
+    answer: 'Absolutely. Each time you subscribe or renew, choose whichever method is most convenient — wallet or card.',
+  },
+  {
+    question: 'Do you offer refunds?',
+    answer: 'Due to the on-chain nature of subscriptions, refunds are not available. However, you can cancel and your access continues until the end of your billing period.',
+  },
+]
 
 // -----------------------------------------------------------------------
 // Read helpers (server-side or client-side)

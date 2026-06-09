@@ -115,6 +115,36 @@ model Subscription {
   @@index([userWallet])
 }
 
+model AlertSubscription {
+  id        String   @id @default(cuid())
+  wallet    String
+  email     String
+  types     String   @default("regime_change,divergence") // comma-separated alert types
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([wallet, email])
+  @@index([wallet])
+  @@index([active])
+}
+
+model ApiKey {
+  id        String   @id @default(cuid())
+  wallet    String
+  name      String
+  keyHash   String   @unique // sha256 of the API key
+  keyPrefix String   // first 8 chars for display (e.g. "rs_a1b2c3d4")
+  tier      Int      // minimum tier required
+  active    Boolean  @default(true)
+  lastUsed  DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([wallet])
+  @@index([keyHash])
+}
+
 model QuizAttempt {
   id        String   @id @default(cuid())
   userId    String? // Optional, as anonymous users can take the quiz

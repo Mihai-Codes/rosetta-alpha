@@ -115,7 +115,7 @@ docs/SPRINT_PLAN.md
 docs/DEPLOY.md
 coverage.xml
 workflows/
-api/
+/api/
 narratives.db
 data/knowledge_graph.db
 .aider*
