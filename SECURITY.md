@@ -8,8 +8,8 @@ If you discover a security vulnerability in Rosetta Alpha, please report it resp
 
 Instead, please contact us via:
 
-- **Email:** security@rosetta-alpha.app (preferred)
-- **Discord:** DM @mihai on the project Discord
+- **Email:** hello@mihai.codes (preferred)
+- **Discord:** DM @mihai_chindris on Discord
 
 ### What to include
 
