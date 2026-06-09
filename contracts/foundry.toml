@@ -12,6 +12,11 @@ via_ir = true
 [profile.default.fuzz]
 runs = 256
 
+[profile.default.invariant]
+runs = 256
+depth = 128
+fail_on_revert = false
+
 [rpc_endpoints]
 # Arc testnet RPC — fill in when deploying
 arc_testnet = "${ARC_RPC_URL}"

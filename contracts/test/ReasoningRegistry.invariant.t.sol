@@ -1,40 +1,35 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Test, console2} from "forge-std/Test.sol";
+import {Test} from "forge-std/Test.sol";
 import {ReasoningRegistry} from "../src/ReasoningRegistry.sol";
 
 /**
  * @title RegistryHandler
  * @notice Bounded handler for ReasoningRegistry invariant fuzzing.
+ *         Uses vm.prank(submitter) so the registry sees an authorized caller.
  */
 contract RegistryHandler is Test {
     ReasoningRegistry public registry;
+    address public submitter;
 
     bytes32[] public recordedHashes;
     mapping(bytes32 => bool) public isRecorded;
 
-    // Ghost variables
-    uint256 public ghost_recordCalls;
-    uint256 public ghost_duplicateReverts;
-
-    constructor(ReasoningRegistry _registry) {
+    constructor(ReasoningRegistry _registry, address _submitter) {
         registry = _registry;
+        submitter = _submitter;
     }
 
     function record(bytes32 traceHash) external {
-        traceHash = bytes32(uint256(traceHash) % 1000); // bound to small set
+        traceHash = bytes32(uint256(traceHash) % 1000);
         if (traceHash == bytes32(0)) return;
+        if (isRecorded[traceHash]) return;
 
-        if (isRecorded[traceHash]) {
-            ghost_duplicateReverts++;
-            return; // will revert, skip
-        }
-
+        vm.prank(submitter);
         registry.record(traceHash, "bafkrei-test", ReasoningRegistry.Region.US, ReasoningRegistry.AssetClass.CRYPTO);
         recordedHashes.push(traceHash);
         isRecorded[traceHash] = true;
-        ghost_recordCalls++;
     }
 
     function getRecordedCount() external view returns (uint256) {
@@ -45,11 +40,6 @@ contract RegistryHandler is Test {
 /**
  * @title ReasoningRegistryInvariantTest
  * @notice Invariant tests for ReasoningRegistry.
- *
- * Invariants:
- *   1. Append-only: recorded trace data never changes
- *   2. Count consistency: traceHashes.length == totalTraces()
- *   3. No duplicate hashes in the array
  */
 contract ReasoningRegistryInvariantTest is Test {
     ReasoningRegistry public registry;
@@ -58,16 +48,19 @@ contract ReasoningRegistryInvariantTest is Test {
     address owner = address(0xBEEF);
     address submitter = address(0xDEAD);
 
+    // Mapping-based duplicate check (O(1) instead of O(n^2))
+    mapping(bytes32 => bool) public seenHash;
+
     function setUp() public {
         vm.prank(owner);
         registry = new ReasoningRegistry(owner, submitter);
 
-        handler = new RegistryHandler(registry);
+        handler = new RegistryHandler(registry, submitter);
         targetContract(address(handler));
         targetSender(submitter);
     }
 
-    /// @notice Append-only: once recorded, traceHash cannot be overwritten.
+    /// @notice Append-only: once recorded, trace data never changes.
     function invariant_appendOnly() public view {
         for (uint256 i; i < handler.getRecordedCount(); ++i) {
             bytes32 hash = handler.recordedHashes(i);
@@ -83,14 +76,16 @@ contract ReasoningRegistryInvariantTest is Test {
     }
 
     /// @notice No duplicate hashes in traceHashes array.
-    function invariant_noDuplicates() public view {
+    function invariant_noDuplicates() public {
+        // Reset seen mapping
         for (uint256 i; i < handler.getRecordedCount(); ++i) {
-            for (uint256 j = i + 1; j < handler.getRecordedCount(); ++j) {
-                assertTrue(
-                    handler.recordedHashes(i) != handler.recordedHashes(j),
-                    "duplicate hash in array"
-                );
-            }
+            bytes32 hash = handler.recordedHashes(i);
+            assertFalse(seenHash[hash], "duplicate hash in array");
+            seenHash[hash] = true;
+        }
+        // Clean up for next run
+        for (uint256 i; i < handler.getRecordedCount(); ++i) {
+            seenHash[handler.recordedHashes(i)] = false;
         }
     }
 }

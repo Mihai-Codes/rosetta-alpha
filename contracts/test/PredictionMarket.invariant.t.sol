@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Test, console2} from "forge-std/Test.sol";
+import {Test} from "forge-std/Test.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ReasoningRegistry} from "../src/ReasoningRegistry.sol";
 import {RosettaToken} from "../src/RosettaToken.sol";
@@ -11,6 +11,8 @@ import {PredictionMarket} from "../src/PredictionMarket.sol";
 /**
  * @title MarketHandler
  * @notice Bounded handler for PredictionMarket invariant fuzzing.
+ *         Agents are funded and approve the token contract in setUp.
+ *         Uses vm.prank to stake/create markets on behalf of agents.
  */
 contract MarketHandler is Test {
     PredictionMarket public market;
@@ -20,12 +22,6 @@ contract MarketHandler is Test {
 
     bytes32[] public createdHashes;
     mapping(bytes32 => bool) public isCreated;
-
-    // Ghost variables
-    uint256 public ghost_totalStakedInMarkets;
-    uint256 public ghost_createdCount;
-    uint256 public ghost_resolvedCount;
-    uint256 public ghost_settledCount;
 
     constructor(
         PredictionMarket _market,
@@ -56,7 +52,7 @@ contract MarketHandler is Test {
         uint256 entryPrice,
         uint32 horizonDays
     ) external {
-        traceHash = bytes32(uint256(traceHash) % 1000); // bound to small set
+        traceHash = bytes32(uint256(traceHash) % 1000);
         stakeAmount = bound(stakeAmount, 1 ether, 10_000 ether);
         confidenceBp = uint16(bound(confidenceBp, 100, 10_000));
         entryPrice = bound(entryPrice, 1e8, 1_000e8);
@@ -71,6 +67,14 @@ contract MarketHandler is Test {
 
         if (isCreated[traceHash]) return;
 
+        // Unstake first if agent has existing stake (recycle tokens)
+        uint256 existingStake = token.stakedBalance(agent);
+        if (existingStake > 0) {
+            vm.prank(agent);
+            token.unstake(existingStake);
+        }
+
+        // Agent stakes then creates market — both from agent's perspective
         vm.startPrank(agent);
         token.stake(stakeAmount);
         market.createMarket(traceHash, agent, stakeAmount, assetKey, PredictionMarket.Direction.LONG, confidenceBp, entryPrice, horizonDays);
@@ -78,8 +82,6 @@ contract MarketHandler is Test {
 
         createdHashes.push(traceHash);
         isCreated[traceHash] = true;
-        ghost_totalStakedInMarkets += stakeAmount;
-        ghost_createdCount++;
     }
 
     function resolveMarket(bytes32 traceHash) external {
@@ -89,7 +91,6 @@ contract MarketHandler is Test {
 
         vm.warp(m.resolvesAt + 1);
         market.resolve(traceHash);
-        ghost_resolvedCount++;
     }
 
     function settleMarket(bytes32 traceHash) external {
@@ -100,7 +101,6 @@ contract MarketHandler is Test {
         uint64 settlesAt = m.resolvedAt + market.disputeWindowSec();
         vm.warp(settlesAt + 1);
         market.settle(traceHash);
-        ghost_settledCount++;
     }
 
     function getCreatedCount() external view returns (uint256) {
@@ -111,11 +111,6 @@ contract MarketHandler is Test {
 /**
  * @title PredictionMarketInvariantTest
  * @notice Invariant tests for PredictionMarket.
- *
- * Invariants:
- *   1. Reward pool never negative (uint256, but settle must never overpay)
- *   2. State machine: settled markets stay settled
- *   3. Market count consistency: marketHashes.length == totalMarkets()
  */
 contract PredictionMarketInvariantTest is Test {
     ReasoningRegistry public registry;
@@ -136,11 +131,20 @@ contract PredictionMarketInvariantTest is Test {
         market = new PredictionMarket(owner, address(registry), address(token), address(oracle));
         token.setSlasher(address(market), true);
 
+        // Fund agents AND approve token contract for staking
+        vm.stopPrank();
+
+        vm.prank(owner);
         token.transfer(agent1, 100_000 ether);
+        vm.prank(owner);
         token.transfer(agent2, 100_000 ether);
 
+        vm.prank(agent1);
+        token.approve(address(token), type(uint256).max);
+        vm.prank(agent2);
+        token.approve(address(token), type(uint256).max);
+
         // Fund reward pool
-        vm.stopPrank();
         vm.prank(owner);
         token.approve(address(market), 50_000 ether);
         vm.prank(owner);
@@ -163,7 +167,6 @@ contract PredictionMarketInvariantTest is Test {
         for (uint256 i; i < handler.getCreatedCount(); ++i) {
             bytes32 hash = handler.createdHashes(i);
             PredictionMarket.Market memory m = market.getMarket(hash);
-            // If status is SETTLED, resolvedAt and exitPrice should be non-zero
             if (m.status == PredictionMarket.Status.SETTLED) {
                 assertGt(m.resolvedAt, 0, "settled but resolvedAt=0");
                 assertGt(m.exitPrice, 0, "settled but exitPrice=0");

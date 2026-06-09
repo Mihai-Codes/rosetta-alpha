@@ -1,26 +1,21 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Test, console2} from "forge-std/Test.sol";
+import {Test} from "forge-std/Test.sol";
 import {RosettaToken} from "../src/RosettaToken.sol";
 
 /**
  * @title RosettaTokenHandler
  * @notice Bounded handler for RosettaToken invariant fuzzing.
- *         Tracks actors and amounts to verify conservation invariants.
+ *         Uses vm.prank to ensure staking/unstaking/slashing happens
+ *         from the fuzzer-selected sender, not from the handler.
  */
 contract RosettaTokenHandler is Test {
     RosettaToken public token;
     address[] public actors;
-    uint256[] public actorStakes;
-
-    // Ghost variables — mirror state for delta checks
-    uint256 public ghost_totalStaked;
 
     constructor(RosettaToken _token) {
         token = _token;
-        actors.push(address(this));
-        actorStakes.push(0);
     }
 
     function addActor(address actor) external {
@@ -29,36 +24,32 @@ contract RosettaTokenHandler is Test {
             if (actors[i] == actor) return;
         }
         actors.push(actor);
-        actorStakes.push(0);
+    }
+
+    function setActors(address a1, address a2, address a3) external {
+        if (actors.length > 0) return; // only set once
+        actors.push(a1);
+        actors.push(a2);
+        actors.push(a3);
     }
 
     function stake(uint256 amount) external {
         amount = bound(amount, 1, token.balanceOf(msg.sender));
         if (amount == 0) return;
+        vm.prank(msg.sender);
         token.stake(amount);
-        _syncBalance(msg.sender);
     }
 
     function unstake(uint256 amount) external {
         amount = bound(amount, 1, token.stakedBalance(msg.sender));
         if (amount == 0) return;
+        vm.prank(msg.sender);
         token.unstake(amount);
-        _syncBalance(msg.sender);
     }
 
     function slash(address agent, uint256 amount) external {
         amount = bound(amount, 1, 100 ether);
         token.slash(agent, amount);
-        _syncBalance(agent);
-    }
-
-    function _syncBalance(address actor) internal {
-        for (uint256 i; i < actors.length; ++i) {
-            if (actors[i] == actor) {
-                actorStakes[i] = token.stakedBalance(actor);
-                return;
-            }
-        }
     }
 
     function getActorCount() external view returns (uint256) {
@@ -69,11 +60,6 @@ contract RosettaTokenHandler is Test {
 /**
  * @title RosettaTokenInvariantTest
  * @notice Invariant tests for RosettaToken staking/slashing conservation.
- *
- * Invariants:
- *   1. Conservation: totalStaked == sum of all stakedBalance[]
- *   2. Slash never creates tokens (totalStaked <= totalSupply)
- *   3. Individual stake never exceeds totalStaked
  */
 contract RosettaTokenInvariantTest is Test {
     RosettaToken public token;
@@ -96,6 +82,7 @@ contract RosettaTokenInvariantTest is Test {
         vm.stopPrank();
 
         handler = new RosettaTokenHandler(token);
+        handler.setActors(agent1, agent2, agent3);
         targetContract(address(handler));
         targetSender(agent1);
         targetSender(agent2);
