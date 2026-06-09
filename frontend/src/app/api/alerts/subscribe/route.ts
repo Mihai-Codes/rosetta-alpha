@@ -2,8 +2,7 @@
  * POST /api/alerts/subscribe — Subscribe to email alerts
  * =======================================================
  *
- * Accepts { email, types? } and stores the subscription.
- * Wallet is extracted from the authenticated session.
+ * Accepts { wallet, email, types? } and stores the subscription.
  * Types default to "regime_change,divergence".
  *
  * Skeleton endpoint — email sending is not yet implemented.
@@ -21,6 +20,7 @@ export const dynamic = 'force-dynamic'
 const VALID_ALERT_TYPES = ['regime_change', 'divergence', 'thesis_update', 'market_event']
 
 type AlertPayload = {
+  wallet?: unknown
   email?: unknown
   types?: unknown
 }
@@ -28,16 +28,23 @@ type AlertPayload = {
 export async function POST(req: Request) {
   try {
     const session = await auth()
-    const wallet = (session?.user as { wallet?: string } | undefined)?.wallet
-
-    if (!wallet) {
+    if (!session?.user) {
       return NextResponse.json(
-        { success: false, error: 'Authentication required — connect your wallet' },
+        { success: false, error: 'Authentication required' },
         { status: 401, headers: NO_STORE_HEADERS }
       )
     }
 
     const body = (await req.json().catch(() => null)) as AlertPayload | null
+    const wallet = typeof body?.wallet === 'string' ? body.wallet.trim() : ''
+
+    if (!wallet || !/^0x[a-fA-F0-9]{40}$/.test(wallet)) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid wallet address' },
+        { status: 400, headers: NO_STORE_HEADERS }
+      )
+    }
+
     const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase() : ''
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {

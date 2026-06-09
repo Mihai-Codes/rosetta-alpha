@@ -1,8 +1,8 @@
 /**
- * GET /api/keys/list — List API keys for the authenticated wallet
+ * GET /api/keys/list?wallet=0x... — List API keys for the wallet
  * ===============================================================
  *
- * Returns list of keys (without plaintext) for the authenticated user's wallet.
+ * Returns list of keys (without plaintext) for the wallet.
  */
 
 import { NextResponse } from 'next/server'
@@ -13,15 +13,23 @@ import { NO_STORE_HEADERS, handleServerError } from '@/lib/api-utils'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
     const session = await auth()
-    const wallet = (session?.user as { wallet?: string } | undefined)?.wallet
-
-    if (!wallet) {
+    if (!session?.user) {
       return NextResponse.json(
-        { success: false, error: 'Authentication required — connect your wallet' },
+        { success: false, error: 'Authentication required' },
         { status: 401, headers: NO_STORE_HEADERS }
+      )
+    }
+
+    const { searchParams } = new URL(req.url)
+    const wallet = searchParams.get('wallet')?.trim() ?? ''
+
+    if (!wallet || !/^0x[a-fA-F0-9]{40}$/.test(wallet)) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid wallet address' },
+        { status: 400, headers: NO_STORE_HEADERS }
       )
     }
 

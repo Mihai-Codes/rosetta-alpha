@@ -2,8 +2,7 @@
  * POST /api/keys/generate — Generate a new API key
  * =================================================
  *
- * Accepts { name } and returns a new API key.
- * Wallet is extracted from the authenticated session.
+ * Accepts { wallet, name } and returns a new API key.
  * The key is hashed before storage; only the plaintext is returned once.
  *
  * Requires Pro subscription. Max 5 active keys per wallet.
@@ -20,6 +19,7 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 type KeyPayload = {
+  wallet?: unknown
   name?: unknown
 }
 
@@ -34,16 +34,23 @@ function generateApiKey(): { plaintext: string; hash: string; prefix: string } {
 export async function POST(req: Request) {
   try {
     const session = await auth()
-    const wallet = (session?.user as { wallet?: string } | undefined)?.wallet
-
-    if (!wallet) {
+    if (!session?.user) {
       return NextResponse.json(
-        { success: false, error: 'Authentication required — connect your wallet' },
+        { success: false, error: 'Authentication required' },
         { status: 401, headers: NO_STORE_HEADERS }
       )
     }
 
     const body = (await req.json().catch(() => null)) as KeyPayload | null
+    const wallet = typeof body?.wallet === 'string' ? body.wallet.trim() : ''
+
+    if (!wallet || !/^0x[a-fA-F0-9]{40}$/.test(wallet)) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid wallet address' },
+        { status: 400, headers: NO_STORE_HEADERS }
+      )
+    }
+
     const name = typeof body?.name === 'string' ? body.name.trim() : ''
 
     if (!name || name.length < 3 || name.length > 64) {
