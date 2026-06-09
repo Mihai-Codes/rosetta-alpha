@@ -1,27 +1,27 @@
 /**
- * GET /api/keys/list — List API keys for a wallet
- * ================================================
+ * GET /api/keys/list — List API keys for the authenticated wallet
+ * ===============================================================
  *
- * Accepts ?wallet=0x... query param.
- * Returns list of keys (without plaintext) for the wallet.
+ * Returns list of keys (without plaintext) for the authenticated user's wallet.
  */
 
 import { NextResponse } from 'next/server'
+import { auth } from '../../../../../auth'
 import { prisma } from '@/lib/prisma'
-import { NO_STORE_HEADERS, isValidEthereumAddress, handleServerError } from '@/lib/api-utils'
+import { NO_STORE_HEADERS, handleServerError } from '@/lib/api-utils'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
-    const { searchParams } = new URL(req.url)
-    const wallet = searchParams.get('wallet') ?? ''
+    const session = await auth()
+    const wallet = (session?.user as { wallet?: string } | undefined)?.wallet
 
-    if (!isValidEthereumAddress(wallet)) {
+    if (!wallet) {
       return NextResponse.json(
-        { success: false, error: 'Invalid wallet address' },
-        { status: 400, headers: NO_STORE_HEADERS }
+        { success: false, error: 'Authentication required — connect your wallet' },
+        { status: 401, headers: NO_STORE_HEADERS }
       )
     }
 

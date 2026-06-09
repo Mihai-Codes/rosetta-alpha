@@ -266,20 +266,6 @@ export async function hasRequiredTier(address: Address, requiredTier: Tier): Pro
   return status.active && status.tier >= requiredTier
 }
 
-/**
- * Format remaining subscription time for display.
- */
-export function formatTimeRemaining(expiresAt: number): string {
-  const now = Math.floor(Date.now() / 1000)
-  const remaining = expiresAt - now
-  if (remaining <= 0) return 'Expired'
-
-  const days = Math.floor(remaining / 86400)
-  const hours = Math.floor((remaining % 86400) / 3600)
-  if (days > 0) return `${days}d ${hours}h remaining`
-  return `${hours}h remaining`
-}
-
 // -----------------------------------------------------------------------
 // Write helpers (server-side only — called by webhook handlers)
 // -----------------------------------------------------------------------

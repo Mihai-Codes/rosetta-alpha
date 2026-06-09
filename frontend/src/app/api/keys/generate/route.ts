@@ -2,23 +2,24 @@
  * POST /api/keys/generate — Generate a new API key
  * =================================================
  *
- * Accepts { wallet, name } and returns a new API key.
+ * Accepts { name } and returns a new API key.
+ * Wallet is extracted from the authenticated session.
  * The key is hashed before storage; only the plaintext is returned once.
  *
- * Skeleton endpoint — rate limiting and key validation middleware not yet wired.
+ * Requires Pro subscription. Max 5 active keys per wallet.
  */
 
 import { NextResponse } from 'next/server'
 import { createHash, randomBytes } from 'crypto'
+import { auth } from '../../../../../auth'
 import { prisma } from '@/lib/prisma'
-import { NO_STORE_HEADERS, isValidEthereumAddress, handleServerError } from '@/lib/api-utils'
+import { NO_STORE_HEADERS, handleServerError } from '@/lib/api-utils'
 import { Tier } from '@/lib/subscription'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 type KeyPayload = {
-  wallet?: unknown
   name?: unknown
 }
 
@@ -26,23 +27,24 @@ function generateApiKey(): { plaintext: string; hash: string; prefix: string } {
   const raw = randomBytes(32).toString('hex')
   const plaintext = `rs_${raw}`
   const hash = createHash('sha256').update(plaintext).digest('hex')
-  const prefix = plaintext.slice(0, 12) // "rs_a1b2c3d4e5f6"
+  const prefix = plaintext.slice(0, 11) // "rs_a1b2c3d4" — 11 chars for display
   return { plaintext, hash, prefix }
 }
 
 export async function POST(req: Request) {
   try {
-    const body = (await req.json().catch(() => null)) as KeyPayload | null
+    const session = await auth()
+    const wallet = (session?.user as { wallet?: string } | undefined)?.wallet
 
-    const wallet = typeof body?.wallet === 'string' ? body.wallet.trim() : ''
-    const name = typeof body?.name === 'string' ? body.name.trim() : ''
-
-    if (!isValidEthereumAddress(wallet)) {
+    if (!wallet) {
       return NextResponse.json(
-        { success: false, error: 'Invalid Ethereum wallet address' },
-        { status: 400, headers: NO_STORE_HEADERS }
+        { success: false, error: 'Authentication required — connect your wallet' },
+        { status: 401, headers: NO_STORE_HEADERS }
       )
     }
+
+    const body = (await req.json().catch(() => null)) as KeyPayload | null
+    const name = typeof body?.name === 'string' ? body.name.trim() : ''
 
     if (!name || name.length < 3 || name.length > 64) {
       return NextResponse.json(

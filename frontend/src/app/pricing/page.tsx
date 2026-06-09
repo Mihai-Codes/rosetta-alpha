@@ -56,7 +56,7 @@ function TierCard({ tier, name, price, annualPrice, isAnnual, features, highligh
         ) : (
           <>
             <span className="font-display text-3xl sm:text-4xl text-text-primary">${displayPrice}</span>
-            <span className="text-sm text-text-secondary">/month</span>
+            <span className="text-sm text-text-secondary">/month{isAnnual ? ', billed annually' : ''}</span>
           </>
         )}
       </div>

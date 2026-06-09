@@ -98,6 +98,16 @@ export function SubscribeModal({ tier, isOpen, onClose, onSuccess }: SubscribeMo
     }
   }, [walletStep, approveHash, isApproving, subscribe])
 
+  // Timeout: if stuck in approving/subscribing for 60s without a hash, reset
+  useEffect(() => {
+    if (walletStep !== 'approving' && walletStep !== 'subscribing') return
+    const timer = setTimeout(() => {
+      setWalletStep('error')
+      setWalletError('Transaction timed out. Please try again.')
+    }, 60_000)
+    return () => clearTimeout(timer)
+  }, [walletStep])
+
   // Step 3: After subscribe confirms, complete
   useEffect(() => {
     if (walletStep !== 'subscribing' || !subscribeHash) return

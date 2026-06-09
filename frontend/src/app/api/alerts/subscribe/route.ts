@@ -2,7 +2,8 @@
  * POST /api/alerts/subscribe — Subscribe to email alerts
  * =======================================================
  *
- * Accepts { wallet, email, types? } and stores the subscription.
+ * Accepts { email, types? } and stores the subscription.
+ * Wallet is extracted from the authenticated session.
  * Types default to "regime_change,divergence".
  *
  * Skeleton endpoint — email sending is not yet implemented.
@@ -10,8 +11,9 @@
  */
 
 import { NextResponse } from 'next/server'
+import { auth } from '../../../../../auth'
 import { prisma } from '@/lib/prisma'
-import { NO_STORE_HEADERS, isValidEthereumAddress, handleServerError } from '@/lib/api-utils'
+import { NO_STORE_HEADERS, handleServerError } from '@/lib/api-utils'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -19,24 +21,24 @@ export const dynamic = 'force-dynamic'
 const VALID_ALERT_TYPES = ['regime_change', 'divergence', 'thesis_update', 'market_event']
 
 type AlertPayload = {
-  wallet?: unknown
   email?: unknown
   types?: unknown
 }
 
 export async function POST(req: Request) {
   try {
-    const body = (await req.json().catch(() => null)) as AlertPayload | null
+    const session = await auth()
+    const wallet = (session?.user as { wallet?: string } | undefined)?.wallet
 
-    const wallet = typeof body?.wallet === 'string' ? body.wallet.trim() : ''
-    const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase() : ''
-
-    if (!isValidEthereumAddress(wallet)) {
+    if (!wallet) {
       return NextResponse.json(
-        { success: false, error: 'Invalid Ethereum wallet address' },
-        { status: 400, headers: NO_STORE_HEADERS }
+        { success: false, error: 'Authentication required — connect your wallet' },
+        { status: 401, headers: NO_STORE_HEADERS }
       )
     }
+
+    const body = (await req.json().catch(() => null)) as AlertPayload | null
+    const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase() : ''
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return NextResponse.json(
