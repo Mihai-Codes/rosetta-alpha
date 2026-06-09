@@ -4,6 +4,7 @@ pragma solidity ^0.8.24;
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import {IPriceOracle} from "./IPriceOracle.sol";
 
@@ -62,6 +63,8 @@ interface IRosettaTokenSlasher {
 }
 
 contract PredictionMarket is Ownable, ReentrancyGuard {
+    using SafeERC20 for IERC20;
+
     // -----------------------------------------------------------------------
     // Types
     // -----------------------------------------------------------------------
@@ -197,8 +200,8 @@ contract PredictionMarket is Ownable, ReentrancyGuard {
     /// @notice Owner deposits ROSETTA into the reward pool. Caller must approve first.
     function fundRewardPool(uint256 amount) external onlyOwner {
         if (amount == 0) revert ZeroAmount();
-        // Pull tokens from owner — uses standard ERC20 transferFrom via IERC20.
-        IERC20(address(token)).transferFrom(msg.sender, address(this), amount);
+        // Pull tokens from owner — uses SafeERC20 to handle non-standard return values.
+        IERC20(address(token)).safeTransferFrom(msg.sender, address(this), amount);
         rewardPool += amount;
         emit RewardPoolFunded(amount, rewardPool);
     }
@@ -208,7 +211,7 @@ contract PredictionMarket is Ownable, ReentrancyGuard {
         if (amount == 0) revert ZeroAmount();
         if (amount > rewardPool) revert InsufficientRewardPool(amount, rewardPool);
         rewardPool -= amount;
-        require(token.transfer(msg.sender, amount), "transfer failed");
+        IERC20(address(token)).safeTransfer(msg.sender, amount);
         emit RewardPoolWithdrawn(amount, rewardPool);
     }
 
@@ -335,7 +338,7 @@ contract PredictionMarket is Ownable, ReentrancyGuard {
             uint256 payout = amount > rewardPool ? rewardPool : amount;
             if (payout > 0) {
                 rewardPool -= payout;
-                require(token.transfer(m.agent, payout), "reward transfer failed");
+                IERC20(address(token)).safeTransfer(m.agent, payout);
             }
             emit MarketSettled(traceHash, m.agent, true, payout);
         } else {
