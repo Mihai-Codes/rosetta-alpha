@@ -27,7 +27,7 @@ def _event(
         desk=desk,
         ticker=ticker,
         thesis=thesis or {},
-        timestamp=timestamp or datetime(2026, 6, 6, 12, tzinfo=UTC),
+        timestamp=timestamp or datetime.now(UTC),
     )
 
 
