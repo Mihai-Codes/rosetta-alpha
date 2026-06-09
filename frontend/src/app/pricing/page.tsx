@@ -149,11 +149,11 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
     <div className="border-b border-border">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between w-full py-4 text-left"
+        className="flex items-center justify-between w-full py-4 px-4 text-left"
       >
         <span className="text-sm text-text-primary font-medium">{question}</span>
         <ChevronDown
-          className={`w-4 h-4 text-text-tertiary transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          className={`w-4 h-4 text-text-tertiary transition-transform shrink-0 ml-4 ${isOpen ? 'rotate-180' : ''}`}
         />
       </button>
       <AnimatePresence>
@@ -165,7 +165,7 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <p className="pb-4 text-sm text-text-secondary leading-relaxed">{answer}</p>
+            <p className="pb-4 px-4 text-sm text-text-secondary leading-relaxed">{answer}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -224,7 +224,7 @@ export default function PricingPage() {
           <h1 className="font-display text-4xl md:text-5xl text-text-primary leading-tight">
             Intelligence, Priced Fairly
           </h1>
-          <p className="mt-4 text-text-secondary text-sm max-w-xl mx-auto">
+          <p className="mt-4 text-text-secondary text-sm">
             Five AI agents. Five regional desks. All reasoning hashed on-chain. Choose how deep you want to go.
           </p>
         </div>
@@ -278,7 +278,7 @@ export default function PricingPage() {
         </div>
 
         {/* Payment methods note */}
-        <div className="mt-8 max-w-3xl mx-auto text-center">
+        <div className="mt-8 mx-auto text-center">
           <p className="text-xs text-text-secondary">
             Pay with your crypto wallet (USDC on Arc) or credit/debit card (via Stripe).{' '}
             <span className="text-text-tertiary">Card payments are converted to USDC and delivered to your wallet.</span>

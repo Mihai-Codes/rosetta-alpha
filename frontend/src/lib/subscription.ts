@@ -148,7 +148,7 @@ export const TIER_FEATURES: Record<Tier, TierFeature[]> = {
     { label: 'Full provenance chain visibility', implemented: true },
     { label: 'Knowledge graph (full search + contradictions)', implemented: true },
     { label: 'x402 micropayment bypass', implemented: true },
-    { label: 'Quiz-to-earn (0.5 USDC rewards)', implemented: false },
+    { label: 'Quiz-to-earn (0.5 USDC rewards)', implemented: true },
     { label: 'Email alerts: regime changes + divergence', implemented: false },
   ],
   [Tier.Pro]: [
@@ -174,7 +174,7 @@ export const COMPARISON_FEATURES: ComparisonRow[] = [
   { name: 'Provenance chain', free: 'Partial', premium: true, pro: true },
   { name: 'Knowledge graph', free: 'Basic', premium: true, pro: true },
   { name: 'x402 micropayments', free: false, premium: true, pro: true },
-  { name: 'Quiz-to-earn', free: false, premium: 'Coming soon', pro: 'Coming soon' },
+  { name: 'Quiz-to-earn', free: false, premium: true, pro: true },
   { name: 'Email alerts', free: false, premium: 'Coming soon', pro: 'Coming soon' },
   { name: 'API access', free: false, premium: false, pro: 'Coming soon' },
   { name: 'Custom alerts', free: false, premium: false, pro: 'Coming soon' },
