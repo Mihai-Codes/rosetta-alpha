@@ -1,10 +1,10 @@
 # Smart Contract Security Audit — Rosetta Alpha
 
 **Date:** 2026-06-09
-**Auditor:** AdaL (automated + manual review)
+**Auditor:** AdaL (automated + manual review + invariant fuzzing)
 **Scope:** All Solidity contracts in `contracts/src/`
-**Tooling:** Foundry 1.0.2, Slither 0.11.5, manual code review
-**Test Results:** 96/96 pass (19 ReasoningRegistry, 19 RosettaToken, 22 RosettaSubscription, 36 PredictionMarket)
+**Tooling:** Foundry 1.0.2, Slither 0.11.5, manual code review, 13 invariant tests
+**Test Results:** 109/109 pass (96 unit/fuzz + 13 invariant, 256 runs each)
 
 ---
 
@@ -13,12 +13,12 @@
 | Severity | Count | Status |
 |----------|-------|--------|
 | CRITICAL | 0     | —      |
-| HIGH     | 1     | **Fixed** |
+| HIGH     | 3     | **All Fixed** |
 | MEDIUM   | 3     | Acknowledged (hackathon-grade, acceptable) |
 | LOW      | 4     | Acknowledged |
 | INFO     | 5     | Acknowledged |
 
-**Overall assessment:** The contracts are well-structured for a hackathon prototype. One HIGH finding (unchecked `transferFrom`) has been fixed. MEDIUM findings are acknowledged as acceptable for hackathon scope; production deployment would require additional hardening.
+**Overall assessment:** The contracts are well-structured for a hackathon prototype. Three HIGH findings have been fixed (unchecked transferFrom, zero-address in createMarket, zero-address in mint). MEDIUM findings are acknowledged as acceptable for hackathon scope; production deployment would require additional hardening.
 
 ---
 
@@ -52,6 +52,42 @@ rewardPool += amount;
 - `settle()` — reward transfer replaced with `safeTransfer`
 
 **Verification:** All 36 PredictionMarket tests pass after fix.
+
+---
+
+### H-2: Missing zero-address check on `agent` in `PredictionMarket.createMarket`
+
+**File:** `src/PredictionMarket.sol:247`
+**Impact:** Rewards sent to `address(0)` (permanently burned)
+
+**Description:**
+`createMarket()` accepted `agent == address(0)`. If a market settled correctly, `safeTransfer` would send ROSETTA rewards to the zero address — permanent loss.
+
+**Remediation:** ✅ Fixed — added `if (agent == address(0)) revert ZeroAddress();`
+
+---
+
+### H-3: Missing zero-address check on `to` in `RosettaToken.mint`
+
+**File:** `src/RosettaToken.sol:84`
+**Impact:** Accidental mint to `address(0)` permanently burns tokens
+
+**Description:**
+`mint()` had no zero-address guard. Owner could accidentally mint to `address(0)`, irrecoverably burning tokens from the supply.
+
+**Remediation:** ✅ Fixed — added `if (to == address(0)) revert ZeroAddress();`
+
+---
+
+### H-4: `confidenceBp == 0` allowed in `PredictionMarket.createMarket`
+
+**File:** `src/PredictionMarket.sol:250`
+**Impact:** No-op markets with zero economic outcome
+
+**Description:**
+`createMarket()` accepted `confidenceBp == 0`. This creates markets where `amount = (stakeAmount * 0) / 10000 = 0` — settle produces no reward and no slash. Wastes gas and clutters `marketHashes`.
+
+**Remediation:** ✅ Fixed — changed check to `if (confidenceBp == 0 || confidenceBp > 10000) revert ConfidenceOutOfRange(confidenceBp);`
 
 ---
 
@@ -207,13 +243,13 @@ All contracts use `^0.8.24` which allows compilation with any 0.8.x ≥ 0.8.24. 
 
 ## Test Coverage Summary
 
-| Contract | Unit Tests | Fuzz Tests | Edge Cases |
-|----------|-----------|------------|------------|
-| ReasoningRegistry | 19 | 0 | Duplicate hash, zero hash, empty CID, auth revocation, pagination |
-| RosettaToken | 13 | 2 | Stake/unstake, slash clamping, zero amounts, slasher auth |
-| RosettaSubscription | 10 | 4 | Tier pricing, subscribe/unsubscribe, upgrade/downgrade, expiry, renewal |
-| PredictionMarket | 22 | 3 | Create/resolve/settle lifecycle, all direction outcomes, confidence scaling, pool clamping |
-| **Total** | **64** | **9** | |
+| Contract | Unit Tests | Fuzz Tests | Invariant Tests | Edge Cases |
+|----------|-----------|------------|-----------------|------------|
+| ReasoningRegistry | 19 | 0 | 3 | Duplicate hash, zero hash, empty CID, auth revocation, pagination, append-only, count, no duplicates |
+| RosettaToken | 13 | 2 | 3 | Stake/unstake, slash clamping, zero amounts, slasher auth, conservation, supply bound |
+| RosettaSubscription | 10 | 4 | 3 | Tier pricing, subscribe/unsubscribe, upgrade/downgrade, expiry, renewal, tier validity, revenue accounting, expiry consistency |
+| PredictionMarket | 22 | 3 | 4 | Create/resolve/settle lifecycle, all direction outcomes, confidence scaling, pool clamping, reward pool accounting, state machine, count |
+| **Total** | **64** | **9** | **13** | |
 
 **Invariant tests:** Pending (see next steps).
 

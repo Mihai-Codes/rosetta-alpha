@@ -56,6 +56,7 @@ contract RosettaToken is ERC20, Ownable, ReentrancyGuard {
     error NotSlasher(address caller);
     error InsufficientStake(address agent, uint256 requested, uint256 available);
     error ZeroAmount();
+    error ZeroAddress();
 
     // -----------------------------------------------------------------------
     // Constructor
@@ -82,6 +83,7 @@ contract RosettaToken is ERC20, Ownable, ReentrancyGuard {
 
     /// @notice Mint additional tokens (owner only — for rewards pool top-ups).
     function mint(address to, uint256 amount) external onlyOwner {
+        if (to == address(0)) revert ZeroAddress();
         if (amount == 0) revert ZeroAmount();
         _mint(to, amount);
         emit Minted(to, amount);

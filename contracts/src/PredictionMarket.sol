@@ -154,6 +154,7 @@ contract PredictionMarket is Ownable, ReentrancyGuard {
     error TooEarlyToSettle(uint64 settlesAt, uint64 nowTs);
     error ZeroAmount();
     error ZeroPrice();
+    error ZeroAddress();
     error ConfidenceOutOfRange(uint16 bp);
     error InsufficientRewardPool(uint256 requested, uint256 available);
 
@@ -245,9 +246,10 @@ contract PredictionMarket is Ownable, ReentrancyGuard {
         uint32 horizonDays
     ) external {
         if (markets[traceHash].createdAt != 0) revert MarketAlreadyExists(traceHash);
+        if (agent == address(0)) revert ZeroAddress();
         if (stakeAmount == 0) revert ZeroAmount();
         if (entryPrice == 0)  revert ZeroPrice();
-        if (confidenceBp > 10000) revert ConfidenceOutOfRange(confidenceBp);
+        if (confidenceBp == 0 || confidenceBp > 10000) revert ConfidenceOutOfRange(confidenceBp);
 
         // Validate the trace exists in the registry (reverts internally if not).
         // We only need the submitter field as a smoke check.
