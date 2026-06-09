@@ -6,14 +6,14 @@
  * The frontend uses @stripe/crypto's loadStripeOnramp() + createSession() to mount the widget.
  *
  * Stripe Onramp API is NOT in the Node.js SDK — we call it via raw HTTP.
- * Required header: Stripe-Version: 2025-10-29.clover;crypto_onramp_beta=v2
+ * Retry logic + error labels are in lib/stripe-api.ts (DRY).
  */
 
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { Tier, TIER_PRICES_USD, isValidTier } from '@/lib/subscription'
 import { NO_STORE_HEADERS, isValidEthereumAddress, handleServerError } from '@/lib/api-utils'
-import { STRIPE_API_BASE, stripeHeaders } from '@/lib/stripe-api'
+import { createStripeOnrampSession } from '@/lib/stripe-api'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -67,28 +67,13 @@ export async function POST(req: Request) {
     params.append('metadata[tier]', tier.toString())
     params.append('metadata[wallet_address]', walletAddress)
 
-    const response = await fetch(`${STRIPE_API_BASE}/crypto/onramp_sessions`, {
-      method: 'POST',
-      headers: {
-        ...stripeHeaders(),
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: params.toString(),
-      cache: 'no-store',
-    })
+    const { session, error, code } = await createStripeOnrampSession(params)
 
-    const data = await response.json().catch(() => null) as Record<string, unknown> | null
-
-    if (!response.ok || !data?.id || !data?.client_secret) {
-      const error = data?.error as { message?: string; code?: string } | undefined
-      console.error('Stripe onramp session creation failed:', error ?? data)
+    if (!session) {
+      console.error('Stripe onramp session creation failed:', code, error)
       return NextResponse.json(
-        {
-          success: false,
-          error: error?.message ?? 'Failed to create onramp session',
-          code: error?.code ?? 'stripe_error',
-        },
-        { status: response.status >= 400 && response.status < 600 ? response.status : 502, headers: NO_STORE_HEADERS }
+        { success: false, error, code },
+        { status: 502, headers: NO_STORE_HEADERS }
       )
     }
 
@@ -108,18 +93,21 @@ export async function POST(req: Request) {
         userWallet: walletAddress.toLowerCase(),
         amountUsdc: amountUsd,
         tier: tier as number,
-        stripeSessionId: data.id as string,
-        status: (data.status as string) ?? 'initialized',
+        stripeSessionId: session.id,
+        status: session.status ?? 'initialized',
       },
     }).catch((err) => {
       console.warn('Failed to persist onramp purchase record:', err)
     })
 
+    const isTestMode = process.env.STRIPE_SECRET_KEY?.startsWith('sk_test_') ?? true
+
     return NextResponse.json(
       {
         success: true,
-        clientSecret: data.client_secret,
-        sessionId: data.id,
+        clientSecret: session.client_secret,
+        sessionId: session.id,
+        testMode: isTestMode,
       },
       { headers: NO_STORE_HEADERS }
     )

@@ -18,9 +18,11 @@
 
 import {
   createContext,
+  memo,
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type ReactNode,
@@ -136,10 +138,20 @@ interface OnrampElementProps {
   onChange?: (status: string, session: OnrampSessionData) => void
 }
 
-export function OnrampElement({ clientSecret, appearance, onReady, onChange }: OnrampElementProps) {
+export const OnrampElement = memo(function OnrampElement({ clientSecret, appearance, onReady, onChange }: OnrampElementProps) {
   const { stripeOnramp, loading, error } = useStripeOnramp()
   const containerRef = useRef<HTMLDivElement>(null)
   const sessionRef = useRef<OnrampSession | null>(null)
+  const mountedIdRef = useRef<string | null>(null)
+
+  // Stable refs for callbacks to avoid effect re-runs
+  const onReadyRef = useRef(onReady)
+  onReadyRef.current = onReady
+  const onChangeRef = useRef(onChange)
+  onChangeRef.current = onChange
+
+  // Memoize appearance to prevent re-mounts on parent re-renders
+  const stableAppearance = useMemo(() => appearance, [JSON.stringify(appearance)])
 
   useEffect(() => {
     if (!stripeOnramp || !containerRef.current || !clientSecret) return
@@ -148,30 +160,35 @@ export function OnrampElement({ clientSecret, appearance, onReady, onChange }: O
 
     // Unmount any previous session
     sessionRef.current?.unmount()
+    sessionRef.current = null
 
-    const session = stripeOnramp.createSession({ clientSecret, appearance })
+    const session = stripeOnramp.createSession({ clientSecret, appearance: stableAppearance })
     sessionRef.current = session
 
     session.addEventListener('onramp_ui_loaded', () => {
-      if (!cancelled) onReady?.()
+      if (!cancelled) onReadyRef.current?.()
     })
 
     session.addEventListener('onramp_session_updated', (event) => {
-      if (!cancelled) onChange?.(event.payload.session.status, event.payload.session)
+      if (!cancelled) onChangeRef.current?.(event.payload.session.status, event.payload.session)
     })
 
-    // Mount uses a CSS selector — assign an ID to the container
+    // Stable mount ID — only create once per clientSecret
+    if (!mountedIdRef.current || mountedIdRef.current.startsWith('unmounted-')) {
+      mountedIdRef.current = `onramp-mount-${clientSecret.slice(0, 12)}`
+    }
     if (containerRef.current) {
-      containerRef.current.id = `onramp-mount-${Date.now()}`
-      session.mount(`#${containerRef.current.id}`)
+      containerRef.current.id = mountedIdRef.current
+      session.mount(`#${mountedIdRef.current}`)
     }
 
     return () => {
       cancelled = true
       session.unmount()
       sessionRef.current = null
+      mountedIdRef.current = `unmounted-${Date.now()}`
     }
-  }, [stripeOnramp, clientSecret, appearance, onReady, onChange])
+  }, [stripeOnramp, clientSecret, stableAppearance])
 
   if (loading) {
     return (
@@ -195,4 +212,4 @@ export function OnrampElement({ clientSecret, appearance, onReady, onChange }: O
   }
 
   return <div ref={containerRef} className="onramp-element" />
-}
+})

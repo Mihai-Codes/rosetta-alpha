@@ -67,6 +67,7 @@ function CryptoOnrampContent({ tier, walletAddress, onSuccess, onClose }: Omit<C
   const [status, setStatus] = useState<string>('loading')
   const [error, setError] = useState<string | null>(null)
   const [isRetrying, setIsRetrying] = useState(false)
+  const [testMode, setTestMode] = useState(false)
   const onSuccessRef = useRef(onSuccess)
   onSuccessRef.current = onSuccess
   const onCloseRef = useRef(onClose)
@@ -90,7 +91,7 @@ function CryptoOnrampContent({ tier, walletAddress, onSuccess, onClose }: Omit<C
         }),
       })
 
-      const data = await res.json() as { success: boolean; clientSecret?: string; sessionId?: string; error?: string }
+      const data = await res.json() as { success: boolean; clientSecret?: string; sessionId?: string; error?: string; testMode?: boolean }
 
       if (!data.success || !data.clientSecret) {
         throw new Error(data.error ?? 'Failed to create payment session')
@@ -98,6 +99,7 @@ function CryptoOnrampContent({ tier, walletAddress, onSuccess, onClose }: Omit<C
 
       setClientSecret(data.clientSecret)
       setSessionId(data.sessionId ?? null)
+      setTestMode(data.testMode ?? false)
       setStatus('initialized')
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unknown error'
@@ -196,6 +198,18 @@ function CryptoOnrampContent({ tier, walletAddress, onSuccess, onClose }: Omit<C
           </svg>
         </button>
       </div>
+
+      {/* Test mode banner */}
+      {testMode && (
+        <div className="mx-5 mt-4 px-3 py-2 rounded-md bg-warning/10 border border-warning/20 flex items-center gap-2">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="shrink-0">
+            <path d="M7 1L1 13H13L7 1Z" stroke="#EAB308" strokeWidth="1.5" strokeLinejoin="round" />
+            <path d="M7 5V8" stroke="#EAB308" strokeWidth="1.5" strokeLinecap="round" />
+            <circle cx="7" cy="10.5" r="0.75" fill="#EAB308" />
+          </svg>
+          <span className="text-[11px] text-warning">Test mode — no real charges</span>
+        </div>
+      )}
 
       {/* Body */}
       <div className="p-5">
