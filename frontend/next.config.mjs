@@ -12,6 +12,9 @@ const WC_FRAME_SRC = [
   'https://verify.walletconnect.org',
   'https://secure.walletconnect.com',
   'https://secure.walletconnect.org',
+  // Stripe Crypto Onramp iframe
+  'https://js.stripe.com',
+  'https://crypto.stripe.com',
 ].join(' ')
 
 const WC_CONNECT_SRC = [
@@ -44,6 +47,9 @@ const WC_CONNECT_SRC = [
   'https://keys.coinbase.com',
   'https://api.developer.coinbase.com',
   'https://wallet.coinbase.com',
+  // Stripe Crypto Onramp API
+  'https://api.stripe.com',
+  'https://crypto.stripe.com',
 ].join(' ')
 
 const securityHeaders = [
@@ -51,13 +57,33 @@ const securityHeaders = [
     key: 'Content-Security-Policy',
     value: [
       `default-src 'self'`,
-      `script-src 'self' 'unsafe-inline' 'unsafe-eval'`,
+      `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://crypto-js.stripe.com`,
       `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
       `font-src 'self' https://fonts.gstatic.com https://fonts.reown.com`,
-      `img-src * 'self' data: blob:`,
+      `img-src * 'self' data: blob: https://*.stripe.com`,
       `connect-src 'self' ${WC_CONNECT_SRC}`,
       `frame-src 'self' ${WC_FRAME_SRC}`,
     ].join('; '),
+  },
+  {
+    key: 'X-Frame-Options',
+    value: 'DENY',
+  },
+  {
+    key: 'X-Content-Type-Options',
+    value: 'nosniff',
+  },
+  {
+    key: 'Referrer-Policy',
+    value: 'strict-origin-when-cross-origin',
+  },
+  {
+    key: 'Permissions-Policy',
+    value: 'camera=(), microphone=(), geolocation=()',
+  },
+  {
+    key: 'Strict-Transport-Security',
+    value: 'max-age=63072000; includeSubDomains; preload',
   },
   /**
    * Required for Base Smart Wallet / Coinbase passkey popups.

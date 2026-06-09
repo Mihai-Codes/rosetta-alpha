@@ -130,6 +130,20 @@ export async function POST(req: Request) {
   const metadata = session.metadata as Record<string, string> | undefined
   const transactionDetails = session.transaction_details as Record<string, unknown> | undefined
 
+  // Idempotency: skip if we already processed this exact status for this session
+  // Stripe retries webhooks for up to 72 hours — we must not double-process
+  const eventId = event.id as string | undefined
+  if (eventId) {
+    const existing = await prisma.onrampPurchase.findUnique({
+      where: { stripeSessionId: sessionId ?? '' },
+      select: { status: true },
+    }).catch(() => null)
+    if (existing?.status === status) {
+      console.log(`[webhook] Duplicate event ${eventId} for session ${sessionId} — skipping`)
+      return NextResponse.json({ success: true, received: true, duplicate: true }, { headers: NO_STORE_HEADERS })
+    }
+  }
+
   console.log(`[webhook] onramp_session.updated — id=${sessionId} status=${status}`)
 
   // Update the purchase record
