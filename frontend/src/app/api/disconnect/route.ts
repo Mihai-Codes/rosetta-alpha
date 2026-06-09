@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { auth } from '../../../../auth'
 
 /**
  * GET /api/disconnect
@@ -10,6 +11,11 @@ import { NextResponse } from 'next/server'
  * runs cookieToInitialState() — no race condition possible.
  */
 export async function GET(req: Request) {
+  const session = await auth()
+  if (!session?.user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   const { searchParams } = new URL(req.url)
   const redirectTo = searchParams.get('next') ?? '/'
 

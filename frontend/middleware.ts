@@ -2,8 +2,8 @@ import { auth } from './auth'
 import { NextResponse } from 'next/server'
 
 export default auth((req) => {
-  // Allow Playwright local screenshot runs to bypass auth
-  if (process.env.PLAYWRIGHT_BYPASS === 'true') {
+  // Allow Playwright local screenshot runs to bypass auth — ONLY in development
+  if (process.env.NODE_ENV !== 'production' && process.env.PLAYWRIGHT_BYPASS === 'true') {
     return NextResponse.next()
   }
   const isLoggedIn = !!req.auth
