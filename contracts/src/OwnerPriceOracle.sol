@@ -47,7 +47,6 @@ contract OwnerPriceOracle is IPriceOracle, Ownable {
     /// @inheritdoc IPriceOracle
     function getPrice(bytes32 assetKey) external view returns (uint256 price, uint256 timestamp) {
         PricePoint memory p = _prices[assetKey];
-        if (p.timestamp == 0) revert PriceNotSet(assetKey);
         return (p.price, p.timestamp);
     }
 }

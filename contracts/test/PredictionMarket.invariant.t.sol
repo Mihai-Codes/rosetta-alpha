@@ -11,14 +11,18 @@ import {PredictionMarket} from "../src/PredictionMarket.sol";
 /**
  * @title MarketHandler
  * @notice Bounded handler for PredictionMarket invariant fuzzing.
- *         Agents are funded and approve the token contract in setUp.
- *         Uses vm.prank to stake/create markets on behalf of agents.
+ *         Uses pre-funded agent addresses — NOT the fuzzer-generated `agent` param.
+ *         Each function is self-contained with its own vm.prank scope.
  */
 contract MarketHandler is Test {
     PredictionMarket public market;
     ReasoningRegistry public registry;
     RosettaToken public token;
     OwnerPriceOracle public oracle;
+    address public submitter;
+
+    address[] public agents;
+    uint256 public nextAgentIdx;
 
     bytes32[] public createdHashes;
     mapping(bytes32 => bool) public isCreated;
@@ -27,25 +31,44 @@ contract MarketHandler is Test {
         PredictionMarket _market,
         ReasoningRegistry _registry,
         RosettaToken _token,
-        OwnerPriceOracle _oracle
+        OwnerPriceOracle _oracle,
+        address _submitter,
+        address[] memory _agents
     ) {
         market = _market;
         registry = _registry;
         token = _token;
         oracle = _oracle;
+        submitter = _submitter;
+        for (uint256 i; i < _agents.length; ++i) {
+            agents.push(_agents[i]);
+        }
     }
 
-    function _recordTrace(bytes32 hash) internal {
+    function _ensureTrace(bytes32 hash) internal {
         (, , , , uint256 ts, ) = registry.traces(hash);
         if (ts == 0) {
-            vm.prank(address(0xDEAD));
+            vm.prank(submitter);
             registry.record(hash, "bafkrei-test", ReasoningRegistry.Region.US, ReasoningRegistry.AssetClass.CRYPTO);
         }
     }
 
+    function _ensureOracle(bytes32 assetKey, uint256 price) internal {
+        (, uint256 ts) = oracle.getPrice(assetKey);
+        if (ts == 0) {
+            vm.prank(address(0xBEEF));
+            oracle.setPrice(assetKey, price);
+        }
+    }
+
+    function _pickAgent() internal returns (address agent) {
+        agent = agents[nextAgentIdx % agents.length];
+        nextAgentIdx++;
+    }
+
     function createMarket(
         bytes32 traceHash,
-        address agent,
+        address, /*fuzzerAgent — ignored, we use pre-funded agents*/
         uint256 stakeAmount,
         bytes32 assetKey,
         uint16 confidenceBp,
@@ -58,27 +81,31 @@ contract MarketHandler is Test {
         entryPrice = bound(entryPrice, 1e8, 1_000e8);
         horizonDays = uint32(bound(horizonDays, 1, 30));
 
-        _recordTrace(traceHash);
-        (, uint256 oracleTs) = oracle.getPrice(assetKey);
-        if (oracleTs == 0) {
-            vm.prank(address(0xBEEF));
-            oracle.setPrice(assetKey, entryPrice);
-        }
-
         if (isCreated[traceHash]) return;
 
-        // Unstake first if agent has existing stake (recycle tokens)
-        uint256 existingStake = token.stakedBalance(agent);
-        if (existingStake > 0) {
+        address agent = _pickAgent();
+
+        _ensureTrace(traceHash);
+        _ensureOracle(assetKey, entryPrice);
+
+        // Unstake any existing stake to recycle tokens
+        uint256 existing = token.stakedBalance(agent);
+        if (existing > 0) {
             vm.prank(agent);
-            token.unstake(existingStake);
+            token.unstake(existing);
         }
 
-        // Agent stakes then creates market — both from agent's perspective
-        vm.startPrank(agent);
+        // Agent approves token contract (idempotent — max approval persists)
+        vm.prank(agent);
+        token.approve(address(token), type(uint256).max);
+
+        // Agent stakes
+        vm.prank(agent);
         token.stake(stakeAmount);
+
+        // Agent creates market
+        vm.prank(agent);
         market.createMarket(traceHash, agent, stakeAmount, assetKey, PredictionMarket.Direction.LONG, confidenceBp, entryPrice, horizonDays);
-        vm.stopPrank();
 
         createdHashes.push(traceHash);
         isCreated[traceHash] = true;
@@ -88,8 +115,9 @@ contract MarketHandler is Test {
         if (!isCreated[traceHash]) return;
         PredictionMarket.Market memory m = market.getMarket(traceHash);
         if (m.status != PredictionMarket.Status.PENDING) return;
-
-        vm.warp(m.resolvesAt + 1);
+        if (block.timestamp < m.resolvesAt) {
+            vm.warp(m.resolvesAt + 1);
+        }
         market.resolve(traceHash);
     }
 
@@ -97,9 +125,10 @@ contract MarketHandler is Test {
         if (!isCreated[traceHash]) return;
         PredictionMarket.Market memory m = market.getMarket(traceHash);
         if (m.status != PredictionMarket.Status.RESOLVED) return;
-
         uint64 settlesAt = m.resolvedAt + market.disputeWindowSec();
-        vm.warp(settlesAt + 1);
+        if (block.timestamp < settlesAt) {
+            vm.warp(settlesAt + 1);
+        }
         market.settle(traceHash);
     }
 
@@ -122,27 +151,25 @@ contract PredictionMarketInvariantTest is Test {
     address owner = address(0xBEEF);
     address agent1 = address(0x1111);
     address agent2 = address(0x2222);
+    address agent3 = address(0x3333);
+    address submitter = address(0xDEAD);
 
     function setUp() public {
         vm.startPrank(owner);
-        registry = new ReasoningRegistry(owner, address(0xDEAD));
+        registry = new ReasoningRegistry(owner, submitter);
         token = new RosettaToken(owner, 1_000_000 ether);
         oracle = new OwnerPriceOracle(owner);
         market = new PredictionMarket(owner, address(registry), address(token), address(oracle));
         token.setSlasher(address(market), true);
-
-        // Fund agents AND approve token contract for staking
         vm.stopPrank();
 
+        // Fund agents with tokens
         vm.prank(owner);
         token.transfer(agent1, 100_000 ether);
         vm.prank(owner);
         token.transfer(agent2, 100_000 ether);
-
-        vm.prank(agent1);
-        token.approve(address(token), type(uint256).max);
-        vm.prank(agent2);
-        token.approve(address(token), type(uint256).max);
+        vm.prank(owner);
+        token.transfer(agent3, 100_000 ether);
 
         // Fund reward pool
         vm.prank(owner);
@@ -150,10 +177,16 @@ contract PredictionMarketInvariantTest is Test {
         vm.prank(owner);
         market.fundRewardPool(50_000 ether);
 
-        handler = new MarketHandler(market, registry, token, oracle);
+        address[] memory agentAddrs = new address[](3);
+        agentAddrs[0] = agent1;
+        agentAddrs[1] = agent2;
+        agentAddrs[2] = agent3;
+
+        handler = new MarketHandler(market, registry, token, oracle, submitter, agentAddrs);
         targetContract(address(handler));
         targetSender(agent1);
         targetSender(agent2);
+        targetSender(agent3);
     }
 
     /// @notice Reward pool balance must match the contract's internal counter.
@@ -188,5 +221,25 @@ contract PredictionMarketInvariantTest is Test {
                 assertEq(m.resolvedAt, 0, "pending market has resolvedAt != 0");
             }
         }
+    }
+
+    /// @notice Resolved and settled markets always have exitPrice > 0.
+    function invariant_resolvedMarketsHaveExitPrice() public view {
+        for (uint256 i; i < handler.getCreatedCount(); ++i) {
+            bytes32 hash = handler.createdHashes(i);
+            PredictionMarket.Market memory m = market.getMarket(hash);
+            if (m.status == PredictionMarket.Status.RESOLVED || m.status == PredictionMarket.Status.SETTLED) {
+                assertGt(m.exitPrice, 0, "resolved/settled but exitPrice=0");
+                assertGt(m.resolvedAt, 0, "resolved/settled but resolvedAt=0");
+            }
+        }
+    }
+
+    /// @notice Total staked never exceeds initial agent funding + reward pool.
+    ///         Agents start with 100k each (300k total), pool is 50k.
+    ///         On slash, tokens are burned from supply. On reward, tokens move
+    ///         from pool to agent wallet (not staked). So totalStaked <= 300k.
+    function invariant_totalStakedBounded() public view {
+        assertLe(token.totalStaked(), 300_000 ether, "totalStaked exceeds agent funding");
     }
 }
