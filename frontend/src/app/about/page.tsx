@@ -13,7 +13,7 @@ export default function AboutPage() {
             About
           </p>
           <h1 className="font-display text-4xl md:text-5xl text-text-primary leading-tight">
-            Rosetta Alpha
+            Rosetta <span className="text-brand-red">Alpha</span>
           </h1>
         </div>
         <AboutView />
